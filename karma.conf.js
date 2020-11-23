@@ -27,6 +27,26 @@ module.exports = function (config) {
     autoWatch: true,
     browsers: ['Chrome'],
     singleRun: false,
-    restartOnFileChange: true
+    restartOnFileChange: true,
+    customLaunchers: {
+      GitlabCI: {
+        base: 'ChromeHeadless',
+        flags: [
+          "--disable-background-networking",
+          "--disable-default-apps",
+          "--disable-extensions",
+          "--disable-gpu",
+          "--disable-sync",
+          "--disable-translate",
+          "--headless",
+          "--hide-scrollbars",
+          "--metrics-recording-only",
+          "--mute-audio",
+          "--no-first-run",
+          "--no-sandbox",
+          "--safebrowsing-disable-auto-update"
+        ]
+      }
+    }
   });
 };
