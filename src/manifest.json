@@ -4,11 +4,15 @@
   "description": "NER browser extension",
   "manifest_version": 2,
   "browser_action": {
-    "default_icon": "/assets/img/website_static_img_favicon.ico"
+    "default_icon": "/assets/img/website_static_img_favicon.ico",
+    "default_popup": "index.html?page=popup"
+  },
+  "background": {
+    "page": "index.html?page=background"
   },
   "permissions": [
     "<all_urls>",
     "webRequest",
-    "activeTab"
+    "tabs"
   ]
 }
