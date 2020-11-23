@@ -3,7 +3,7 @@
   "version": "1.0",
   "description": "NER browser extension",
   "manifest_version": 2,
-  "page_action": {
+  "browser_action": {
     "default_icon": "/assets/img/website_static_img_favicon.ico"
   },
   "permissions": [
