@@ -25,7 +25,7 @@
             "aot": true,
             "assets": [
               "src/manifest.json",
-              "src/assets/img",
+              "src/assets",
               {
                 "glob": "**/*",
                 "input": "./node_modules/webextension-polyfill/dist/",
