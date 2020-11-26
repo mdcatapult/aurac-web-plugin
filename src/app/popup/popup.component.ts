@@ -14,14 +14,8 @@ export class PopupComponent implements OnInit {
   }
 
   nerCurrentPage() {
-    this.log.Info("Trying to get page...")
-    browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT}).then(tabs => {
-      const tabId = tabs[0].id;
-      browser.tabs.sendMessage(tabId, {type: 'run_leadmine', tabId})
-      .then(result => {
-        this.log.Info(result);
-      });
-    });
+    this.log.Log('Sending message to background page...');
+    browser.runtime.sendMessage({type: 'ner_current_page'})
+      .catch(e => this.log.Error(`Couldn't send message to background page: ${e}`));
   }
-
 }

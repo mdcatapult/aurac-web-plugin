@@ -7,6 +7,7 @@ import { LoggerComponent } from './background/logger/logger.component';
 import { PopupComponent } from './popup/popup.component';
 import { RouterComponent } from './router/router.component';
 import { Routes, RouterModule } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
 
 
 const routes: Routes = [
@@ -23,7 +24,8 @@ const routes: Routes = [
   ],
   imports: [
     BrowserModule,
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes),
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
