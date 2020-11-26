@@ -2,11 +2,12 @@
 
 ## Running NER on a web page
 
+The plugin runs Leadmine over a web page in a Chrome or Firefox browser, logging the result.  
 Once the extension is loaded you will see the following icon:
 
 ![image](./src/assets/favicon.ico)
 
-Clicking this icon will reveal a popup, which currently has a single `NER` option.  Clicking the `NER` button will run Leadmine (by making an API call to the Leadmine Web Service at https://leadmine.wopr.inf.mdc) on the contents of the active tab in a Chrome or Firefox browser, logging the result.
+Clicking this icon will reveal a popup, which currently has a single `NER` option.  Clicking the `NER` button will run Leadmine (by making an API call to the Leadmine Web Service at https://leadmine.wopr.inf.mdc) on the contents of the active tab.
 
 
 ### Development
