@@ -24,8 +24,13 @@
             "tsConfig": "tsconfig.app.json",
             "aot": true,
             "assets": [
-              "src/favicon.ico",
-              "src/assets"
+              "src/manifest.json",
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "./node_modules/webextension-polyfill/dist/",
+                "output": "."
+              }
             ],
             "styles": [
               "src/styles.scss"

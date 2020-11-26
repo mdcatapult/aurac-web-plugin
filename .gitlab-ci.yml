@@ -1,0 +1,43 @@
+stages:
+  - test-lint-build
+  - release
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
+test-lint-build:
+  stage: test-lint-build
+  image: node:alpine
+  tags:
+    - wopr
+  artifacts:
+    paths:
+      - dist/*
+  before_script:
+    - apk --no-cache upgrade && apk add --no-cache chromium
+    - export CHROME_BIN=/usr/bin/chromium-browser
+    - npm install
+  script:
+    - npm run test:ci
+    - npm run lint
+    - npm run build
+    - npm run package
+  coverage: /Lines\s+:\s(\d+\.?\d*)%\s\(\s\d+\/\d+\s\)/
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /^Setting version to.*/
+
+# TODO: The release stage currently increments the version in the package.json *only*.
+# Must also update the version in the manifest.json that is packaged at build time.
+release:
+  stage: release
+  image: registry.mdcatapult.io/informatics/docker-images/ci:node-v1.1.7
+  tags:
+    - wopr
+  script:
+    - /scripts/release.sh -b -r develop -u 'dist/browser-plugin/web-ext-artifacts/FerretPlugin-*.zip'
+  only:
+    - master
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /^Setting version to.*/
