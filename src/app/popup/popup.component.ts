@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Message } from 'src/types';
 import { LogService } from './log.service';
 
 @Component({
@@ -15,7 +16,7 @@ export class PopupComponent implements OnInit {
 
   nerCurrentPage() {
     this.log.Log('Sending message to background page...');
-    browser.runtime.sendMessage({type: 'ner_current_page'})
+    browser.runtime.sendMessage<Message>({type: 'ner_current_page'})
       .catch(e => this.log.Error(`Couldn't send message to background page: ${e}`));
   }
 }
