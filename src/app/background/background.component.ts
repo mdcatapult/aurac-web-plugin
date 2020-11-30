@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { LeadmineMessage, LeadminerResult, Message, StringMessage } from 'src/types';
 
 @Component({
   selector: 'app-background',
@@ -18,14 +19,18 @@ export class BackgroundComponent {
 
   nerCurrentPage() {
     console.log('Getting content of active tab...');
+    let tab;
     browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT}).then(tabs => {
-      const tabId = tabs[0].id;
-      browser.tabs.sendMessage<any, any>(tabId, {type: 'run_leadmine', tabId})
+      tab = tabs[0].id;
+      browser.tabs.sendMessage<Message, StringMessage>(tab, {type: 'get_page_contents'})
+      .catch(e => console.error(e))
       .then(result => {
-        console.log('Sending page content to leadmine...');
-        this.client.post<any>('https://leadmine.wopr.inf.mdc/entities', result.page, {observe: 'response'})
+        result = result as StringMessage;
+        console.log('Sending page contents to leadmine...');
+        this.client.post<LeadminerResult>('https://leadmine.wopr.inf.mdc/entities', result.body, {observe: 'response'})
           .subscribe((response) => {
-            console.log(response);
+            console.log('Received results from leadmine...');
+            browser.tabs.sendMessage<LeadmineMessage>(tab, {type: 'markup_page', body: response.body});
           });
       });
     });
