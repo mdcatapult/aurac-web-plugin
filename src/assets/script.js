@@ -1,4 +1,4 @@
-(function(){
+(function () {
 
   console.log("script loaded");
 
@@ -15,15 +15,9 @@
               const element = newElement(txt);
               const node = document.querySelector(selector);
               node.innerHTML = node.innerHTML.replace(txt, createSpan(txt));
-              node.addEventListener("mouseenter", (event) => {
-                  addElement(element);
-                });
-              node.addEventListener("mouseleave", (event) => {
-
-                setTimeout(() => element.remove(), 5000);
-              })
-              }
-            );
+              node.addEventListener("mouseenter", (event) => addElement(element));
+              node.addEventListener("mouseleave", (event) => setTimeout(() => element.remove(), 5000));
+            });
         })
         break;
       default:
@@ -33,21 +27,16 @@
 
   const createSpan = (info) => `<span style="background-color: yellow;">${info}</span>`;
 
-
-  // create a new element
   const newElement = (info) => {
     console.log("newElement called with " + info)
     let elemDiv = document.createElement('div');
     elemDiv.style.cssText = 'width:25%;height:25%;background:rgb(192,192,192);';
-    elemDiv.insertAdjacentHTML('afterbegin',`<h1>${info}</h1>`);
+    elemDiv.insertAdjacentHTML('afterbegin', `<h1>${info}</h1>`);
     return elemDiv;
   }
 
   // add a new element to the DOM
-  const addElement = (element) => {
-    window.document.body.insertBefore(element, window.document.body.lastChild);
-  }
-
+  const addElement = (element) => window.document.body.insertBefore(element, window.document.body.lastChild);
 
   const getSelectors = (entity) => {
     // Create regex for entity.
@@ -55,7 +44,7 @@
 
     // Get all nodes whose innerHTML contains the entity.
     const nodes = Array.from(document.querySelectorAll('body *:not(script)'))
-        .filter(element => element.innerText && element.innerText.match(re))
+      .filter(element => element.innerText && element.innerText.match(re))
 
     // Create an array of unique selectors for each node.
     const nodeSelectors = nodes.map(n => uniqueSelector(n))
