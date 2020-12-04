@@ -15,8 +15,9 @@
               const element = newElement(txt);
               const node = document.querySelector(selector);
               node.innerHTML = node.innerHTML.replace(txt, createSpan(txt));
-              node.addEventListener("mouseenter", (event) => addElement(element));
-              node.addEventListener("mouseleave", (event) => setTimeout(() => element.remove(), 5000));
+              node.addEventListener("mouseenter", (event) => {
+                addElement(element);
+              });
             });
         })
         break;
@@ -27,16 +28,26 @@
 
   const createSpan = (info) => `<span style="background-color: yellow;">${info}</span>`;
 
+  // creates a new div with h1 element
   const newElement = (info) => {
-    console.log("newElement called with " + info)
     let elemDiv = document.createElement('div');
-    elemDiv.style.cssText = 'width:25%;height:25%;background:rgb(192,192,192);';
-    elemDiv.insertAdjacentHTML('afterbegin', `<h1>${info}</h1>`);
+    elemDiv.id = 'parent';
+    elemDiv.style.cssText = 'width:10%;height:10%;background:rgb(192,192,192);';
+    elemDiv.style.position = 'absolute';
+    elemDiv.style.left = '50%';
+    elemDiv.style.top = '50%';
+    elemDiv.style.transform = 'translate(-0%, -50%)';
+    elemDiv.style.border = '5px solid #FFFF00';
+    elemDiv.style.padding = '10px';
+    elemDiv.style.zIndex = '10';
+    elemDiv.insertAdjacentHTML('afterbegin', `<h1 style="position:absolute">${info}</h1><h1 style="position:absolute;top:1%;right:1%;cursor:pointer;" onclick="this.parentNode.parentNode.removeChild(this.parentNode)">x</h1>`);
     return elemDiv;
   }
 
-  // add a new element to the DOM
-  const addElement = (element) => window.document.body.insertBefore(element, window.document.body.lastChild);
+  // adds a new element to the DOM
+  const addElement = (element) => {
+    window.document.body.insertBefore(element, window.document.body.lastChild);
+  };
 
   const getSelectors = (entity) => {
     // Create regex for entity.
