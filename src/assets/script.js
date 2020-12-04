@@ -9,10 +9,11 @@
         return Promise.resolve({type: 'leadmine', body: document.querySelector('body').outerHTML})
       case 'markup_page':
         msg.body.entities.map((entity) => {
-          const txt = entity.entity.entityText
+          const txt = entity.entity.entityText;
+          const info = {entityText: txt, resolvedEntity: entity.entity.resolvedEntity};
           getSelectors(txt)
             .map(selector => {
-              const element = newElement(txt);
+              const element = newElement(info);
               const node = document.querySelector(selector);
               node.innerHTML = node.innerHTML.replace(txt, createSpan(txt));
               node.addEventListener("mouseenter", (event) => {
@@ -29,22 +30,31 @@
     }
   })
 
-  const createSpan = (info) => `<span style="background-color: yellow;">${info}</span>`;
+  const createSpan = (term) => `<span style="background-color: yellow;">${term}</span>`;
 
-  // creates a new div with h1 element
+  // creates a new div with h1 elements
   const newElement = (info) => {
-    let elemDiv = document.createElement('div');
-    elemDiv.id = 'parent';
-    elemDiv.style.cssText = 'width:10%;height:10%;background:rgb(192,192,192);';
-    elemDiv.style.position = 'absolute';
-    elemDiv.style.left = '50%';
-    elemDiv.style.top = '50%';
-    elemDiv.style.transform = 'translate(-0%, -50%)';
-    elemDiv.style.border = '5px solid #FFFF00';
-    elemDiv.style.padding = '10px';
-    elemDiv.style.zIndex = '10';
-    elemDiv.insertAdjacentHTML('afterbegin', `<h1 style="position:absolute">${info}</h1><h1 style="position:absolute;top:1%;right:1%;cursor:pointer;" onclick="this.parentNode.parentNode.removeChild(this.parentNode)">x</h1>`);
-    return elemDiv;
+    // create div
+    let div = document.createElement('div');
+    // add styling
+    div.style.cssText = 'width:10%;height:10%;background:rgb(192,192,192);';
+    div.style.position = 'absolute';
+    div.style.left = '50%';
+    div.style.top = '50%';
+    div.style.transform = 'translate(-0%, -50%)';
+    div.style.border = '5px solid #FFFF00';
+    div.style.padding = '10px';
+    div.style.zIndex = '10';
+    div.display = 'flex';
+    div.display.justifyContent = 'space-between';
+    div.display.alignItems = 'center';
+    // insert inner HTML elements
+    div.insertAdjacentHTML('afterbegin', `
+        <h1>Term: ${info.entityText}</h1>
+        <h1>Resolved entity: ${info.resolvedEntity}</h1>
+        <h1 style="position:absolute;top:1%;right:1%;cursor:pointer;" onclick="this.parentNode.parentNode.removeChild(this.parentNode)">x</h1>
+    `);
+    return div;
   }
 
   // adds a new element to the DOM
