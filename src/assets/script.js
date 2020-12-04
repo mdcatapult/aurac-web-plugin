@@ -18,6 +18,9 @@
               node.addEventListener("mouseenter", (event) => {
                 addElement(element);
               });
+              node.addEventListener("mouseleave", (event) => {
+                setTimeout(() => element.remove(), 5000);
+              });
             });
         })
         break;
