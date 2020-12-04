@@ -11,9 +11,17 @@
         msg.body.entities.map((entity) => {
           const txt = entity.entity.entityText
           getSelectors(txt)
-            .map(s => {
-              document.querySelector(s).innerHTML = document.querySelector(s).innerHTML
-                .replace(txt, `<span style="background-color: yellow;">${txt}</span>`)
+            .map(selector => {
+              const element = newElement(txt);
+              const node = document.querySelector(selector);
+              node.innerHTML = node.innerHTML.replace(txt, createSpan(txt));
+              node.addEventListener("mouseenter", (event) => {
+                  addElement(element);
+                });
+              node.addEventListener("mouseleave", (event) => {
+
+                setTimeout(() => element.remove(), 5000);
+              })
               }
             );
         })
@@ -22,18 +30,36 @@
         throw new Error('Received unexpected message from plugin');
     }
   })
-  
+
+  const createSpan = (info) => `<span style="background-color: yellow;">${info}</span>`;
+
+
+  // create a new element
+  const newElement = (info) => {
+    console.log("newElement called with " + info)
+    let elemDiv = document.createElement('div');
+    elemDiv.style.cssText = 'width:25%;height:25%;background:rgb(192,192,192);';
+    elemDiv.insertAdjacentHTML('afterbegin',`<h1>${info}</h1>`);
+    return elemDiv;
+  }
+
+  // add a new element to the DOM
+  const addElement = (element) => {
+    window.document.body.insertBefore(element, window.document.body.lastChild);
+  }
+
+
   const getSelectors = (entity) => {
     // Create regex for entity.
     const re = new RegExp(`\\b${entity}\\b`)
-  
-    // Get all nodes who's innerHTML contains the entity.
+
+    // Get all nodes whose innerHTML contains the entity.
     const nodes = Array.from(document.querySelectorAll('body *:not(script)'))
         .filter(element => element.innerText && element.innerText.match(re))
-      
+
     // Create an array of unique selectors for each node.
     const nodeSelectors = nodes.map(n => uniqueSelector(n))
-  
+
     // Unset the selectors which are parents of other selectors in the array.
     for (let i = 0; i < nodes.length; i++) {
       const idx = nodeSelectors.indexOf(uniqueSelector(nodes[i].parentElement))
@@ -42,11 +68,11 @@
         nodes[idx] = undefined;
       }
     }
-    
+
     // Return the selectors which are still defined.
     return nodeSelectors.filter(n => !!n)
   }
-  
+
   const uniqueSelector = (node) => {
     if (!node) {
       return undefined
@@ -64,5 +90,5 @@
     }
     return `html > ${selector.toLowerCase()}`;
   }
-  
+
 })()
