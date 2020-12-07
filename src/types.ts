@@ -36,6 +36,7 @@ export type Entity = {
     entityText: string;
     possiblyCorrectedText: string;
     recognisingDict: Dictionary;
+    resolvedEntity: string;
     sectionType: string;
 };
 
