@@ -10,12 +10,12 @@
       case 'markup_page':
         msg.body.entities.map((entity) => {
           const txt = entity.entity.entityText;
-          const info = {entityText: txt, resolvedEntity: entity.entity.resolvedEntity};
+          let info = {entityText: txt, resolvedEntity: entity.entity.resolvedEntity};
           getSelectors(txt)
             .map(selector => {
               const element = newElement(info);
               const node = document.querySelector(selector);
-              node.innerHTML = node.innerHTML.replace(txt, createSpan(txt));
+              node.innerHTML = node.innerHTML.replace(txt, createSpan(txt, entity.entity.recognisingDict.htmlColor));
               node.addEventListener("mouseenter", (event) => {
                 addElement(element);
               });
@@ -30,14 +30,14 @@
     }
   })
 
-  const createSpan = (term) => `<span style="background-color: yellow;">${term}</span>`;
+  const createSpan = (term, colour) => `<span style="background-color: ${colour};">${term}</span>`;
 
   // creates a new div with h1 elements
   const newElement = (info) => {
     // create div
     let div = document.createElement('div');
     // add styling
-    div.style.cssText = 'width:10%;height:10%;background:rgb(192,192,192);';
+    div.style.cssText = 'width:15%;height:5%;background:rgb(192,192,192);';
     div.style.position = 'absolute';
     div.style.left = '50%';
     div.style.top = '50%';
@@ -47,18 +47,19 @@
     div.style.zIndex = '10';
     div.display = 'flex';
     div.display.justifyContent = 'space-between';
-    div.display.alignItems = 'center';
+    // div.display.alignItems = 'center';
     // insert inner HTML elements
     div.insertAdjacentHTML('afterbegin', `
-        <h1>Term: ${info.entityText}</h1>
-        <h1>Resolved entity: ${info.resolvedEntity}</h1>
-        <h1 style="position:absolute;top:1%;right:1%;cursor:pointer;" onclick="this.parentNode.parentNode.removeChild(this.parentNode)">x</h1>
+        <h5>Term: ${info.entityText}</h5>
+        <h5 style="position:absolute;top:1%;right:1%;cursor:pointer;" onclick="this.parentNode.parentNode.removeChild(this.parentNode)">x</h5>
     `);
+    if (info.resolvedEntity) div.insertAdjacentHTML('beforeend', `<h5>Resolved entity: ${info.resolvedEntity}</h5>`)
     return div;
   }
 
   // adds a new element to the DOM
   const addElement = (element) => {
+    console.log(this.parentNode + "     PARENT NODE");
     window.document.body.insertBefore(element, window.document.body.lastChild);
   };
 
