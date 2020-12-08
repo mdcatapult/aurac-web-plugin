@@ -30,9 +30,20 @@ export class BackgroundComponent {
         this.client.post<LeadminerResult>('https://leadmine.wopr.inf.mdc/entities', result.body, {observe: 'response'})
           .subscribe((response) => {
             console.log('Received results from leadmine...');
+            this.deduplicateLeadmineEntities(response.body);
             browser.tabs.sendMessage<LeadmineMessage>(tab, {type: 'markup_page', body: response.body});
           });
       });
     });
   }
+
+  deduplicateLeadmineEntities(leadmineResponse: LeadminerResult) {
+    const uniqueEntities = [];
+    leadmineResponse.entities.forEach((entity) => {
+      if (uniqueEntities.every(uniqueEntity => uniqueEntity.entity.entityText !== entity.entity.entityText)) {
+        uniqueEntities.push(entity);
+      }
+    });
+    return leadmineResponse.entities = uniqueEntities;
+    }
 }
