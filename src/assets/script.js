@@ -17,7 +17,7 @@
               const node = document.querySelector(selector);
               node.innerHTML = node.innerHTML.replace(term, highlightTerm(term, entity.entity.recognisingDict.htmlColor));
               node.addEventListener("mouseenter", (event) => {
-                addElement(element, node);
+                addFerretElement(element, node);
               });
               node.addEventListener("mouseleave", (event) => {
                 setTimeout(() => element.remove(), 5000);
@@ -38,7 +38,6 @@
   const newElement = (info) => {
     let div = document.createElement('div');
     div.id = 'ferret';
-    // div.style.cssText = 'width:15%;height:5%;background:rgb(192,192,192);';
     div.style.cssText = 'background:rgb(192,192,192);';
     // position element relative to highlighted term
     div.style.transform = 'translate(0%, 50%)';
@@ -49,21 +48,17 @@
     div.style.zIndex = '10';
     div.display = 'flex';
     div.display.justifyContent = 'space-between';
-    // insert inner HTML elements
     div.insertAdjacentHTML('afterbegin', `<p>Term: ${info.entityText}</p>`);
     if (info.resolvedEntity) div.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${info.resolvedEntity}</p>`)
     return div;
   }
 
   // adds a new element to the DOM as a child of the passed node
-  const addElement = (element, node) => {
-    // remove old element first
-    const el = document.getElementById('ferret');
-    console.log(el);
-   if (el) el.remove();
-    console.log(el);
+  const addFerretElement = (element, node) => {
+    // remove any existing element first
+    const existingElement = document.getElementById('ferret');
+   if (existingElement) existingElement.remove();
     node.appendChild(element);
-    console.log(el);
   };
 
   const getSelectors = (entity) => {
