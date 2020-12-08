@@ -1,0 +1,24 @@
+{
+  "name": "FerretPlugin",
+  "version": "1.0",
+  "description": "NER browser extension",
+  "manifest_version": 2,
+  "browser_action": {
+    "default_icon": "assets/favicon.ico",
+    "default_popup": "index.html?page=popup"
+  },
+  "background": {
+    "page": "index.html?page=background"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["browser-polyfill.min.js", "assets/script.js"]
+    }
+  ],
+  "permissions": [
+    "<all_urls>",
+    "webRequest",
+    "tabs"
+  ]
+}

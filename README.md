@@ -1,27 +1,23 @@
-# BrowserPlugin
+# Browser Plugin
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.0.
+## Running NER on a web page
 
-## Development server
+The plugin runs Leadmine over a web page in a Chrome or Firefox browser, logging the result.  
+Once the extension is loaded you will see the following icon:
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+![image](./src/assets/favicon.ico)
 
-## Code scaffolding
+Clicking this icon will reveal a popup, which currently has a single `NER` option.  Clicking the `NER` button will run Leadmine (by making an API call to the Leadmine Web Service at https://leadmine.wopr.inf.mdc) on the contents of the active tab.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
-## Build
+### Development
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+Cross-browser plugin written in Angular. This plugin combines the [web extension api](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions), the [web extension polyfill](https://github.com/mozilla/webextension-polyfill), and the [web extension types](https://github.com/kelseasy/web-ext-types) with angular.
 
-## Running unit tests
+Because Angular works as a single page app, different pages have to be loaded via query parameters. The angular router doesn't seem to pick the up query parameters but the `ActivatedRoute` service does, so routing is implemented a bit strangely.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Run `npm run build` to build the extension.
+Load the extension into chrome as an unpacked extension from `dist/browser-plugin` after building.
 
-## Running end-to-end tests
+Run `npm start` to launch firefox and pre-load the extension.
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
