@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { LeadmineMessage, LeadminerResult, Message, StringMessage } from 'src/types';
+import {LeadmineMessage, LeadminerEntity, LeadminerResult, Message, StringMessage} from 'src/types';
 
 @Component({
   selector: 'app-background',
@@ -38,12 +38,12 @@ export class BackgroundComponent {
   }
 
   deduplicateLeadmineEntities(leadmineResponse: LeadminerResult) {
-    const uniqueEntities = [];
-    leadmineResponse.entities.forEach((entity) => {
+    const uniqueEntities = new Array<LeadminerEntity>();
+    leadmineResponse.entities.forEach((entity: LeadminerEntity) => {
       if (uniqueEntities.every(uniqueEntity => uniqueEntity.entity.entityText !== entity.entity.entityText)) {
         uniqueEntities.push(entity);
       }
     });
-    return leadmineResponse.entities = uniqueEntities;
+    leadmineResponse.entities = uniqueEntities;
     }
 }
