@@ -37,25 +37,33 @@
   // creates a new div with Leadmine entityText and resolvedEntity
   const newElement = (info) => {
     let div = document.createElement('div');
-    div.style.cssText = 'width:15%;height:5%;background:rgb(192,192,192);';
-    div.style.position = 'absolute';
-    div.style.left = '50%';
-    div.style.top = '50%';
-    div.style.transform = 'translate(-0%, -50%)';
-    div.style.border = '5px solid #FFFF00';
+    div.id = 'ferret';
+    // div.style.cssText = 'width:15%;height:5%;background:rgb(192,192,192);';
+    div.style.cssText = 'background:rgb(192,192,192);';
+    // position element relative to highlighted term
+    div.style.transform = 'translate(0%, 50%)';
+    div.style.border = '2px solid #FFFF00';
     div.style.padding = '10px';
+    div.style.position = 'absolute';
+    // set z-index to 10 to ensure element is always on top
     div.style.zIndex = '10';
     div.display = 'flex';
     div.display.justifyContent = 'space-between';
     // insert inner HTML elements
-    div.insertAdjacentHTML('afterbegin', `<h5>Term: ${info.entityText}</h5>`);
-    if (info.resolvedEntity) div.insertAdjacentHTML('beforeend', `<h5>Resolved entity: ${info.resolvedEntity}</h5>`)
+    div.insertAdjacentHTML('afterbegin', `<p>Term: ${info.entityText}</p>`);
+    if (info.resolvedEntity) div.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${info.resolvedEntity}</p>`)
     return div;
   }
 
-  // adds a new element to the DOM
-  const addElement = (element) => {
-    window.document.body.insertBefore(element, window.document.body.lastChild);
+  // adds a new element to the DOM as a child of the passed node
+  const addElement = (element, node) => {
+    // remove old element first
+    const el = document.getElementById('ferret');
+    console.log(el);
+   if (el) el.remove();
+    console.log(el);
+    node.appendChild(element);
+    console.log(el);
   };
 
   const getSelectors = (entity) => {
