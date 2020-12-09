@@ -16,6 +16,8 @@
               const element = newElement(info);
               const node = document.querySelector(selector);
               node.innerHTML = node.innerHTML.replace(term, highlightTerm(term, entity.entity.recognisingDict.htmlColor));
+              // ADD HIDDEN ELEMENTS TO THE DOM
+              // addFerretElement(element, node);
               node.addEventListener("mouseenter", () => {
                 addFerretElement(element, node);
               });
@@ -43,6 +45,7 @@
              z-index: 10;
              display: flex;
              justify-content: space-between;
+             /*visibility: hidden;*/
          }</style>`;
 
   // adds a passed HTML element to the head of a page
@@ -61,11 +64,9 @@
 
   // adds a new element to the DOM as a child of the passed node
   const addFerretElement = (element, node) => {
-    // remove any existing element first
-    const existingElement = document.getElementById('ferret');
-    if (existingElement) {
-      existingElement.remove()
-    }
+    // remove any existing elements first
+    const existingElements = document.getElementsByClassName('ferret')
+    Array.from(existingElements).forEach(element => element.remove())
     node.appendChild(element);
   };
 
