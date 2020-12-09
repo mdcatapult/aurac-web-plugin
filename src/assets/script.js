@@ -3,7 +3,6 @@
   console.log("script loaded");
 
   browser.runtime.onMessage.addListener((msg) => {
-    console.log(msg);
     switch (msg.type) {
       case 'get_page_contents':
         return Promise.resolve({type: 'leadmine', body: document.querySelector('body').outerHTML})
@@ -16,10 +15,10 @@
               const element = newElement(info);
               const node = document.querySelector(selector);
               node.innerHTML = node.innerHTML.replace(term, highlightTerm(term, entity.entity.recognisingDict.htmlColor));
-              node.addEventListener("mouseenter", (event) => {
+              node.addEventListener("mouseenter", () => {
                 addFerretElement(element, node);
               });
-              node.addEventListener("mouseleave", (event) => {
+              node.addEventListener("mouseleave", () => {
                 setTimeout(() => element.remove(), 5000);
               });
             });
@@ -49,7 +48,9 @@
     div.display = 'flex';
     div.display.justifyContent = 'space-between';
     div.insertAdjacentHTML('afterbegin', `<p>Term: ${info.entityText}</p>`);
-    if (info.resolvedEntity) div.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${info.resolvedEntity}</p>`)
+    if (info.resolvedEntity) {
+      div.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${info.resolvedEntity}</p>`)
+    }
     return div;
   }
 
@@ -57,7 +58,9 @@
   const addFerretElement = (element, node) => {
     // remove any existing element first
     const existingElement = document.getElementById('ferret');
-   if (existingElement) existingElement.remove();
+    if (existingElement) {
+      existingElement.remove()
+    }
     node.appendChild(element);
   };
 
