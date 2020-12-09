@@ -35,21 +35,27 @@
   // highlights a term by wrapping it an HTML span
   const highlightTerm = (term, colour) => `<span style="background-color: ${colour};position: relative;">${term}</span>`;
 
-  // creates an HTML style element
-  const createFerretStyling = () => `<style>.ferret{
+  // creates an HTML style element with basic styling for Ferret tooltip
+  const createFerretStyling = () => {
+    const styleElement = document.createElement("style");
+    styleElement.innerHTML =
+    `.ferret{
+             color: black;
+             font-family: Arial, sans-serif;
+             font-size: 100%;
              background: rgb(192,192,192);
              transform: translate(0%, 50%);
              border: 2px solid #ffff00;
              padding: 10px;
              position: absolute;
              z-index: 10;
-             display: flex;
-             justify-content: space-between;
-             /*visibility: hidden;*/
-         }</style>`;
+         }`
+    return styleElement
+  };
 
   // adds a passed HTML element to the head of a page
-  const addElementToHead = (element) => document.head.insertAdjacentHTML("beforeend", element);
+  // const addElementToHead = (element) => document.head.insertAdjacentHTML("beforeend", element);
+  const addElementToHead = (element) => document.head.appendChild(element);
 
   // creates a new div with Leadmine entityText and resolvedEntity
   const newElement = (info) => {
