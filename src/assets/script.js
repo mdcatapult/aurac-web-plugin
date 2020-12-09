@@ -7,6 +7,7 @@
       case 'get_page_contents':
         return Promise.resolve({type: 'leadmine', body: document.querySelector('body').outerHTML})
       case 'markup_page':
+        addElementToHead(createFerretStyling());
         msg.body.entities.map((entity) => {
           const term = entity.entity.entityText;
           const info = {entityText: term, resolvedEntity: entity.entity.resolvedEntity};
@@ -32,21 +33,25 @@
   // highlights a term by wrapping it an HTML span
   const highlightTerm = (term, colour) => `<span style="background-color: ${colour};position: relative;">${term}</span>`;
 
+  // creates an HTML style element
+  const createFerretStyling = () => `<style>.ferret{
+             background: rgb(192,192,192);
+             transform: translate(0%, 50%);
+             border: 2px solid #ffff00;
+             padding: 10px;
+             position: absolute;
+             z-index: 10;
+             display: flex;
+             justify-content: space-between;
+         }</style>`;
+
+  // adds a passed HTML element to the head of a page
+  const addElementToHead = (element) => document.head.insertAdjacentHTML("beforeend", element);
 
   // creates a new div with Leadmine entityText and resolvedEntity
   const newElement = (info) => {
     let div = document.createElement('div');
-    div.id = 'ferret';
-    div.style.cssText = 'background:rgb(192,192,192);';
-    // position element relative to highlighted term
-    div.style.transform = 'translate(0%, 50%)';
-    div.style.border = '2px solid #FFFF00';
-    div.style.padding = '10px';
-    div.style.position = 'absolute';
-    // set z-index to 10 to ensure element is always on top
-    div.style.zIndex = '10';
-    div.display = 'flex';
-    div.display.justifyContent = 'space-between';
+    div.className = 'ferret';
     div.insertAdjacentHTML('afterbegin', `<p>Term: ${info.entityText}</p>`);
     if (info.resolvedEntity) {
       div.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${info.resolvedEntity}</p>`)
