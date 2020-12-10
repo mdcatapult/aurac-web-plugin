@@ -10,11 +10,10 @@
         document.head.appendChild(newFerretStyleElement());
         msg.body.map((entity) => {
           const term = entity.entity.entityText;
-          const info = {entityText: term, resolvedEntity: entity.entity.resolvedEntity};
-          const selectors = getSelectors(term)
-          
-          selectors
+          const info = {entityText: term, resolvedEntity: entity.entity.resolvedEntity};         
+          getSelectors(term)
             .map(selector => {
+              // Try/catch for edge cases.
               try {
                 const node = document.querySelector(selector);
                 node.innerHTML = node.innerHTML.replace(term, highlightTerm(term, entity.entity.recognisingDict.htmlColor));
@@ -24,7 +23,6 @@
               } catch (e) {
                 console.error(e)
               }
-              
             });
         })
         break;
@@ -41,21 +39,21 @@
     const styleElement = document.createElement("style");
     styleElement.innerHTML =
     `.ferret-tooltip {
-             color: black;
-             font-family: Arial, sans-serif;
-             font-size: 100%;
-             background: rgb(192,192,192);
-             transform: translate(0%, 50%);
-             border: 2px solid #ffff00;
-             padding: 10px;
-             position: absolute;
-             z-index: 10;
-             visibility: hidden;
-         }
+        color: black;
+        font-family: Arial, sans-serif;
+        font-size: 100%;
+        background: rgb(192,192,192);
+        transform: translate(0%, 50%);
+        border: 2px solid #ffff00;
+        padding: 10px;
+        position: absolute;
+        z-index: 10;
+        visibility: hidden;
+    }
 
-     .ferret-highlight:hover .ferret-tooltip{
-             visibility: visible;
-         }`
+    .ferret-highlight:hover .ferret-tooltip{
+        visibility: visible;
+    }`
     return styleElement
   };
 
@@ -77,6 +75,7 @@
     // Get all nodes whose innerHTML contains the entity.
     const nodes = Array.from(document.querySelectorAll('body *:not(script):not(style)'))
       .filter(element => element.innerText && element.innerText.match(re))
+      // Filter on inner html as well so that we don't catch 'enti<div>ty</div>' like things.
       .filter(element => element.innerHTML && element.innerHTML.match(re))
 
     // Create an array of unique selectors for each node.

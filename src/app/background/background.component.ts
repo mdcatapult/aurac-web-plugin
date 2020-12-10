@@ -45,5 +45,5 @@ export class BackgroundComponent {
       }
     });
     return uniqueEntities;
-    }
+  }
 }
