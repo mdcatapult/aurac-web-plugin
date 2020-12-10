@@ -77,6 +77,7 @@
     // Get all nodes whose innerHTML contains the entity.
     const nodes = Array.from(document.querySelectorAll('body *:not(script):not(style)'))
       .filter(element => element.innerText && element.innerText.match(re))
+      .filter(element => element.innerHTML && element.innerHTML.match(re))
 
     // Create an array of unique selectors for each node.
     const nodeSelectors = nodes.map(n => uniqueSelector(n))

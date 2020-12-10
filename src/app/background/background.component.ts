@@ -31,9 +31,6 @@ export class BackgroundComponent {
           .subscribe((response) => {
             console.log('Received results from leadmine...');
             const uniqueEntities = this.getUniqueEntities(response.body);
-            uniqueEntities.map(entity => {
-              console.log(entity.entity.entityText)
-            })
             browser.tabs.sendMessage<LeadmineMessage>(tab, {type: 'markup_page', body: uniqueEntities});
           });
       });
