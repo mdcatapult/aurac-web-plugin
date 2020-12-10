@@ -10,20 +10,32 @@
         addElementToHead(createFerretStyling());
         msg.body.entities.map((entity) => {
           const term = entity.entity.entityText;
+          console.log(term);
           const info = {entityText: term, resolvedEntity: entity.entity.resolvedEntity};
+          // cannot import outside of a module so cannot use e.g. uuid4 to generate a unique ID
+          // each term occupies a unique position in the document so concatenating the start and end of a term
+          // should ensure no ID collisions
+          const id = entity.entity.beg.toString() + entity.entity.end.toString();
           getSelectors(term)
             .map(selector => {
-              const element = newElement(info);
+              const element = newElement(info, id);
               const node = document.querySelector(selector);
+              console.log(entity.entity.entityText);
+              console.log(selector);
+              console.log(node);
               node.innerHTML = node.innerHTML.replace(term, highlightTerm(term, entity.entity.recognisingDict.htmlColor));
+              const ferretHighlight = document.querySelector(selector + ' .ferret-highlight')
               // ADD HIDDEN ELEMENTS TO THE DOM
-              // addFerretElement(element, node);
-              node.addEventListener("mouseenter", () => {
-                addFerretElement(element, node);
-              });
-              node.addEventListener("mouseleave", () => {
-                setTimeout(() => element.remove(), 5000);
-              });
+              // addFerretElement(element, ferretHighlight);
+              ferretHighlight.appendChild(element);
+              // const ferret = document.getElementById(id)
+              // node.addEventListener("mouseenter", () => {
+              //   console.log(ferret);
+              //   ferret.style.visibility = "visible";
+              // });
+              // node.addEventListener("mouseleave", () => {
+              //   setTimeout(() => ferret.style.visibility = "hidden", 5000);
+              // });
             });
         })
         break;
@@ -33,7 +45,7 @@
   })
 
   // highlights a term by wrapping it an HTML span
-  const highlightTerm = (term, colour) => `<span style="background-color: ${colour};position: relative;">${term}</span>`;
+  const highlightTerm = (term, colour) => `<span class="ferret-highlight" style="background-color: ${colour};position: relative;">${term}</span>`;
 
   // creates an HTML style element with basic styling for Ferret tooltip
   const createFerretStyling = () => {
@@ -49,6 +61,11 @@
              padding: 10px;
              position: absolute;
              z-index: 10;
+             visibility: hidden;
+         }
+
+     .ferret-highlight:hover .ferret{
+             visibility: visible;
          }`
     return styleElement
   };
@@ -58,9 +75,10 @@
   const addElementToHead = (element) => document.head.appendChild(element);
 
   // creates a new div with Leadmine entityText and resolvedEntity
-  const newElement = (info) => {
+  const newElement = (info, id) => {
     let div = document.createElement('div');
     div.className = 'ferret';
+    div.id = id;
     div.insertAdjacentHTML('afterbegin', `<p>Term: ${info.entityText}</p>`);
     if (info.resolvedEntity) {
       div.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${info.resolvedEntity}</p>`)
@@ -71,8 +89,8 @@
   // adds a new element to the DOM as a child of the passed node
   const addFerretElement = (element, node) => {
     // remove any existing elements first
-    const existingElements = document.getElementsByClassName('ferret')
-    Array.from(existingElements).forEach(element => element.remove())
+    // const existingElements = document.getElementsByClassName('ferret')
+    // Array.from(existingElements).forEach(element => element.remove())
     node.appendChild(element);
   };
 
