@@ -10,7 +10,7 @@ export interface StringMessage extends Message {
 }
 
 export interface LeadmineMessage extends Message {
-    body: LeadminerResult;
+    body: Array<LeadminerEntity>;
 }
 
 export interface LogMessage extends Message {
