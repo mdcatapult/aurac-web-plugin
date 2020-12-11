@@ -10,7 +10,7 @@ export interface StringMessage extends Message {
 }
 
 export interface LeadmineMessage extends Message {
-    body: LeadminerResult;
+    body: Array<LeadminerEntity>;
 }
 
 export interface LogMessage extends Message {
@@ -36,6 +36,7 @@ export type Entity = {
     entityText: string;
     possiblyCorrectedText: string;
     recognisingDict: Dictionary;
+    resolvedEntity: string;
     sectionType: string;
 };
 
