@@ -2,6 +2,7 @@
 
   console.log('script loaded');
 
+  // @ts-ignore
   browser.runtime.onMessage.addListener((msg) => {
     switch (msg.type) {
       case 'get_page_contents':
