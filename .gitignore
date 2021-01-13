@@ -9,6 +9,7 @@ bin
 /out-tsc
 # Only exists if Bazel was run
 /bazel-out
+/src/assets/script.js
 
 # dependencies
 /node_modules
