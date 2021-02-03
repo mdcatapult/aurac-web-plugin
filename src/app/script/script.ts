@@ -10,14 +10,14 @@
       case 'markup_page':
         document.head.appendChild(newFerretStyleElement());
         msg.body.map((entity) => {
-          const term = entity.entity.entityText;
-          const info = {entityText: term, resolvedEntity: entity.entity.resolvedEntity};
+          const term = entity.entityText;
+          const info = {entityText: term, resolvedEntity: entity.resolvedEntity};
           getSelectors(term)
             .map(selector => {
               // Try/catch for edge cases.
               try {
                 const node = document.querySelector(selector);
-                node.innerHTML = node.innerHTML.replace(term, highlightTerm(term, entity.entity.recognisingDict.htmlColor));
+                node.innerHTML = node.innerHTML.replace(term, highlightTerm(term, entity.recognisingDict.htmlColor));
                 const ferretHighlight = document.querySelector(selector + ' .ferret-highlight');
                 const element = newFerretTooltip(info);
                 ferretHighlight.appendChild(element);

@@ -40,7 +40,7 @@ export class BackgroundComponent {
   getUniqueEntities(leadmineResponse: LeadminerResult): Array<LeadminerEntity> {
     const uniqueEntities = new Array<LeadminerEntity>();
     leadmineResponse.entities.forEach((entity: LeadminerEntity) => {
-      if (uniqueEntities.every(uniqueEntity => uniqueEntity.entity.entityText !== entity.entity.entityText)) {
+      if (uniqueEntities.every(uniqueEntity => uniqueEntity.entityText !== entity.entityText)) {
         uniqueEntities.push(entity);
       }
     });
