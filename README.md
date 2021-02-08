@@ -21,3 +21,5 @@ Load the extension into chrome as an unpacked extension from `dist/browser-plugi
 
 Run `npm start` to launch firefox and pre-load the extension.
 
+**N.B. YOU MUST BE CONNECTED TO THE ALDERLEY PARK VPN FOR THE PLUGIN TO WORK**
+

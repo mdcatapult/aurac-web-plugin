@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { LeadmineMessage, LeadminerResult, Message, StringMessage } from 'src/types';
+import {LeadmineMessage, LeadminerEntity, LeadminerResult, Message, StringMessage} from 'src/types';
 
 @Component({
   selector: 'app-background',
@@ -30,9 +30,20 @@ export class BackgroundComponent {
         this.client.post<LeadminerResult>('https://leadmine.wopr.inf.mdc/entities', result.body, {observe: 'response'})
           .subscribe((response) => {
             console.log('Received results from leadmine...');
-            browser.tabs.sendMessage<LeadmineMessage>(tab, {type: 'markup_page', body: response.body});
+            const uniqueEntities = this.getUniqueEntities(response.body);
+            browser.tabs.sendMessage<LeadmineMessage>(tab, {type: 'markup_page', body: uniqueEntities});
           });
       });
     });
+  }
+
+  getUniqueEntities(leadmineResponse: LeadminerResult): Array<LeadminerEntity> {
+    const uniqueEntities = new Array<LeadminerEntity>();
+    leadmineResponse.entities.forEach((entity: LeadminerEntity) => {
+      if (uniqueEntities.every(uniqueEntity => uniqueEntity.entity.entityText !== entity.entity.entityText)) {
+        uniqueEntities.push(entity);
+      }
+    });
+    return uniqueEntities;
   }
 }
