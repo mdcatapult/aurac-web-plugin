@@ -17,7 +17,7 @@
               // Try/catch for edge cases.
               try {
                 const node = document.querySelector(selector);
-                node.innerHTML = node.innerHTML.replace(term, highlightTerm(term, entity.entity.recognisingDict.htmlColor));
+                node.innerHTML = node.innerHTML.replace(term, highlightTerm(term, entity.recognisingDict.htmlColor));
                 const ferretHighlight = document.querySelector(selector + ' .ferret-highlight');
                 const element = newFerretTooltip(info);
                 ferretHighlight.appendChild(element);

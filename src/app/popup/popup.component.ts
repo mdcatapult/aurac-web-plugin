@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Message } from 'src/types';
 import { LogService } from './log.service';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-popup',
@@ -10,7 +9,7 @@ import { Router } from '@angular/router';
 })
 export class PopupComponent implements OnInit {
 
-  constructor(private log: LogService, private router: Router) { }
+  constructor(private log: LogService) { }
 
   ngOnInit(): void {
   }
