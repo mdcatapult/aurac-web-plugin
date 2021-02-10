@@ -12,12 +12,12 @@ export class BackgroundComponent {
     browser.runtime.onMessage.addListener((msg) => {
       if (msg.type === 'ner_current_page') {
         console.log('Received message from popup...');
-        this.nerCurrentPage();
+        this.nerCurrentPage(msg.body);
       }
     });
   }
 
-  nerCurrentPage() {
+  nerCurrentPage(dictionary) {
     console.log('Getting content of active tab...');
     let tab;
     browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT}).then(tabs => {
@@ -27,7 +27,7 @@ export class BackgroundComponent {
       .then(result => {
         result = result as StringMessage;
         console.log('Sending page contents to leadmine...');
-        this.client.post<LeadminerResult>('https://leadmine.wopr.inf.mdc/entities', result.body, {observe: 'response'})
+        this.client.post<LeadminerResult>(`https://leadmine.wopr.inf.mdc/${dictionary}/entities`, result.body, {observe: 'response'})
           .subscribe((response) => {
             console.log('Received results from leadmine...');
             const uniqueEntities = this.getUniqueEntities(response.body);

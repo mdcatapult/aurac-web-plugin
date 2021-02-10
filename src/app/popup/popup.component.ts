@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Message } from 'src/types';
 import { LogService } from './log.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-popup',
@@ -9,14 +10,14 @@ import { LogService } from './log.service';
 })
 export class PopupComponent implements OnInit {
 
-  constructor(private log: LogService) { }
+  constructor(private log: LogService, private router: Router) { }
 
   ngOnInit(): void {
   }
 
-  nerCurrentPage() {
+  nerCurrentPage(dictionary) {
     this.log.Log('Sending message to background page...');
-    browser.runtime.sendMessage<Message>({type: 'ner_current_page'})
+    browser.runtime.sendMessage<Message>({type: 'ner_current_page', body: dictionary})
       .catch(e => this.log.Error(`Couldn't send message to background page: ${e}`));
   }
 }
