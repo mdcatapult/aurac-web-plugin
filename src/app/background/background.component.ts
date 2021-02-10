@@ -27,7 +27,7 @@ export class BackgroundComponent {
       .then(result => {
         result = result as StringMessage;
         console.log('Sending page contents to leadmine...');
-        this.client.post<LeadminerResult>('https://leadmine.wopr.inf.mdc/entities', result.body, {observe: 'response'})
+        this.client.post<LeadminerResult>('https://leadmine.wopr.inf.mdc/proteins/entities', result.body, {observe: 'response'})
           .subscribe((response) => {
             console.log('Received results from leadmine...');
             const uniqueEntities = this.getUniqueEntities(response.body);
