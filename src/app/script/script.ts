@@ -17,12 +17,10 @@
               // Try/catch for edge cases.
               try {
                 const node = document.querySelector(selector);
-                if (!node.className.includes('tooltipped')) {
-                  node.innerHTML = node.innerHTML.replace(term, highlightTerm(term, entity.recognisingDict.htmlColor));
-                  const ferretHighlight = document.querySelector(selector + ' .ferret-highlight');
-                  const element = newFerretTooltip(info);
-                  ferretHighlight.appendChild(element);
-                }
+                node.innerHTML = node.innerHTML.replace(term, highlightTerm(term, entity.entity.recognisingDict.htmlColor));
+                const ferretHighlight = document.querySelector(selector + ' .ferret-highlight');
+                const element = newFerretTooltip(info);
+                ferretHighlight.appendChild(element);
               } catch (e) {
                 console.error(e);
               }
@@ -93,30 +91,8 @@
       }
     }
 
-    const definedSelectors = nodeSelectors.filter(n => !!n);
-    const nonToolTipped = definedSelectors.filter(definedSelector => !document.querySelector(definedSelector).className.includes('tooltipped'));
-    if (definedSelectors.length) {
-      definedSelectors.forEach(ds => {
-        console.log(document.querySelector(ds));
-        console.log('from defined selector');
-      });
-    }
-    if (nonToolTipped.length) {
-      nonToolTipped.forEach(ntt => {
-        console.log(document.querySelector(ntt));
-        console.log('from non tooltipped selector');
-      });
-    }
-
-    return nonToolTipped.filter(ds => {
-      const element = document.querySelector(ds);
-      parentHasClass(element, 'tooltipped');
-    });
-
-    // return nonToolTipped.filter(n => !!n);
-
     // Return the selectors which are still defined.
-    // return nodeSelectors.filter(n => !!n);
+    return nodeSelectors.filter(n => !!n);
   };
 
   const uniqueSelector = (node: Element) => {
@@ -135,11 +111,6 @@
       node = node.parentElement;
     }
     return `html > ${selector.toLowerCase()}`;
-  };
-
-  const parentHasClass = (element , className: string) => {
-    if (element.className && element.className.split('').indexOf(className) >= 0 ) { return true; }
-    return element.parentNode && parentHasClass(element.parentNode, className);
   };
 
 })();
