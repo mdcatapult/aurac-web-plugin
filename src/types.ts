@@ -24,11 +24,6 @@ export type LeadminerResult = {
 };
 
 export type LeadminerEntity = {
-    entity: Entity;
-    entityGroup: string;
-};
-
-export type Entity = {
     beg: number;
     begInNormalizedDoc: number;
     end: number;
@@ -38,6 +33,7 @@ export type Entity = {
     recognisingDict: Dictionary;
     resolvedEntity: string;
     sectionType: string;
+    entityGroup: string;
 };
 
 export type Dictionary = {
