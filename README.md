@@ -23,3 +23,17 @@ Run `npm start` to launch firefox and pre-load the extension.
 
 **N.B. YOU MUST BE CONNECTED TO THE ALDERLEY PARK VPN FOR THE PLUGIN TO WORK**
 
+### Custom SSL certs
+
+If you are using custom ssl certs you may need to tell your browser to accept them by navigating to the web-service that ferret uses for NER eg `https://leadmine.wopr.inf.mdc/proteins/entities/pde5`
+
+### Keeping Firefox changes between sessions
+
+Using `npm start` boots a fresh Firefox instance each time. It can get frustrating having to accept any custom ssl certs each time you start. Instead you can set the following env vars:
+
+```bash
+export WEB_EXT_FIREFOX_PROFILE=/path/to/custom/profile/dir/
+export WEB_EXT_PROFILE_CREATE_IF_MISSING
+export WEB_EXT_KEEP_PROFILE_CHANGES=true
+```
+Then you only have to accept the cert first time. Any future reboot will have the cert saved in the custom profile.
