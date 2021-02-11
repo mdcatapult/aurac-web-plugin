@@ -21,5 +21,25 @@ Load the extension into chrome as an unpacked extension from `dist/browser-plugi
 
 Run `npm start` to launch firefox and pre-load the extension.
 
+If you want to start the browser on a particular web page then set the following env var:
+```bash
+export WEB_EXT_START_URL=https://www.uniprot.org/uniprot/O76074
+```
+Saves a lot of time when testing.
+
 **N.B. YOU MUST BE CONNECTED TO THE ALDERLEY PARK VPN FOR THE PLUGIN TO WORK**
 
+### Custom SSL certs
+
+If you are using custom ssl certs you may need to tell your browser to accept them by navigating to the web-service that ferret uses for NER eg `https://leadmine.wopr.inf.mdc/proteins/entities/pde5`
+
+### Keeping Firefox changes between sessions
+
+Using `npm start` boots a fresh Firefox instance each time. It can get frustrating having to accept any custom ssl certs each time you start. Instead you can set the following env vars:
+
+```bash
+export WEB_EXT_FIREFOX_PROFILE=/path/to/custom/profile/dir/
+export WEB_EXT_PROFILE_CREATE_IF_MISSING
+export WEB_EXT_KEEP_PROFILE_CHANGES=true
+```
+Then you only have to accept the cert first time. Any future reboot will have the cert saved in the custom profile.

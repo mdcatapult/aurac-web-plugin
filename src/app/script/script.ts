@@ -19,7 +19,6 @@
               replacementNode.innerHTML = element.nodeValue.replace(term, highlightTerm(term, entity));
               element.parentNode.insertBefore(replacementNode, element);
               element.parentNode.removeChild(element);
-
             } catch (e) {
               console.error(e);
             }
@@ -110,11 +109,9 @@
         if (element.nodeValue.match(re)) {
           elements.push(element);
         }
-      } else if (!element.classList.contains('tooltipped') && element.style.display !== 'none') {
+      } else if (!element.classList.contains('tooltipped') && !element.classList.contains('tooltipped-click') && element.style.display !== 'none') {
         allDescendants(element, elements, re);
       }
     });
   }
-
-
 })();
