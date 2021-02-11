@@ -98,11 +98,6 @@
     return `html > ${selector.toLowerCase()}`;
   };
 
-  const parentHasClass = (element , className: string) => {
-    if (element.className && element.className.split('').indexOf(className) >= 0 ) { return true; }
-    return element.parentNode && parentHasClass(element.parentNode, className);
-  };
-
   // Recursively find all text nodes which match regex
   function allDescendants(node: HTMLElement, elements: Array<Element>, re: RegExp) {
     node.childNodes.forEach(child => {
@@ -116,5 +111,4 @@
       }
     });
   }
-
 })();
