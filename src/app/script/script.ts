@@ -12,15 +12,14 @@
         msg.body.map((entity) => {
           const term = entity.entityText;
           const info = {entityText: term, resolvedEntity: entity.resolvedEntity};
-          getSelectors(term)
-            .map(selector => {
+          const sel = getSelectors(term);
+          sel.map(element => {
               // Try/catch for edge cases.
               try {
-                const node = document.querySelector(selector);
-                node.innerHTML = node.innerHTML.replace(term, highlightTerm(term, entity.entity.recognisingDict.htmlColor));
-                const ferretHighlight = document.querySelector(selector + ' .ferret-highlight');
-                const element = newFerretTooltip(info);
-                ferretHighlight.appendChild(element);
+                const replacementNode = document.createElement('span');
+                replacementNode.innerHTML = element.nodeValue.replace(term, highlightTerm(term, entity));
+                element.parentNode.insertBefore(replacementNode, element);
+                element.parentNode.removeChild(element);
               } catch (e) {
                 console.error(e);
               }
@@ -33,7 +32,11 @@
   });
 
   // highlights a term by wrapping it an HTML span
-  const highlightTerm = (term, colour) => `<span class="ferret-highlight" style="background-color: ${colour};position: relative;">${term}</span>`;
+  const highlightTerm = (term, entity) => {
+    const entityHtml = newFerretTooltip(entity).outerHTML;
+    const highlightSpan = `<span class="ferret-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative;">${term}</span>` + entityHtml;
+    return highlightSpan;
+  };
 
   // creates an HTML style element with basic styling for Ferret tooltip
   const newFerretStyleElement = () => {
@@ -52,7 +55,7 @@
         visibility: hidden;
     }
 
-    .ferret-highlight:hover .ferret-tooltip{
+    .ferret-highlight:hover + span.ferret-tooltip{
         visibility: visible;
     }`;
     return styleElement;
@@ -60,7 +63,7 @@
 
   // creates a new div with Leadmine entityText and resolvedEntity
   const newFerretTooltip = (info) => {
-    const div = document.createElement('div');
+    const div = document.createElement('span');
     div.className = 'ferret-tooltip';
     div.insertAdjacentHTML('afterbegin', `<p>Term: ${info.entityText}</p>`);
     if (info.resolvedEntity) {
@@ -72,27 +75,9 @@
   const getSelectors = (entity) => {
     // Create regex for entity.
     const re = new RegExp(`\\b${entity}\\b`);
-
-    // Get all nodes whose innerHTML contains the entity.
-    const nodes: Array<Element> = Array.from(document.querySelectorAll('body *:not(script):not(style)'))
-      .filter((htmlElement: HTMLElement) => htmlElement.innerText && htmlElement.innerText.match(re))
-      // Filter on inner html as well so that we don't catch 'enti<div>ty</div>' like things.
-      .filter((htmlElement: HTMLElement) => htmlElement.innerHTML && htmlElement.innerHTML.match(re));
-
-    // Create an array of unique selectors for each node.
-    const nodeSelectors: Array<string> = nodes.map(n => uniqueSelector(n));
-
-    // Unset the selectors which are parents of other selectors in the array.
-    for (const node of nodes) {
-      const idx = nodeSelectors.indexOf(uniqueSelector(node.parentElement));
-      if (idx > -1 || !node.parentElement) {
-        nodeSelectors[idx] = undefined;
-        nodes[idx] = undefined;
-      }
-    }
-
-    // Return the selectors which are still defined.
-    return nodeSelectors.filter(n => !!n);
+    const allElements: Array<Element> = [];
+    allDescendants(document.body, allElements, re);
+    return allElements;
   };
 
   const uniqueSelector = (node: Element) => {
@@ -113,4 +98,17 @@
     return `html > ${selector.toLowerCase()}`;
   };
 
+  // Recursively find all text nodes which match regex
+  function allDescendants(node: HTMLElement, elements: Array<Element>, re: RegExp) {
+    node.childNodes.forEach(child => {
+      const element = child as HTMLElement;
+      if (element.nodeType === Node.TEXT_NODE) {
+        if (element.nodeValue.match(re)) {
+          elements.push(element);
+        }
+      } else if (!element.classList.contains('tooltipped') && !element.classList.contains('tooltipped-click') && element.style.display !== 'none') {
+        allDescendants(element, elements, re);
+      }
+    });
+  }
 })();
