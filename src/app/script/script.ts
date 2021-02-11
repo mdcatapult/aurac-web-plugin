@@ -83,24 +83,6 @@
     return allElements;
   };
 
-  const uniqueSelector = (node: Element) => {
-    if (!node) {
-      return undefined;
-    }
-    let selector = '';
-    while (node.parentElement) {
-      const siblings: Array<Element> = Array.from(node.parentElement.children).filter(
-        (e: HTMLElement) => e.tagName === node.tagName
-      );
-      selector =
-        (siblings.indexOf(node)
-          ? `${node.tagName}:nth-of-type(${siblings.indexOf(node) + 1})`
-          : `${node.tagName}`) + `${selector ? ' > ' : ''}${selector}`;
-      node = node.parentElement;
-    }
-    return `html > ${selector.toLowerCase()}`;
-  };
-
   // Recursively find all text nodes which match regex
   function allDescendants(node: HTMLElement, elements: Array<Element>, re: RegExp) {
     node.childNodes.forEach(child => {
@@ -109,7 +91,7 @@
         if (element.nodeValue.match(re)) {
           elements.push(element);
         }
-      } else if (element.style.display !== 'none') {
+      } else if (!element.classList.contains('tooltipped') && !element.classList.contains('tooltipped-click') && element.style.display !== 'none') {
         allDescendants(element, elements, re);
       }
     });
