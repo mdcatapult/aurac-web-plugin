@@ -11,13 +11,6 @@
         document.head.appendChild(newFerretStyleElement());
         msg.body.map((entity) => {
           const term = entity.entityText;
-          const info = {
-            entityText: term,
-            resolvedEntity: entity.resolvedEntity,
-            entityGroup: entity.entityGroup,
-            entityType: entity.recognisingDict.entityType,
-            source: entity.recognisingDict.source
-          };
           const sel = getSelectors(term);
           sel.map(element => {
             // Try/catch for edge cases.
@@ -63,7 +56,7 @@
         visibility: hidden;
     }
 
-    .ferret-highlight:hover .ferret-tooltip{
+    .ferret-highlight:hover + span.ferret-tooltip{
         visibility: visible;
     }`;
     return styleElement;
@@ -71,15 +64,15 @@
 
   // creates a new div with Leadmine entityText and resolvedEntity
   const newFerretTooltip = (info) => {
-    const div = document.createElement('div');
+    const div = document.createElement('span');
     div.className = 'ferret-tooltip';
     div.insertAdjacentHTML('afterbegin', `<p>Term: ${info.entityText}</p>`);
     if (info.resolvedEntity) {
       div.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${info.resolvedEntity}</p>`);
     }
     div.insertAdjacentHTML('beforeend', `<p>Entity Group: ${info.entityGroup}</p>`);
-    div.insertAdjacentHTML('beforeend', `<p>Entity Type: ${info.entityType}</p>`);
-    div.insertAdjacentHTML('beforeend', `<p>Dictionary Source: ${info.source}</p>`);
+    div.insertAdjacentHTML('beforeend', `<p>Entity Type: ${info.recognisingDict.entityType}</p>`);
+    div.insertAdjacentHTML('beforeend', `<p>Dictionary Source: ${info.recognisingDict.source}</p>`);
     return div;
   };
 
