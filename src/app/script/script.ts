@@ -109,7 +109,7 @@
         if (element.nodeValue.match(re)) {
           elements.push(element);
         }
-      } else if (!element.classList.contains('tooltipped') && !element.classList.contains('tooltipped-click') && element.style.display !== 'none') {
+      } else if (element.style.display !== 'none') {
         allDescendants(element, elements, re);
       }
     });
