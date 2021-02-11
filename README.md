@@ -21,6 +21,12 @@ Load the extension into chrome as an unpacked extension from `dist/browser-plugi
 
 Run `npm start` to launch firefox and pre-load the extension.
 
+If you want to start the browser on a particular web page then set the following env var:
+```bash
+export WEB_EXT_START_URL=https://www.uniprot.org/uniprot/O76074
+```
+Saves a lot of time when testing.
+
 **N.B. YOU MUST BE CONNECTED TO THE ALDERLEY PARK VPN FOR THE PLUGIN TO WORK**
 
 ### Custom SSL certs
