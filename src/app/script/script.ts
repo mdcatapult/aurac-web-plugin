@@ -11,19 +11,18 @@
         document.head.appendChild(newFerretStyleElement());
         msg.body.map((entity) => {
           const term = entity.entityText;
-          const info = {entityText: term, resolvedEntity: entity.resolvedEntity};
           const sel = getSelectors(term);
           sel.map(element => {
-              // Try/catch for edge cases.
-              try {
-                const replacementNode = document.createElement('span');
-                replacementNode.innerHTML = element.nodeValue.replace(term, highlightTerm(term, entity));
-                element.parentNode.insertBefore(replacementNode, element);
-                element.parentNode.removeChild(element);
-              } catch (e) {
-                console.error(e);
-              }
-            });
+            // Try/catch for edge cases.
+            try {
+              const replacementNode = document.createElement('span');
+              replacementNode.innerHTML = element.nodeValue.replace(term, highlightTerm(term, entity));
+              element.parentNode.insertBefore(replacementNode, element);
+              element.parentNode.removeChild(element);
+            } catch (e) {
+              console.error(e);
+            }
+          });
         });
         break;
       default:
@@ -37,6 +36,7 @@
     const highlightSpan = `<span class="ferret-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative;">${term}</span>` + entityHtml;
     return highlightSpan;
   };
+
 
   // creates an HTML style element with basic styling for Ferret tooltip
   const newFerretStyleElement = () => {
@@ -69,6 +69,9 @@
     if (info.resolvedEntity) {
       div.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${info.resolvedEntity}</p>`);
     }
+    div.insertAdjacentHTML('beforeend', `<p>Entity Group: ${info.entityGroup}</p>`);
+    div.insertAdjacentHTML('beforeend', `<p>Entity Type: ${info.recognisingDict.entityType}</p>`);
+    div.insertAdjacentHTML('beforeend', `<p>Dictionary Source: ${info.recognisingDict.source}</p>`);
     return div;
   };
 
@@ -78,24 +81,6 @@
     const allElements: Array<Element> = [];
     allDescendants(document.body, allElements, re);
     return allElements;
-  };
-
-  const uniqueSelector = (node: Element) => {
-    if (!node) {
-      return undefined;
-    }
-    let selector = '';
-    while (node.parentElement) {
-      const siblings: Array<Element> = Array.from(node.parentElement.children).filter(
-        (e: HTMLElement) => e.tagName === node.tagName
-      );
-      selector =
-        (siblings.indexOf(node)
-          ? `${node.tagName}:nth-of-type(${siblings.indexOf(node) + 1})`
-          : `${node.tagName}`) + `${selector ? ' > ' : ''}${selector}`;
-      node = node.parentElement;
-    }
-    return `html > ${selector.toLowerCase()}`;
   };
 
   // Recursively find all text nodes which match regex

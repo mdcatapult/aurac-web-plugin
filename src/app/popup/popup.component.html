@@ -1,1 +1,5 @@
-<button (click)="nerCurrentPage()">NER</button>
+<button (click)="nerCurrentPage('general')">NER:general</button>
+<button (click)="nerCurrentPage('chemical-entities')">NER:chemicals(SMILES)</button>
+<button (click)="nerCurrentPage('chemical-inchi')">NER:chemicals(InchiKey)</button>
+<button (click)="nerCurrentPage('proteins')">NER:genes/proteins</button>
+
