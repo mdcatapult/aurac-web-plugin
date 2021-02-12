@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {LeadmineMessage, LeadminerEntity, LeadminerResult, Message, StringMessage} from 'src/types';
+import {validDict} from './types';
 
 @Component({
   selector: 'app-background',
   template: '<app-logger></app-logger>',
 })
+
 export class BackgroundComponent {
 
   constructor(private client: HttpClient) {
@@ -17,7 +19,7 @@ export class BackgroundComponent {
     });
   }
 
-  nerCurrentPage(dictionary) {
+  nerCurrentPage(dictionary: validDict) {
     console.log('Getting content of active tab...');
     let tab;
     browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT}).then(tabs => {
