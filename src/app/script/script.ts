@@ -6,7 +6,9 @@
   browser.runtime.onMessage.addListener((msg) => {
     switch (msg.type) {
       case 'get_page_contents':
-        return Promise.resolve({type: 'leadmine', body: document.querySelector('body').outerHTML});
+        const textNodes: Array<string> = [];
+        allTextNodes(document.body, textNodes);
+        return Promise.resolve({type: 'leadmine', body: textNodes.join('\n')});
       case 'markup_page':
         document.head.appendChild(newFerretStyleElement());
         msg.body.map((entity) => {
@@ -96,6 +98,27 @@
             // tslint:disable-next-line:max-line-length
           } else if (!element.classList.contains('tooltipped') && !element.classList.contains('tooltipped-click') && element.style.display !== 'none') {
             allDescendants(element, elements, re);
+          }
+        }
+      });
+    } catch (e) {
+      // There are so many things that could go wrong.
+      // The DOM is a wild west
+      console.error(e);
+    }
+  }
+
+  // Recursively find all text nodes which match regex
+  function allTextNodes(node: HTMLElement, textNodes: Array<string>) {
+    try {
+      node.childNodes.forEach(child => {
+        const element = child as HTMLElement;
+        if (allowedNodeType(element)) {
+          if (element.nodeType === Node.TEXT_NODE) {
+            textNodes.push(element.textContent + '\n');
+            // tslint:disable-next-line:max-line-length
+          } else if (!element.classList.contains('tooltipped') && !element.classList.contains('tooltipped-click') && element.style.display !== 'none') {
+            allTextNodes(element, textNodes);
           }
         }
       });
