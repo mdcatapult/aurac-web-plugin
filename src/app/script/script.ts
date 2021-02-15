@@ -6,9 +6,11 @@
   browser.runtime.onMessage.addListener((msg) => {
     switch (msg.type) {
       case 'get_page_contents':
-        const textNodes: Array<string> = [];
-        allTextNodes(document.body, textNodes);
-        return Promise.resolve({type: 'leadmine', body: textNodes.join('\n')});
+        return new Promise((resolve, reject) => {
+          const textNodes: Array<string> = [];
+          allTextNodes(document.body, textNodes);
+          resolve({type: 'leadmine', body: textNodes.join('\n')});
+        });
       case 'markup_page':
         document.head.appendChild(newFerretStyleElement());
         msg.body.map((entity) => {
