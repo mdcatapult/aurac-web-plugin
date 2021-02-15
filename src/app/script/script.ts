@@ -85,15 +85,30 @@
 
   // Recursively find all text nodes which match regex
   function allDescendants(node: HTMLElement, elements: Array<Element>, re: RegExp) {
-    node.childNodes.forEach(child => {
-      const element = child as HTMLElement;
-      if (element.nodeType === Node.TEXT_NODE) {
-        if (element.nodeValue.match(re)) {
-          elements.push(element);
+    try {
+      node.childNodes.forEach(child => {
+        const element = child as HTMLElement;
+        if (allowedNodeType(element)) {
+          if (element.nodeType === Node.TEXT_NODE) {
+            if (element.nodeValue.match(re)) {
+              elements.push(element);
+            }
+            // tslint:disable-next-line:max-line-length
+          } else if (!element.classList.contains('tooltipped') && !element.classList.contains('tooltipped-click') && element.style.display !== 'none') {
+            allDescendants(element, elements, re);
+          }
         }
-      } else if (!element.classList.contains('tooltipped') && !element.classList.contains('tooltipped-click') && element.style.display !== 'none') {
-        allDescendants(element, elements, re);
-      }
-    });
+      });
+    } catch (e) {
+      // There are so many things that could go wrong.
+      // The DOM is a wild west
+      console.error(e);
+    }
   }
+
+  // Only allow nodes that we can traverse or add children to
+  const allowedNodeType = (element: HTMLElement): boolean => {
+    return element.nodeType !== Node.COMMENT_NODE && element.nodeType !== Node.CDATA_SECTION_NODE
+      && element.nodeType !== Node.PROCESSING_INSTRUCTION_NODE && element.nodeType !== Node.DOCUMENT_TYPE_NODE;
+  };
 })();
