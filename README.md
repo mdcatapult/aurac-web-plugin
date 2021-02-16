@@ -53,7 +53,7 @@ Using `npm start` boots a fresh Firefox instance each time. It can get frustrati
 
 ```bash
 export WEB_EXT_FIREFOX_PROFILE=/path/to/custom/profile/dir/
-export WEB_EXT_PROFILE_CREATE_IF_MISSING
+export WEB_EXT_PROFILE_CREATE_IF_MISSING=true
 export WEB_EXT_KEEP_PROFILE_CHANGES=true
 ```
 Then you only have to accept the cert first time. Any future reboot will have the cert saved in the custom profile. However, the cert may get recycled so you may have to add it again.
