@@ -42,4 +42,33 @@ export WEB_EXT_FIREFOX_PROFILE=/path/to/custom/profile/dir/
 export WEB_EXT_PROFILE_CREATE_IF_MISSING
 export WEB_EXT_KEEP_PROFILE_CHANGES=true
 ```
-Then you only have to accept the cert first time. Any future reboot will have the cert saved in the custom profile.
+Then you only have to accept the cert first time. Any future reboot will have the cert saved in the custom profile. However, the cert may get recycled so you may have to add it again.
+
+### Debugging with chrome
+If you set `export WEB_EXT_TARGET=chromium` then `npm start` will boot it into chromium. You can also use `export WEB_EXT_CHROMIUM_PROFILE=/a/dir` but you need to create the directory first (unlike with Firefox & `export WEB_EXT_PROFILE_CREATE_IF_MISSING`).
+
+### Firefox Promises & sendMessage
+Due to how Firefox uses [web extension polyfills](https://github.com/mozilla/webextension-polyfill/issues/172) the following [bug](https://bugzilla.mozilla.org/show_bug.cgi?id=1456531) means that Firefox needs to use a vanilla Promise object rather than the polyfill it is given. You can `Promise.resolve("A value")` ok but not as an inner function like
+```js
+return new Promise((resolve, reject) => {
+    resolve("A value");
+});
+```
+To solve this we had to add a [custom webpack config](https://developer.okta.com/blog/2019/12/09/angular-webpack). If the Firefox bug gets resolved then revert the following changes:
+
+In angular.json change
+```json
+          "builder": "@angular-builders/custom-webpack:browser",
+```
+back to
+```json
+"builder": "@angular-devkit/build-angular:browser",
+```
+and remove
+```json
+"customWebpackConfig": {
+  "path": "./custom-webpack.config.js"
+}
+```
+Remove the `custom-webpack.config.json` file. Remove `"@angular-builders/custom-webpack": "^11.0.0"` from `package.json`.
+See `app/script/script.ts` for the actual Promise code.
