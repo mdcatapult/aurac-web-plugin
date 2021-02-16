@@ -6,7 +6,11 @@
   browser.runtime.onMessage.addListener((msg) => {
     switch (msg.type) {
       case 'get_page_contents':
-        return Promise.resolve({type: 'leadmine', body: document.querySelector('body').outerHTML});
+        return new Promise((resolve, reject) => {
+          const textNodes: Array<string> = [];
+          allTextNodes(document.body, textNodes);
+          resolve({type: 'leadmine', body: textNodes.join('\n')});
+        });
       case 'markup_page':
         document.head.appendChild(newFerretStyleElement());
         msg.body.map((entity) => {
@@ -85,15 +89,51 @@
 
   // Recursively find all text nodes which match regex
   function allDescendants(node: HTMLElement, elements: Array<Element>, re: RegExp) {
-    node.childNodes.forEach(child => {
-      const element = child as HTMLElement;
-      if (element.nodeType === Node.TEXT_NODE) {
-        if (element.nodeValue.match(re)) {
-          elements.push(element);
+    try {
+      node.childNodes.forEach(child => {
+        const element = child as HTMLElement;
+        if (allowedNodeType(element)) {
+          if (element.nodeType === Node.TEXT_NODE) {
+            if (element.nodeValue.match(re)) {
+              elements.push(element);
+            }
+            // tslint:disable-next-line:max-line-length
+          } else if (!element.classList.contains('tooltipped') && !element.classList.contains('tooltipped-click') && element.style.display !== 'none') {
+            allDescendants(element, elements, re);
+          }
         }
-      } else if (!element.classList.contains('tooltipped') && !element.classList.contains('tooltipped-click') && element.style.display !== 'none') {
-        allDescendants(element, elements, re);
-      }
-    });
+      });
+    } catch (e) {
+      // There are so many things that could go wrong.
+      // The DOM is a wild west
+      console.error(e);
+    }
   }
+
+  // Recursively find all text nodes which match regex
+  function allTextNodes(node: HTMLElement, textNodes: Array<string>) {
+    try {
+      node.childNodes.forEach(child => {
+        const element = child as HTMLElement;
+        if (allowedNodeType(element)) {
+          if (element.nodeType === Node.TEXT_NODE) {
+            textNodes.push(element.textContent + '\n');
+            // tslint:disable-next-line:max-line-length
+          } else if (!element.classList.contains('tooltipped') && !element.classList.contains('tooltipped-click') && element.style.display !== 'none') {
+            allTextNodes(element, textNodes);
+          }
+        }
+      });
+    } catch (e) {
+      // There are so many things that could go wrong.
+      // The DOM is a wild west
+      console.error(e);
+    }
+  }
+
+  // Only allow nodes that we can traverse or add children to
+  const allowedNodeType = (element: HTMLElement): boolean => {
+    return element.nodeType !== Node.COMMENT_NODE && element.nodeType !== Node.CDATA_SECTION_NODE
+      && element.nodeType !== Node.PROCESSING_INSTRUCTION_NODE && element.nodeType !== Node.DOCUMENT_TYPE_NODE;
+  };
 })();
