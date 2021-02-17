@@ -21,6 +21,7 @@
             try {
               const replacementNode = document.createElement('span');
               replacementNode.innerHTML = element.nodeValue.replace(term, highlightTerm(term, entity));
+              replacementNode.addEventListener('mouseover', newFerretTooltip(entity, replacementNode));
               element.parentNode.insertBefore(replacementNode, element);
               element.parentNode.removeChild(element);
             } catch (e) {
@@ -35,11 +36,7 @@
   });
 
   // highlights a term by wrapping it an HTML span
-  const highlightTerm = (term, entity) => {
-    const entityHtml = newFerretTooltip(entity).outerHTML;
-    const highlightSpan = `<span class="ferret-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative;">${term}</span>` + entityHtml;
-    return highlightSpan;
-  };
+  const highlightTerm = (term, entity) => `<span class="ferret-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative;">${term}</span>`;
 
 
   // creates an HTML style element with basic styling for Ferret tooltip
@@ -65,18 +62,27 @@
     return styleElement;
   };
 
-  // creates a new div with Leadmine entityText and resolvedEntity
-  const newFerretTooltip = (info) => {
-    const div = document.createElement('span');
-    div.className = 'ferret-tooltip';
-    div.insertAdjacentHTML('afterbegin', `<p>Term: ${info.entityText}</p>`);
-    if (info.resolvedEntity) {
-      div.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${info.resolvedEntity}</p>`);
-    }
-    div.insertAdjacentHTML('beforeend', `<p>Entity Group: ${info.entityGroup}</p>`);
-    div.insertAdjacentHTML('beforeend', `<p>Entity Type: ${info.recognisingDict.entityType}</p>`);
-    div.insertAdjacentHTML('beforeend', `<p>Dictionary Source: ${info.recognisingDict.source}</p>`);
-    return div;
+  // returns an event listener which new creates a new element with passed info and appends it to the passed element
+  const newFerretTooltip = (info, element) => {
+    return (event) => {
+      const span = document.createElement('span');
+      span.className = 'ferret-tooltip';
+      span.insertAdjacentHTML('afterbegin', `<p>Term: ${info.entityText}</p>`);
+      if (info.resolvedEntity) {
+        span.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${info.resolvedEntity}</p>`);
+      }
+      span.insertAdjacentHTML('beforeend', `<p>Entity Group: ${info.entityGroup}</p>`);
+      span.insertAdjacentHTML('beforeend', `<p>Entity Type: ${info.recognisingDict.entityType}</p>`);
+      span.insertAdjacentHTML('beforeend', `<p>Dictionary Source: ${info.recognisingDict.source}</p>`);
+      if (event.type === 'mouseover') {
+        // TODO: prevent addition of multiple tooltips when hover over an element more than once
+        element.appendChild(span);
+      }
+      if (event.type === 'mouseout') {
+        // TODO: remove tooltips (?)
+        console.log('mouseout');
+      }
+    };
   };
 
   const getSelectors = (entity) => {
