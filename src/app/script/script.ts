@@ -23,10 +23,8 @@
               replacementNode.innerHTML = element.nodeValue.replace(term, highlightTerm(term, entity));
               element.parentNode.insertBefore(replacementNode, element);
               element.parentNode.removeChild(element);
-              replacementNode.addEventListener('mouseover', newFerretTooltip(entity, replacementNode));
               replacementNode.addEventListener('mouseenter', newFerretTooltip(entity, replacementNode));
               replacementNode.addEventListener('mouseleave', newFerretTooltip(entity, replacementNode));
-              replacementNode.addEventListener('mouseout', newFerretTooltip(entity, replacementNode));
             } catch (e) {
               console.error(e);
             }
@@ -49,18 +47,13 @@
       `.ferret-tooltip {
         color: black;
         font-family: Arial, sans-serif;
-        font-size: 100%;
+        font-size: 14px;
         background: rgb(192,192,192);
         transform: translate(0%, 50%);
         border: 2px solid #ffff00;
         padding: 10px;
         position: absolute;
         z-index: 10;
-        visibility: hidden;
-    }
-
-    .ferret-highlight:hover + span.ferret-tooltip{
-        visibility: visible;
     }`;
     return styleElement;
   };
