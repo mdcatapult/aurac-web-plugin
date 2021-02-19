@@ -21,9 +21,12 @@
             try {
               const replacementNode = document.createElement('span');
               replacementNode.innerHTML = element.nodeValue.replace(term, highlightTerm(term, entity));
-              replacementNode.addEventListener('mouseover', newFerretTooltip(entity, replacementNode));
               element.parentNode.insertBefore(replacementNode, element);
               element.parentNode.removeChild(element);
+              replacementNode.addEventListener('mouseover', newFerretTooltip(entity, replacementNode));
+              replacementNode.addEventListener('mouseenter', newFerretTooltip(entity, replacementNode));
+              replacementNode.addEventListener('mouseleave', newFerretTooltip(entity, replacementNode));
+              replacementNode.addEventListener('mouseout', newFerretTooltip(entity, replacementNode));
             } catch (e) {
               console.error(e);
             }
@@ -62,7 +65,7 @@
     return styleElement;
   };
 
-  // returns an event listener which new creates a new element with passed info and appends it to the passed element
+  // returns an event listener which creates a new element with passed info and appends it to the passed element
   const newFerretTooltip = (info, element) => {
     return (event) => {
       const span = document.createElement('span');
@@ -74,13 +77,21 @@
       span.insertAdjacentHTML('beforeend', `<p>Entity Group: ${info.entityGroup}</p>`);
       span.insertAdjacentHTML('beforeend', `<p>Entity Type: ${info.recognisingDict.entityType}</p>`);
       span.insertAdjacentHTML('beforeend', `<p>Dictionary Source: ${info.recognisingDict.source}</p>`);
-      if (event.type === 'mouseover') {
-        // TODO: prevent addition of multiple tooltips when hover over an element more than once
-        element.appendChild(span);
-      }
-      if (event.type === 'mouseout') {
-        // TODO: remove tooltips (?)
-        console.log('mouseout');
+
+      switch (event.type) {
+        case 'mouseenter':
+          element.appendChild(span);
+          break;
+        case 'mouseleave':
+          const ferretToolTips = Array.from(document.getElementsByClassName('ferret-tooltip'));
+          if (ferretToolTips) {
+            ferretToolTips.forEach(ferretToolTip => {
+              if (element.childNodes && Array.from(element.childNodes).includes(ferretToolTip)) {
+                element.removeChild(ferretToolTip);
+              }
+            });
+          }
+          break;
       }
     };
   };
