@@ -7,7 +7,21 @@ Once the extension is loaded you will see the following icon:
 
 ![image](./src/assets/favicon.ico)
 
-Clicking this icon will reveal a popup, which currently has a single `NER` option.  Clicking the `NER` button will run Leadmine (by making an API call to the Leadmine Web Service at https://leadmine.wopr.inf.mdc) on the contents of the active tab.
+Clicking this icon will reveal a popup, which currently has 4 NER options (the `Account` and `Settings` buttons are not yet functional), corresponding to a specific Leadmine deployment:
+* Genes/Proteins
+* Chemicals(SMILES) 
+* Chemicals(InchiKey) - N.B. this instance will only resolve IUPACs to Inchi/InchiKey, other chemical synonyma will resolve to SMILES
+* General - the general purpose Leadmine config provided by NextMove which covers:
+  * Chemicals
+  * Diseases
+  * Genes / Proteins
+  * Chemical Reactions
+  * Patent Identifiers
+  * Antibodies
+  * Mass Spec
+  * Organisms
+  
+Clicking one of these four buttons will run Leadmine (by making an API call to the Leadmine web service) on the contents of the active tab.
 
 
 ### Development
@@ -39,7 +53,39 @@ Using `npm start` boots a fresh Firefox instance each time. It can get frustrati
 
 ```bash
 export WEB_EXT_FIREFOX_PROFILE=/path/to/custom/profile/dir/
-export WEB_EXT_PROFILE_CREATE_IF_MISSING
+export WEB_EXT_PROFILE_CREATE_IF_MISSING=true
 export WEB_EXT_KEEP_PROFILE_CHANGES=true
 ```
-Then you only have to accept the cert first time. Any future reboot will have the cert saved in the custom profile.
+Then you only have to accept the cert first time. Any future reboot will have the cert saved in the custom profile. However, the cert may get recycled so you may have to add it again.
+
+### Debugging with chrome
+If you set `export WEB_EXT_TARGET=chromium` then `npm start` will boot it into chromium. You can also use `export WEB_EXT_CHROMIUM_PROFILE=/a/dir` but you need to create the directory first (unlike with Firefox & `export WEB_EXT_PROFILE_CREATE_IF_MISSING`).
+
+### Firefox Promises & sendMessage
+Due to how Firefox uses [web extension polyfills](https://github.com/mozilla/webextension-polyfill/issues/172) the following [bug](https://bugzilla.mozilla.org/show_bug.cgi?id=1456531) means that Firefox needs to use a vanilla Promise object rather than the polyfill it is given. You can `Promise.resolve("A value")` ok but not as an inner function like
+```js
+return new Promise((resolve, reject) => {
+    resolve("A value");
+});
+```
+To solve this we have added the following rule to webpack.config.js. If the Firefox bug gets resolved simply remove this rule:
+
+```javascript
+{
+  test: /\.js$/,
+  exclude: /(node_modules|bower_components)/,
+  use: {
+    loader: "babel-loader",
+    options: {
+      presets: ["babel-preset-env"],
+      plugins: [
+        [
+          "babel-plugin-transform-runtime",
+          { polyfill: false, regenerator: true }
+        ]
+      ]
+    }
+  }
+},
+```
+See `app/script/script.ts` for the actual Promise code.
