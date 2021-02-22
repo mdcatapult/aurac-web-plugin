@@ -73,12 +73,16 @@
 
       switch (event.type) {
         case 'mouseenter':
-          element.appendChild(span);
+          element.childNodes.forEach(childNode => {
+            if (childNode.className === 'ferret-highlight') {
+              return;
+            }
+            element.appendChild(span);
+          });
           break;
         case 'mouseleave':
           // remove ALL ferret tooltips - this catches a case such as 'Glucans biosynthesis protein D' in which both the full term and
           // 'protein' are recognised entities after NER'ing the page
-          // TODO: handle overlapping tooltips in cases where more than one entity is matched in a single phrase
           Array.from(document.getElementsByClassName('ferret-tooltip')).forEach(tooltip => tooltip.remove());
           break;
       }
