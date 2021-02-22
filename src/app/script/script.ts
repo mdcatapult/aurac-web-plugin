@@ -39,6 +39,14 @@
   // highlights a term by wrapping it an HTML span
   const highlightTerm = (term, entity) => `<span class="ferret-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative;">${term}</span>`;
 
+  // removes ferret highlight span
+  const unHighlightTerm = (node) => {
+    // regex to extract term from inside span tag
+    const regex = /[<span.*>(.*)</span>]/g;
+    const term = node.nodeValue.match(regex)[1];
+    console.log(term);
+    // node.nodeValue.replace()
+  };
 
   // creates an HTML style element with basic styling for Ferret tooltip
   const newFerretStyleElement = () => {
@@ -73,8 +81,13 @@
 
       switch (event.type) {
         case 'mouseenter':
+          // the 'inner' match is found first
           element.childNodes.forEach(childNode => {
             if (childNode.className === 'ferret-highlight') {
+              console.log(childNode);
+              // childNode.remove() removes the entire element...we need to 'reverse' the higlighting
+              // create an 'un-highlight' method?
+              // or just don't highlight it in the first place? - tricky to do, how do we know the outer match from an inner one?
               return;
             }
             element.appendChild(span);
