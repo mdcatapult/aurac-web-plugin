@@ -61,18 +61,17 @@
   // returns an event listener which creates a new element with passed info and appends it to the passed element
   const newFerretTooltip = (info, element) => {
     return (event) => {
-      const span = document.createElement('span');
-      span.className = 'ferret-tooltip';
-      span.insertAdjacentHTML('afterbegin', `<p>Term: ${info.entityText}</p>`);
-      if (info.resolvedEntity) {
-        span.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${info.resolvedEntity}</p>`);
-      }
-      span.insertAdjacentHTML('beforeend', `<p>Entity Group: ${info.entityGroup}</p>`);
-      span.insertAdjacentHTML('beforeend', `<p>Entity Type: ${info.recognisingDict.entityType}</p>`);
-      span.insertAdjacentHTML('beforeend', `<p>Dictionary Source: ${info.recognisingDict.source}</p>`);
-
       switch (event.type) {
         case 'mouseenter':
+          const span = document.createElement('span');
+          span.className = 'ferret-tooltip';
+          span.insertAdjacentHTML('afterbegin', `<p>Term: ${info.entityText}</p>`);
+          if (info.resolvedEntity) {
+            span.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${info.resolvedEntity}</p>`);
+          }
+          span.insertAdjacentHTML('beforeend', `<p>Entity Group: ${info.entityGroup}</p>`);
+          span.insertAdjacentHTML('beforeend', `<p>Entity Type: ${info.recognisingDict.entityType}</p>`);
+          span.insertAdjacentHTML('beforeend', `<p>Dictionary Source: ${info.recognisingDict.source}</p>`);
           element.appendChild(span);
           break;
         case 'mouseleave':
