@@ -39,13 +39,13 @@
   // highlights a term by wrapping it an HTML span
   const highlightTerm = (term, entity) => `<span class="ferret-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative;">${term}</span>`;
 
-  // removes ferret highlight span
+  // extracts highlighted term from ferret highlight span
   const unHighlightTerm = (node) => {
-    // regex to extract term from inside span tag
-    const regex = /[<span.*>(.*)</span>]/g;
-    const term = node.nodeValue.match(regex)[1];
-    console.log(term);
-    // node.nodeValue.replace()
+    // create new span element without any styling
+    const span = document.createElement('span');
+    span.innerHTML = node.children[0].innerHTML;
+    // replace the ferret highlight span with the new 'unhighlighted' one
+    node.replaceChild(span, node.children[0]);
   };
 
   // creates an HTML style element with basic styling for Ferret tooltip
@@ -81,14 +81,15 @@
 
       switch (event.type) {
         case 'mouseenter':
-          // the 'inner' match is found first
           element.childNodes.forEach(childNode => {
-            if (childNode.className === 'ferret-highlight') {
+            if (childNode.className === 'ferret-highlight' && childNode.childNodes[0].children) {
               console.log(childNode);
-              // childNode.remove() removes the entire element...we need to 'reverse' the higlighting
-              // create an 'un-highlight' method?
-              // or just don't highlight it in the first place? - tricky to do, how do we know the outer match from an inner one?
-              return;
+              unHighlightTerm(childNode.firstChild);
+              // span altered correctly, but tooltip already appended
+              // outer match tooltip is at least displayed on top
+              console.log(childNode);
+              // if we return here we get a single tooltip, but only on the inner match
+              // return;
             }
             element.appendChild(span);
           });
