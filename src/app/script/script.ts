@@ -39,7 +39,7 @@
   // highlights a term by wrapping it an HTML span
   const highlightTerm = (term, entity) => `<span class="ferret-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative;">${term}</span>`;
 
-  // extracts highlighted term from ferret highlight span
+  // removes ferret highlight
   const unHighlightTerm = (node) => {
     // create new span element without any styling
     const span = document.createElement('span');
@@ -83,13 +83,15 @@
         case 'mouseenter':
           element.childNodes.forEach(childNode => {
             if (childNode.className === 'ferret-highlight' && childNode.childNodes[0].children) {
-              console.log(childNode);
+              childNode.firstChild.firstChild.removeEventListener('mouseenter', newFerretTooltip);
+              childNode.firstChild.firstChild.removeEventListener('mouseleave', newFerretTooltip);
+              childNode.firstChild.removeEventListener('mouseenter', newFerretTooltip);
+              childNode.firstChild.removeEventListener('mouseleave', newFerretTooltip);
               unHighlightTerm(childNode.firstChild);
-              // span altered correctly, but tooltip already appended
-              // outer match tooltip is at least displayed on top
-              console.log(childNode);
+              // span is altered correctly after unHiglightTerm, but still getting overlapping tooltips
               // if we return here we get a single tooltip, but only on the inner match
               // return;
+              Array.from(document.getElementsByClassName('ferret-tooltip')).forEach(tooltip => tooltip.remove());
             }
             element.appendChild(span);
           });
