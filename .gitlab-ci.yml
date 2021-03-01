@@ -30,8 +30,6 @@ test-lint-build:
 release:
   stage: release
   image: registry.mdcatapult.io/informatics/docker-images/ci:node-v1.1.7
-  tags:
-    - wopr
   script:
     - /scripts/release.sh -b -r develop -u 'dist/browser-plugin/web-ext-artifacts/FerretPlugin-*.zip'
   only:
