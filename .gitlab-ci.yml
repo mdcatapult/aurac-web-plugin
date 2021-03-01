@@ -8,8 +8,6 @@ variables:
 test-lint-build:
   stage: test-lint-build
   image: node:alpine
-  tags:
-    - wopr
   artifacts:
     paths:
       - dist/*
