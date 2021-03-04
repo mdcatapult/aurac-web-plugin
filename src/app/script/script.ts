@@ -23,7 +23,7 @@
               replacementNode.innerHTML = element.nodeValue.replace(term, highlightTerm(term, entity));
               element.parentNode.insertBefore(replacementNode, element);
               element.parentNode.removeChild(element);
-              const childValue = Array.from(replacementNode.children).filter(child => child.className === 'ferret-highlight');
+              const childValue = getFerretHighlightChildren(replacementNode);
               childValue[0].addEventListener('mouseenter', newFerretTooltip(entity, replacementNode));
               childValue[0].addEventListener('mouseleave', newFerretTooltip(entity, replacementNode));
             } catch (e) {
@@ -64,13 +64,12 @@
     return (event) => {
       switch (event.type) {
         case 'mouseenter':
-          const hightlightChildren: Array<Element> = Array.from(element.children).filter(child => child.className === 'ferret-highlight');
-          for (const index of hightlightChildren) {
-            if (hightlightChildren.length > 0 && element.parentElement.className === 'ferret-highlight') {
-              removeEventListener('mouseenter', newFerretTooltip(info, element));
-            } else {
-              initialiseTooltip(info, element);
-            }
+          const highlightChildren = getFerretHighlightChildren(element);
+          if (highlightChildren.some(child => child.className === 'ferret-highlight')
+            && element.parentElement.className === 'ferret-highlight') {
+            removeEventListener('mouseenter', newFerretTooltip(info, element));
+          } else {
+            initialiseTooltip(info, element);
           }
           break;
         case 'mouseleave':
@@ -95,6 +94,10 @@
     span.insertAdjacentHTML('beforeend', `<p>Entity Type: ${information.recognisingDict.entityType}</p>`);
     span.insertAdjacentHTML('beforeend', `<p>Dictionary Source: ${information.recognisingDict.source}</p>`);
     htmlElement.appendChild(span);
+  }
+
+  function getFerretHighlightChildren(element: Element) {
+    return Array.from(element.children).filter(child => child.className === 'ferret-highlight');
   }
 
   const getSelectors = (entity) => {
