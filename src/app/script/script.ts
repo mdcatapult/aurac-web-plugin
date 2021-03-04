@@ -68,7 +68,6 @@
           for (const index of hightlightChildren) {
             if (hightlightChildren.length > 0 && element.parentElement.className === 'ferret-highlight') {
               removeEventListener('mouseenter', newFerretTooltip(info, element));
-              console.log('removeEventListener has been called');
             } else {
               initialiseTooltip(info, element);
             }
@@ -86,7 +85,6 @@
 
   // Initialises a new tooltip based on current entity
   function initialiseTooltip(information, htmlElement: Element) {
-    console.log('Ferret-Toolip Class created');
     const span = document.createElement('span');
     span.className = 'ferret-tooltip';
     span.insertAdjacentHTML('afterbegin', `<p>Term: ${information.entityText}</p>`);
