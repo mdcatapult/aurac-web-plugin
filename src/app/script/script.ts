@@ -23,8 +23,9 @@
               replacementNode.innerHTML = element.nodeValue.replace(term, highlightTerm(term, entity));
               element.parentNode.insertBefore(replacementNode, element);
               element.parentNode.removeChild(element);
-              replacementNode.addEventListener('mouseenter', newFerretTooltip(entity, replacementNode));
-              replacementNode.addEventListener('mouseleave', newFerretTooltip(entity, replacementNode));
+              const childValue = Array.from(replacementNode.children).filter(child => child.className === 'ferret-highlight');
+              childValue[0].addEventListener('mouseenter', newFerretTooltip(entity, replacementNode));
+              childValue[0].addEventListener('mouseleave', newFerretTooltip(entity, replacementNode));
             } catch (e) {
               console.error(e);
             }
@@ -39,14 +40,6 @@
   // highlights a term by wrapping it an HTML span
   const highlightTerm = (term, entity) => `<span class="ferret-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative;">${term}</span>`;
 
-  // removes ferret highlight
-  const unHighlightTerm = (node) => {
-    // create new span element without any styling
-    const span = document.createElement('span');
-    span.innerHTML = node.children[0].innerHTML;
-    // replace the ferret highlight span with the new 'unhighlighted' one
-    node.replaceChild(span, node.children[0]);
-  };
 
   // creates an HTML style element with basic styling for Ferret tooltip
   const newFerretStyleElement = () => {
@@ -67,43 +60,44 @@
   };
 
   // returns an event listener which creates a new element with passed info and appends it to the passed element
-  const newFerretTooltip = (info, element) => {
+  const newFerretTooltip = (info, element: Element) => {
     return (event) => {
-      const span = document.createElement('span');
-      span.className = 'ferret-tooltip';
-      span.insertAdjacentHTML('afterbegin', `<p>Term: ${info.entityText}</p>`);
-      if (info.resolvedEntity) {
-        span.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${info.resolvedEntity}</p>`);
-      }
-      span.insertAdjacentHTML('beforeend', `<p>Entity Group: ${info.entityGroup}</p>`);
-      span.insertAdjacentHTML('beforeend', `<p>Entity Type: ${info.recognisingDict.entityType}</p>`);
-      span.insertAdjacentHTML('beforeend', `<p>Dictionary Source: ${info.recognisingDict.source}</p>`);
-
       switch (event.type) {
         case 'mouseenter':
-          element.childNodes.forEach(childNode => {
-            if (childNode.className === 'ferret-highlight' && childNode.childNodes[0].children) {
-              childNode.firstChild.firstChild.removeEventListener('mouseenter', newFerretTooltip);
-              childNode.firstChild.firstChild.removeEventListener('mouseleave', newFerretTooltip);
-              childNode.firstChild.removeEventListener('mouseenter', newFerretTooltip);
-              childNode.firstChild.removeEventListener('mouseleave', newFerretTooltip);
-              unHighlightTerm(childNode.firstChild);
-              // span is altered correctly after unHiglightTerm, but still getting overlapping tooltips
-              // if we return here we get a single tooltip, but only on the inner match
-              // return;
-              Array.from(document.getElementsByClassName('ferret-tooltip')).forEach(tooltip => tooltip.remove());
+          const hightlightChildren: Array<Element> = Array.from(element.children).filter(child => child.className === 'ferret-highlight');
+          for (const index of hightlightChildren) {
+            if (hightlightChildren.length > 0 && element.parentElement.className === 'ferret-highlight') {
+              removeEventListener('mouseenter', newFerretTooltip(info, element));
+              console.log('removeEventListener has been called');
+            } else {
+              initialiseTooltip(info, element);
             }
-            element.appendChild(span);
-          });
+          }
           break;
         case 'mouseleave':
           // remove ALL ferret tooltips - this catches a case such as 'Glucans biosynthesis protein D' in which both the full term and
           // 'protein' are recognised entities after NER'ing the page
+          // TODO: handle overlapping tooltips in cases where more than one entity is matched in a single phrase
           Array.from(document.getElementsByClassName('ferret-tooltip')).forEach(tooltip => tooltip.remove());
           break;
       }
     };
   };
+
+  // Initialises a new tooltip based on current entity
+  function initialiseTooltip(information, htmlElement: Element) {
+    console.log('Ferret-Toolip Class created');
+    const span = document.createElement('span');
+    span.className = 'ferret-tooltip';
+    span.insertAdjacentHTML('afterbegin', `<p>Term: ${information.entityText}</p>`);
+    if (information.resolvedEntity) {
+      span.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${information.resolvedEntity}</p>`);
+    }
+    span.insertAdjacentHTML('beforeend', `<p>Entity Group: ${information.entityGroup}</p>`);
+    span.insertAdjacentHTML('beforeend', `<p>Entity Type: ${information.recognisingDict.entityType}</p>`);
+    span.insertAdjacentHTML('beforeend', `<p>Dictionary Source: ${information.recognisingDict.source}</p>`);
+    htmlElement.appendChild(span);
+  }
 
   const getSelectors = (entity) => {
     // Create regex for entity.
