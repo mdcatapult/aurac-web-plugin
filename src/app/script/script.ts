@@ -64,8 +64,7 @@
     return (event) => {
       switch (event.type) {
         case 'mouseenter':
-          const highlightChildren = getFerretHighlightChildren(element);
-          if (highlightChildren.some(child => child.className === 'ferret-highlight')
+          if (getFerretHighlightChildren(element).some(child => child.className === 'ferret-highlight')
             && element.parentElement.className === 'ferret-highlight') {
             removeEventListener('mouseenter', newFerretTooltip(info, element));
           } else {
