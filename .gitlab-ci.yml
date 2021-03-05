@@ -35,7 +35,7 @@ release:
   tags:
     - wopr
   script:
-    - /scripts/release.sh -b -r develop -u 'dist/browser-plugin/web-ext-artifacts/FerretPlugin-*.zip'
+    - /scripts/release.sh -b -r develop -u 'dist/browser-plugin/web-ext-artifacts/ferretplugin-*.zip'
   only:
     - master
   except:
