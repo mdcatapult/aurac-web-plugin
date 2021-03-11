@@ -8,6 +8,7 @@ import { PopupComponent } from './popup/popup.component';
 import { RouterComponent } from './router/router.component';
 import { Routes, RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
+import { SidebarComponent } from './sidebar/sidebar.component';
 
 
 const routes: Routes = [
@@ -20,7 +21,8 @@ const routes: Routes = [
     BackgroundComponent,
     LoggerComponent,
     PopupComponent,
-    RouterComponent
+    RouterComponent,
+    SidebarComponent
   ],
   imports: [
     BrowserModule,

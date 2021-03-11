@@ -4,6 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "web-ext run --verbose --source-dir=dist/browser-plugin",
+    "dev": "web-ext run --verbose --source-dir=dist/browser-plugin --start-url=https://www.uniprot.org/uniprot/P40120",
+    "watch": "tsc -p src/app/script && ng build --prod --source-map true && cd dist/browser-plugin && web-ext build --as-needed --overwrite-dest",
     "build": "tsc -p src/app/script && ng build --prod --source-map true",
     "package": "cd dist/browser-plugin && web-ext build",
     "test": "ng test",
@@ -58,7 +60,7 @@
     "tailwindcss": "^2.0.2",
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",
-    "typescript": "~4.0.5",
+    "typescript": "^4.0.7",
     "web-ext": "^5.4.0",
     "web-ext-types": "^3.2.1",
     "webextension-polyfill": "^0.7.0"
