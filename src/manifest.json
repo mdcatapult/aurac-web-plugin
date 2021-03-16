@@ -16,9 +16,7 @@
       "js": ["browser-polyfill.min.js", "assets/script.js"]
     }
   ],
-  "permissions": [
-    "tabs"
-  ],
+  "permissions": ["tabs"],
   "icons": {
     "48": "assets/Ferret.icon.48.png",
     "128": "assets/Ferret.icon.128.png"
