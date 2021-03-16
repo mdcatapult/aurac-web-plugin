@@ -126,8 +126,10 @@
   // Creates a sidebar element presenting information.
   function renderSidebar(information: Information): void {
     const sidebarText = document.createElement('div');
+    sidebarText.style.padding = '5px';
     sidebarText.id = 'sidebar-text';
-    sidebarText.style.border = '1px solid black';
+    sidebarText.style.border = '2px solid black';
+    sidebarText.style.marginBottom = '5px';
     sidebarText.insertAdjacentHTML('afterbegin', `<p>Term: ${information.entityText}</p>`);
     if (information.resolvedEntity) {
       sidebarText.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${information.resolvedEntity}</p>`);
