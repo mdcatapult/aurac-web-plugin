@@ -14,6 +14,8 @@
   ferretSidebar.appendChild(buttonElement);
   buttonElement.innerHTML = '&#10060';
   buttonElement.className = 'sidebar-button button';
+  const sidebarTexts = document.createElement('div');
+  ferretSidebar.appendChild(sidebarTexts);
   const sidebarArray: Information[] = [];
 
   buttonElement.addEventListener('click', () => {
@@ -106,7 +108,12 @@
           if (!sidebarArray.some(v => v.entityText === info.entityText)) {
             renderSidebar(info);
             sidebarArray.push(info);
-            console.log(sidebarArray);
+          } else {
+            const index = sidebarArray.indexOf(sidebarArray.find(v => v.entityText === info.entityText));
+            sidebarTexts.getElementsByTagName('div').item(index).scrollIntoView({behavior: 'smooth'});
+            for (let i = 0; i < sidebarTexts.getElementsByTagName('div').length; i++) {
+              sidebarTexts.getElementsByTagName('div')[i].style.color = i === index ? 'blue' : 'black';
+            }
           }
           break;
         case 'mouseleave':
@@ -120,7 +127,7 @@
 
   // Initialises a new tooltip based on current entity
   function renderSidebar(information: Information): void {
-      const sidebarText = document.createElement('span');
+      const sidebarText = document.createElement('div');
       sidebarText.id = 'sidebar-text';
       sidebarText.style.border = '1px solid black';
       sidebarText.insertAdjacentHTML('afterbegin', `<p>Term: ${information.entityText}</p>`);
@@ -130,7 +137,7 @@
       sidebarText.insertAdjacentHTML('beforeend', `<p>Entity Group: ${information.entityGroup}</p>`);
       sidebarText.insertAdjacentHTML('beforeend', `<p>Entity Type: ${information.recognisingDict.entityType}</p>`);
       sidebarText.insertAdjacentHTML('beforeend', `<p>Dictionary Source: ${information.recognisingDict.source}</p>`);
-      ferretSidebar.appendChild(sidebarText);
+      sidebarTexts.appendChild(sidebarText);
   }
 
   function getFerretHighlightChildren(element: Element): Element[] {
