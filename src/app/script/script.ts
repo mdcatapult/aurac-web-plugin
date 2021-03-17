@@ -101,7 +101,6 @@
       if (event.type !== 'mouseenter') {
         return;
       }
-      Array.from(document.getElementsByClassName('ferret-tooltip')).forEach(tooltip => tooltip.remove());
       if (getFerretHighlightChildren(element).some(child => child.className === 'ferret-highlight')
         && element.parentElement.className === 'ferret-highlight') {
         removeEventListener('mouseenter', newFerretTooltip(info, element));
