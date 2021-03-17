@@ -107,8 +107,8 @@
         removeEventListener('mouseenter', newFerretTooltip(info, element));
       }
       if (!sidebarArray.some(v => v.entityText === info.entityText)) {
-        sidebarArray.push(info);
         renderSidebar(info);
+        sidebarArray.push(info);
       }
       const highlightedIndex = sidebarArray.indexOf(sidebarArray.find(v => v.entityText === info.entityText));
       sidebarTexts.getElementsByTagName('div').item(highlightedIndex).scrollIntoView({behavior: 'smooth'});
@@ -130,7 +130,7 @@
     const sidebarText = document.createElement('div');
     sidebarText.id = 'sidebar-text';
     sidebarText.style.border = '1px solid black';
-    sidebarText.style.marginBottom = '2px';
+    sidebarText.style.marginBottom = '5px';
     sidebarText.insertAdjacentHTML('afterbegin', `<p>Term: ${information.entityText}</p>`);
     if (information.resolvedEntity) {
       sidebarText.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${information.resolvedEntity}</p>`);
