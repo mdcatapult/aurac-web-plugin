@@ -8,7 +8,6 @@ import { ActivatedRoute } from '@angular/router';
 export class RouterComponent implements OnInit {
   isBackground = false;
   isPopup = false;
-  isSidebar = false;
   constructor(private route: ActivatedRoute) { }
 
   ngOnInit(): void {
@@ -16,7 +15,6 @@ export class RouterComponent implements OnInit {
       const page = m.get('page');
       this.isBackground = page === 'background';
       this.isPopup = page === 'popup';
-      this.isSidebar = page === 'sidebar';
     });
   }
 }
