@@ -119,9 +119,7 @@
   function setSidebarColors(highlightedIndex: number): void {
     const textElements = sidebarTexts.getElementsByTagName('div');
     Array.from(textElements).forEach((element, i) => {
-      element.style.border = i === highlightedIndex ? '1px blue solid' : '1px black solid';
-      // element.style.color = i === highlightedIndex ? 'blue' : 'black';
-      // element.getElementsByTagName('p')[0].style.color = i === highlightedIndex ? 'blue' : 'black';
+      element.style.border = i === highlightedIndex ? '2px blue solid' : '1px black solid';
     });
   }
 
@@ -130,6 +128,7 @@
     const sidebarText = document.createElement('div');
     sidebarText.id = 'sidebar-text';
     sidebarText.style.border = '1px solid black';
+    sidebarText.style.padding = '2px';
     sidebarText.style.marginBottom = '5px';
     sidebarText.insertAdjacentHTML('afterbegin', `<p>Term: ${information.entityText}</p>`);
     if (information.resolvedEntity) {
