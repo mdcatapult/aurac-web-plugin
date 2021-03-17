@@ -16,7 +16,7 @@
   buttonElement.className = 'sidebar-button button';
   const sidebarTexts = document.createElement('div');
   ferretSidebar.appendChild(sidebarTexts);
-  const sidebarArray: Information[] = [];
+  const entityToDiv = new Map<string, HTMLDivElement>();
 
   buttonElement.addEventListener('click', () => {
     ferretSidebar.remove();
@@ -106,25 +106,23 @@
         && element.parentElement.className === 'ferret-highlight') {
         removeEventListener('mouseenter', newFerretTooltip(info, element));
       }
-      if (!sidebarArray.some(v => v.entityText === info.entityText)) {
-        renderSidebar(info);
-        sidebarArray.push(info);
+      if (!entityToDiv.has(info.entityText)) {
+        entityToDiv.set(info.entityText, renderSidebar(info));
       }
-      const highlightedIndex = sidebarArray.indexOf(sidebarArray.find(v => v.entityText === info.entityText));
-      sidebarTexts.getElementsByTagName('div').item(highlightedIndex).scrollIntoView({behavior: 'smooth'});
-      setSidebarColors(highlightedIndex);
+      const div = entityToDiv.get(info.entityText);
+      div.scrollIntoView({behavior: 'smooth'});
+      setSidebarColors(div);
     };
   };
 
-  function setSidebarColors(highlightedIndex: number): void {
-    const textElements = sidebarTexts.getElementsByTagName('div');
-    Array.from(textElements).forEach((element, i) => {
-      element.style.border = i === highlightedIndex ? '2px blue solid' : '1px black solid';
+  function setSidebarColors(highlightedDiv: HTMLDivElement): void {
+    Array.from(entityToDiv.values()).forEach(div => {
+      div.style.border = div === highlightedDiv ? '2px blue solid' : '1px black solid';
     });
   }
 
   // Creates a sidebar element presenting information.
-  function renderSidebar(information: Information): void {
+  function renderSidebar(information: Information): HTMLDivElement {
     const sidebarText = document.createElement('div');
     sidebarText.id = 'sidebar-text';
     sidebarText.style.border = '1px solid black';
@@ -138,6 +136,7 @@
     sidebarText.insertAdjacentHTML('beforeend', `<p>Entity Type: ${information.recognisingDict.entityType}</p>`);
     sidebarText.insertAdjacentHTML('beforeend', `<p>Dictionary Source: ${information.recognisingDict.source}</p>`);
     sidebarTexts.appendChild(sidebarText);
+    return sidebarText;
   }
 
   function getFerretHighlightChildren(element: Element) {
