@@ -51,8 +51,8 @@
               element.parentNode.insertBefore(replacementNode, element);
               element.parentNode.removeChild(element);
               const childValue = getFerretHighlightChildren(replacementNode);
-              childValue[0].addEventListener('mouseenter', newFerretTooltip(entity, replacementNode));
-              childValue[0].addEventListener('mouseleave', newFerretTooltip(entity, replacementNode));
+              childValue[0].addEventListener('mouseenter', populateFerretSidebar(entity, replacementNode));
+              childValue[0].addEventListener('mouseleave', populateFerretSidebar(entity, replacementNode));
             } catch (e) {
               console.error(e);
             }
@@ -66,7 +66,7 @@
   // highlights a term by wrapping it an HTML span
   const highlightTerm = (term, entity) => `<span class="ferret-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative;">${term}</span>`;
 
-  // creates an HTML style element with basic styling for Ferret tooltip
+  // creates an HTML style element with basic styling for Ferret sidebar
   const newFerretStyleElement = () => {
     const styleElement = document.createElement('style');
     styleElement.innerHTML =
@@ -96,14 +96,14 @@
   };
 
   // returns an event listener which creates a new element with passed info and appends it to the passed element
-  const newFerretTooltip = (info, element: Element) => {
+  const populateFerretSidebar = (info: Information, element: Element) => {
     return (event) => {
       if (event.type !== 'mouseenter') {
         return;
       }
       if (getFerretHighlightChildren(element).some(child => child.className === 'ferret-highlight')
         && element.parentElement.className === 'ferret-highlight') {
-        removeEventListener('mouseenter', newFerretTooltip(info, element));
+        removeEventListener('mouseenter', populateFerretSidebar(info, element));
       }
       if (!entityToDiv.has(info.entityText)) {
         entityToDiv.set(info.entityText, renderSidebar(info));
