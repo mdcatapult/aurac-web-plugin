@@ -10,7 +10,8 @@
     "test:ci": "ng test --browsers GitlabCI --watch false",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "build:prod": "cross-env NODE_ENV=production ng build --prod"
+    "build:prod": "cross-env NODE_ENV=production ng build --prod",
+    "weblint": "web-ext lint"
   },
   "private": true,
   "dependencies": {
