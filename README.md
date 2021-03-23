@@ -89,3 +89,10 @@ To solve this we have added the following rule to webpack.config.js. If the Fire
 },
 ```
 See `app/script/script.ts` for the actual Promise code.
+
+### Building, linting & running
+There are various convenience scripts inside the `package.json` that can be run using `npm run`. Highlights include:
+
+* start - start up a browser with the plugin pre-loaded
+* weblint - lint the code using web-ext
+* build - build the plugin
