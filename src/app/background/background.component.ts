@@ -1,7 +1,18 @@
-import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import {LeadmineMessage, LeadminerEntity, LeadminerResult, Message, StringMessage} from 'src/types';
+import {Component} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {
+  LeadmineMessage,
+  LeadminerEntity,
+  LeadmineResult,
+  LeadminerResult,
+  ConverterResult,
+  XRef,
+  XRefMessage,
+  Message,
+  StringMessage
+} from 'src/types';
 import {validDict} from './types';
+import {map, switchMap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-background',
@@ -12,14 +23,45 @@ export class BackgroundComponent {
 
   constructor(private client: HttpClient) {
     browser.runtime.onMessage.addListener((msg) => {
-      if (msg.type === 'ner_current_page') {
-        console.log('Received message from popup...');
-        this.nerCurrentPage(msg.body);
+      switch (msg.type) {
+        case 'ner_current_page': {
+          console.log('Received message from popup...');
+          this.nerCurrentPage(msg.body);
+          break;
+        }
+        case 'compound_x-refs' : {
+          this.loadXRefs(msg.body);
+          break;
+        }
       }
     });
   }
 
-  nerCurrentPage(dictionary: validDict) {
+  private loadXRefs(entityTerm: string): void {
+    const leadmineURL = `http://localhost:8081/entities/${entityTerm}`;
+    const compoundConverterURL = 'http://localhost:8082/convert';
+    const unichemURL = 'http://localhost:8080/x-ref';
+
+    this.client.get(leadmineURL).pipe(
+      switchMap((leadmineResult: LeadmineResult) => {
+          const smiles = leadmineResult ? leadmineResult.entities[0].resolvedEntity : undefined;
+          return this.client.get(`${compoundConverterURL}/${smiles}?from=SMILES&to=inchikey`);
+        }
+      ),
+      switchMap((converterResult: ConverterResult) => this.client.get(`${unichemURL}/${converterResult.output}`)),
+      map((xrefs: XRef[]) => xrefs.map(xref => {
+        xref.compoundName = entityTerm;
+        return xref;
+      }))
+    ).subscribe((xrefs: XRef[]) => {
+      browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT}).then(tabs => {
+        const tab = tabs[0].id;
+        browser.tabs.sendMessage<XRefMessage>(tab, {type: 'x-ref_result', body: xrefs});
+      });
+    });
+  }
+
+  private nerCurrentPage(dictionary: validDict): void {
     console.log('Getting content of active tab...');
     let tab;
     browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT}).then(tabs => {

@@ -7,16 +7,20 @@
     "moduleResolution": "node",
     "importHelpers": true,
     "target": "es2015",
+//    "esModuleInterop": true,
     "typeRoots": [
       "node_modules/@types",
       "node_modules/web-ext-types"
     ],
+//    "types": [
+//      "node"
+//    ],
     "lib": [
       "es2018",
       "dom"
     ]
   },
   "files": [
-    "script.ts",
+    "script.ts"
   ],
 }
