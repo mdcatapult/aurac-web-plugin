@@ -1,5 +1,3 @@
-// import {XRef} from '../../types';
-
 (() => {
   type Information = {
     entityText: string,
