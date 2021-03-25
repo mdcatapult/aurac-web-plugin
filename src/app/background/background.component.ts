@@ -13,6 +13,7 @@ import {
 } from 'src/types';
 import {validDict} from './types';
 import {map, switchMap} from 'rxjs/operators';
+import {of} from 'rxjs';
 
 @Component({
   selector: 'app-background',
@@ -45,7 +46,7 @@ export class BackgroundComponent {
     this.client.get(leadmineURL).pipe(
       switchMap((leadmineResult: LeadmineResult) => {
           const smiles = leadmineResult ? leadmineResult.entities[0].resolvedEntity : undefined;
-          return this.client.get(`${compoundConverterURL}/${smiles}?from=SMILES&to=inchikey`);
+          return smiles ? this.client.get(`${compoundConverterURL}/${smiles}?from=SMILES&to=inchikey`) : of({});
         }
       ),
       switchMap((converterResult: ConverterResult) => this.client.get(`${unichemURL}/${converterResult.output}`)),
