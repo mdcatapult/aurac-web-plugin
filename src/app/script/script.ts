@@ -1,9 +1,36 @@
 (() => {
-
+  type Information = {
+    entityText: string,
+    resolvedEntity: string,
+    entityGroup: string,
+    recognisingDict: {
+      entityType: string,
+      source: string,
+    },
+  };
   console.log('script loaded');
+  const ferretSidebar = document.createElement('span');
+  const buttonElement = document.createElement('button');
+  ferretSidebar.appendChild(buttonElement);
+  buttonElement.innerHTML = '&#10060';
+  buttonElement.className = 'sidebar-button button';
+  const sidebarTexts = document.createElement('div');
+  ferretSidebar.appendChild(sidebarTexts);
+  const entityToDiv = new Map<string, HTMLDivElement>();
 
+  buttonElement.addEventListener('click', () => {
+    ferretSidebar.remove();
+    document.body.style.width = '100vw';
+    document.body.style.marginLeft = '0';
+  });
   // @ts-ignore
   browser.runtime.onMessage.addListener((msg) => {
+
+    document.body.style.width = '80vw';
+    document.body.style.marginLeft = '20vw';
+    document.head.appendChild(newFerretStyleElement());
+    ferretSidebar.className = 'ferret-sidebar';
+    document.body.appendChild(ferretSidebar);
     switch (msg.type) {
       case 'get_page_contents':
         return new Promise((resolve, reject) => {
@@ -24,8 +51,8 @@
               element.parentNode.insertBefore(replacementNode, element);
               element.parentNode.removeChild(element);
               const childValue = getFerretHighlightChildren(replacementNode);
-              childValue[0].addEventListener('mouseenter', newFerretTooltip(entity, replacementNode));
-              childValue[0].addEventListener('mouseleave', newFerretTooltip(entity, replacementNode));
+              childValue[0].addEventListener('mouseenter', populateFerretSidebar(entity, replacementNode));
+              childValue[0].addEventListener('mouseleave', populateFerretSidebar(entity, replacementNode));
             } catch (e) {
               console.error(e);
             }
@@ -36,63 +63,79 @@
         throw new Error('Received unexpected message from plugin');
     }
   });
-
   // highlights a term by wrapping it an HTML span
   const highlightTerm = (term, entity) => `<span class="ferret-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative;">${term}</span>`;
 
-
-  // creates an HTML style element with basic styling for Ferret tooltip
+  // creates an HTML style element with basic styling for Ferret sidebar
   const newFerretStyleElement = () => {
     const styleElement = document.createElement('style');
     styleElement.innerHTML =
-      `.ferret-tooltip {
+      `.ferret-sidebar {
         color: black;
         font-family: Arial, sans-serif;
         font-size: 14px;
         background: rgb(192,192,192);
-        transform: translate(0%, 50%);
-        border: 2px solid #ffff00;
-        padding: 10px;
-        position: absolute;
+        position: fixed;
         z-index: 10;
-    }`;
+        height: 100vh;
+        left: 0;
+        top: 0;
+        width: 20vw;
+        border-right: 2px solid black;
+        padding: 5px;
+        overflow-wrap: break-word;
+        overflow-y: scroll;
+    }
+    .sidebar-button {
+      color: black;
+      background-color: rgb(192, 192, 192);
+      position: relative;
+      left: 88%;
+     }`;
     return styleElement;
   };
 
   // returns an event listener which creates a new element with passed info and appends it to the passed element
-  const newFerretTooltip = (info, element: Element) => {
+  const populateFerretSidebar = (info: Information, element: Element) => {
     return (event) => {
-      switch (event.type) {
-        case 'mouseenter':
-          if (getFerretHighlightChildren(element).some(child => child.className === 'ferret-highlight')
-            && element.parentElement.className === 'ferret-highlight') {
-            removeEventListener('mouseenter', newFerretTooltip(info, element));
-          } else {
-            initialiseTooltip(info, element);
-          }
-          break;
-        case 'mouseleave':
-          // remove ALL ferret tooltips - this catches a case such as 'Glucans biosynthesis protein D' in which both the full term and
-          // 'protein' are recognised entities after NER'ing the page
-          // TODO: handle overlapping tooltips in cases where more than one entity is matched in a single phrase
-          Array.from(document.getElementsByClassName('ferret-tooltip')).forEach(tooltip => tooltip.remove());
-          break;
+      if (event.type !== 'mouseenter') {
+        return;
       }
+      if (getFerretHighlightChildren(element).some(child => child.className === 'ferret-highlight')
+        && element.parentElement.className === 'ferret-highlight') {
+        removeEventListener('mouseenter', populateFerretSidebar(info, element));
+      }
+      if (!entityToDiv.has(info.entityText)) {
+        entityToDiv.set(info.entityText, renderSidebar(info));
+      }
+      const div = entityToDiv.get(info.entityText);
+      div.scrollIntoView({behavior: 'smooth'});
+      setSidebarColors(div);
     };
   };
 
-  // Initialises a new tooltip based on current entity
-  function initialiseTooltip(information, htmlElement: Element) {
-    const span = document.createElement('span');
-    span.className = 'ferret-tooltip';
-    span.insertAdjacentHTML('afterbegin', `<p>Term: ${information.entityText}</p>`);
+  function setSidebarColors(highlightedDiv: HTMLDivElement): void {
+    Array.from(entityToDiv.values()).forEach(div => {
+      div.style.border = div === highlightedDiv ? '2px blue solid' : '1px black solid';
+    });
+  }
+
+  // Creates a sidebar element presenting information.
+  function renderSidebar(information: Information): HTMLDivElement {
+    const sidebarText = document.createElement('div');
+    sidebarText.id = 'sidebar-text';
+    sidebarText.style.border = '1px solid black';
+    sidebarText.style.padding = '2px';
+    sidebarText.style.marginBottom = '5px';
+    sidebarText.insertAdjacentHTML('afterbegin', `<p>Term: ${information.entityText}</p>`);
     if (information.resolvedEntity) {
-      span.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${information.resolvedEntity}</p>`);
+      sidebarText.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${information.resolvedEntity}</p>`);
     }
-    span.insertAdjacentHTML('beforeend', `<p>Entity Group: ${information.entityGroup}</p>`);
-    span.insertAdjacentHTML('beforeend', `<p>Entity Type: ${information.recognisingDict.entityType}</p>`);
-    span.insertAdjacentHTML('beforeend', `<p>Dictionary Source: ${information.recognisingDict.source}</p>`);
-    htmlElement.appendChild(span);
+    sidebarText.insertAdjacentHTML('beforeend', `<p>Entity Group: ${information.entityGroup}</p>`);
+    sidebarText.insertAdjacentHTML('beforeend', `<p>Entity Type: ${information.recognisingDict.entityType}</p>`);
+    sidebarText.insertAdjacentHTML('beforeend', `<p>Dictionary Source: ${information.recognisingDict.source}</p>`);
+    sidebarTexts.appendChild(sidebarText);
+    return sidebarText;
   }
 
   function getFerretHighlightChildren(element: Element) {
