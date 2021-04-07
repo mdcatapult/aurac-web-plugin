@@ -31,7 +31,7 @@ test-lint-build:
 # Must also update the version in the manifest.json that is packaged at build time.
 release:
   stage: release
-  image: registry.mdcatapult.io/informatics/docker-images/ci:node-v1.1.7
+  image: registry.mdcatapult.io/informatics/docker-images/ci/node
   tags:
     - wopr
   script:
