@@ -13,7 +13,7 @@
   const buttonElement = document.createElement('button');
   ferretSidebar.appendChild(buttonElement);
   buttonElement.innerHTML = '&#10060';
-  buttonElement.className = 'sidebar-button button';
+  buttonElement.className = 'sidebar-button';
   const sidebarTexts = document.createElement('div');
   ferretSidebar.appendChild(sidebarTexts);
   const entityToDiv = new Map<string, HTMLDivElement>();
@@ -89,8 +89,9 @@
     .sidebar-button {
       color: black;
       background-color: rgb(192, 192, 192);
-      position: relative;
-      left: 88%;
+      position: fixed;
+      left: 17.5vw;
+      top: 0.5vw;
      }`;
     return styleElement;
   };
