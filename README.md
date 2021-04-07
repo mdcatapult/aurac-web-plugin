@@ -7,7 +7,7 @@ Once the extension is loaded you will see the following icon:
 
 ![image](./src/assets/favicon.ico)
 
-Clicking this icon will reveal a popup, which currently has 5 NER options (the `Account` and `Settings` buttons are not yet functional), corresponding to a specific Leadmine deployment:
+Clicking this icon will reveal a popup, which currently has 5 NER options (the `Settings` button is not yet functional), corresponding to a specific Leadmine deployment:
 * Genes/Proteins
 * Diseases
 * Chemicals(SMILES) 
