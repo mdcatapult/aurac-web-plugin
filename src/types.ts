@@ -1,4 +1,4 @@
-export type MessageType = 'ner_current_page' | 'get_page_contents' | 'markup_page' | 'compound_x-refs' | 'x-ref_result';
+export type MessageType = 'ner_current_page' | 'get_page_contents' | 'markup_page' | 'compound_x-refs' | 'x-ref_result' | 'settings';
 
 export interface Message {
     type: MessageType;
@@ -66,3 +66,9 @@ export type XRef = {
   databaseName: string,
   url: string,
 };
+
+export type Settings = {
+  leadmineURL: string,
+  compoundConverterURL: string,
+  unichemURL: string,
+}

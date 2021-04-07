@@ -9,7 +9,7 @@ import {
   XRef,
   XRefMessage,
   Message,
-  StringMessage
+  StringMessage, Settings
 } from 'src/types';
 import {validDict} from './types';
 import {map, switchMap} from 'rxjs/operators';
@@ -21,6 +21,8 @@ import {of} from 'rxjs';
 })
 
 export class BackgroundComponent {
+
+  settings?: Settings = undefined;
 
   constructor(private client: HttpClient) {
     browser.runtime.onMessage.addListener((msg) => {
@@ -34,22 +36,24 @@ export class BackgroundComponent {
           this.loadXRefs(msg.body);
           break;
         }
+        case 'settings' : {
+          this.settings = msg.body;
+        }
       }
     });
   }
 
   private loadXRefs(entityTerm: string): void {
-    const leadmineURL = `http://localhost:8081/entities/${entityTerm}`;
-    const compoundConverterURL = 'http://localhost:8082/convert';
-    const unichemURL = 'http://localhost:8080/x-ref';
+
+    const leadmineURL = `${this.settings.leadmineURL}/${entityTerm}`;
 
     this.client.get(leadmineURL).pipe(
       switchMap((leadmineResult: LeadmineResult) => {
           const smiles = leadmineResult ? leadmineResult.entities[0].resolvedEntity : undefined;
-          return smiles ? this.client.get(`${compoundConverterURL}/${smiles}?from=SMILES&to=inchikey`) : of({});
+          return smiles ? this.client.get(`${this.settings.compoundConverterURL}/${smiles}?from=SMILES&to=inchikey`) : of({});
         }
       ),
-      switchMap((converterResult: ConverterResult) => this.client.get(`${unichemURL}/${converterResult.output}`)),
+      switchMap((converterResult: ConverterResult) => this.client.get(`${this.settings.unichemURL}/${converterResult.output}`)),
       map((xrefs: XRef[]) => xrefs.map(xref => {
         xref.compoundName = entityTerm;
         return xref;
