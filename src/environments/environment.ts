@@ -3,7 +3,10 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  leadmineURL: 'http://localhost:8081',
+  compoundConverterURL: 'http://localhost:8082/convert',
+  unichemURL: 'http://localhost:8080/x-ref',
 };
 
 /*

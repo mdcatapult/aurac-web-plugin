@@ -10,6 +10,11 @@ import {LogService} from './log.service';
 export class PopupComponent implements OnInit {
 
   isSettings = false;
+  settings: Settings = {
+    leadmineURL: 'leadmineURL',
+    compoundConverterURL: 'compoundURL',
+    unichemURL: 'unichemURL',
+}
 
   constructor(private log: LogService) {
   }
@@ -22,9 +27,9 @@ export class PopupComponent implements OnInit {
   }
 
   onSaveSettings(settings: Settings) {
-    this.log.Log('settings: ');
-    this.log.Log(settings);
     this.log.Log('Sending message to background page...');
+    this.settings = settings;
+    console.log('settings: ', settings);
     browser.runtime.sendMessage<Message>({type: 'settings', body: settings})
       .catch(e => this.log.Error(`Couldn't send message to background page: ${e}`));
   }
