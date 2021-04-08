@@ -7,8 +7,9 @@ Once the extension is loaded you will see the following icon:
 
 ![image](./src/assets/favicon.ico)
 
-Clicking this icon will reveal a popup, which currently has 4 NER options (the `Account` and `Settings` buttons are not yet functional), corresponding to a specific Leadmine deployment:
+Clicking this icon will reveal a popup, which currently has 5 NER options (the `Settings` button is not yet functional), corresponding to a specific Leadmine deployment:
 * Genes/Proteins
+* Diseases
 * Chemicals(SMILES) 
 * Chemicals(InchiKey) - N.B. this instance will only resolve IUPACs to Inchi/InchiKey, other chemical synonyma will resolve to SMILES
 * General - the general purpose Leadmine config provided by NextMove which covers:
