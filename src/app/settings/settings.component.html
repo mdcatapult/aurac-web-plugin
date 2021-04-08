@@ -1,0 +1,11 @@
+<div class="settings">
+  <button (click)="closeSettings()">&#10060;</button>
+  <form [formGroup]="settingsForm">
+    Leadmine URL : <input type=text formControlName="leadmineURL" >
+    Compound Converter URL : <input type=text formControlName="compoundConverterURL" >
+    Unichem URL : <input type=text formControlName="unichemURL" >
+    <button type="submit">Submit</button>
+  </form>
+
+  <button (click)="save()">Save</button>
+</div>

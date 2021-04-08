@@ -86,7 +86,7 @@
   </div>
 </div>
 <app-settings
-  ng-show="isSettings"
+  [hidden]="!isSettings"
   (closed)="isSettings=false"
   (saved)="onSaveSettings($event)"
 ></app-settings>

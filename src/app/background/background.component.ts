@@ -22,7 +22,7 @@ import {of} from 'rxjs';
 
 export class BackgroundComponent {
 
-  settings?: Settings = undefined;
+  settings?: Settings;
 
   constructor(private client: HttpClient) {
     browser.runtime.onMessage.addListener((msg) => {
