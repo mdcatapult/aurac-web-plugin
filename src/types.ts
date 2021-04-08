@@ -1,4 +1,4 @@
-export type MessageType = 'ner_current_page' | 'get_page_contents' | 'markup_page';
+export type MessageType = 'ner_current_page' | 'get_page_contents' | 'markup_page' | 'compound_x-refs' | 'x-ref_result';
 
 export interface Message {
     type: MessageType;
@@ -11,6 +11,10 @@ export interface StringMessage extends Message {
 
 export interface LeadmineMessage extends Message {
     body: Array<LeadminerEntity>;
+}
+
+export interface XRefMessage extends Message {
+  body: Array<XRef>;
 }
 
 export interface LogMessage extends Message {
@@ -44,4 +48,21 @@ export type Dictionary = {
     minimumCorrectedEntityLength: number;
     minimumEntityLength: number;
     source: string;
+};
+
+export type LeadmineResult = {
+  entities: {
+    resolvedEntity: string,
+  }[],
+};
+
+export type ConverterResult = {
+  input: string,
+  output: string,
+};
+
+export type XRef = {
+  compoundName: string,
+  databaseName: string,
+  url: string,
 };
