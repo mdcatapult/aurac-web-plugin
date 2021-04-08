@@ -46,6 +46,10 @@
           sel.map(element => {
             // Try/catch for edge cases.
             try {
+              if (element.parentElement.parentElement.className === 'sidebar-text') {
+                return;
+              }
+
               const replacementNode = document.createElement('span');
               replacementNode.innerHTML = element.nodeValue.replace(term, highlightTerm(term, entity));
               element.parentNode.insertBefore(replacementNode, element);
@@ -125,6 +129,7 @@
   function renderSidebar(information: Information): HTMLDivElement {
     const sidebarText = document.createElement('div');
     sidebarText.id = 'sidebar-text';
+    sidebarText.className = 'sidebar-text';
     sidebarText.style.border = '1px solid black';
     sidebarText.style.padding = '2px';
     sidebarText.style.marginBottom = '5px';
