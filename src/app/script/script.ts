@@ -46,10 +46,6 @@
           sel.map(element => {
             // Try/catch for edge cases.
             try {
-              if (element.parentElement.parentElement.className === 'sidebar-text') {
-                return;
-              }
-
               const replacementNode = document.createElement('span');
               replacementNode.innerHTML = element.nodeValue.replace(term, highlightTerm(term, entity));
               element.parentNode.insertBefore(replacementNode, element);
@@ -158,6 +154,9 @@
 
   // Recursively find all text nodes which match regex
   function allDescendants(node: HTMLElement, elements: Array<Element>, re: RegExp) {
+    if (node && node.classList.contains('ferret-sidebar')) {
+      return;
+    }
     try {
       node.childNodes.forEach(child => {
         const element = child as HTMLElement;
