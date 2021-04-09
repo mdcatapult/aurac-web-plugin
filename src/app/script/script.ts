@@ -8,6 +8,21 @@
       source: string,
     },
   };
+  class EntityToDiv {
+    private m = new Map<string, HTMLDivElement>();
+    set(text: string, html: HTMLDivElement) {
+      this.m.set(text.toLowerCase(), html);
+    }
+    has(text: string): boolean {
+      return this.m.has(text.toLowerCase());
+    }
+    get(text: string): HTMLDivElement {
+      return this.m.get(text);
+    }
+    values(): IterableIterator<HTMLDivElement> {
+      return this.m.values();
+    }
+  }
   console.log('script loaded');
   const ferretSidebar = document.createElement('span');
   const buttonElement = document.createElement('button');
@@ -16,8 +31,7 @@
   buttonElement.className = 'sidebar-button';
   const sidebarTexts = document.createElement('div');
   ferretSidebar.appendChild(sidebarTexts);
-  const entityToDiv = new Map<string, HTMLDivElement>();
-
+  const entityToDiv = new EntityToDiv();
   buttonElement.addEventListener('click', () => {
     ferretSidebar.remove();
     document.body.style.width = '100vw';
@@ -107,8 +121,8 @@
         && element.parentElement.className === 'ferret-highlight') {
         removeEventListener('mouseenter', populateFerretSidebar(info, element));
       } else {
-        if (!entityToDiv.has(info.entityText.toLowerCase())) {
-          entityToDiv.set(info.entityText.toLowerCase(), renderSidebar(info));
+        if (!entityToDiv.has(info.entityText)) {
+          entityToDiv.set(info.entityText, renderSidebar(info));
         }
       }
       const div = entityToDiv.get(info.entityText.toLowerCase());
