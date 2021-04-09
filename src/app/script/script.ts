@@ -75,6 +75,9 @@
           });
         });
         break;
+      case 'x-ref_result':
+        setXRefHTML(msg.body);
+        break;
       default:
         throw new Error('Received unexpected message from plugin');
     }
@@ -125,9 +128,11 @@
       } else {
         if (!entityToDiv.has(info.entityText)) {
           entityToDiv.set(info.entityText, renderSidebar(info));
+          // @ts-ignore
+          browser.runtime.sendMessage({type: 'compound_x-refs', body: info.entityText});
         }
       }
-      const div = entityToDiv.get(info.entityText.toLowerCase());
+      const div = entityToDiv.get(info.entityText);
       div.scrollIntoView({behavior: 'smooth'});
       setSidebarColors(div);
     };
@@ -153,8 +158,19 @@
     sidebarText.insertAdjacentHTML('beforeend', `<p>Entity Group: ${information.entityGroup}</p>`);
     sidebarText.insertAdjacentHTML('beforeend', `<p>Entity Type: ${information.recognisingDict.entityType}</p>`);
     sidebarText.insertAdjacentHTML('beforeend', `<p>Dictionary Source: ${information.recognisingDict.source}</p>`);
+    const xrefHTML = document.createElement('div');
+    xrefHTML.className = information.entityText;
+    sidebarText.appendChild(xrefHTML);
     sidebarTexts.appendChild(sidebarText);
     return sidebarText;
+  }
+
+  function setXRefHTML(xrefs: {databaseName: string, url: string, compoundName: string}[]): void {
+    Array.from(document.getElementsByClassName(xrefs[0].compoundName)).forEach(element => element.innerHTML = '');
+    xrefs.forEach(xref => {
+      const xrefElement = document.getElementsByClassName(xref.compoundName).item(0);
+      xrefElement.innerHTML += `<p> ${xref.databaseName}: ${xref.url}</p>`;
+    });
   }
 
   function getFerretHighlightChildren(element: Element) {
