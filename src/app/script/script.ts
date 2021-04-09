@@ -125,7 +125,6 @@
   function renderSidebar(information: Information): HTMLDivElement {
     const sidebarText = document.createElement('div');
     sidebarText.id = 'sidebar-text';
-    sidebarText.className = 'sidebar-text';
     sidebarText.style.border = '1px solid black';
     sidebarText.style.padding = '2px';
     sidebarText.style.marginBottom = '5px';
