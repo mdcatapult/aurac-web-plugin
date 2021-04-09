@@ -102,12 +102,14 @@
       if (event.type !== 'mouseenter') {
         return;
       }
+
       if (getFerretHighlightChildren(element).some(child => child.className === 'ferret-highlight')
         && element.parentElement.className === 'ferret-highlight') {
         removeEventListener('mouseenter', populateFerretSidebar(info, element));
-      }
-      if (!entityToDiv.has(info.entityText)) {
-        entityToDiv.set(info.entityText, renderSidebar(info));
+      } else {
+        if (!entityToDiv.has(info.entityText)) {
+          entityToDiv.set(info.entityText, renderSidebar(info));
+        }
       }
       const div = entityToDiv.get(info.entityText);
       div.scrollIntoView({behavior: 'smooth'});
