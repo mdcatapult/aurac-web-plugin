@@ -107,11 +107,11 @@
         && element.parentElement.className === 'ferret-highlight') {
         removeEventListener('mouseenter', populateFerretSidebar(info, element));
       } else {
-        if (!entityToDiv.has(info.entityText)) {
-          entityToDiv.set(info.entityText, renderSidebar(info));
+        if (!entityToDiv.has(info.entityText.toLowerCase())) {
+          entityToDiv.set(info.entityText.toLowerCase(), renderSidebar(info));
         }
       }
-      const div = entityToDiv.get(info.entityText);
+      const div = entityToDiv.get(info.entityText.toLowerCase());
       div.scrollIntoView({behavior: 'smooth'});
       setSidebarColors(div);
     };
