@@ -8,6 +8,8 @@
       source: string,
     },
   };
+
+  // provides a wrapper around Map<string, HTMLDivElement>() to ensure key formatting
   class EntityToDiv {
     private m = new Map<string, HTMLDivElement>();
     set(text: string, html: HTMLDivElement) {
