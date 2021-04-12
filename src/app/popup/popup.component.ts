@@ -22,7 +22,6 @@ export class PopupComponent implements OnInit {
   }
 
   onSaveSettings(settings: Settings) {
-    console.log('settings: ', settings);
     browser.runtime.sendMessage<Message>({type: 'save-settings', body: settings})
       .catch(e => this.log.Error(`Couldn't send message to background page: ${e}`));
   }

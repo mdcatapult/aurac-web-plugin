@@ -27,8 +27,6 @@ export class SettingsComponent implements OnInit {
     browser.runtime.sendMessage<Message>({type: 'load-settings'})
       .catch(e => this.log.Error(`Couldn't send load-settings message to background page: ${e}`))
       .then((settings: Settings) => {
-        this.log.Log('load settings msg:');
-        this.log.Log(settings);
         this.settingsForm.reset(settings);
       });
   }

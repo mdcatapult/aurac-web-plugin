@@ -43,7 +43,6 @@ export class BackgroundComponent {
           break;
         }
         case 'load-settings': {
-          console.log('load-settings msg received, returning ', this.settings);
           reply(this.settings);
           break;
         }
