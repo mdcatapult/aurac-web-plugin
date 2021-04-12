@@ -3,50 +3,61 @@
   <br>
   <form [formGroup]="settingsForm">
 
-
+<!--    Leadmine-->
     <div class="shadow sm:rounded-md sm:overflow-hidden">
       <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
         <div class="grid grid-cols-3 gap-6">
           <div class="col-span-3 sm:col-span-2">
             <label for="leadmineURL" class="block text-sm font-medium text-gray-700">
-              Website
+              Leadmine URL
             </label>
             <div class="mt-1 flex rounded-md shadow-sm">
-                  <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                    http://
-                  </span>
-              <input type="text" name="leadmineURL"  formControlName="leadmineURL" id="leadmineURL" class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300" placeholder="www.example.com">
+              <input type="text" name="leadmineURL"  formControlName="leadmineURL" id="leadmineURL" class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300">
             </div>
           </div>
         </div>
       </div>
     </div>
 
-
-
-<!--    <div class="url-form">-->
-<!--      <span class="url text-base font-medium text-gray-900">-->
-<!--        Leadmine URL:-->
-<!--      </span>-->
-<!--      <input class=url-input type=text formControlName="leadmineURL">-->
-<!--    </div>-->
-<!--    <br>-->
-<!--    <div class="url-form">-->
-<!--      <span class="url text-base font-medium text-gray-900">-->
-<!--        Compound Converter URL:-->
-<!--      </span>-->
-<!--      <input class=url-input type=text formControlName="compoundConverterURL">-->
-<!--    </div>-->
-
-    <br>
-    <div class="url-form">
-      <span class="url text-base font-medium text-gray-900">
-        Unichem URL:
-      </span>
-      <input class=url-input type=text formControlName="unichemURL">
+<!--    Compound converter -->
+    <div class="shadow sm:rounded-md sm:overflow-hidden">
+      <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
+        <div class="grid grid-cols-3 gap-6">
+          <div class="col-span-3 sm:col-span-2">
+            <label for="compoundConverterURL" class="block text-sm font-medium text-gray-700">
+              Compound Converter URL
+            </label>
+            <div class="mt-1 flex rounded-md shadow-sm">
+              <input type="text" name="compoundConverterURL"  formControlName="compoundConverterURL" id="compoundConverterURL" class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300">
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <br>
+
+<!--    Unichem-->
+    <div class="shadow sm:rounded-md sm:overflow-hidden">
+      <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
+        <div class="grid grid-cols-3 gap-6">
+          <div class="col-span-3 sm:col-span-2">
+            <label for="unichemURL" class="block text-sm font-medium text-gray-700">
+              Unichem URL
+            </label>
+            <div class="mt-1 flex rounded-md shadow-sm">
+              <input type="text" name="unichemURL"  formControlName="unichemURL" id="unichemURL" class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </form>
 
-  <button class="save text-base font-medium text-gray-900" (click)="save()">Save</button>
+  <button
+    (click)="save()"
+    class="save inline-flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+    Save
+  </button>
 </div>
+
+
