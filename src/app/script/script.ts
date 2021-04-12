@@ -147,7 +147,7 @@
   }
 
   function setXRefHTML(xrefs: {databaseName: string, url: string, compoundName: string}[]): void {
-    Array.from(document.getElementsByClassName(xrefs[0].compoundName)).forEach(element => element.innerHTML = '');
+    Array.from(document.getElementsByClassName(xrefs[0] ? xrefs[0].compoundName : '')).forEach(element => element.innerHTML = '');
     xrefs.forEach(xref => {
       const xrefElement = document.getElementsByClassName(xref.compoundName).item(0);
       xrefElement.innerHTML += `<p> ${xref.databaseName}: ${xref.url}</p>`;

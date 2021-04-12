@@ -1,11 +1,29 @@
 <div class="settings">
   <button (click)="closeSettings()">&#10060;</button>
+  <br>
   <form [formGroup]="settingsForm">
-    Leadmine URL : <input type=text formControlName="leadmineURL" >
-    Compound Converter URL : <input type=text formControlName="compoundConverterURL" >
-    Unichem URL : <input type=text formControlName="unichemURL" >
-    <button type="submit">Submit</button>
+    <div class="url-form">
+      <span class="url text-base font-medium text-gray-900">
+        Leadmine URL:
+      </span>
+      <input class=url-input type=text formControlName="leadmineURL">
+    </div>
+    <br>
+    <div class="url-form">
+      <span class="url text-base font-medium text-gray-900">
+        Compound Converter URL:
+      </span>
+      <input class=url-input type=text formControlName="compoundConverterURL">
+    </div>
+    <br>
+    <div class="url-form">
+      <span class="url text-base font-medium text-gray-900">
+        Unichem URL:
+      </span>
+      <input class=url-input type=text formControlName="unichemURL">
+    </div>
+    <br>
   </form>
 
-  <button (click)="save()">Save</button>
+  <button class="save text-base font-medium text-gray-900" (click)="save()">Save</button>
 </div>

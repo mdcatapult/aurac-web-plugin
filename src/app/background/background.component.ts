@@ -9,12 +9,11 @@ import {
   XRef,
   XRefMessage,
   Message,
-  StringMessage, Settings
+  StringMessage, Settings, defaultSettings
 } from 'src/types';
 import {validDict} from './types';
 import {map, switchMap} from 'rxjs/operators';
 import {of} from 'rxjs';
-import {LogService} from '../popup/log.service';
 
 @Component({
   selector: 'app-background',
@@ -23,22 +22,30 @@ import {LogService} from '../popup/log.service';
 
 export class BackgroundComponent {
 
-  settings?: Settings;
+  settings: Settings = defaultSettings;
+  dictionary: validDict;
 
   constructor(private client: HttpClient) {
-    browser.runtime.onMessage.addListener((msg) => {
+    browser.runtime.onMessage.addListener((msg, sender, reply) => {
+      console.log('Received message from popup...', msg);
       switch (msg.type) {
         case 'ner_current_page': {
-          console.log('Received message from popup...');
-          this.nerCurrentPage(msg.body);
+          this.dictionary = msg.body;
+          this.nerCurrentPage(this.dictionary);
           break;
         }
         case 'compound_x-refs' : {
           this.loadXRefs(msg.body);
           break;
         }
-        case 'settings' : {
+        case 'save-settings' : {
           this.settings = msg.body;
+          break;
+        }
+        case 'load-settings': {
+          console.log('load-settings msg received, returning ', this.settings);
+          reply(this.settings);
+          break;
         }
       }
     });
@@ -46,7 +53,7 @@ export class BackgroundComponent {
 
   private loadXRefs(entityTerm: string): void {
 
-    const leadmineURL = `${this.settings.leadmineURL}/${entityTerm}`;
+    const leadmineURL = `${this.settings.leadmineURL}/${this.dictionary}/entities/${entityTerm}`;
 
     this.client.get(leadmineURL).pipe(
       switchMap((leadmineResult: LeadmineResult) => {
@@ -54,9 +61,13 @@ export class BackgroundComponent {
           return smiles ? this.client.get(`${this.settings.compoundConverterURL}/${smiles}?from=SMILES&to=inchikey`) : of({});
         }
       ),
-      switchMap((converterResult: ConverterResult) => this.client.get(`${this.settings.unichemURL}/${converterResult.output}`)),
+      switchMap((converterResult: ConverterResult) => {
+        return converterResult ? this.client.get(`${this.settings.unichemURL}/${converterResult.output}`) : of({});
+      }),
       map((xrefs: XRef[]) => xrefs.map(xref => {
-        xref.compoundName = entityTerm;
+        if (xref) {
+          xref.compoundName = entityTerm;
+        }
         return xref;
       }))
     ).subscribe((xrefs: XRef[]) => {
@@ -77,7 +88,7 @@ export class BackgroundComponent {
       .then(result => {
         result = result as StringMessage;
         console.log('Sending page contents to leadmine...');
-        this.client.post<LeadminerResult>(`https://leadmine.wopr.inf.mdc/${dictionary}/entities`, result.body, {observe: 'response'})
+        this.client.post<LeadminerResult>(`${this.settings.leadmineURL}/${dictionary}/entities`, result.body, {observe: 'response'})
           .subscribe((response) => {
             console.log('Received results from leadmine...');
             const uniqueEntities = this.getUniqueEntities(response.body);
