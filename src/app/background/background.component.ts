@@ -14,6 +14,7 @@ import {
 import {validDict} from './types';
 import {map, switchMap} from 'rxjs/operators';
 import {of} from 'rxjs';
+import {LogService} from '../popup/log.service';
 
 @Component({
   selector: 'app-background',

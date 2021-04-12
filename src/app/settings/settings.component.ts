@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {Settings} from '../../types';
 import {environment} from '../../environments/environment';
+import {LogService} from '../popup/log.service';
 
 @Component({
   selector: 'app-settings',
@@ -14,15 +15,15 @@ export class SettingsComponent implements OnInit {
   @Output() closed = new EventEmitter<boolean>();
 
   settingsForm = new FormGroup({
+
     leadmineURL: new FormControl(environment.leadmineURL),
     compoundConverterURL: new FormControl(environment.compoundConverterURL),
     unichemURL: new FormControl(environment.unichemURL),
   });
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   save(): void {
     this.saved.emit(this.settingsForm.value);
