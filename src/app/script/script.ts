@@ -19,7 +19,7 @@
       return this.m.has(text.toLowerCase());
     }
     get(text: string): HTMLDivElement {
-      return this.m.get(text);
+      return this.m.get(text.toLowerCase());
     }
     values(): IterableIterator<HTMLDivElement> {
       return this.m.values();
@@ -133,8 +133,10 @@
         }
       }
       const div = entityToDiv.get(info.entityText);
-      div.scrollIntoView({behavior: 'smooth'});
-      setSidebarColors(div);
+      if (div) {
+        div.scrollIntoView({behavior: 'smooth'});
+        setSidebarColors(div);
+      }
     };
   };
 
