@@ -70,6 +70,10 @@ export class BackgroundComponent {
       browser.tabs.sendMessage<Message, StringMessage>(tab, {type: 'get_page_contents'})
       .catch(e => console.error(e))
       .then(result => {
+        if (!result || !result.body) {
+          console.log('No content');
+          return;
+        }
         result = result as StringMessage;
         console.log('Sending page contents to leadmine...');
         this.client.post<LeadminerResult>(`https://leadmine.wopr.inf.mdc/${dictionary}/entities`, result.body, {observe: 'response'})
