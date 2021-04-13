@@ -26,7 +26,7 @@ export class BackgroundComponent {
   dictionary: validDict;
 
   constructor(private client: HttpClient) {
-    browser.runtime.onMessage.addListener((msg, sender, reply) => {
+    browser.runtime.onMessage.addListener(msg => {
       console.log('Received message from popup...', msg);
       switch (msg.type) {
         case 'ner_current_page': {
@@ -43,8 +43,7 @@ export class BackgroundComponent {
           break;
         }
         case 'load-settings': {
-          reply(this.settings);
-          break;
+          return Promise.resolve(this.settings);
         }
       }
     });
