@@ -70,7 +70,8 @@ export class BackgroundComponent {
       browser.tabs.sendMessage<Message, StringMessage>(tab, {type: 'get_page_contents'})
       .catch(e => console.error(e))
       .then(result => {
-        if (!result) {
+        if (!result || !result.body) {
+          console.log('No content');
           return;
         }
         result = result as StringMessage;

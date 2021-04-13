@@ -68,7 +68,6 @@
               element.parentNode.removeChild(element);
               const childValue = getFerretHighlightChildren(replacementNode);
               childValue[0].addEventListener('mouseenter', populateFerretSidebar(entity, replacementNode));
-              childValue[0].addEventListener('mouseleave', populateFerretSidebar(entity, replacementNode));
             } catch (e) {
               console.error(e);
             }
