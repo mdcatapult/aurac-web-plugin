@@ -8,6 +8,8 @@ import { PopupComponent } from './popup/popup.component';
 import { RouterComponent } from './router/router.component';
 import { Routes, RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
+import {SettingsComponent} from './settings/settings.component';
+import {ReactiveFormsModule} from '@angular/forms';
 
 
 const routes: Routes = [
@@ -20,12 +22,14 @@ const routes: Routes = [
     BackgroundComponent,
     LoggerComponent,
     PopupComponent,
-    RouterComponent
+    RouterComponent,
+    SettingsComponent,
   ],
   imports: [
     BrowserModule,
-    RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' }),
-    HttpClientModule
+    RouterModule.forRoot(routes, {relativeLinkResolution: 'legacy'}),
+    HttpClientModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

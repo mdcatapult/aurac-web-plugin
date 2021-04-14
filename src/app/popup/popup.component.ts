@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { Message } from 'src/types';
-import { LogService } from './log.service';
+import {Component, OnInit} from '@angular/core';
+import {Message, Settings} from 'src/types';
+import {LogService} from './log.service';
 
 @Component({
   selector: 'app-popup',
@@ -9,9 +9,21 @@ import { LogService } from './log.service';
 })
 export class PopupComponent implements OnInit {
 
-  constructor(private log: LogService) { }
+  isSettings = false;
+
+  constructor(private log: LogService) {
+  }
 
   ngOnInit(): void {
+  }
+
+  settingsClicked() {
+    this.isSettings = true;
+  }
+
+  onSaveSettings(settings: Settings) {
+    browser.runtime.sendMessage<Message>({type: 'save-settings', body: settings})
+      .catch(e => this.log.Error(`Couldn't send message to background page: ${e}`));
   }
 
   nerCurrentPage(dictionary) {

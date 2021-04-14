@@ -10,7 +10,7 @@ Once the extension is loaded you will see the following icon:
 Clicking this icon will reveal a popup, which currently has 5 NER options (the `Settings` button is not yet functional), corresponding to a specific Leadmine deployment:
 * Genes/Proteins
 * Diseases
-* Chemicals(SMILES) 
+* Chemicals(SMILES)
 * Chemicals(InchiKey) - N.B. this instance will only resolve IUPACs to Inchi/InchiKey, other chemical synonyma will resolve to SMILES
 * General - the general purpose Leadmine config provided by NextMove which covers:
   * Chemicals
@@ -21,7 +21,7 @@ Clicking this icon will reveal a popup, which currently has 5 NER options (the `
   * Antibodies
   * Mass Spec
   * Organisms
-  
+
 Clicking one of these four buttons will run Leadmine (by making an API call to the Leadmine web service) on the contents of the active tab.
 
 
@@ -31,10 +31,9 @@ Cross-browser plugin written in Angular. This plugin combines the [web extension
 
 Because Angular works as a single page app, different pages have to be loaded via query parameters. The angular router doesn't seem to pick the up query parameters but the `ActivatedRoute` service does, so routing is implemented a bit strangely.
 
-Run `npm run build` to build the extension.
-Load the extension into chrome as an unpacked extension from `dist/browser-plugin` after building.
+`npm run build && npm run start` boots the app for a production environment.
 
-Run `npm start` to launch firefox and pre-load the extension.
+Build time is reduced when instead running `npm run dev`, which can be used for development environment.
 
 If you want to start the browser on a particular web page then set the following env var:
 ```bash
@@ -43,10 +42,6 @@ export WEB_EXT_START_URL=https://www.uniprot.org/uniprot/O76074
 Saves a lot of time when testing.
 
 **N.B. YOU MUST BE CONNECTED TO THE ALDERLEY PARK VPN FOR THE PLUGIN TO WORK**
-
-### Custom SSL certs
-
-If you are using custom ssl certs you may need to tell your browser to accept them by navigating to the web-service that ferret uses for NER eg `https://leadmine.wopr.inf.mdc/proteins/entities/pde5`
 
 ### Keeping Firefox changes between sessions
 
