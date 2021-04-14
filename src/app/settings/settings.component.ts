@@ -4,6 +4,7 @@ import {defaultSettings, Message, Settings} from '../../types';
 import {environment} from '../../environments/environment';
 import {LogService} from '../popup/log.service';
 
+
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
@@ -35,6 +36,34 @@ export class SettingsComponent implements OnInit {
     this.saved.emit(this.settingsForm.value);
     this.closed.emit(true);
   }
+
+  export(): void {
+    return;
+  }
+
+  load() : void {
+    console.log('hell')
+    document.querySelector('input').click()
+  }
+
+  onFileSelected(event: Event) {
+    let e = event.target as HTMLInputElement
+
+    if (e.files && e.files.length > 0) {
+      const reader = new FileReader();
+      reader.onloadend = (e) => {
+        // handle data processing
+        console.log(reader.result.toString());
+      };
+      reader.readAsText(e.files[0]);
+    } else {
+
+      console.error('No file selected');
+    }
+    console.log('Change input file')
+
+  }
+
 
   closeSettings(): void {
     this.closed.emit(true);

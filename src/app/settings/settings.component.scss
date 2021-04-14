@@ -3,7 +3,13 @@
   width: 600px;
 }
 
-.save {
-  position: absolute;
-  transform: translate(5%, 10%);
+.x {
+  margin: 5px;
+}
+
+.onebox{
+  width: auto;
+  height: auto;
+  display:inline-block;
+  background-color: red;
 }

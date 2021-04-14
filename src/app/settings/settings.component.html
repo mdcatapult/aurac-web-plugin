@@ -3,7 +3,7 @@
   <br>
   <form [formGroup]="settingsForm">
 
-<!--    Leadmine-->
+    <!--    Leadmine-->
     <div class="shadow sm:rounded-md sm:overflow-hidden">
       <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
         <div class="grid grid-cols-3 gap-6">
@@ -25,7 +25,7 @@
       </div>
     </div>
 
-<!--    Compound converter -->
+    <!--    Compound converter -->
     <div class="shadow sm:rounded-md sm:overflow-hidden">
       <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
         <div class="grid grid-cols-3 gap-6">
@@ -47,7 +47,7 @@
       </div>
     </div>
 
-<!--    Unichem-->
+    <!--    Unichem-->
     <div class="shadow sm:rounded-md sm:overflow-hidden">
       <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
         <div class="grid grid-cols-3 gap-6">
@@ -66,12 +66,38 @@
 
   </form>
 
-  <button
-    (click)="save()"
-    class="save inline-flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white
+
+  <input type="file" class="file-input" style="display:none"
+         (change)="onFileSelected($event)" #fileUpload>
+
+  <div id="onebox">
+
+    <button
+      (click)="save()"
+      class="x child save inline-flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white
     bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-    Save
-  </button>
+      Save
+    </button>
+
+    <button
+      (click)="export()"
+      class="x child export inline-flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white
+    bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+      Export
+    </button>
+
+    <div class="file-upload">
+      <button
+        (click)="fileUpload.click()"
+        class="x child load inline-flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white
+    bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+        Load
+      </button>
+    </div>
+
+  </div>
+
+
 </div>
 
 
