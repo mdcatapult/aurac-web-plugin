@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {defaultSettings, Message, Settings} from '../../types';
 import {environment} from '../../environments/environment';
@@ -21,7 +21,8 @@ export class SettingsComponent implements OnInit {
     unichemURL: new FormControl(defaultSettings.unichemURL),
   });
 
-  constructor(private log: LogService) {}
+  constructor(private log: LogService) {
+  }
 
   ngOnInit(): void {
     this.log.Log('sending load settings msg');
@@ -41,17 +42,17 @@ export class SettingsComponent implements OnInit {
     return;
   }
 
-  load() : void {
-    console.log('hell')
-    document.querySelector('input').click()
+  load(): void {
+    console.log('hell');
+    document.querySelector('input').click();
   }
 
   onFileSelected(event: Event) {
-    let e = event.target as HTMLInputElement
+    const e = event.target as HTMLInputElement;
 
     if (e.files && e.files.length > 0) {
       const reader = new FileReader();
-      reader.onloadend = (e) => {
+      reader.onloadend = (x) => {
         // handle data processing
         console.log(reader.result.toString());
       };
@@ -60,7 +61,7 @@ export class SettingsComponent implements OnInit {
 
       console.error('No file selected');
     }
-    console.log('Change input file')
+    console.log('Change input file');
 
   }
 
