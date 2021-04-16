@@ -19,6 +19,8 @@ export class SettingsComponent implements OnInit {
   dictionaryUrls = defaultSettings;
   downloadJsonHref : SafeUrl
 
+
+
   settingsForm = new FormGroup({
     leadmineURL: new FormControl(defaultSettings.leadmineURL),
     compoundConverterURL: new FormControl(defaultSettings.compoundConverterURL),
@@ -29,6 +31,7 @@ export class SettingsComponent implements OnInit {
   fileUploadElementRef: ElementRef
 
   constructor(private log: LogService, private sanitizer: DomSanitizer) {
+    this.export();
   }
 
   ngOnInit(): void {
@@ -47,15 +50,15 @@ export class SettingsComponent implements OnInit {
 
   export(): void {
 
-    // // var theJSON = JSON.stringify(this.resJsonResponse);
-    // // var uri = this.sanitizer.bypassSecurityTrustUrl("data:text/json;charset=UTF-8," + encodeURIComponent(theJSON));
-    // // this.downloadJsonHref = uri;
-    // //
-    //   const theJSON = JSON.stringify(this.dictionaryUrls);
-    //   const uri = this.sanitizer.bypassSecurityTrustUrl("data:text/json;charset=UTF-8," + encodeURIComponent(theJSON));
-    //
-    //
+    // var theJSON = JSON.stringify(this.resJsonResponse);
+    // var uri = this.sanitizer.bypassSecurityTrustUrl("data:text/json;charset=UTF-8," + encodeURIComponent(theJSON));
     // this.downloadJsonHref = uri;
+    // //
+      const theJSON = JSON.stringify(this.dictionaryUrls);
+      const uri = this.sanitizer.bypassSecurityTrustResourceUrl("data:text/json;charset=UTF-8," + encodeURIComponent(theJSON));
+    //
+    //
+    this.downloadJsonHref = uri;
     //
     // return;
   }
