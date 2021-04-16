@@ -76,13 +76,13 @@ export type XRef = {
   url: string,
 };
 
-export type Settings = {
+export type DictionaryURLs = {
   leadmineURL: string,
   compoundConverterURL: string,
   unichemURL: string,
 };
 
-export const defaultSettings: Settings = {
+export const defaultSettings: DictionaryURLs = {
   leadmineURL: environment.leadmineURL,
   compoundConverterURL: environment.compoundConverterURL,
   unichemURL: environment.unichemURL,
