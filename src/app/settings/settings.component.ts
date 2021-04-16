@@ -1,10 +1,9 @@
-import {Component, OnInit, Input, ViewChild, Output, EventEmitter, ElementRef} from '@angular/core';
+import {Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
-import {defaultSettings, Message, DictionaryURLs} from '../../types';
-import {environment} from '../../environments/environment';
+import {defaultSettings, DictionaryURLs, Message} from '../../types';
 import {LogService} from '../popup/log.service';
 
-import {DomSanitizer, SafeResourceUrl, SafeUrl} from '@angular/platform-browser';
+import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-settings',
