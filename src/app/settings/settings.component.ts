@@ -17,7 +17,7 @@ export class SettingsComponent implements OnInit {
   @Output() closed = new EventEmitter<boolean>();
 
   dictionaryUrls = defaultSettings;
-  downloadJsonHref: SafeUrl
+  downloadJsonHref: SafeUrl;
 
   settingsForm = new FormGroup({
     leadmineURL: new FormControl(defaultSettings.leadmineURL),
@@ -26,9 +26,9 @@ export class SettingsComponent implements OnInit {
   });
 
 
-  // used to keep track of fileUpload thingy?
+  // used to keep track of native fileUpload
   @ViewChild('fileUpload')
-  fileUploadElementRef: ElementRef
+  fileUploadElementRef: ElementRef;
 
   constructor(private log: LogService, private sanitizer: DomSanitizer) {
   }
@@ -49,12 +49,12 @@ export class SettingsComponent implements OnInit {
         const json = JSON.stringify(this.dictionaryUrls);
 
         this.downloadJsonHref =
-          this.sanitizer.bypassSecurityTrustResourceUrl("data:text/json;charset=UTF-8," + encodeURIComponent(json));
+          this.sanitizer.bypassSecurityTrustResourceUrl('data:text/json;charset=UTF-8,' + encodeURIComponent(json));
 
       } catch (e) {
-        console.log("error creating JSON from URL: " + e);
+        console.log('error creating JSON from URL: ' + e);
       }
-    })
+    });
   }
 
   save(): void {
@@ -67,34 +67,30 @@ export class SettingsComponent implements OnInit {
 
     if (e.files && e.files.length > 0) {
 
-      let file: File = e.files[0];
+      const file: File = e.files[0];
       const reader = new FileReader();
 
-      console.log("file size")
+      console.log('file size');
       console.log(file.size); // check file size?
 
       reader.onloadend = (_) => {
 
         try {
-          const dictionaryURLs = <DictionaryURLs>JSON.parse(reader.result as string);
+          const dictionaryURLs = JSON.parse(reader.result as string) as DictionaryURLs;
 
           if (this.validURLs(dictionaryURLs)) {
-            this.settingsForm.controls["leadmineURL"].setValue(dictionaryURLs.leadmineURL);
-            this.settingsForm.controls["compoundConverterURL"].setValue(dictionaryURLs.compoundConverterURL);
-            this.settingsForm.controls["unichemURL"].setValue(dictionaryURLs.unichemURL);
-
+            this.settingsForm.reset(dictionaryURLs);
             this.dictionaryUrls = dictionaryURLs;
-
           } else {
             // some URLs not valid
             // TODO error popup?
           }
         } catch (e) {
-          console.log("error validating dictionary URLs from file: " + e)
+          console.log('error validating dictionary URLs from file: ' + e);
         }
 
         // reset the file element to allow reloading of the same file
-        this.fileUploadElementRef.nativeElement.value = ""
+        this.fileUploadElementRef.nativeElement.value = '';
       };
 
       reader.readAsText(file);
@@ -109,16 +105,20 @@ export class SettingsComponent implements OnInit {
   }
 
   // check if keys exist and we can make a URL
-  validURLs(urls: DictionaryURLs): Boolean {
+  validURLs(urls: DictionaryURLs): boolean {
 
     // TODO probably better to have an array of URLs?
-    if (!urls.leadmineURL || !urls.unichemURL || !urls.compoundConverterURL) return false;
+    if (!urls.leadmineURL || !urls.unichemURL || !urls.compoundConverterURL) {
+      return false;
+    }
 
     try {
-      for (let urlsKey in urls) {
-        const validURL = new URL(urls[urlsKey])
+      for (const urlsKey of Object.keys(urls)) {
+        const validURL = new URL(urls[urlsKey]);
 
-        if (!validURL) return false;
+        if (!validURL) {
+          return false;
+        }
       }
     } catch (e) {
       return false;
