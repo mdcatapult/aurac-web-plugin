@@ -17,9 +17,7 @@ export class SettingsComponent implements OnInit {
   @Output() closed = new EventEmitter<boolean>();
 
   dictionaryUrls = defaultSettings;
-  downloadJsonHref : SafeUrl
-
-
+  downloadJsonHref: SafeUrl
 
   settingsForm = new FormGroup({
     leadmineURL: new FormControl(defaultSettings.leadmineURL),
@@ -27,11 +25,12 @@ export class SettingsComponent implements OnInit {
     unichemURL: new FormControl(defaultSettings.unichemURL),
   });
 
+
+  // used to keep track of fileUpload thingy?
   @ViewChild('fileUpload')
   fileUploadElementRef: ElementRef
 
   constructor(private log: LogService, private sanitizer: DomSanitizer) {
-    this.export();
   }
 
   ngOnInit(): void {
@@ -41,31 +40,26 @@ export class SettingsComponent implements OnInit {
       .then((settings: DictionaryURLs) => {
         this.settingsForm.reset(settings);
       });
+
+
+    this.settingsForm.valueChanges.subscribe(formValues => {
+      this.dictionaryUrls = formValues;
+
+      try {
+        const json = JSON.stringify(this.dictionaryUrls);
+
+        this.downloadJsonHref =
+          this.sanitizer.bypassSecurityTrustResourceUrl("data:text/json;charset=UTF-8," + encodeURIComponent(json));
+
+      } catch (e) {
+        console.log("error creating JSON from URL: " + e);
+      }
+    })
   }
 
   save(): void {
     this.saved.emit(this.settingsForm.value);
     this.closed.emit(true);
-  }
-
-  export(): void {
-
-    // var theJSON = JSON.stringify(this.resJsonResponse);
-    // var uri = this.sanitizer.bypassSecurityTrustUrl("data:text/json;charset=UTF-8," + encodeURIComponent(theJSON));
-    // this.downloadJsonHref = uri;
-    // //
-      const theJSON = JSON.stringify(this.dictionaryUrls);
-      const uri = this.sanitizer.bypassSecurityTrustResourceUrl("data:text/json;charset=UTF-8," + encodeURIComponent(theJSON));
-    //
-    //
-    this.downloadJsonHref = uri;
-    //
-    // return;
-  }
-
-  load(): void {
-    console.log('hell');
-    document.querySelector('input').click();
   }
 
   onFileSelected(event: Event) {
@@ -79,12 +73,12 @@ export class SettingsComponent implements OnInit {
       console.log("file size")
       console.log(file.size); // check file size?
 
-      reader.onloadend = (x) => {
+      reader.onloadend = (_) => {
 
         try {
           const dictionaryURLs = <DictionaryURLs>JSON.parse(reader.result as string);
 
-          if (this.validUrls(dictionaryURLs)) {
+          if (this.validURLs(dictionaryURLs)) {
             this.settingsForm.controls["leadmineURL"].setValue(dictionaryURLs.leadmineURL);
             this.settingsForm.controls["compoundConverterURL"].setValue(dictionaryURLs.compoundConverterURL);
             this.settingsForm.controls["unichemURL"].setValue(dictionaryURLs.unichemURL);
@@ -93,10 +87,10 @@ export class SettingsComponent implements OnInit {
 
           } else {
             // some URLs not valid
-            // TODO error popup
+            // TODO error popup?
           }
         } catch (e) {
-          console.log(e)
+          console.log("error validating dictionary URLs from file: " + e)
         }
 
         // reset the file element to allow reloading of the same file
@@ -105,10 +99,8 @@ export class SettingsComponent implements OnInit {
 
       reader.readAsText(file);
     } else {
-
       console.error('No file selected');
     }
-    console.log('Change input file');
   }
 
 
@@ -116,18 +108,17 @@ export class SettingsComponent implements OnInit {
     this.closed.emit(true);
   }
 
-
   // check if keys exist and we can make a URL
-  validUrls(urls: DictionaryURLs): Boolean {
+  validURLs(urls: DictionaryURLs): Boolean {
 
-    // TODO probably better to have an array of URLs
+    // TODO probably better to have an array of URLs?
     if (!urls.leadmineURL || !urls.unichemURL || !urls.compoundConverterURL) return false;
 
     try {
       for (let urlsKey in urls) {
-        const validURL =  new URL(urls[urlsKey])
+        const validURL = new URL(urls[urlsKey])
 
-        if(!validURL) return false;
+        if (!validURL) return false;
       }
     } catch (e) {
       return false;
@@ -135,6 +126,4 @@ export class SettingsComponent implements OnInit {
 
     return true;
   }
-
-
 }
