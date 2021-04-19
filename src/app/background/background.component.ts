@@ -9,7 +9,7 @@ import {
   XRef,
   XRefMessage,
   Message,
-  StringMessage
+  StringMessage, Settings, defaultSettings
 } from 'src/types';
 import {validDict} from './types';
 import {map, switchMap} from 'rxjs/operators';
@@ -22,36 +22,50 @@ import {of} from 'rxjs';
 
 export class BackgroundComponent {
 
+  settings: Settings = defaultSettings;
+  dictionary: validDict;
+
   constructor(private client: HttpClient) {
-    browser.runtime.onMessage.addListener((msg) => {
+    browser.runtime.onMessage.addListener(msg => {
+      console.log('Received message from popup...', msg);
       switch (msg.type) {
         case 'ner_current_page': {
-          console.log('Received message from popup...');
-          this.nerCurrentPage(msg.body);
+          this.dictionary = msg.body;
+          this.nerCurrentPage(this.dictionary);
           break;
         }
         case 'compound_x-refs' : {
           this.loadXRefs(msg.body);
           break;
         }
+        case 'save-settings' : {
+          this.settings = msg.body;
+          break;
+        }
+        case 'load-settings': {
+          return Promise.resolve(this.settings);
+        }
       }
     });
   }
 
   private loadXRefs(entityTerm: string): void {
-    const leadmineURL = `http://localhost:8081/entities/${entityTerm}`;
-    const compoundConverterURL = 'http://localhost:8082/convert';
-    const unichemURL = 'http://localhost:8080/x-ref';
+
+    const leadmineURL = `${this.settings.leadmineURL}/${this.dictionary}/entities/${entityTerm}`;
 
     this.client.get(leadmineURL).pipe(
       switchMap((leadmineResult: LeadmineResult) => {
           const smiles = leadmineResult ? leadmineResult.entities[0].resolvedEntity : undefined;
-          return smiles ? this.client.get(`${compoundConverterURL}/${smiles}?from=SMILES&to=inchikey`) : of({});
+          return smiles ? this.client.get(`${this.settings.compoundConverterURL}/${smiles}?from=SMILES&to=inchikey`) : of({});
         }
       ),
-      switchMap((converterResult: ConverterResult) => this.client.get(`${unichemURL}/${converterResult.output}`)),
+      switchMap((converterResult: ConverterResult) => {
+        return converterResult ? this.client.get(`${this.settings.unichemURL}/${converterResult.output}`) : of({});
+      }),
       map((xrefs: XRef[]) => xrefs.map(xref => {
-        xref.compoundName = entityTerm;
+        if (xref) {
+          xref.compoundName = entityTerm;
+        }
         return xref;
       }))
     ).subscribe((xrefs: XRef[]) => {
@@ -70,9 +84,13 @@ export class BackgroundComponent {
       browser.tabs.sendMessage<Message, StringMessage>(tab, {type: 'get_page_contents'})
       .catch(e => console.error(e))
       .then(result => {
+        if (!result || !result.body) {
+          console.log('No content');
+          return;
+        }
         result = result as StringMessage;
         console.log('Sending page contents to leadmine...');
-        this.client.post<LeadminerResult>(`https://leadmine.wopr.inf.mdc/${dictionary}/entities`, result.body, {observe: 'response'})
+        this.client.post<LeadminerResult>(`${this.settings.leadmineURL}/${dictionary}/entities`, result.body, {observe: 'response'})
           .subscribe((response) => {
             console.log('Received results from leadmine...');
             const uniqueEntities = this.getUniqueEntities(response.body);

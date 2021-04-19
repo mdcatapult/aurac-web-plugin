@@ -8,16 +8,32 @@
       source: string,
     },
   };
+
+  // provides a wrapper around Map<string, HTMLDivElement>() to ensure key formatting
+  class EntityToDiv {
+    private m = new Map<string, HTMLDivElement>();
+    set(text: string, html: HTMLDivElement) {
+      this.m.set(text.toLowerCase(), html);
+    }
+    has(text: string): boolean {
+      return this.m.has(text.toLowerCase());
+    }
+    get(text: string): HTMLDivElement {
+      return this.m.get(text.toLowerCase());
+    }
+    values(): IterableIterator<HTMLDivElement> {
+      return this.m.values();
+    }
+  }
   console.log('script loaded');
   const ferretSidebar = document.createElement('span');
   const buttonElement = document.createElement('button');
   ferretSidebar.appendChild(buttonElement);
   buttonElement.innerHTML = '&#10060';
-  buttonElement.className = 'sidebar-button button';
+  buttonElement.className = 'sidebar-button';
   const sidebarTexts = document.createElement('div');
   ferretSidebar.appendChild(sidebarTexts);
-  const entityToDiv = new Map<string, HTMLDivElement>();
-
+  const entityToDiv = new EntityToDiv();
   buttonElement.addEventListener('click', () => {
     ferretSidebar.remove();
     document.body.style.width = '100vw';
@@ -25,6 +41,7 @@
   });
   // @ts-ignore
   browser.runtime.onMessage.addListener((msg) => {
+
     document.body.style.width = '80vw';
     document.body.style.marginLeft = '20vw';
     document.head.appendChild(newFerretStyleElement());
@@ -51,7 +68,6 @@
               element.parentNode.removeChild(element);
               const childValue = getFerretHighlightChildren(replacementNode);
               childValue[0].addEventListener('mouseenter', populateFerretSidebar(entity, replacementNode));
-              childValue[0].addEventListener('mouseleave', populateFerretSidebar(entity, replacementNode));
             } catch (e) {
               console.error(e);
             }
@@ -91,8 +107,9 @@
     .sidebar-button {
       color: black;
       background-color: rgb(192, 192, 192);
-      position: relative;
-      left: 88%;
+      position: fixed;
+      left: 17.5vw;
+      top: 0.5vw;
      }`;
     return styleElement;
   };
@@ -103,19 +120,22 @@
       if (event.type !== 'mouseenter') {
         return;
       }
+
       if (getFerretHighlightChildren(element).some(child => child.className === 'ferret-highlight')
         && element.parentElement.className === 'ferret-highlight') {
         removeEventListener('mouseenter', populateFerretSidebar(info, element));
-      }
-      if (!entityToDiv.has(info.entityText)) {
-        entityToDiv.set(info.entityText, renderSidebar(info));
-        // @ts-ignore
-        browser.runtime.sendMessage({type: 'compound_x-refs', body: info.entityText});
-
+      } else {
+        if (!entityToDiv.has(info.entityText)) {
+          entityToDiv.set(info.entityText, renderSidebar(info));
+          // @ts-ignore
+          browser.runtime.sendMessage({type: 'compound_x-refs', body: info.entityText});
+        }
       }
       const div = entityToDiv.get(info.entityText);
-      div.scrollIntoView({behavior: 'smooth'});
-      setSidebarColors(div);
+      if (div) {
+        div.scrollIntoView({behavior: 'smooth'});
+        setSidebarColors(div);
+      }
     };
   };
 
@@ -147,7 +167,7 @@
   }
 
   function setXRefHTML(xrefs: {databaseName: string, url: string, compoundName: string}[]): void {
-    Array.from(document.getElementsByClassName(xrefs[0].compoundName)).forEach(element => element.innerHTML = '');
+    Array.from(document.getElementsByClassName(xrefs[0] ? xrefs[0].compoundName : '')).forEach(element => element.innerHTML = '');
     xrefs.forEach(xref => {
       const xrefElement = document.getElementsByClassName(xref.compoundName).item(0);
       xrefElement.innerHTML += `<p> ${xref.databaseName}: ${xref.url}</p>`;
@@ -168,6 +188,9 @@
 
   // Recursively find all text nodes which match regex
   function allDescendants(node: HTMLElement, elements: Array<Element>, re: RegExp) {
+    if (node && node.classList.contains('ferret-sidebar')) {
+      return;
+    }
     try {
       node.childNodes.forEach(child => {
         const element = child as HTMLElement;
