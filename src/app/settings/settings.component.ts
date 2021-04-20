@@ -4,7 +4,7 @@ import {defaultSettings, DictionaryURLs, Message} from '../../types';
 import {LogService} from '../popup/log.service';
 
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import {SettingsService} from "./settings.service";
+import {SettingsService} from './settings.service';
 
 @Component({
   selector: 'app-settings',

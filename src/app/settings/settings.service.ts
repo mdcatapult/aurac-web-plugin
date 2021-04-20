@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {DictionaryURLs} from "../../types";
+import {DictionaryURLs} from '../../types';
 
 @Injectable({
   providedIn: 'root'

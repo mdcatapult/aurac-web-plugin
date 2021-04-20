@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { SettingsService } from './settings.service';
-import {DictionaryURLs} from "../../types";
+import {DictionaryURLs} from '../../types';
 
 describe('SettingsService', () => {
   let service: SettingsService;
@@ -17,21 +17,22 @@ describe('SettingsService', () => {
 
   it('should return false when given invalid URLs', () => {
     const invalidUrls: DictionaryURLs = {
-      leadmineURL: "dhfjdhrks",
-      compoundConverterURL: "asdfsdaf",
-      unichemURL: "/dfdsf/asd???=asdf",
-    }
+      leadmineURL: 'dhfjdhrks',
+      compoundConverterURL: 'asdfsdaf',
+      unichemURL: '/dfdsf/asd???=asdf',
+    };
 
-    expect(service.validURLs(invalidUrls)).toBeFalse()
-  })
+    expect(service.validURLs(invalidUrls)).toBeFalse();
+  });
 
   it('should return true given valid URLs', () => {
     const validURLs: DictionaryURLs = {
       leadmineURL: 'https://leadmine.wopr.inf.mdc',
       compoundConverterURL: 'https://compound-converter.wopr.inf.mdc/convert',
       unichemURL: 'http://unichem-plus.wopr.inf.mdc/x-ref'
-    }
+    };
 
-    expect(service.validURLs(validURLs)).toBeTruthy()
-  })
+    expect(service.validURLs(validURLs)).toBeTruthy();
+  });
+
 });
