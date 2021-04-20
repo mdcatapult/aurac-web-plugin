@@ -60,7 +60,7 @@ export class SettingsComponent implements OnInit {
 
         } catch (e) {
           this.validURLs = false;
-          console.log('error creating JSON from URL: ' + e);
+          console.log('error creating JSON from URLs: ' + e);
         }
       } else {
         this.validURLs = false;
