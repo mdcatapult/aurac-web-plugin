@@ -4,6 +4,7 @@ import {defaultSettings, DictionaryURLs, Message} from '../../types';
 import {LogService} from '../popup/log.service';
 
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
+import {SettingsService} from "./settings.service";
 
 @Component({
   selector: 'app-settings',
@@ -16,7 +17,7 @@ export class SettingsComponent implements OnInit {
   @Output() closed = new EventEmitter<boolean>();
 
   dictionaryUrls = defaultSettings;
-  downloadJsonHref: SafeUrl;
+  downloadJsonHref: SafeUrl; // TODO I don't know what this is for anymore
 
   settingsForm = new FormGroup({
     leadmineURL: new FormControl(defaultSettings.leadmineURL),
@@ -29,7 +30,7 @@ export class SettingsComponent implements OnInit {
   @ViewChild('fileUpload')
   fileUploadElementRef: ElementRef;
 
-  constructor(private log: LogService, private sanitizer: DomSanitizer) {
+  constructor(private log: LogService, private sanitizer: DomSanitizer, private settingsService: SettingsService) {
   }
 
   ngOnInit(): void {
@@ -77,7 +78,7 @@ export class SettingsComponent implements OnInit {
         try {
           const dictionaryURLs = JSON.parse(reader.result as string) as DictionaryURLs;
 
-          if (this.validURLs(dictionaryURLs)) {
+          if (this.settingsService.validURLs(dictionaryURLs)) {
             this.settingsForm.reset(dictionaryURLs);
             this.dictionaryUrls = dictionaryURLs;
           } else {
@@ -103,26 +104,5 @@ export class SettingsComponent implements OnInit {
     this.closed.emit(true);
   }
 
-  // check if keys exist and we can make a URL
-  validURLs(urls: DictionaryURLs): boolean {
 
-    // TODO probably better to have an array of URLs?
-    if (!urls.leadmineURL || !urls.unichemURL || !urls.compoundConverterURL) {
-      return false;
-    }
-
-    try {
-      for (const urlsKey of Object.keys(urls)) {
-        const validURL = new URL(urls[urlsKey]);
-
-        if (!validURL) {
-          return false;
-        }
-      }
-    } catch (e) {
-      return false;
-    }
-
-    return true;
-  }
 }
