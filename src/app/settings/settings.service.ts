@@ -8,7 +8,7 @@ export class SettingsService {
 
   constructor() { }
 
-  // check if keys exist and we can make a URL
+  // check if correct keys exist and we can make a URL
   validURLs(urls: DictionaryURLs): boolean {
 
     // TODO probably better to have an array of URLs?

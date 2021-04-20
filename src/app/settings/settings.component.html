@@ -78,18 +78,30 @@
   <div id="button-container">
     <button
       (click)="save()"
-      class="button-element child save inline-flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white
-    bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+      class="button-element child save inline-flex justify-center py-2 px-4 border border-transparent text-sm font-medium
+      rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2
+      focus:ring-indigo-500">
       Save
     </button>
 
-    <a class="button-element child export inline-flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white
-    bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+    <!--show if validURls -->
+    <a *ngIf="validURLs" class="button-element child export inline-flex justify-center py-2 px-4 border border-transparent
+    text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2
+    focus:ring-offset-2 focus:ring-indigo-500"
        title="Export"
        [href]="downloadJsonHref"
        download="ferret-url-settings.json">
       Export
     </a>
+
+    <a *ngIf="!validURLs" class="button-element child export inline-flex justify-center py-2 px-4 border
+    border-transparent text-sm font-medium rounded-md text-white disabled focus:outline-none focus:ring-2
+    focus:ring-offset-2 focus:ring-indigo-500"
+       title="Export"
+       download="ferret-url-settings.json">
+      Export
+    </a>
+
 
     <button
       (click)="fileUpload.click()"

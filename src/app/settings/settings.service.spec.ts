@@ -25,6 +25,16 @@ describe('SettingsService', () => {
     expect(service.validURLs(invalidUrls)).toBeFalse();
   });
 
+  it('should return false given some valid and invalid URLs', () => {
+    const validURLs: DictionaryURLs = {
+      leadmineURL: '',
+      compoundConverterURL: 'https://compound-converter.wopr.inf.mdc/convert',
+      unichemURL: 'http://unichem-plus.wopr.inf.mdc/x-ref'
+    };
+
+    expect(service.validURLs(validURLs)).toBeFalse();
+  });
+
   it('should return true given valid URLs', () => {
     const validURLs: DictionaryURLs = {
       leadmineURL: 'https://leadmine.wopr.inf.mdc',

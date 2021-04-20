@@ -17,6 +17,7 @@ export class SettingsComponent implements OnInit {
   @Output() closed = new EventEmitter<boolean>();
 
   dictionaryUrls = defaultSettings;
+  validURLs = false;
   downloadJsonHref: SafeUrl; // TODO I don't know what this is for anymore
 
   settingsForm = new FormGroup({
@@ -30,7 +31,9 @@ export class SettingsComponent implements OnInit {
   @ViewChild('fileUpload')
   fileUploadElementRef: ElementRef;
 
-  constructor(private log: LogService, private sanitizer: DomSanitizer, private settingsService: SettingsService) {
+  constructor(private log: LogService,
+              private sanitizer: DomSanitizer,
+              private settingsService: SettingsService) {
   }
 
   ngOnInit(): void {
@@ -41,18 +44,27 @@ export class SettingsComponent implements OnInit {
         this.settingsForm.reset(settings);
       });
 
-
+    // listen for form URL value changes and verify URLs are valid
+    // downloadJsonHref is used to conditionally show & hide buttons that allow or disallow exporting URLs
     this.settingsForm.valueChanges.subscribe(formValues => {
+
       this.dictionaryUrls = formValues;
+      this.validURLs = this.settingsService.validURLs(this.dictionaryUrls);
 
-      try {
-        const json = JSON.stringify(this.dictionaryUrls);
+      if (this.validURLs) {
+        try {
+          const json = JSON.stringify(this.dictionaryUrls);
 
-        this.downloadJsonHref =
-          this.sanitizer.bypassSecurityTrustResourceUrl('data:text/json;charset=UTF-8,' + encodeURIComponent(json));
+          this.downloadJsonHref =
+            this.sanitizer.bypassSecurityTrustResourceUrl('data:text/json;charset=UTF-8,' + encodeURIComponent(json));
 
-      } catch (e) {
-        console.log('error creating JSON from URL: ' + e);
+        } catch (e) {
+          this.validURLs = false;
+          console.log('error creating JSON from URL: ' + e);
+        }
+      } else {
+        this.validURLs = false;
+        console.log('error, dictionary URLs invalid');
       }
     });
   }
@@ -71,7 +83,7 @@ export class SettingsComponent implements OnInit {
       const reader = new FileReader();
 
       console.log('file size');
-      console.log(file.size); // check file size?
+      console.log(file.size); // TODO check file size?
 
       reader.onloadend = (_) => {
 
@@ -103,6 +115,5 @@ export class SettingsComponent implements OnInit {
   closeSettings(): void {
     this.closed.emit(true);
   }
-
 
 }
