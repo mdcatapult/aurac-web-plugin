@@ -18,7 +18,7 @@ export class SettingsComponent implements OnInit {
 
   dictionaryUrls = defaultSettings;
   validURLs = false;
-  downloadJsonHref: SafeUrl; // TODO I don't know what this is for anymore
+  downloadJsonHref: SafeUrl; // used to as HREF link from HTML file
 
   settingsForm = new FormGroup({
     leadmineURL: new FormControl(defaultSettings.leadmineURL),
@@ -74,12 +74,12 @@ export class SettingsComponent implements OnInit {
     this.closed.emit(true);
   }
 
-  onFileSelected(event: Event) {
-    const e = event.target as HTMLInputElement;
+  onFileSelected(ev: Event) {
+    const event = ev.target as HTMLInputElement;
 
-    if (e.files && e.files.length > 0) {
+    if (event.files && event.files.length > 0) {
 
-      const file: File = e.files[0];
+      const file: File = event.files[0];
       const reader = new FileReader();
 
       console.log('file size');
@@ -110,7 +110,6 @@ export class SettingsComponent implements OnInit {
       console.error('No file selected');
     }
   }
-
 
   closeSettings(): void {
     this.closed.emit(true);
