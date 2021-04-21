@@ -51,8 +51,8 @@ describe('SettingsService', () => {
       "\"compoundConverterUrL\": \"https://compound-converter.wopr.inf.mdc/convert\"," +
       "\"unichemURL\": \"http://unichem-plus.wopr.inf.mdc/x-ref\"}"
 
-    const validURLs = JSON.parse(invalidJsonString) as DictionaryURLs;
+    const urlsWithInvalidKey = JSON.parse(invalidJsonString) as DictionaryURLs;
 
-    expect(service.validURLs(validURLs)).toBeFalse();
+    expect(service.validURLs(urlsWithInvalidKey)).toBeFalse();
   });
 });
