@@ -1,10 +1,11 @@
 import {Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
+import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {defaultSettings, DictionaryURLs, Message} from '../../types';
 import {LogService} from '../popup/log.service';
 
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {SettingsService} from './settings.service';
+import settings = browser.browsingData.settings;
 
 @Component({
   selector: 'app-settings',
@@ -20,12 +21,6 @@ export class SettingsComponent implements OnInit {
   validURLs = false;
   downloadJsonHref: SafeUrl; // used to as HREF link from HTML file
 
-  settingsForm = new FormGroup({
-    leadmineURL: new FormControl(defaultSettings.leadmineURL),
-    compoundConverterURL: new FormControl(defaultSettings.compoundConverterURL),
-    unichemURL: new FormControl(defaultSettings.unichemURL),
-  });
-
 
   // used to keep track of native fileUpload
   @ViewChild('fileUpload')
@@ -34,7 +29,14 @@ export class SettingsComponent implements OnInit {
   constructor(private log: LogService,
               private sanitizer: DomSanitizer,
               private settingsService: SettingsService) {
+
   }
+
+  settingsForm = new FormGroup({
+    leadmineURL: new FormControl(defaultSettings.leadmineURL, [Validators.required, this.settingsService.validator]),
+    compoundConverterURL: new FormControl(defaultSettings.compoundConverterURL, [Validators.required, this.settingsService.validator]),
+    unichemURL: new FormControl(defaultSettings.unichemURL, [Validators.required, this.settingsService.validator]),
+  });
 
   ngOnInit(): void {
     this.log.Log('sending load settings msg');
@@ -70,6 +72,7 @@ export class SettingsComponent implements OnInit {
   }
 
   save(): void {
+
     this.saved.emit(this.settingsForm.value);
     this.closed.emit(true);
   }

@@ -1,12 +1,18 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {DictionaryURLs} from '../../types';
+import {AbstractControl} from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SettingsService {
 
-  constructor() { }
+  constructor() {
+  }
+
+  validator(control: AbstractControl) {
+    return this.validURLs(control.value) ? null : {'invalid URL': control.value};
+  }
 
   // check if correct keys exist and we can make a URL
   validURLs(urls: DictionaryURLs): boolean {
