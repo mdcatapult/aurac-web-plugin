@@ -1,6 +1,6 @@
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 
-import { SettingsService } from './settings.service';
+import {SettingsService} from './settings.service';
 import {DictionaryURLs} from '../../types';
 
 describe('SettingsService', () => {
@@ -46,7 +46,7 @@ describe('SettingsService', () => {
   });
 
   it('should return false given invalid dictionary URL keys', () => {
-g
+
     const invalidJsonString = "{\"leadmineURL\": \"https://leadmine.wopr.inf.mdc\", " +
       "\"compoundConverterUrL\": \"https://compound-converter.wopr.inf.mdc/convert\"," +
       "\"unichemURL\": \"http://unichem-plus.wopr.inf.mdc/x-ref\"}";
