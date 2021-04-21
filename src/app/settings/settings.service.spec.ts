@@ -47,9 +47,9 @@ describe('SettingsService', () => {
 
   it('should return false given invalid dictionary URL keys', () => {
 
-    const invalidJsonString = "{\"leadmineURL\": \"https://leadmine.wopr.inf.mdc\", " +
-      "\"compoundConverterUrL\": \"https://compound-converter.wopr.inf.mdc/convert\"," +
-      "\"unichemURL\": \"http://unichem-plus.wopr.inf.mdc/x-ref\"}"
+    const invalidJsonString = '{\'leadmineURL\': \'https://leadmine.wopr.inf.mdc\', ' +
+      '\'compoundConverterUrL\': \'https://compound-converter.wopr.inf.mdc/convert\',' +
+      '\'unichemURL\': \'http://unichem-plus.wopr.inf.mdc/x-ref\'}';
 
     const urlsWithInvalidKey = JSON.parse(invalidJsonString) as DictionaryURLs;
 

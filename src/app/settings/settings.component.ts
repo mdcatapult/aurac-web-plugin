@@ -74,7 +74,7 @@ export class SettingsComponent implements OnInit {
     this.closed.emit(true);
   }
 
-  onFileSelected(ev: Event) : void {
+  onFileSelected(ev: Event): void {
     const event = ev.target as HTMLInputElement;
 
     if (event.files && event.files.length > 0) {
