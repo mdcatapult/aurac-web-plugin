@@ -45,4 +45,14 @@ describe('SettingsService', () => {
     expect(service.validURLs(validURLs)).toBeTruthy();
   });
 
+  it('should return false given invalid dictionary URL keys', () => {
+
+    const invalidJsonString = "{\"leadmineURL\": \"https://leadmine.wopr.inf.mdc\", " +
+      "\"compoundConverterUrL\": \"https://compound-converter.wopr.inf.mdc/convert\"," +
+      "\"unichemURL\": \"http://unichem-plus.wopr.inf.mdc/x-ref\"}"
+
+    const validURLs = JSON.parse(invalidJsonString) as DictionaryURLs;
+
+    expect(service.validURLs(validURLs)).toBeFalse();
+  });
 });
