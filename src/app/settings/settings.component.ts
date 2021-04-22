@@ -5,7 +5,6 @@ import {LogService} from '../popup/log.service';
 
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {SettingsService} from './settings.service';
-import settings = browser.browsingData.settings;
 
 @Component({
   selector: 'app-settings',
@@ -20,6 +19,7 @@ export class SettingsComponent implements OnInit {
   dictionaryUrls = defaultSettings;
   validURLs = false;
   downloadJsonHref: SafeUrl; // used to as HREF link from HTML file
+  settingsForm: FormGroup;
 
 
   // used to keep track of native fileUpload
@@ -32,13 +32,21 @@ export class SettingsComponent implements OnInit {
 
   }
 
-  settingsForm = new FormGroup({
-    leadmineURL: new FormControl(defaultSettings.leadmineURL, [Validators.required, this.settingsService.validator]),
-    compoundConverterURL: new FormControl(defaultSettings.compoundConverterURL, [Validators.required, this.settingsService.validator]),
-    unichemURL: new FormControl(defaultSettings.unichemURL, [Validators.required, this.settingsService.validator]),
-  });
-
   ngOnInit(): void {
+    this.settingsForm = new FormGroup({
+      leadmineURL: new FormControl(
+        defaultSettings.leadmineURL,
+        [Validators.required, this.validator.bind(this)]
+      ),
+      compoundConverterURL: new FormControl(
+        defaultSettings.compoundConverterURL,
+        [Validators.required, this.validator.bind(this)]
+      ),
+      unichemURL: new FormControl(
+        defaultSettings.unichemURL,
+        [Validators.required, this.validator.bind(this)]
+      ),
+    });
     this.log.Log('sending load settings msg');
     browser.runtime.sendMessage<Message>({type: 'load-settings'})
       .catch(e => this.log.Error(`Couldn't send load-settings message to background page: ${e}`))
@@ -71,10 +79,15 @@ export class SettingsComponent implements OnInit {
     });
   }
 
-  save(): void {
+  // validator = (control: AbstractControl): {[key: string]: string} | null => this.settingsService.validURLs(control.value) ? null : {'invalid URL': control.value};
 
-    this.saved.emit(this.settingsForm.value);
-    this.closed.emit(true);
+  validator(control: AbstractControl): {[key: string]: string} | null {
+    return this.settingsService.validURLs(control.value) ? null : {'invalid URL': control.value}
+  }
+
+  save(): void {
+      this.saved.emit(this.settingsForm.value);
+      this.closed.emit(true);
   }
 
   onFileSelected(ev: Event): void {
