@@ -20,7 +20,7 @@ export class SettingsService {
 
     try {
       for (const urlsKey of Object.keys(urls)) {
-        const validURL = new URL(urls[urlsKey]);
+        const validURL = this.isValidURL(urlsKey);
 
         if (!validURL) {
           return false;
@@ -33,13 +33,13 @@ export class SettingsService {
     return true;
   }
 
-  // static isValidURL(url: String) : boolean {
-  //
-  // }
+  static isValidURL(url: string): boolean {
+    return !!new URL(url);
+  }
 
-  static validator(control: AbstractControl): {[key: string]: string} | null {
+  static validator(control: AbstractControl): { [key: string]: string } | null {
     console.log('potatoes', control.value);
-    console.log( SettingsService.validURLs(control.value))
+    console.log(SettingsService.validURLs(control.value))
 
 
     return SettingsService.validURLs(control.value) ? null : {'invalid URL': control.value}
