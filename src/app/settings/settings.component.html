@@ -14,11 +14,15 @@
             <div class="mt-1 flex rounded-md shadow-sm">
               <input
                 type="text"
+                [ngStyle]="getBorderColor('unichemURL')"
                 name="leadmineURL"
                 formControlName="leadmineURL"
                 id="leadmineURL"
                 class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300"
               >
+              <div *ngIf="!settingsForm.get('leadmineURL').valid">
+                Your URL is wrong!
+              </div>
             </div>
           </div>
         </div>
@@ -36,6 +40,8 @@
             <div class="mt-1 flex rounded-md shadow-sm">
               <input
                 type="text"
+
+                [ngStyle]="getBorderColor('compoundConverterURL')"
                 name="compoundConverterURL"
                 formControlName="compoundConverterURL"
                 id="compoundConverterURL"
@@ -58,6 +64,7 @@
             <div class="mt-1 flex rounded-md shadow-sm">
               <input
                 type="text"
+                [ngStyle]="getBorderColor('unichemURL')"
                 name="unichemURL"
                 formControlName="unichemURL"
                 id="unichemURL"

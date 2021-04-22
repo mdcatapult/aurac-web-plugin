@@ -22,7 +22,7 @@ describe('SettingsService', () => {
       unichemURL: '/dfdsf/asd???=asdf',
     };
 
-    expect(service.validURLs(invalidUrls)).toBeFalse();
+    expect(SettingsService.validURLs(invalidUrls)).toBeFalse();
   });
 
   it('should return false given some valid and invalid URLs', () => {
@@ -32,7 +32,7 @@ describe('SettingsService', () => {
       unichemURL: 'http://unichem-plus.wopr.inf.mdc/x-ref'
     };
 
-    expect(service.validURLs(validURLs)).toBeFalse();
+    expect(SettingsService.validURLs(validURLs)).toBeFalse();
   });
 
   it('should return true given valid URLs', () => {
@@ -42,7 +42,7 @@ describe('SettingsService', () => {
       unichemURL: 'http://unichem-plus.wopr.inf.mdc/x-ref'
     };
 
-    expect(service.validURLs(validURLs)).toBeTruthy();
+    expect(SettingsService.validURLs(validURLs)).toBeTruthy();
   });
 
   it('should return false given invalid dictionary URL keys', () => {
@@ -53,6 +53,6 @@ describe('SettingsService', () => {
 
     const urlsWithInvalidKey = JSON.parse(invalidJsonString) as DictionaryURLs;
 
-    expect(service.validURLs(urlsWithInvalidKey)).toBeFalse();
+    expect(SettingsService.validURLs(urlsWithInvalidKey)).toBeFalse();
   });
 });

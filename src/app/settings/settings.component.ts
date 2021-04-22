@@ -27,8 +27,7 @@ export class SettingsComponent implements OnInit {
   fileUploadElementRef: ElementRef;
 
   constructor(private log: LogService,
-              private sanitizer: DomSanitizer,
-              private settingsService: SettingsService) {
+              private sanitizer: DomSanitizer) {
 
   }
 
@@ -36,15 +35,15 @@ export class SettingsComponent implements OnInit {
     this.settingsForm = new FormGroup({
       leadmineURL: new FormControl(
         defaultSettings.leadmineURL,
-        [Validators.required, this.validator.bind(this)]
+        Validators.compose([Validators.required, SettingsService.validator])
       ),
       compoundConverterURL: new FormControl(
         defaultSettings.compoundConverterURL,
-        [Validators.required, this.validator.bind(this)]
+        Validators.compose([Validators.required, SettingsService.validator])
       ),
       unichemURL: new FormControl(
         defaultSettings.unichemURL,
-        [Validators.required, this.validator.bind(this)]
+        Validators.compose([Validators.required, SettingsService.validator])
       ),
     });
     this.log.Log('sending load settings msg');
@@ -59,7 +58,7 @@ export class SettingsComponent implements OnInit {
     this.settingsForm.valueChanges.subscribe(formValues => {
 
       this.dictionaryUrls = formValues;
-      this.validURLs = this.settingsService.validURLs(this.dictionaryUrls);
+      this.validURLs = SettingsService.validURLs(this.dictionaryUrls);
 
       if (this.validURLs) {
         try {
@@ -79,10 +78,12 @@ export class SettingsComponent implements OnInit {
     });
   }
 
-  // validator = (control: AbstractControl): {[key: string]: string} | null => this.settingsService.validURLs(control.value) ? null : {'invalid URL': control.value};
+  getBorderColor(formName: string) : Object {
 
-  validator(control: AbstractControl): {[key: string]: string} | null {
-    return this.settingsService.validURLs(control.value) ? null : {'invalid URL': control.value}
+
+    return {'border-color' : this.settingsForm.get(formName).valid  ? 'red' : 'gray' }
+
+    // return {'border-color' : this.settingsForm.get('leadmineURL').valid ? 'gray' : 'red'};
   }
 
   save(): void {
@@ -106,7 +107,7 @@ export class SettingsComponent implements OnInit {
         try {
           const dictionaryURLs = JSON.parse(reader.result as string) as DictionaryURLs;
 
-          if (this.settingsService.validURLs(dictionaryURLs)) {
+          if (SettingsService.validURLs(dictionaryURLs)) {
             this.settingsForm.reset(dictionaryURLs);
             this.dictionaryUrls = dictionaryURLs;
           } else {

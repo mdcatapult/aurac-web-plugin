@@ -11,7 +11,7 @@ export class SettingsService {
   }
 
   // check if correct keys exist and we can make a URL
-  validURLs(urls: DictionaryURLs): boolean {
+  static validURLs(urls: DictionaryURLs): boolean {
 
     // TODO probably better to have an array of URLs?
     if (!urls.leadmineURL || !urls.unichemURL || !urls.compoundConverterURL) {
@@ -32,4 +32,17 @@ export class SettingsService {
 
     return true;
   }
+
+  // static isValidURL(url: String) : boolean {
+  //
+  // }
+
+  static validator(control: AbstractControl): {[key: string]: string} | null {
+    console.log('potatoes', control.value);
+    console.log( SettingsService.validURLs(control.value))
+
+
+    return SettingsService.validURLs(control.value) ? null : {'invalid URL': control.value}
+  }
+
 }
