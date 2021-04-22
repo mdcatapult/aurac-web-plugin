@@ -1,5 +1,5 @@
 import {Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
-import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {defaultSettings, DictionaryURLs, Message} from '../../types';
 import {LogService} from '../popup/log.service';
 
@@ -28,7 +28,6 @@ export class SettingsComponent implements OnInit {
 
   constructor(private log: LogService,
               private sanitizer: DomSanitizer) {
-
   }
 
   ngOnInit(): void {
@@ -78,17 +77,13 @@ export class SettingsComponent implements OnInit {
     });
   }
 
-  getBorderColor(formName: string) : Object {
-
-
-    return {'border-color' : this.settingsForm.get(formName).valid  ? 'red' : 'gray' }
-
-    // return {'border-color' : this.settingsForm.get('leadmineURL').valid ? 'gray' : 'red'};
+  getBorderColor(formName: string): Object {
+    return {'border-color': this.settingsForm.get(formName).valid ? 'gray' : 'red'}
   }
 
   save(): void {
-      this.saved.emit(this.settingsForm.value);
-      this.closed.emit(true);
+    this.saved.emit(this.settingsForm.value);
+    this.closed.emit(true);
   }
 
   onFileSelected(ev: Event): void {
