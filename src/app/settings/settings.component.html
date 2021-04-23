@@ -8,21 +8,18 @@
       <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
         <div class="grid grid-cols-3 gap-6">
           <div class="col-span-3 sm:col-span-2">
-            <label for="leadmineURL" class="block text-sm font-medium text-gray-700">
+            <label for="{{urlKeys.leadmineURL}}" class="block text-sm font-medium text-gray-700">
               Leadmine URL
             </label>
             <div class="mt-1 flex rounded-md shadow-sm">
               <input
                 type="text"
-                [ngStyle]="getBorderColor('unichemURL')"
-                name="leadmineURL"
-                formControlName="leadmineURL"
-                id="leadmineURL"
+                [ngStyle]="getBorderColor(urlKeys.leadmineURL)"
+                name="{{urlKeys.leadmineURL}}"
+                formControlName="{{urlKeys.leadmineURL}}"
+                id="{{urlKeys.leadmineURL}}"
                 class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300"
               >
-              <div *ngIf="!settingsForm.get('leadmineURL').valid">
-                Your URL is wrong!
-              </div>
             </div>
           </div>
         </div>
@@ -34,16 +31,16 @@
       <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
         <div class="grid grid-cols-3 gap-6">
           <div class="col-span-3 sm:col-span-2">
-            <label for="compoundConverterURL" class="block text-sm font-medium text-gray-700">
+            <label for="{{urlKeys.compoundConverterURL}}" class="block text-sm font-medium text-gray-700">
               Compound Converter URL
             </label>
             <div class="mt-1 flex rounded-md shadow-sm">
               <input
                 type="text"
-                [ngStyle]="getBorderColor('compoundConverterURL')"
-                name="compoundConverterURL"
-                formControlName="compoundConverterURL"
-                id="compoundConverterURL"
+                [ngStyle]="getBorderColor(urlKeys.compoundConverterURL)"
+                name="{{urlKeys.compoundConverterURL}}"
+                formControlName="{{urlKeys.compoundConverterURL}}"
+                id="{{urlKeys.compoundConverterURL}}"
                 class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300"
               >
             </div>
@@ -57,16 +54,16 @@
       <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
         <div class="grid grid-cols-3 gap-6">
           <div class="col-span-3 sm:col-span-2">
-            <label for="unichemURL" class="block text-sm font-medium text-gray-700">
+            <label for="{{urlKeys.unichemURL}}" class="block text-sm font-medium text-gray-700">
               Unichem URL
             </label>
             <div class="mt-1 flex rounded-md shadow-sm">
               <input
                 type="text"
-                [ngStyle]="getBorderColor('unichemURL')"
-                name="unichemURL"
-                formControlName="unichemURL"
-                id="unichemURL"
+                [ngStyle]="getBorderColor(urlKeys.unichemURL)"
+                name="{{urlKeys.unichemURL}}"
+                formControlName="{{urlKeys.unichemURL}}"
+                id="{{urlKeys.unichemURL}}"
                 class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300"
               >
             </div>
@@ -89,14 +86,17 @@
   <div id="button-container">
     <button
       (click)="save()"
+      [disabled]="!settingsForm.valid"
       class="button-element child save inline-flex justify-center py-2 px-4 border border-transparent text-sm font-medium
       rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2
-      focus:ring-indigo-500">
+      focus:ring-indigo-500"
+      [ngClass]="!settingsForm.valid ? 'disabled' : '' "
+    >
       Save
     </button>
 
     <!--show if validURls -->
-    <a *ngIf="validURLs" class="button-element child export inline-flex justify-center py-2 px-4 border border-transparent
+    <a *ngIf="settingsForm.valid" class="button-element child export inline-flex justify-center py-2 px-4 border border-transparent
     text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2
     focus:ring-offset-2 focus:ring-indigo-500"
        title="Export"
@@ -105,7 +105,7 @@
       Export
     </a>
 
-    <a *ngIf="!validURLs" class="button-element child export inline-flex justify-center py-2 px-4 border
+    <a *ngIf="!settingsForm.valid" class="button-element child export inline-flex justify-center py-2 px-4 border
     border-transparent text-sm font-medium rounded-md text-white disabled focus:outline-none focus:ring-2
     focus:ring-offset-2 focus:ring-indigo-500"
        title="Export"

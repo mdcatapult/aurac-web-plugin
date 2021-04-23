@@ -87,3 +87,9 @@ export const defaultSettings: DictionaryURLs = {
   compoundConverterURL: environment.compoundConverterURL,
   unichemURL: environment.unichemURL,
 };
+
+export const DictionaryURLKeys = {
+  leadmineURL : 'leadmineURL',
+  compoundConverterURL : 'compoundConverterURL',
+  unichemURL : 'unichemURL'
+}

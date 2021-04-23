@@ -1,10 +1,11 @@
 import {Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {defaultSettings, DictionaryURLs, Message} from '../../types';
+import {defaultSettings, DictionaryURLKeys, DictionaryURLs, Message} from '../../types';
 import {LogService} from '../popup/log.service';
 
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {SettingsService} from './settings.service';
+
 
 @Component({
   selector: 'app-settings',
@@ -17,9 +18,9 @@ export class SettingsComponent implements OnInit {
   @Output() closed = new EventEmitter<boolean>();
 
   dictionaryUrls = defaultSettings;
-  validURLs = false;
   downloadJsonHref: SafeUrl; // used to as HREF link from HTML file
   settingsForm: FormGroup;
+  readonly urlKeys = DictionaryURLKeys;
 
 
   // used to keep track of native fileUpload
@@ -57,9 +58,8 @@ export class SettingsComponent implements OnInit {
     this.settingsForm.valueChanges.subscribe(formValues => {
 
       this.dictionaryUrls = formValues;
-      this.validURLs = SettingsService.validURLs(this.dictionaryUrls);
 
-      if (this.validURLs) {
+      if (this.settingsForm.valid) {
         try {
           const json = JSON.stringify(this.dictionaryUrls);
 
@@ -67,11 +67,9 @@ export class SettingsComponent implements OnInit {
             this.sanitizer.bypassSecurityTrustResourceUrl('data:text/json;charset=UTF-8,' + encodeURIComponent(json));
 
         } catch (e) {
-          this.validURLs = false;
-          console.log('error creating JSON from URLs: ' + e);
+          console.log('error creating JSON from URLs: ', e);
         }
       } else {
-        this.validURLs = false;
         console.log('error, dictionary URLs invalid');
       }
     });
@@ -82,7 +80,7 @@ export class SettingsComponent implements OnInit {
   }
 
   save(): void {
-    if (SettingsService.validURLs(this.dictionaryUrls)) {
+    if (this.settingsForm.valid) {
       this.saved.emit(this.settingsForm.value);
       this.closed.emit(true);
     }
