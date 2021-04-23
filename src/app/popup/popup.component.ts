@@ -26,7 +26,7 @@ export class PopupComponent implements OnInit {
       .catch(e => this.log.Error(`Couldn't send message to background page: ${e}`));
   }
 
-  nerCurrentPage(dictionary) {
+  nerCurrentPage(dictionary: any) {
     this.log.Log('Sending message to background page...');
     browser.runtime.sendMessage<Message>({type: 'ner_current_page', body: dictionary})
       .catch(e => this.log.Error(`Couldn't send message to background page: ${e}`));

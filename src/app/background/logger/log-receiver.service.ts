@@ -41,7 +41,7 @@ export class LogReceiverService {
   }
 
   private initialise() {
-    browser.runtime.onMessage.addListener((msg) => {
+    browser.runtime.onMessage.addListener((msg: any) => {
       if (msg.type !== 'log') { return; }
       switch (msg.level) {
         case 'debug':
