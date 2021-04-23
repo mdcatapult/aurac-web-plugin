@@ -54,7 +54,6 @@ export class SettingsComponent implements OnInit {
       });
 
     // listen for form URL value changes and verify URLs are valid
-    // downloadJsonHref is used to conditionally show & hide buttons that allow or disallow exporting URLs
     this.settingsForm.valueChanges.subscribe(formValues => {
 
       this.dictionaryUrls = formValues;
@@ -67,10 +66,10 @@ export class SettingsComponent implements OnInit {
             this.sanitizer.bypassSecurityTrustResourceUrl('data:text/json;charset=UTF-8,' + encodeURIComponent(json));
 
         } catch (e) {
-          console.log('error creating JSON from URLs: ', e);
+          this.log.Error(`error creating JSON from URLs: ${e}`);
         }
       } else {
-        console.log('error, dictionary URLs invalid');
+        this.log.Error('error, dictionary URLs invalid');
       }
     });
   }
@@ -94,8 +93,7 @@ export class SettingsComponent implements OnInit {
       const file: File = event.files[0];
       const reader = new FileReader();
 
-      console.log('file size');
-      console.log(file.size); // TODO check file size?
+      // TODO check file size?
 
       reader.onloadend = () => {
 
@@ -110,7 +108,7 @@ export class SettingsComponent implements OnInit {
             // TODO error popup?
           }
         } catch (e) {
-          console.log('error validating dictionary URLs from file: ' + e);
+          this.log.Error(`error validating dictionary URLs from file: ${e}`)
         }
 
         // reset the file element to allow reloading of the same file
@@ -119,7 +117,7 @@ export class SettingsComponent implements OnInit {
 
       reader.readAsText(file);
     } else {
-      console.error('No file selected');
+      this.log.Error('No file selected')
     }
   }
 
