@@ -82,8 +82,10 @@ export class SettingsComponent implements OnInit {
   }
 
   save(): void {
-    this.saved.emit(this.settingsForm.value);
-    this.closed.emit(true);
+    if (SettingsService.validURLs(this.dictionaryUrls)) {
+      this.saved.emit(this.settingsForm.value);
+      this.closed.emit(true);
+    }
   }
 
   onFileSelected(ev: Event): void {
