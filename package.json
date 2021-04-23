@@ -5,7 +5,7 @@
     "ng": "ng",
     "start": "web-ext run --verbose --source-dir=dist/browser-plugin",
     "build": "tsc -p src/app/script && ng build --prod --source-map true",
-    "dev": "tsc -p src/app/script && ng build",
+    "dev": "tsc -p src/app/script && ng build && web-ext run --verbose --source-dir=dist/browser-plugin",
     "package": "cd dist/browser-plugin && web-ext build",
     "test": "ng test",
     "test:ci": "ng test --browsers GitlabCI --watch false",
