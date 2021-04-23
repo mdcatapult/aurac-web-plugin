@@ -17,20 +17,14 @@ export class SettingsService {
       return false;
     }
 
-    for (const urlsKey of Object.keys(urls)) {
-      const validURL = this.isValidURL(urlsKey);
-
-      if (!validURL) {
-        return false;
-      }
-    }
-
-    return true;
+    return Object.keys(urls).every(key =>
+      this.isValidURL(urls[key])
+    );
   }
 
   static isValidURL(url: string): boolean {
     try {
-      new URL(url)
+      new URL(url);
       return true;
     } catch (e) {
       console.log(e);
@@ -39,6 +33,6 @@ export class SettingsService {
   }
 
   static validator(control: AbstractControl): { [key: string]: string } | null {
-    return SettingsService.isValidURL(control.value) ? null : {'invalid URL': control.value}
+    return SettingsService.isValidURL(control.value) ? null : {'invalid URL': control.value};
   }
 }

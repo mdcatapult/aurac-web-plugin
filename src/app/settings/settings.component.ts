@@ -77,8 +77,8 @@ export class SettingsComponent implements OnInit {
     });
   }
 
-  getBorderColor(formName: string): Object {
-    return {'border-color': this.settingsForm.get(formName).valid ? 'gray' : 'red'}
+  getBorderColor(formName: string): object {
+    return {'border-color': this.settingsForm.get(formName).valid ? 'gray' : 'red'};
   }
 
   save(): void {
@@ -97,7 +97,7 @@ export class SettingsComponent implements OnInit {
       console.log('file size');
       console.log(file.size); // TODO check file size?
 
-      reader.onloadend = (_) => {
+      reader.onloadend = () => {
 
         try {
           const dictionaryURLs = JSON.parse(reader.result as string) as DictionaryURLs;
