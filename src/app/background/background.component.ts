@@ -26,7 +26,7 @@ export class BackgroundComponent {
   dictionary?: validDict;
 
   constructor(private client: HttpClient) {
-    browser.runtime.onMessage.addListener((msg: any) => {
+    browser.runtime.onMessage.addListener((msg: Partial<Message>) => {
       console.log('Received message from popup...', msg);
       switch (msg.type) {
         case 'ner_current_page': {
