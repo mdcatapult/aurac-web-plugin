@@ -75,9 +75,9 @@ export class SettingsComponent implements OnInit {
   }
 
   getBorderColor(formName: string): object {
-    let colour = 'gray'
-    if(!this.settingsForm!.get(formName)!.valid) {
-      colour = 'red'
+    let colour = 'gray';
+    if (!this.settingsForm!.get(formName)!.valid) {
+      colour = 'red';
     }
     return {'border-color': colour};
   }
@@ -112,7 +112,7 @@ export class SettingsComponent implements OnInit {
             // TODO error popup?
           }
         } catch (e) {
-          this.log.Error(`error validating dictionary URLs from file: ${e}`)
+          this.log.Error(`error validating dictionary URLs from file: ${e}`);
         }
 
         // reset the file element to allow reloading of the same file
@@ -121,7 +121,7 @@ export class SettingsComponent implements OnInit {
 
       reader.readAsText(file);
     } else {
-      this.log.Error('No file selected')
+      this.log.Error('No file selected');
     }
   }
 

@@ -96,4 +96,4 @@ export const DictionaryURLKeys = {
   leadmineURL : 'leadmineURL',
   compoundConverterURL : 'compoundConverterURL',
   unichemURL : 'unichemURL'
-}
+};
