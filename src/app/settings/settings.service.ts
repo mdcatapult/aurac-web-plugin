@@ -17,34 +17,14 @@ export class SettingsService {
       return false;
     }
 
-    // for (const key in urls) {
-    //   if (urls.hasOwnProperty(key)) {
-    //     let value = urls[key];
-    //   }
-    // }
-
-    // let valid = true;
-    // for (let key in urls) {
-    //   if (urls.hasOwnProperty(key)) {
-    //     if(!this.isValidURL(urls[key])) {
-    //       valid = false;
-    //     }
-    //   } else {
-    //     valid = false;
-    //   }
-    // }
-    //
-    // return valid;
-
-
-
     return Object.keys(urls).every(key =>
-      this.isValidURL(urls[key as keyof  DictionaryURLs])
+      this.isValidURL(urls[key as keyof DictionaryURLs])
     );
   }
 
   static isValidURL(url: string): boolean {
     try {
+      // tslint:disable-next-line
       new URL(url);
       return true;
     } catch (e) {
