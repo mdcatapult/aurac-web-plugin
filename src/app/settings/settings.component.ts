@@ -76,7 +76,7 @@ export class SettingsComponent implements OnInit {
 
   getBorderColor(formName: string): object {
     let colour = 'gray'
-    if(this.settingsForm!.get(formName)!.valid) {
+    if(!this.settingsForm!.get(formName)!.valid) {
       colour = 'red'
     }
     return {'border-color': colour};
