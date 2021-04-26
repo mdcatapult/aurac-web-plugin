@@ -23,15 +23,15 @@ import {of} from 'rxjs';
 export class BackgroundComponent {
 
   settings: Settings = defaultSettings;
-  dictionary: validDict;
+  dictionary?: validDict;
 
   constructor(private client: HttpClient) {
-    browser.runtime.onMessage.addListener(msg => {
+    browser.runtime.onMessage.addListener((msg: Partial<Message>) => {
       console.log('Received message from popup...', msg);
       switch (msg.type) {
         case 'ner_current_page': {
           this.dictionary = msg.body;
-          this.nerCurrentPage(this.dictionary);
+          this.nerCurrentPage(this.dictionary!);
           break;
         }
         case 'compound_x-refs' : {
@@ -54,6 +54,7 @@ export class BackgroundComponent {
     const leadmineURL = `${this.settings.leadmineURL}/${this.dictionary}/entities/${entityTerm}`;
 
     this.client.get(leadmineURL).pipe(
+      // @ts-ignore
       switchMap((leadmineResult: LeadmineResult) => {
           const smiles = leadmineResult ? leadmineResult.entities[0].resolvedEntity : undefined;
           return smiles ? this.client.get(`${this.settings.compoundConverterURL}/${smiles}?from=SMILES&to=inchikey`) : of({});
@@ -70,7 +71,7 @@ export class BackgroundComponent {
       }))
     ).subscribe((xrefs: XRef[]) => {
       browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT}).then(tabs => {
-        const tab = tabs[0].id;
+        const tab = tabs[0].id!;
         browser.tabs.sendMessage<XRefMessage>(tab, {type: 'x-ref_result', body: xrefs});
       });
     });
@@ -78,9 +79,8 @@ export class BackgroundComponent {
 
   private nerCurrentPage(dictionary: validDict): void {
     console.log('Getting content of active tab...');
-    let tab;
     browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT}).then(tabs => {
-      tab = tabs[0].id;
+      const tab = tabs[0].id!;
       browser.tabs.sendMessage<Message, StringMessage>(tab, {type: 'get_page_contents'})
       .catch(e => console.error(e))
       .then(result => {
@@ -93,7 +93,10 @@ export class BackgroundComponent {
         this.client.post<LeadminerResult>(`${this.settings.leadmineURL}/${dictionary}/entities`, result.body, {observe: 'response'})
           .subscribe((response) => {
             console.log('Received results from leadmine...');
-            const uniqueEntities = this.getUniqueEntities(response.body);
+            if (!response.body) {
+              return;
+            }
+            const uniqueEntities = this.getUniqueEntities(response.body!);
             browser.tabs.sendMessage<LeadmineMessage>(tab, {type: 'markup_page', body: uniqueEntities});
           });
       });
