@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {DictionaryURLs} from '../../types';
+import {DictionaryURLKeys, DictionaryURLs} from '../../types';
 import {AbstractControl} from '@angular/forms';
 
 @Injectable({
@@ -17,8 +17,29 @@ export class SettingsService {
       return false;
     }
 
+    // for (const key in urls) {
+    //   if (urls.hasOwnProperty(key)) {
+    //     let value = urls[key];
+    //   }
+    // }
+
+    // let valid = true;
+    // for (let key in urls) {
+    //   if (urls.hasOwnProperty(key)) {
+    //     if(!this.isValidURL(urls[key])) {
+    //       valid = false;
+    //     }
+    //   } else {
+    //     valid = false;
+    //   }
+    // }
+    //
+    // return valid;
+
+
+
     return Object.keys(urls).every(key =>
-      this.isValidURL(urls[key])
+      this.isValidURL(urls[key as keyof  DictionaryURLs])
     );
   }
 

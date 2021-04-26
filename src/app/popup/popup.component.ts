@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Message, DictionaryURLs} from 'src/types';
 import {LogService} from './log.service';
+import {validDict} from '../background/types';
 
 @Component({
   selector: 'app-popup',
@@ -26,7 +27,7 @@ export class PopupComponent implements OnInit {
       .catch(e => this.log.Error(`Couldn't send message to background page: ${e}`));
   }
 
-  nerCurrentPage(dictionary) {
+  nerCurrentPage(dictionary: validDict) {
     this.log.Log('Sending message to background page...');
     browser.runtime.sendMessage<Message>({type: 'ner_current_page', body: dictionary})
       .catch(e => this.log.Error(`Couldn't send message to background page: ${e}`));

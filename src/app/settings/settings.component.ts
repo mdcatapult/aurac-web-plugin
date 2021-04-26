@@ -18,14 +18,14 @@ export class SettingsComponent implements OnInit {
   @Output() closed = new EventEmitter<boolean>();
 
   dictionaryUrls = defaultSettings;
-  downloadJsonHref: SafeUrl; // used to as HREF link from HTML file
-  settingsForm: FormGroup;
+  downloadJsonHref: SafeUrl | undefined; // used to as HREF link from HTML file
+  settingsForm: FormGroup | undefined;
   readonly urlKeys = DictionaryURLKeys;
 
 
   // used to keep track of native fileUpload
   @ViewChild('fileUpload')
-  fileUploadElementRef: ElementRef;
+  fileUploadElementRef: ElementRef | undefined;
 
   constructor(private log: LogService,
               private sanitizer: DomSanitizer) {
@@ -50,7 +50,7 @@ export class SettingsComponent implements OnInit {
     browser.runtime.sendMessage<Message>({type: 'load-settings'})
       .catch(e => this.log.Error(`Couldn't send load-settings message to background page: ${e}`))
       .then((settings: DictionaryURLs) => {
-        this.settingsForm.reset(settings);
+        this.settingsForm!.reset(settings);
       });
 
     // listen for form URL value changes and verify URLs are valid
@@ -58,7 +58,7 @@ export class SettingsComponent implements OnInit {
 
       this.dictionaryUrls = formValues;
 
-      if (this.settingsForm.valid) {
+      if (this.settingsForm!.valid) {
         try {
           const json = JSON.stringify(this.dictionaryUrls);
 
@@ -75,12 +75,16 @@ export class SettingsComponent implements OnInit {
   }
 
   getBorderColor(formName: string): object {
-    return {'border-color': this.settingsForm.get(formName).valid ? 'gray' : 'red'};
+    let colour = 'gray'
+    if(this.settingsForm!.get(formName)!.valid) {
+      colour = 'red'
+    }
+    return {'border-color': colour};
   }
 
   save(): void {
-    if (this.settingsForm.valid) {
-      this.saved.emit(this.settingsForm.value);
+    if (this.settingsForm!.valid) {
+      this.saved.emit(this.settingsForm!.value);
       this.closed.emit(true);
     }
   }
@@ -101,7 +105,7 @@ export class SettingsComponent implements OnInit {
           const dictionaryURLs = JSON.parse(reader.result as string) as DictionaryURLs;
 
           if (SettingsService.validURLs(dictionaryURLs)) {
-            this.settingsForm.reset(dictionaryURLs);
+            this.settingsForm!.reset(dictionaryURLs);
             this.dictionaryUrls = dictionaryURLs;
           } else {
             // some URLs not valid
@@ -112,7 +116,7 @@ export class SettingsComponent implements OnInit {
         }
 
         // reset the file element to allow reloading of the same file
-        this.fileUploadElementRef.nativeElement.value = '';
+        this.fileUploadElementRef!.nativeElement.value = '';
       };
 
       reader.readAsText(file);
