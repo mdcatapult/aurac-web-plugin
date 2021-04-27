@@ -19,7 +19,7 @@ export class SettingsComponent implements OnInit {
 
   dictionaryUrls = defaultSettings;
   downloadJsonHref: SafeUrl | undefined; // used to as HREF link from HTML file
-  settingsForm: FormGroup | undefined;
+  // settingsForm: FormGroup | undefined;
   readonly urlKeys = DictionaryURLKeys;
 
 
@@ -27,30 +27,32 @@ export class SettingsComponent implements OnInit {
   @ViewChild('fileUpload')
   fileUploadElementRef: ElementRef | undefined;
 
+  settingsForm = new FormGroup({
+    leadmineURL: new FormControl(
+      defaultSettings.leadmineURL,
+      Validators.compose([Validators.required, SettingsService.validator])
+    ),
+    compoundConverterURL: new FormControl(
+      defaultSettings.compoundConverterURL,
+      Validators.compose([Validators.required, SettingsService.validator])
+    ),
+    unichemURL: new FormControl(
+      defaultSettings.unichemURL,
+      Validators.compose([Validators.required, SettingsService.validator])
+    ),
+  });
+
   constructor(private log: LogService,
               private sanitizer: DomSanitizer) {
   }
 
   ngOnInit(): void {
-    this.settingsForm = new FormGroup({
-      leadmineURL: new FormControl(
-        defaultSettings.leadmineURL,
-        Validators.compose([Validators.required, SettingsService.validator])
-      ),
-      compoundConverterURL: new FormControl(
-        defaultSettings.compoundConverterURL,
-        Validators.compose([Validators.required, SettingsService.validator])
-      ),
-      unichemURL: new FormControl(
-        defaultSettings.unichemURL,
-        Validators.compose([Validators.required, SettingsService.validator])
-      ),
-    });
+
     this.log.Log('sending load settings msg');
     browser.runtime.sendMessage<Message>({type: 'load-settings'})
       .catch(e => this.log.Error(`Couldn't send load-settings message to background page: ${e}`))
       .then((settings: DictionaryURLs) => {
-        this.settingsForm!.reset(settings);
+        this.settingsForm.reset(settings);
       });
 
     // listen for form URL value changes and verify URLs are valid
@@ -58,7 +60,7 @@ export class SettingsComponent implements OnInit {
 
       this.dictionaryUrls = formValues;
 
-      if (this.settingsForm!.valid) {
+      if (this.settingsForm.valid) {
         try {
           const json = JSON.stringify(this.dictionaryUrls);
 
@@ -76,15 +78,15 @@ export class SettingsComponent implements OnInit {
 
   getBorderColor(formName: string): object {
     let colour = 'gray';
-    if (!this.settingsForm!.get(formName)!.valid) {
+    if (!this.settingsForm.get(formName)!.valid) {
       colour = 'red';
     }
     return {'border-color': colour};
   }
 
   save(): void {
-    if (this.settingsForm!.valid) {
-      this.saved.emit(this.settingsForm!.value);
+    if (this.settingsForm.valid) {
+      this.saved.emit(this.settingsForm.value);
       this.closed.emit(true);
     }
   }
@@ -105,7 +107,7 @@ export class SettingsComponent implements OnInit {
           const dictionaryURLs = JSON.parse(reader.result as string) as DictionaryURLs;
 
           if (SettingsService.validURLs(dictionaryURLs)) {
-            this.settingsForm!.reset(dictionaryURLs);
+            this.settingsForm.reset(dictionaryURLs);
             this.dictionaryUrls = dictionaryURLs;
           } else {
             // some URLs not valid
