@@ -68,10 +68,10 @@ export class SettingsComponent implements OnInit {
             this.sanitizer.bypassSecurityTrustResourceUrl('data:text/json;charset=UTF-8,' + encodeURIComponent(json));
 
         } catch (e) {
-          this.log.Error(`error creating JSON from URLs: ${e}`);
+          this.log.Info(`error creating JSON from URLs: ${e}`);
         }
       } else {
-        this.log.Error('error, dictionary URLs invalid');
+        this.log.Info('error, dictionary URLs invalid');
       }
     });
   }
