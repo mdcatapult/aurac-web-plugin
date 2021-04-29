@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {
   LeadmineMessage,
   LeadminerEntity,
@@ -14,6 +14,7 @@ import {
 import {validDict} from './types';
 import {map, switchMap} from 'rxjs/operators';
 import {of} from 'rxjs';
+import {query} from '@angular/animations';
 
 @Component({
   selector: 'app-background',
@@ -50,7 +51,7 @@ export class BackgroundComponent {
   }
 
   private loadXRefs(entityTerm: string): void {
-  // TODO: use resolvedEntity if dictionary is chemical-inchi as this will already be InchiKey not SMILES
+    // TODO: use resolvedEntity if dictionary is chemical-inchi as this will already be InchiKey not SMILES
     const leadmineURL = `${this.settings.leadmineURL}/${this.dictionary}/entities/${entityTerm}`;
 
     this.client.get(leadmineURL).pipe(
@@ -82,29 +83,40 @@ export class BackgroundComponent {
     browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT}).then(tabs => {
       const tab = tabs[0].id!;
       browser.tabs.sendMessage<Message, StringMessage>(tab, {type: 'get_page_contents'})
-      .catch(e => console.error(e))
-      .then(result => {
-        if (!result || !result.body) {
-          console.log('No content');
-          return;
-        }
-        result = result as StringMessage;
-        console.log('Sending page contents to leadmine...');
-        const inchiKeyQuery = dictionary === 'chemical-inchi' ? '?inchikey=true' : '';
-        // reassign dictionary as there is no longer a chemical-inchi Leadmine instance
-        if (dictionary === 'chemical-inchi') {
-          dictionary = 'chemical-entities';
-        }
-        this.client.post<LeadminerResult>(`${this.settings.leadmineURL}/${dictionary}/entities${inchiKeyQuery}`, result.body, {observe: 'response'})
-          .subscribe((response) => {
-            console.log('Received results from leadmine...');
-            if (!response.body) {
-              return;
-            }
-            const uniqueEntities = this.getUniqueEntities(response.body!);
-            browser.tabs.sendMessage<LeadmineMessage>(tab, {type: 'markup_page', body: uniqueEntities});
-          });
-      });
+        .catch(e => console.error(e))
+        .then(result => {
+          if (!result || !result.body) {
+            console.log('No content');
+            return;
+          }
+          result = result as StringMessage;
+          console.log('Sending page contents to leadmine...');
+          const contentHeaders = new HttpHeaders()
+            .set('Content-Type', 'text/plain')
+            .set('Accept', '*/*');
+          let queryParams: HttpParams = new HttpParams()
+            .set('inchikey', 'false');
+          if (dictionary === 'chemical-inchi') {
+            dictionary = 'chemical-entities';
+            queryParams = queryParams.set('ingggglxkfjndglxnfgchikey', 'true');
+          }
+          // with query param, get:
+          // error: "Unsupported Content-Type [Some(text/plain; charset=UTF-8)], supported: application/json"
+          // setting content header appears to have no effect?
+          this.client.post<LeadminerResult>(
+            `${this.settings.leadmineURL}/${dictionary}/entities`,
+            result.body,
+            // 'aspirin',
+            {observe: 'response', params: queryParams })
+            .subscribe((response) => {
+              console.log('Received results from leadmine...');
+              if (!response.body) {
+                return;
+              }
+              const uniqueEntities = this.getUniqueEntities(response.body!);
+              browser.tabs.sendMessage<LeadmineMessage>(tab, {type: 'markup_page', body: uniqueEntities});
+            });
+        });
     });
   }
 
