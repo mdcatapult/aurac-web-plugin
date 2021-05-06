@@ -14,6 +14,7 @@ import {
 import {validDict} from './types';
 import {map, switchMap} from 'rxjs/operators';
 import {of} from 'rxjs';
+import {BrowserService} from '../browser.service';
 
 @Component({
   selector: 'app-background',
@@ -25,8 +26,8 @@ export class BackgroundComponent {
   settings: Settings = defaultSettings;
   dictionary?: validDict;
 
-  constructor(private client: HttpClient) {
-    browser.runtime.onMessage.addListener((msg: Partial<Message>) => {
+  constructor(private client: HttpClient, private browserService: BrowserService) {
+    this.browserService.addListener((msg: Partial<Message>) => {
       console.log('Received message from popup...', msg);
       switch (msg.type) {
         case 'ner_current_page': {
@@ -70,18 +71,19 @@ export class BackgroundComponent {
         return xref;
       }))
     ).subscribe((xrefs: XRef[]) => {
-      browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT}).then(tabs => {
+      this.browserService.getActiveTab().
+      then(tabs => {
         const tab = tabs[0].id!;
-        browser.tabs.sendMessage<XRefMessage>(tab, {type: 'x-ref_result', body: xrefs});
+        this.browserService.sendMessageToTab(tab, {type: 'x-ref_result', body: xrefs});
       });
     });
   }
 
   private nerCurrentPage(dictionary: validDict): void {
     console.log('Getting content of active tab...');
-    browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT}).then(tabs => {
+    this.browserService.getActiveTab().then(tabs => {
       const tab = tabs[0].id!;
-      browser.tabs.sendMessage<Message, StringMessage>(tab, {type: 'get_page_contents'})
+      this.browserService.sendMessageToTab(tab, {type: 'get_page_contents'})
       .catch(e => console.error(e))
       .then(result => {
         if (!result || !result.body) {
@@ -97,7 +99,7 @@ export class BackgroundComponent {
               return;
             }
             const uniqueEntities = this.getUniqueEntities(response.body!);
-            browser.tabs.sendMessage<LeadmineMessage>(tab, {type: 'markup_page', body: uniqueEntities});
+            this.browserService.sendMessageToTab(tab, {type: 'markup_page', body: uniqueEntities});
           });
       });
     });

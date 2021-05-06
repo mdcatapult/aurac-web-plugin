@@ -24,7 +24,7 @@ export class SettingsComponent implements OnInit {
 
   ngOnInit(): void {
     this.log.Log('sending load settings msg');
-    this.browserService.loadSettings()
+    this.browserService.sendMessage('load-settings')
       .then((settings: Settings) => {
         this.settingsForm.reset(settings);
       });
