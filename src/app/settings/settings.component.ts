@@ -1,8 +1,8 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
-import {defaultSettings, Message, Settings} from '../../types';
-import {environment} from '../../environments/environment';
+import {defaultSettings, Settings} from '../../types';
 import {LogService} from '../popup/log.service';
+import {BrowserService} from '../browser.service';
 
 @Component({
   selector: 'app-settings',
@@ -20,12 +20,11 @@ export class SettingsComponent implements OnInit {
     unichemURL: new FormControl(defaultSettings.unichemURL),
   });
 
-  constructor(private log: LogService) {}
+  constructor(private log: LogService, private browserService: BrowserService) {}
 
   ngOnInit(): void {
     this.log.Log('sending load settings msg');
-    browser.runtime.sendMessage<Message>({type: 'load-settings'})
-      .catch(e => this.log.Error(`Couldn't send load-settings message to background page: ${e}`))
+    this.browserService.loadSettings()
       .then((settings: Settings) => {
         this.settingsForm.reset(settings);
       });
