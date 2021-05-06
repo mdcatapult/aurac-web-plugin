@@ -21,7 +21,7 @@ export class BrowserService {
 
   getActiveTab(): Promise<Tab> {
     return browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT})
-      .then(tabs => new Promise(() => tabs[0]));
+      .then(tabs => tabs[0]);
   }
 
   sendMessageToTab(tabId: number, message: Message): Promise<void | StringMessage> {
