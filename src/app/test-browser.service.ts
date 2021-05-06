@@ -13,7 +13,7 @@ export class TestBrowserService extends BrowserService {
 
   addListener(f: (message: Partial<Message>) => (Promise<Settings> | undefined)): void {}
 
-  getActiveTab(): Promise<Tab[]> {
+  getActiveTab(): Promise<Tab> {
     return new Promise(() => {});
   }
 

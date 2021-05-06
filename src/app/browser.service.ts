@@ -19,11 +19,15 @@ export class BrowserService {
     browser.runtime.onMessage.addListener(f);
   }
 
-  getActiveTab(): Promise<Tab[]> {
-    return browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT});
+  getActiveTab(): Promise<Tab> {
+    return browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT})
+      .then(tabs => new Promise(() => tabs[0]));
   }
 
   sendMessageToTab(tabId: number, message: Message): Promise<void | StringMessage> {
     return browser.tabs.sendMessage<Message, StringMessage>(tabId, message);
+  }
+  sendMessageToActiveTab(msg: Message): Promise<void | StringMessage> {
+    return this.getActiveTab().then(tab => this.sendMessageToTab(tab.id!, msg));
   }
 }

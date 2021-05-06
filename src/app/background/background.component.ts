@@ -70,21 +70,12 @@ export class BackgroundComponent {
         }
         return xref;
       }))
-    ).subscribe((xrefs: XRef[]) => {
-      this.browserService.getActiveTab().
-      then(tabs => {
-        const tab = tabs[0].id!;
-        this.browserService.sendMessageToTab(tab, {type: 'x-ref_result', body: xrefs});
-      });
-    });
+    ).subscribe((xrefs: XRef[]) => this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs}));
   }
 
   private nerCurrentPage(dictionary: validDict): void {
     console.log('Getting content of active tab...');
-    this.browserService.getActiveTab().then(tabs => {
-      const tab = tabs[0].id!;
-      this.browserService.sendMessageToTab(tab, {type: 'get_page_contents'})
-      .catch(e => console.error(e))
+    this.browserService.sendMessageToActiveTab({type: 'get_page_contents'})
       .then(result => {
         if (!result || !result.body) {
           console.log('No content');
@@ -99,10 +90,9 @@ export class BackgroundComponent {
               return;
             }
             const uniqueEntities = this.getUniqueEntities(response.body!);
-            this.browserService.sendMessageToTab(tab, {type: 'markup_page', body: uniqueEntities});
+            this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities});
           });
       });
-    });
   }
 
   getUniqueEntities(leadmineResponse: LeadminerResult): Array<LeadminerEntity> {
