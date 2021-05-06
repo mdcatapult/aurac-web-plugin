@@ -23,11 +23,7 @@ export class BrowserService {
     return browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT});
   }
 
-  sendMessageToTab(tabId: number, message: Message): Promise<any> {
+  sendMessageToTab(tabId: number, message: Message): Promise<void | StringMessage> {
     return browser.tabs.sendMessage<Message, StringMessage>(tabId, message);
   }
-
-  /*sendGenericMessageToTab(tabId: number, message: Message): Promise<any> {
-    return browser.tabs.sendMessage<Message>(tabId, message);
-  }*/
 }
