@@ -17,7 +17,7 @@ export class TestBrowserService extends BrowserService {
     return new Promise(() => {});
   }
 
-  sendMessageToTab<T>(tabId: number, message: Message): Promise<any> {
+  sendMessageToTab<T>(tabId: number, message: Message): Promise<void | StringMessage> {
     return new Promise(() => {});
   }
 }
