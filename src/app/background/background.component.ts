@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {
   LeadmineMessage,
   LeadminerEntity,
@@ -14,7 +14,6 @@ import {
 import {validDict} from './types';
 import {map, switchMap} from 'rxjs/operators';
 import {of} from 'rxjs';
-import {query} from '@angular/animations';
 
 @Component({
   selector: 'app-background',
@@ -91,18 +90,12 @@ export class BackgroundComponent {
           }
           result = result as StringMessage;
           console.log('Sending page contents to leadmine...');
-          const contentHeaders = new HttpHeaders()
-            .set('Content-Type', 'text/plain')
-            .set('Accept', '*/*');
           let queryParams: HttpParams = new HttpParams()
             .set('inchikey', 'false');
           if (dictionary === 'chemical-inchi') {
             dictionary = 'chemical-entities';
-            queryParams = queryParams.set('ingggglxkfjndglxnfgchikey', 'true');
+            queryParams = queryParams.set('inchikey', 'true');
           }
-          // with query param, get:
-          // error: "Unsupported Content-Type [Some(text/plain; charset=UTF-8)], supported: application/json"
-          // setting content header appears to have no effect?
           this.client.post<LeadminerResult>(
             `${this.settings.leadmineURL}/${dictionary}/entities`,
             result.body,
