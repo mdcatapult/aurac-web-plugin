@@ -1,11 +1,13 @@
 import { TestBed, waitForAsync } from '@angular/core/testing';
 import { AppComponent } from './app.component';
+import { Component } from '@angular/core';
 
 describe('AppComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
-        AppComponent
+        AppComponent,
+        MockRouterComponent
       ],
     }).compileComponents();
   }));
@@ -22,3 +24,9 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('browser-plugin');
   });
 });
+@Component({
+  selector: 'router-outlet',
+  template: ''
+})
+class MockRouterComponent {
+}
