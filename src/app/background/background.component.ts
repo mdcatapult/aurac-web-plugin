@@ -51,49 +51,39 @@ export class BackgroundComponent {
   }
 
   private loadXRefs([entityTerm, resolvedEntity]: [string, string]): void {
-    const leadmineURL = `${this.settings.leadmineURL}/${this.dictionary}/entities/${entityTerm}`;
     const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]{1}$/;
-    const resolvedEntitySource = new Observable(observer => observer.next(resolvedEntity));
-    if (!resolvedEntity.match(inchiKeyRegex)) {
-      this.client.get(leadmineURL).pipe(
+    let xRefObservable: Observable<XRef[]>;
+
+    if (resolvedEntity && !resolvedEntity.match(inchiKeyRegex)) {
+      xRefObservable = this.client.get(`${this.settings.compoundConverterURL}/${resolvedEntity}?from=SMILES&to=inchikey`).pipe(
         // @ts-ignore
-        switchMap((leadmineResult: LeadmineResult) => {
-            const smiles = leadmineResult ? leadmineResult.entities[0].resolvedEntity : undefined;
-            return smiles ? this.client.get(`${this.settings.compoundConverterURL}/${smiles}?from=SMILES&to=inchikey`) : of({});
-          }
-        ),
         switchMap((converterResult: ConverterResult) => {
           return converterResult ? this.client.get(`${this.settings.unichemURL}/${converterResult.output}`) : of({});
         }),
-        map((xrefs: XRef[]) => xrefs.map(xref => {
-          if (xref) {
-            xref.compoundName = entityTerm;
-          }
-          return xref;
-        }))
-      ).subscribe((xrefs: XRef[]) => {
-        browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT}).then(tabs => {
-          const tab = tabs[0].id!;
-          browser.tabs.sendMessage<XRefMessage>(tab, {type: 'x-ref_result', body: xrefs});
-        });
-      });
+        this.addCompoundNameToXRefObject(entityTerm)
+      );
     } else {
-      this.client.get(`${this.settings.unichemURL}/${resolvedEntity}`).pipe(
+      xRefObservable = this.client.get(`${this.settings.unichemURL}/${resolvedEntity}`).pipe(
         // @ts-ignore
-        map((xrefs: XRef[]) => xrefs.map(xref => {
-          if (xref) {
-            xref.compoundName = entityTerm;
-          }
-          return xref;
-        }))
-      ).subscribe((xrefs: XRef[]) => {
-        browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT}).then(tabs => {
-          const tab = tabs[0].id!;
-          browser.tabs.sendMessage<XRefMessage>(tab, {type: 'x-ref_result', body: xrefs});
-        });
-      });
+        this.addCompoundNameToXRefObject(entityTerm)
+      );
     }
+
+    xRefObservable.subscribe((xrefs: XRef[]) => {
+      browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT}).then(tabs => {
+        const tab = tabs[0].id!;
+        browser.tabs.sendMessage<XRefMessage>(tab, {type: 'x-ref_result', body: xrefs});
+      });
+    });
   }
+
+  private addCompoundNameToXRefObject = (entityTerm: string) => map((xrefs: XRef[]) => xrefs.map(xref => {
+      if (xref) {
+        xref.compoundName = entityTerm;
+      }
+      return xref;
+    }))
+
 
   private nerCurrentPage(dictionary: validDict): void {
     console.log('Getting content of active tab...');
