@@ -53,28 +53,29 @@ export class BackgroundComponent {
   private loadXRefs([entityTerm, resolvedEntity]: [string, string]): void {
     const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]{1}$/;
     let xRefObservable: Observable<XRef[]>;
+    if (resolvedEntity) {
+      if (!resolvedEntity.match(inchiKeyRegex)) {
+        xRefObservable = this.client.get(`${this.settings.compoundConverterURL}/${resolvedEntity}?from=SMILES&to=inchikey`).pipe(
+          // @ts-ignore
+          switchMap((converterResult: ConverterResult) => {
+            return converterResult ? this.client.get(`${this.settings.unichemURL}/${converterResult.output}`) : of({});
+          }),
+          this.addCompoundNameToXRefObject(entityTerm)
+        );
+      } else {
+        xRefObservable = this.client.get(`${this.settings.unichemURL}/${resolvedEntity}`).pipe(
+          // @ts-ignore
+          this.addCompoundNameToXRefObject(entityTerm)
+        );
+      }
 
-    if (resolvedEntity && !resolvedEntity.match(inchiKeyRegex)) {
-      xRefObservable = this.client.get(`${this.settings.compoundConverterURL}/${resolvedEntity}?from=SMILES&to=inchikey`).pipe(
-        // @ts-ignore
-        switchMap((converterResult: ConverterResult) => {
-          return converterResult ? this.client.get(`${this.settings.unichemURL}/${converterResult.output}`) : of({});
-        }),
-        this.addCompoundNameToXRefObject(entityTerm)
-      );
-    } else {
-      xRefObservable = this.client.get(`${this.settings.unichemURL}/${resolvedEntity}`).pipe(
-        // @ts-ignore
-        this.addCompoundNameToXRefObject(entityTerm)
-      );
-    }
-
-    xRefObservable.subscribe((xrefs: XRef[]) => {
-      browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT}).then(tabs => {
-        const tab = tabs[0].id!;
-        browser.tabs.sendMessage<XRefMessage>(tab, {type: 'x-ref_result', body: xrefs});
+      xRefObservable.subscribe((xrefs: XRef[]) => {
+        browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT}).then(tabs => {
+          const tab = tabs[0].id!;
+          browser.tabs.sendMessage<XRefMessage>(tab, {type: 'x-ref_result', body: xrefs});
+        });
       });
-    });
+    }
   }
 
   private addCompoundNameToXRefObject = (entityTerm: string) => map((xrefs: XRef[]) => xrefs.map(xref => {
