@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-
 import { PopupComponent } from './popup.component';
+import { Component } from '@angular/core';
 
 describe('PopupComponent', () => {
   let component: PopupComponent;
@@ -8,8 +8,10 @@ describe('PopupComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ PopupComponent ]
-    })
+    declarations: [ 
+        PopupComponent,
+        MockSettingsComponent
+    ]})
     .compileComponents();
   }));
 
@@ -23,3 +25,9 @@ describe('PopupComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+@Component({
+  selector: 'app-settings',
+  template: ''
+})
+class MockSettingsComponent {
+}
