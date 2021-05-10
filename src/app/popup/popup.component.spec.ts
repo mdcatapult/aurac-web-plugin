@@ -8,7 +8,7 @@ describe('PopupComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    declarations: [ 
+    declarations: [
         PopupComponent,
         MockSettingsComponent
     ]})
