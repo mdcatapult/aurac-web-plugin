@@ -51,17 +51,10 @@ export class BackgroundComponent {
   }
 
   private loadXRefs([entityTerm, resolvedEntity]: [string, string]): void {
-    const leadmineURL = `${this.settings.leadmineURL}/${this.dictionary}/entities/${entityTerm}`;
     const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]{1}$/;
-    const resolvedEntitySource = new Observable(observer => observer.next(resolvedEntity));
-    if (!resolvedEntity.match(inchiKeyRegex)) {
-      this.client.get(leadmineURL).pipe(
+    if (resolvedEntity && !resolvedEntity.match(inchiKeyRegex)) {
+      this.client.get(`${this.settings.compoundConverterURL}/${resolvedEntity}?from=SMILES&to=inchikey`).pipe(
         // @ts-ignore
-        switchMap((leadmineResult: LeadmineResult) => {
-            const smiles = leadmineResult ? leadmineResult.entities[0].resolvedEntity : undefined;
-            return smiles ? this.client.get(`${this.settings.compoundConverterURL}/${smiles}?from=SMILES&to=inchikey`) : of({});
-          }
-        ),
         switchMap((converterResult: ConverterResult) => {
           return converterResult ? this.client.get(`${this.settings.unichemURL}/${converterResult.output}`) : of({});
         }),
