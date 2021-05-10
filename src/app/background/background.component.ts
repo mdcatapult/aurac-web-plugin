@@ -13,7 +13,8 @@ import {
 } from 'src/types';
 import {validDict} from './types';
 import {map, switchMap} from 'rxjs/operators';
-import {of} from 'rxjs';
+import {Observable, of} from 'rxjs';
+import {resolve} from '@angular/compiler-cli/src/ngtsc/file_system';
 
 @Component({
   selector: 'app-background',
@@ -49,32 +50,49 @@ export class BackgroundComponent {
     });
   }
 
-  private loadXRefs(entityTerm: string): void {
-    // TODO: use resolvedEntity if dictionary is chemical-inchi as this will already be InchiKey not SMILES
+  private loadXRefs([entityTerm, resolvedEntity]: [string, string]): void {
     const leadmineURL = `${this.settings.leadmineURL}/${this.dictionary}/entities/${entityTerm}`;
-
-    this.client.get(leadmineURL).pipe(
-      // @ts-ignore
-      switchMap((leadmineResult: LeadmineResult) => {
-          const smiles = leadmineResult ? leadmineResult.entities[0].resolvedEntity : undefined;
-          return smiles ? this.client.get(`${this.settings.compoundConverterURL}/${smiles}?from=SMILES&to=inchikey`) : of({});
-        }
-      ),
-      switchMap((converterResult: ConverterResult) => {
-        return converterResult ? this.client.get(`${this.settings.unichemURL}/${converterResult.output}`) : of({});
-      }),
-      map((xrefs: XRef[]) => xrefs.map(xref => {
-        if (xref) {
-          xref.compoundName = entityTerm;
-        }
-        return xref;
-      }))
-    ).subscribe((xrefs: XRef[]) => {
-      browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT}).then(tabs => {
-        const tab = tabs[0].id!;
-        browser.tabs.sendMessage<XRefMessage>(tab, {type: 'x-ref_result', body: xrefs});
+    const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]{1}$/;
+    const resolvedEntitySource = new Observable(observer => observer.next(resolvedEntity));
+    if (!resolvedEntity.match(inchiKeyRegex)) {
+      this.client.get(leadmineURL).pipe(
+        // @ts-ignore
+        switchMap((leadmineResult: LeadmineResult) => {
+            const smiles = leadmineResult ? leadmineResult.entities[0].resolvedEntity : undefined;
+            return smiles ? this.client.get(`${this.settings.compoundConverterURL}/${smiles}?from=SMILES&to=inchikey`) : of({});
+          }
+        ),
+        switchMap((converterResult: ConverterResult) => {
+          return converterResult ? this.client.get(`${this.settings.unichemURL}/${converterResult.output}`) : of({});
+        }),
+        map((xrefs: XRef[]) => xrefs.map(xref => {
+          if (xref) {
+            xref.compoundName = entityTerm;
+          }
+          return xref;
+        }))
+      ).subscribe((xrefs: XRef[]) => {
+        browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT}).then(tabs => {
+          const tab = tabs[0].id!;
+          browser.tabs.sendMessage<XRefMessage>(tab, {type: 'x-ref_result', body: xrefs});
+        });
       });
-    });
+    } else {
+      this.client.get(`${this.settings.unichemURL}/${resolvedEntity}`).pipe(
+        // @ts-ignore
+        map((xrefs: XRef[]) => xrefs.map(xref => {
+          if (xref) {
+            xref.compoundName = entityTerm;
+          }
+          return xref;
+        }))
+      ).subscribe((xrefs: XRef[]) => {
+        browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT}).then(tabs => {
+          const tab = tabs[0].id!;
+          browser.tabs.sendMessage<XRefMessage>(tab, {type: 'x-ref_result', body: xrefs});
+        });
+      });
+    }
   }
 
   private nerCurrentPage(dictionary: validDict): void {
@@ -94,13 +112,12 @@ export class BackgroundComponent {
             .set('inchikey', 'false');
           if (dictionary === 'chemical-inchi') {
             dictionary = 'chemical-entities';
-            queryParams = queryParams.set('inchikey', 'true');
+            queryParams = new HttpParams().set('inchikey', 'true');
           }
           this.client.post<LeadminerResult>(
             `${this.settings.leadmineURL}/${dictionary}/entities`,
             result.body,
-            // 'aspirin',
-            {observe: 'response', params: queryParams })
+            {observe: 'response', params: queryParams})
             .subscribe((response) => {
               console.log('Received results from leadmine...');
               if (!response.body) {

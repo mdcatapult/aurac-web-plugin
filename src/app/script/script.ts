@@ -128,7 +128,7 @@
         if (!entityToDiv.has(info.entityText)) {
           entityToDiv.set(info.entityText, renderSidebar(info));
           // @ts-ignore
-          browser.runtime.sendMessage({type: 'compound_x-refs', body: info.entityText});
+          browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity]});
         }
       }
       const div = entityToDiv.get(info.entityText);
