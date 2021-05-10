@@ -57,7 +57,7 @@ export class BackgroundComponent {
     this.client.get(leadmineURL).pipe(
       // @ts-ignore
       switchMap((leadmineResult: LeadmineResult) => {
-          const smiles = leadmineResult ? leadmineResult.entities[0].resolvedEntity : undefined;
+          const smiles = leadmineResult && leadmineResult.entities ? leadmineResult.entities[0].resolvedEntity : undefined;
           return smiles ? this.client.get(`${this.settings.compoundConverterURL}/${smiles}?from=SMILES&to=inchikey`) : of({});
         }
       ),
