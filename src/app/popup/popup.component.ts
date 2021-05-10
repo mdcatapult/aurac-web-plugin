@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Message, Settings} from 'src/types';
+import {Message, DictionaryURLs} from 'src/types';
 import {LogService} from './log.service';
 import {validDict} from '../background/types';
 
@@ -22,7 +22,7 @@ export class PopupComponent implements OnInit {
     this.isSettings = true;
   }
 
-  onSaveSettings(settings: Settings) {
+  onSaveSettings(settings: DictionaryURLs) {
     browser.runtime.sendMessage<Message>({type: 'save-settings', body: settings})
       .catch(e => this.log.Error(`Couldn't send message to background page: ${e}`));
   }

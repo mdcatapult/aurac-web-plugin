@@ -170,7 +170,7 @@
     Array.from(document.getElementsByClassName(xrefs[0] ? xrefs[0].compoundName : '')).forEach(element => element.innerHTML = '');
     xrefs.forEach(xref => {
       const xrefElement = document.getElementsByClassName(xref.compoundName).item(0);
-      xrefElement.innerHTML += `<p> ${xref.databaseName}: ${xref.url}</p>`;
+      xrefElement.innerHTML += `<p> ${xref.databaseName}: <a href=${xref.url} target="_blank">${xref.url}</a></p>`;
     });
   }
 
