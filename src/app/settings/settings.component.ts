@@ -51,9 +51,7 @@ export class SettingsComponent implements OnInit {
     browser.runtime.sendMessage<Message>({type: 'load-settings'})
       .catch(e => this.log.Error(`Couldn't send load-settings message to background page: ${e}`))
       .then((settings: DictionaryURLs) => {
-        if (settings) {
-          this.settingsForm.reset(settings);
-        }
+        this.settingsForm.reset(settings);
       });
 
     // listen for form URL value changes and verify URLs are valid
