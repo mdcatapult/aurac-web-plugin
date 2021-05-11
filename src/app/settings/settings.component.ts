@@ -19,7 +19,6 @@ export class SettingsComponent implements OnInit {
 
   dictionaryUrls = defaultSettings;
   downloadJsonHref: SafeUrl | undefined; // used to as HREF link from HTML file
-  // settingsForm: FormGroup | undefined;
   readonly urlKeys = DictionaryURLKeys;
 
 
@@ -48,11 +47,17 @@ export class SettingsComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.log.Log('onInit: ');
+    this.log.Log(this.settingsForm);
+
+
     this.log.Log('sending load settings msg');
     browser.runtime.sendMessage<Message>({type: 'load-settings'})
       .catch(e => this.log.Error(`Couldn't send load-settings message to background page: ${e}`))
       .then((settings: DictionaryURLs) => {
-        this.settingsForm.reset(settings);
+        if (settings) {
+          this.settingsForm.reset(settings);
+        }
       });
 
     // listen for form URL value changes and verify URLs are valid
