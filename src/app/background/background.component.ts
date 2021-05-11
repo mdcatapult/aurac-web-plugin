@@ -3,7 +3,6 @@ import {HttpClient, HttpParams} from '@angular/common/http';
 import {
   LeadmineMessage,
   LeadminerEntity,
-  LeadmineResult,
   LeadminerResult,
   ConverterResult,
   XRef,
@@ -14,7 +13,7 @@ import {
 import {validDict} from './types';
 import {map, switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
-import {resolve} from '@angular/compiler-cli/src/ngtsc/file_system';
+import MessageSender = browser.runtime.MessageSender;
 
 @Component({
   selector: 'app-background',
@@ -27,7 +26,7 @@ export class BackgroundComponent {
   dictionary?: validDict;
 
   constructor(private client: HttpClient) {
-    browser.runtime.onMessage.addListener((msg: Partial<Message>) => {
+    browser.runtime.onMessage.addListener((msg: Partial<Message>, listener: MessageSender, sendResponse: (response: object) => {} ) => {
       console.log('Received message from popup...', msg);
       switch (msg.type) {
         case 'ner_current_page': {
@@ -44,7 +43,7 @@ export class BackgroundComponent {
           break;
         }
         case 'load-settings': {
-          return Promise.resolve(this.settings);
+          sendResponse(this.settings);
         }
       }
     });
