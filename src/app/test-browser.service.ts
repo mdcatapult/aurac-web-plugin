@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {BrowserService} from './browser.service';
-import {Message, Settings, StringMessage} from '../types';
+import {Message, DictionaryURLs, StringMessage} from '../types';
 import Tab = browser.tabs.Tab;
 
 @Injectable({
@@ -11,7 +11,7 @@ export class TestBrowserService extends BrowserService {
     return new Promise(() => {});
   }
 
-  addListener(f: (message: Partial<Message>) => (Promise<Settings> | undefined)): void {}
+  addListener(f: (message: Partial<Message>) => (Promise<DictionaryURLs> | undefined)): void {}
 
   getActiveTab(): Promise<Tab> {
     return new Promise(() => {});

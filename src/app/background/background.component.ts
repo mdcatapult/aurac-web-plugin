@@ -9,7 +9,7 @@ import {
   XRef,
   XRefMessage,
   Message,
-  StringMessage, Settings, defaultSettings
+  StringMessage, DictionaryURLs, defaultSettings
 } from 'src/types';
 import {validDict} from './types';
 import {map, switchMap} from 'rxjs/operators';
@@ -23,7 +23,7 @@ import {BrowserService} from '../browser.service';
 
 export class BackgroundComponent {
 
-  settings: Settings = defaultSettings;
+  settings: DictionaryURLs = defaultSettings;
   dictionary?: validDict;
 
   constructor(private client: HttpClient, private browserService: BrowserService) {
