@@ -128,7 +128,7 @@
         if (!entityToDiv.has(info.entityText)) {
           entityToDiv.set(info.entityText, renderSidebar(info));
           // @ts-ignore
-          browser.runtime.sendMessage({type: 'compound_x-refs', body: info.entityText});
+          browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity]});
         }
       }
       const div = entityToDiv.get(info.entityText);
@@ -170,7 +170,7 @@
     Array.from(document.getElementsByClassName(xrefs[0] ? xrefs[0].compoundName : '')).forEach(element => element.innerHTML = '');
     xrefs.forEach(xref => {
       const xrefElement = document.getElementsByClassName(xref.compoundName).item(0);
-      xrefElement.innerHTML += `<p> ${xref.databaseName}: ${xref.url}</p>`;
+      xrefElement.innerHTML += `<p> ${xref.databaseName}: <a href=${xref.url} target="_blank">${xref.url}</a></p>`;
     });
   }
 
