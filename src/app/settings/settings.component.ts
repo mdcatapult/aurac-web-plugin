@@ -47,10 +47,6 @@ export class SettingsComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.log.Log('onInit: ');
-    this.log.Log(this.settingsForm);
-
-
     this.log.Log('sending load settings msg');
     browser.runtime.sendMessage<Message>({type: 'load-settings'})
       .catch(e => this.log.Error(`Couldn't send load-settings message to background page: ${e}`))
