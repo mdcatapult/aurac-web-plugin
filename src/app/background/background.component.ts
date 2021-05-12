@@ -1,20 +1,21 @@
 import {Component} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {
-  LeadmineMessage,
+  ConverterResult,
+  defaultSettings,
+  DictionaryURLs,
   LeadminerEntity,
   LeadminerResult,
-  ConverterResult,
-  XRef,
-  XRefMessage,
   Message,
-  StringMessage, DictionaryURLs, defaultSettings
+  StringMessage,
+  XRef
 } from 'src/types';
 import {validDict} from './types';
 import {map, switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
-import MessageSender = browser.runtime.MessageSender;
 import {BrowserService} from '../browser.service';
+import MessageSender = browser.runtime.MessageSender;
+
 @Component({
   selector: 'app-background',
   template: '<app-logger></app-logger>',
