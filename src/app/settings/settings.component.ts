@@ -20,7 +20,6 @@ export class SettingsComponent implements OnInit {
 
   dictionaryUrls = defaultSettings;
   downloadJsonHref: SafeUrl | undefined; // used to as HREF link from HTML file
-  // settingsForm: FormGroup | undefined;
   readonly urlKeys = DictionaryURLKeys;
 
 

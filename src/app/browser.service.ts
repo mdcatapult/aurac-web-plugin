@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {LeadmineMessage, Message, MessageType, DictionaryURLs, StringMessage, XRefMessage} from '../types';
 import {LogService} from './popup/log.service';
 import Tab = browser.tabs.Tab;
+import MessageSender = browser.runtime.MessageSender;
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,8 @@ export class BrowserService {
       .catch((e: any) => this.log.Error(`Failed to send ${msg}: ${e}`));
   }
 
-  addListener(f: (message: Partial<Message>) => Promise<DictionaryURLs> | undefined ): void  {
+  addListener(f: (msg: Partial<Message>, listener: MessageSender, sendResponse: (response: object) => {})
+    => void): void  {
     browser.runtime.onMessage.addListener(f);
   }
 
