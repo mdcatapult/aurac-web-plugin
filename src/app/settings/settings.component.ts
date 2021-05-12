@@ -2,6 +2,7 @@ import {Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@a
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {defaultSettings, DictionaryURLKeys, DictionaryURLs, Message} from '../../types';
 import {LogService} from '../popup/log.service';
+import {BrowserService} from '../browser.service';
 
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {SettingsService} from './settings.service';
@@ -41,15 +42,12 @@ export class SettingsComponent implements OnInit {
     ),
   });
 
-  constructor(private log: LogService,
-              private sanitizer: DomSanitizer) {
-  }
+  constructor(private log: LogService, private browserService: BrowserService, private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {
 
     this.log.Log('sending load settings msg');
-    browser.runtime.sendMessage<Message>({type: 'load-settings'})
-      .catch(e => this.log.Error(`Couldn't send load-settings message to background page: ${e}`))
+    this.browserService.sendMessage('load-settings')
       .then((settings: DictionaryURLs) => {
         this.settingsForm.reset(settings);
       });

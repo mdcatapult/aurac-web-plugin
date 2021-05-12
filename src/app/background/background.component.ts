@@ -1,18 +1,19 @@
 import {Component} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {
-  LeadmineMessage,
+  ConverterResult,
+  defaultSettings,
+  DictionaryURLs,
   LeadminerEntity,
   LeadminerResult,
-  ConverterResult,
-  XRef,
-  XRefMessage,
   Message,
-  StringMessage, DictionaryURLs, defaultSettings
+  StringMessage,
+  XRef
 } from 'src/types';
 import {validDict} from './types';
 import {map, switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
+import {BrowserService} from '../browser.service';
 import MessageSender = browser.runtime.MessageSender;
 
 @Component({
@@ -25,8 +26,9 @@ export class BackgroundComponent {
   settings: DictionaryURLs = defaultSettings;
   dictionary?: validDict;
 
-  constructor(private client: HttpClient) {
-    browser.runtime.onMessage.addListener((msg: Partial<Message>, listener: MessageSender, sendResponse: (response: object) => {} ) => {
+  constructor(private client: HttpClient, private browserService: BrowserService) {
+    this.browserService.addListener((msg: Partial<Message>, listener: MessageSender,
+                                     sendResponse: (response: object) => {}) => {
       console.log('Received message from popup...', msg);
       switch (msg.type) {
         case 'ner_current_page': {
@@ -69,13 +71,11 @@ export class BackgroundComponent {
       }
 
       xRefObservable.subscribe((xrefs: XRef[]) => {
-        browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT}).then(tabs => {
-          const tab = tabs[0].id!;
-          browser.tabs.sendMessage<XRefMessage>(tab, {type: 'x-ref_result', body: xrefs});
+        this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs});
         });
-      });
+      }
     }
-  }
+
 
   private addCompoundNameToXRefObject = (entityTerm: string) => map((xrefs: XRef[]) => xrefs.map(xref => {
       if (xref) {
@@ -87,9 +87,7 @@ export class BackgroundComponent {
 
   private nerCurrentPage(dictionary: validDict): void {
     console.log('Getting content of active tab...');
-    browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT}).then(tabs => {
-      const tab = tabs[0].id!;
-      browser.tabs.sendMessage<Message, StringMessage>(tab, {type: 'get_page_contents'})
+    this.browserService.sendMessageToActiveTab({type: 'get_page_contents'})
         .catch(e => console.error(e))
         .then(result => {
           if (!result || !result.body) {
@@ -114,10 +112,9 @@ export class BackgroundComponent {
                 return;
               }
               const uniqueEntities = this.getUniqueEntities(response.body!);
-              browser.tabs.sendMessage<LeadmineMessage>(tab, {type: 'markup_page', body: uniqueEntities});
+              this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities});
             });
         });
-    });
   }
 
   getUniqueEntities(leadmineResponse: LeadminerResult): Array<LeadminerEntity> {
