@@ -4,11 +4,11 @@
     resolvedEntity: string,
     entityGroup: string,
     recognisingDict: {
+      htmlColor: string,
       entityType: string,
       source: string,
     },
   };
-
   // provides a wrapper around Map<string, HTMLDivElement>() to ensure key formatting
   class EntityToDiv {
     private m = new Map<string, HTMLDivElement>();
@@ -81,6 +81,7 @@
         throw new Error('Received unexpected message from plugin');
     }
   });
+
   // highlights a term by wrapping it an HTML span
   const highlightTerm = (term, entity) => `<span class="ferret-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative;">${term}</span>`;
 
@@ -120,7 +121,6 @@
       if (event.type !== 'mouseenter') {
         return;
       }
-
       if (getFerretHighlightChildren(element).some(child => child.className === 'ferret-highlight')
         && element.parentElement.className === 'ferret-highlight') {
         removeEventListener('mouseenter', populateFerretSidebar(info, element));
@@ -141,7 +141,7 @@
 
   function setSidebarColors(highlightedDiv: HTMLDivElement): void {
     Array.from(entityToDiv.values()).forEach(div => {
-      div.style.border = div === highlightedDiv ? '2px blue solid' : '1px black solid';
+      div.style.border = div === highlightedDiv ? '2px white solid' : '1px black solid';
     });
   }
 
@@ -152,6 +152,7 @@
     sidebarText.style.border = '1px solid black';
     sidebarText.style.padding = '2px';
     sidebarText.style.marginBottom = '5px';
+    sidebarText.style.backgroundColor = information.recognisingDict.htmlColor;
     sidebarText.insertAdjacentHTML('afterbegin', `<p>Term: ${information.entityText}</p>`);
     if (information.resolvedEntity) {
       sidebarText.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${information.resolvedEntity}</p>`);
