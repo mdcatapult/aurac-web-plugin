@@ -20,6 +20,5 @@
   "icons": {
     "48": "assets/Ferret.icon.48.png",
     "128": "assets/Ferret.icon.128.png"
-  },
-  "content_security_policy": "default-src 'self'"
+  }
 }
