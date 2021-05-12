@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Message, DictionaryURLs} from 'src/types';
+import {DictionaryURLs, Message} from 'src/types';
 import {LogService} from './log.service';
 import {validDict} from '../background/types';
 
