@@ -1,19 +1,20 @@
 import {Component} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {
-  LeadmineMessage,
-  LeadminerEntity,
-  LeadmineResult,
-  LeadminerResult,
   ConverterResult,
-  XRef,
-  XRefMessage,
+  defaultSettings,
+  DictionaryURLs,
+  LeadminerEntity,
+  LeadminerResult,
   Message,
-  StringMessage, Settings, defaultSettings
+  StringMessage,
+  XRef
 } from 'src/types';
 import {validDict} from './types';
 import {map, switchMap} from 'rxjs/operators';
-import {of} from 'rxjs';
+import {Observable, of} from 'rxjs';
+import {BrowserService} from '../browser.service';
+import MessageSender = browser.runtime.MessageSender;
 
 @Component({
   selector: 'app-background',
@@ -22,16 +23,17 @@ import {of} from 'rxjs';
 
 export class BackgroundComponent {
 
-  settings: Settings = defaultSettings;
-  dictionary: validDict;
+  settings: DictionaryURLs = defaultSettings;
+  dictionary?: validDict;
 
-  constructor(private client: HttpClient) {
-    browser.runtime.onMessage.addListener(msg => {
+  constructor(private client: HttpClient, private browserService: BrowserService) {
+    this.browserService.addListener((msg: Partial<Message>, listener: MessageSender,
+                                     sendResponse: (response: object) => {}) => {
       console.log('Received message from popup...', msg);
       switch (msg.type) {
         case 'ner_current_page': {
           this.dictionary = msg.body;
-          this.nerCurrentPage(this.dictionary);
+          this.nerCurrentPage(this.dictionary!);
           break;
         }
         case 'compound_x-refs' : {
@@ -43,61 +45,76 @@ export class BackgroundComponent {
           break;
         }
         case 'load-settings': {
-          return Promise.resolve(this.settings);
+          sendResponse(this.settings);
         }
       }
     });
   }
 
-  private loadXRefs(entityTerm: string): void {
+  private loadXRefs([entityTerm, resolvedEntity]: [string, string]): void {
+    const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]{1}$/;
+    let xRefObservable: Observable<XRef[]>;
+    if (resolvedEntity) {
+      if (!resolvedEntity.match(inchiKeyRegex)) {
+        xRefObservable = this.client.get(`${this.settings.compoundConverterURL}/${resolvedEntity}?from=SMILES&to=inchikey`).pipe(
+          // @ts-ignore
+          switchMap((converterResult: ConverterResult) => {
+            return converterResult ? this.client.get(`${this.settings.unichemURL}/${converterResult.output}`) : of({});
+          }),
+          this.addCompoundNameToXRefObject(entityTerm)
+        );
+      } else {
+        xRefObservable = this.client.get(`${this.settings.unichemURL}/${resolvedEntity}`).pipe(
+          // @ts-ignore
+          this.addCompoundNameToXRefObject(entityTerm)
+        );
+      }
 
-    const leadmineURL = `${this.settings.leadmineURL}/${this.dictionary}/entities/${entityTerm}`;
+      xRefObservable.subscribe((xrefs: XRef[]) => {
+        this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs});
+        });
+      }
+    }
 
-    this.client.get(leadmineURL).pipe(
-      switchMap((leadmineResult: LeadmineResult) => {
-          const smiles = leadmineResult ? leadmineResult.entities[0].resolvedEntity : undefined;
-          return smiles ? this.client.get(`${this.settings.compoundConverterURL}/${smiles}?from=SMILES&to=inchikey`) : of({});
-        }
-      ),
-      switchMap((converterResult: ConverterResult) => {
-        return converterResult ? this.client.get(`${this.settings.unichemURL}/${converterResult.output}`) : of({});
-      }),
-      map((xrefs: XRef[]) => xrefs.map(xref => {
-        if (xref) {
-          xref.compoundName = entityTerm;
-        }
-        return xref;
-      }))
-    ).subscribe((xrefs: XRef[]) => {
-      browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT}).then(tabs => {
-        const tab = tabs[0].id;
-        browser.tabs.sendMessage<XRefMessage>(tab, {type: 'x-ref_result', body: xrefs});
-      });
-    });
-  }
+
+  private addCompoundNameToXRefObject = (entityTerm: string) => map((xrefs: XRef[]) => xrefs.map(xref => {
+      if (xref) {
+        xref.compoundName = entityTerm;
+      }
+      return xref;
+    }))
+
 
   private nerCurrentPage(dictionary: validDict): void {
     console.log('Getting content of active tab...');
-    let tab;
-    browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT}).then(tabs => {
-      tab = tabs[0].id;
-      browser.tabs.sendMessage<Message, StringMessage>(tab, {type: 'get_page_contents'})
-      .catch(e => console.error(e))
-      .then(result => {
-        if (!result || !result.body) {
-          console.log('No content');
-          return;
-        }
-        result = result as StringMessage;
-        console.log('Sending page contents to leadmine...');
-        this.client.post<LeadminerResult>(`${this.settings.leadmineURL}/${dictionary}/entities`, result.body, {observe: 'response'})
-          .subscribe((response) => {
-            console.log('Received results from leadmine...');
-            const uniqueEntities = this.getUniqueEntities(response.body);
-            browser.tabs.sendMessage<LeadmineMessage>(tab, {type: 'markup_page', body: uniqueEntities});
-          });
-      });
-    });
+    this.browserService.sendMessageToActiveTab({type: 'get_page_contents'})
+        .catch(e => console.error(e))
+        .then(result => {
+          if (!result || !result.body) {
+            console.log('No content');
+            return;
+          }
+          result = result as StringMessage;
+          console.log('Sending page contents to leadmine...');
+          let queryParams: HttpParams = new HttpParams()
+            .set('inchikey', 'false');
+          if (dictionary === 'chemical-inchi') {
+            dictionary = 'chemical-entities';
+            queryParams = new HttpParams().set('inchikey', 'true');
+          }
+          this.client.post<LeadminerResult>(
+            `${this.settings.leadmineURL}/${dictionary}/entities`,
+            result.body,
+            {observe: 'response', params: queryParams})
+            .subscribe((response) => {
+              console.log('Received results from leadmine...');
+              if (!response.body) {
+                return;
+              }
+              const uniqueEntities = this.getUniqueEntities(response.body!);
+              this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities});
+            });
+        });
   }
 
   getUniqueEntities(leadmineResponse: LeadminerResult): Array<LeadminerEntity> {

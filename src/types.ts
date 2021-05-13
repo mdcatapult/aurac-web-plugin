@@ -7,12 +7,16 @@ export type MessageType =
   | 'compound_x-refs'
   | 'x-ref_result'
   | 'save-settings'
-  | 'load-settings';
+  | 'load-settings'
+  | 'log';
 
 export interface Message {
   type: MessageType;
   body?: any;
+  level?: MessageLevel;
 }
+
+export type MessageLevel = 'debug' | 'info' | 'log' | 'warn' | 'error';
 
 export interface StringMessage extends Message {
   body: string;
@@ -27,7 +31,7 @@ export interface XRefMessage extends Message {
 }
 
 export interface LogMessage extends Message {
-  level: string;
+  level: MessageLevel;
   message: any;
 }
 
@@ -76,14 +80,20 @@ export type XRef = {
   url: string,
 };
 
-export type Settings = {
+export type DictionaryURLs = {
   leadmineURL: string,
   compoundConverterURL: string,
   unichemURL: string,
 };
 
-export const defaultSettings: Settings = {
+export const defaultSettings: DictionaryURLs = {
   leadmineURL: environment.leadmineURL,
   compoundConverterURL: environment.compoundConverterURL,
   unichemURL: environment.unichemURL,
+};
+
+export const DictionaryURLKeys = {
+  leadmineURL : 'leadmineURL',
+  compoundConverterURL : 'compoundConverterURL',
+  unichemURL : 'unichemURL'
 };
