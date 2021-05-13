@@ -11,7 +11,6 @@ import { HttpClientModule } from '@angular/common/http';
 import {SettingsComponent} from './settings/settings.component';
 import {ReactiveFormsModule} from '@angular/forms';
 
-
 const routes: Routes = [
   {path: '**', component: RouterComponent}
 ];
@@ -23,7 +22,7 @@ const routes: Routes = [
     LoggerComponent,
     PopupComponent,
     RouterComponent,
-    SettingsComponent,
+    SettingsComponent
   ],
   imports: [
     BrowserModule,

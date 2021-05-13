@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
+import {Message} from '../../../types';
 
 @Injectable({
   providedIn: 'root'
@@ -41,7 +42,7 @@ export class LogReceiverService {
   }
 
   private initialise() {
-    browser.runtime.onMessage.addListener((msg) => {
+    browser.runtime.onMessage.addListener((msg: Partial<Message> & {msg?: Message}) => {
       if (msg.type !== 'log') { return; }
       switch (msg.level) {
         case 'debug':
