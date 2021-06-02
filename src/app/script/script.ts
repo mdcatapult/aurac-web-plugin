@@ -31,13 +31,21 @@
   ferretSidebar.appendChild(buttonElement);
   buttonElement.innerHTML = '&#10060';
   buttonElement.className = 'sidebar-button';
+  let isExpanded = true;
   const sidebarTexts = document.createElement('div');
   ferretSidebar.appendChild(sidebarTexts);
   const entityToDiv = new EntityToDiv();
   buttonElement.addEventListener('click', () => {
-    ferretSidebar.remove();
-    document.body.style.width = '100vw';
-    document.body.style.marginLeft = '0';
+    if (isExpanded) {
+      isExpanded = false;
+    } else {
+      isExpanded = true;
+    }
+    // ferretSidebar.remove();
+    document.head.appendChild(newFerretStyleElement());
+    document.head.getElementsByClassName('style').item(0).innerHTML = setSidebarHTML();
+    document.body.style.width = isExpanded ? '80vw' : '100vw';
+    document.body.style.marginLeft = isExpanded ? '20vw' : '0vw';
   });
   // @ts-ignore
   browser.runtime.onMessage.addListener((msg) => {
@@ -88,8 +96,13 @@
   // creates an HTML style element with basic styling for Ferret sidebar
   const newFerretStyleElement = () => {
     const styleElement = document.createElement('style');
-    styleElement.innerHTML =
-      `.ferret-sidebar {
+    styleElement.className = 'style';
+    styleElement.innerHTML = setSidebarHTML();
+    return styleElement;
+  };
+
+  const setSidebarHTML = (): string => {
+    return `.ferret-sidebar {
         color: black;
         font-family: Arial, sans-serif;
         font-size: 14px;
@@ -97,7 +110,7 @@
         position: fixed;
         z-index: 10;
         height: 100vh;
-        left: 0;
+        left: ${isExpanded ? '0' : '-21vw'};;
         top: 0;
         width: 20vw;
         border-right: 2px solid black;
@@ -109,10 +122,9 @@
       color: black;
       background-color: rgb(192, 192, 192);
       position: fixed;
-      left: 17.5vw;
+      left: ${isExpanded ? '20vw' : '0'};
       top: 0.5vw;
      }`;
-    return styleElement;
   };
 
   // returns an event listener which creates a new element with passed info and appends it to the passed element
