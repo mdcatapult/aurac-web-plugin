@@ -36,11 +36,7 @@
   ferretSidebar.appendChild(sidebarTexts);
   const entityToDiv = new EntityToDiv();
   buttonElement.addEventListener('click', () => {
-    if (isExpanded) {
-      isExpanded = false;
-    } else {
-      isExpanded = true;
-    }
+    isExpanded = !isExpanded;
     // ferretSidebar.remove();
     document.head.appendChild(newFerretStyleElement());
     document.head.getElementsByClassName('style').item(0).innerHTML = setSidebarHTML();
