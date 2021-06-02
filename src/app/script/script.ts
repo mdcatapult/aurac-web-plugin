@@ -32,19 +32,18 @@
   buttonElement.innerHTML = '&#10060';
   buttonElement.className = 'sidebar-button';
   buttonElement.id = 'button-id';
+  ferretSidebar.id = 'ferret-sidebar-id';
   let isExpanded = true;
-  let id = null;
   const sidebarTexts = document.createElement('div');
   ferretSidebar.appendChild(sidebarTexts);
   const entityToDiv = new EntityToDiv();
   buttonElement.addEventListener('click', () => {
     isExpanded = !isExpanded;
-    // ferretSidebar.remove();
     document.head.appendChild(newFerretStyleElement());
-    myMove();
+    repositionSidebar('button-id', 'ferret-sidebar-id');
     // document.head.getElementsByClassName('style').item(0).innerHTML = setSidebarHTML();
-    document.body.style.width = isExpanded ? '80vw' : '100vw';
-    document.body.style.marginLeft = isExpanded ? '20vw' : '0vw';
+    // document.body.style.width = isExpanded ? '80vw' : '100vw';
+    // document.body.style.marginLeft = isExpanded ? '20vw' : '0vw';
   });
   // @ts-ignore
   browser.runtime.onMessage.addListener((msg) => {
@@ -95,7 +94,7 @@
   // creates an HTML style element with basic styling for Ferret sidebar
   const newFerretStyleElement = () => {
     const styleElement = document.createElement('style');
-    styleElement.className = 'style';
+    // styleElement.className = 'style';
     styleElement.innerHTML = setSidebarHTML();
     return styleElement;
   };
@@ -109,7 +108,7 @@
         position: fixed;
         z-index: 10;
         height: 100vh;
-        left: ${isExpanded ? '0' : '-21vw'};;
+        left: 0;
         top: 0;
         width: 20vw;
         border-right: 2px solid black;
@@ -121,13 +120,16 @@
       color: black;
       background-color: rgb(192, 192, 192);
       position: fixed;
-      left: ${isExpanded ? '20vw' : '0'};
+      left: 17.5vw;
       top: 0.5vw;
      }`;
   };
 
-  const myMove = ()  => {
-    const elem = document.getElementById('button-id');
+  function repositionSidebar(button: string, sidebar: string) {
+    let id = null;
+    const moveButton = document.getElementById(button);
+    const moveSidebar = document.getElementById(sidebar);
+    moveSidebar.style.left = '17.5vw';
     let pos = 0;
     clearInterval(id);
     id = setInterval(frame, 5);
@@ -135,12 +137,12 @@
       if (pos === 350) {
         clearInterval(id);
       } else {
-        pos++;
-        elem.style.top = pos + 'px';
-        elem.style.left = pos + 'px';
+        pos--;
+        moveButton.style.left = pos + 'px';
+        moveSidebar.style.left = pos + 'px';
       }
     }
-  };
+  }
 
   // returns an event listener which creates a new element with passed info and appends it to the passed element
   const populateFerretSidebar = (info: Information, element: Element) => {
