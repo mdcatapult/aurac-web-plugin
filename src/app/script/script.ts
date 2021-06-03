@@ -40,7 +40,7 @@
   buttonElement.addEventListener('click', () => {
     isExpanded = !isExpanded;
     document.head.appendChild(newFerretStyleElement());
-    repositionSidebar('button-id', 'ferret-sidebar-id');
+    repositionSidebar('button-id', 'ferret-sidebar-id', isExpanded);
     // document.head.getElementsByClassName('style').item(0).innerHTML = setSidebarHTML();
     // document.body.style.width = isExpanded ? '80vw' : '100vw';
     // document.body.style.marginLeft = isExpanded ? '20vw' : '0vw';
@@ -125,21 +125,20 @@
      }`;
   };
 
-  function repositionSidebar(button: string, sidebar: string) {
+  function repositionSidebar(button: string, sidebar: string, isCollapsing: boolean) {
     let id = null;
     const moveButton = document.getElementById(button);
     const moveSidebar = document.getElementById(sidebar);
-    moveSidebar.style.left = '17.5vw';
-    let pos = 0;
+    let pos = isCollapsing ? 0 : -17.5;
+    const targetPos = isCollapsing ? -17.5 : 0;
     clearInterval(id);
     id = setInterval(frame, 5);
     function frame() {
-      if (pos === 350) {
+      if (pos === targetPos) {
         clearInterval(id);
       } else {
-        pos--;
-        moveButton.style.left = pos + 'px';
-        moveSidebar.style.left = pos + 'px';
+        pos = isCollapsing ? pos - 0.5 : pos + 0.5;
+        moveSidebar.style.left = pos + 'vw';
       }
     }
   }
