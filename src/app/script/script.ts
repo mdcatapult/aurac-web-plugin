@@ -37,6 +37,7 @@
   ferretSidebar.id = 'ferret-sidebar-id';
   elementToLeft.set(buttonElement, 17.5);
   elementToLeft.set(ferretSidebar, 0);
+
   let isExpanded = true;
   const sidebarTexts = document.createElement('div');
   ferretSidebar.appendChild(sidebarTexts);
@@ -44,8 +45,8 @@
   buttonElement.addEventListener('click', () => {
     const moveButton = document.getElementById('button-id');
     const moveSidebar = document.getElementById('ferret-sidebar-id');
-    repositionSidebar(moveSidebar, isExpanded ? -16 : 0, isExpanded);
-    repositionSidebar(moveButton, isExpanded ? 2.5 : 17.5, isExpanded);
+    repositionSidebar(moveSidebar, isExpanded ? -16 : 0, 'left');
+    repositionSidebar(moveButton, isExpanded ? 2.5 : 17.5, 'left');
 
     isExpanded = !isExpanded;
     document.head.appendChild(newFerretStyleElement());
@@ -103,7 +104,6 @@
   // creates an HTML style element with basic styling for Ferret sidebar
   const newFerretStyleElement = () => {
     const styleElement = document.createElement('style');
-    // styleElement.className = 'style';
     styleElement.innerHTML = setSidebarHTML();
     return styleElement;
   };
@@ -134,20 +134,22 @@
      }`;
   };
 
-  function repositionSidebar(element: HTMLElement, targetLeft: number, isCollapsing: boolean) {
+  function repositionSidebar(element: HTMLElement, target: number, property: 'left' | 'width' | 'marginLeft') {
+    const isCollapsing = isExpanded;
     let id = null;
     let pos = elementToLeft.get(element);
     clearInterval(id);
     id = setInterval(frame, 5);
     function frame() {
-      if (pos === targetLeft) {
+      if (pos === target) {
         clearInterval(id);
       } else {
         pos = isCollapsing ? pos - 0.5 : pos + 0.5;
-        element.style.left = pos + 'vw';
+        element.style[property] = pos + 'vw';
       }
     }
-    elementToLeft.set(element, targetLeft);
+
+    elementToLeft.set(element, target);
   }
 
   // returns an event listener which creates a new element with passed info and appends it to the passed element
