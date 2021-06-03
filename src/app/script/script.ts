@@ -135,23 +135,19 @@
   };
 
   function repositionSidebar(element: HTMLElement, targetLeft: number, isCollapsing: boolean) {
-    console.log('moving ', element.id, ' to ', targetLeft);
     let id = null;
     let pos = elementToLeft.get(element);
-    console.log('starting pos :', pos);
     clearInterval(id);
     id = setInterval(frame, 5);
     function frame() {
       if (pos === targetLeft) {
         clearInterval(id);
       } else {
-
-        console.log('chaging style of ', element.id, " now at ", pos);
         pos = isCollapsing ? pos - 0.5 : pos + 0.5;
         element.style.left = pos + 'vw';
       }
     }
-    elementToLeft.set(element, pos);
+    elementToLeft.set(element, targetLeft);
   }
 
   // returns an event listener which creates a new element with passed info and appends it to the passed element
