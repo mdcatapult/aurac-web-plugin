@@ -26,6 +26,8 @@
     }
   }
   console.log('script loaded');
+
+  const elementToLeft = new Map<HTMLElement, number>();
   const ferretSidebar = document.createElement('span');
   const buttonElement = document.createElement('button');
   ferretSidebar.appendChild(buttonElement);
@@ -33,14 +35,21 @@
   buttonElement.className = 'sidebar-button';
   buttonElement.id = 'button-id';
   ferretSidebar.id = 'ferret-sidebar-id';
+  elementToLeft.set(buttonElement, 17.5);
+  elementToLeft.set(ferretSidebar, 0);
   let isExpanded = true;
   const sidebarTexts = document.createElement('div');
   ferretSidebar.appendChild(sidebarTexts);
   const entityToDiv = new EntityToDiv();
   buttonElement.addEventListener('click', () => {
+    const moveButton = document.getElementById('button-id');
+    const moveSidebar = document.getElementById('ferret-sidebar-id');
+    repositionSidebar(moveSidebar, isExpanded ? -16 : 0, isExpanded);
+    repositionSidebar(moveButton, isExpanded ? 2.5 : 17.5, isExpanded);
+
     isExpanded = !isExpanded;
     document.head.appendChild(newFerretStyleElement());
-    repositionSidebar('button-id', 'ferret-sidebar-id', isExpanded);
+
     // document.head.getElementsByClassName('style').item(0).innerHTML = setSidebarHTML();
     // document.body.style.width = isExpanded ? '80vw' : '100vw';
     // document.body.style.marginLeft = isExpanded ? '20vw' : '0vw';
@@ -125,22 +134,24 @@
      }`;
   };
 
-  function repositionSidebar(button: string, sidebar: string, isCollapsing: boolean) {
+  function repositionSidebar(element: HTMLElement, targetLeft: number, isCollapsing: boolean) {
+    console.log('moving ', element.id, ' to ', targetLeft);
     let id = null;
-    const moveButton = document.getElementById(button);
-    const moveSidebar = document.getElementById(sidebar);
-    let pos = isCollapsing ? 0 : -17.5;
-    const targetPos = isCollapsing ? -17.5 : 0;
+    let pos = elementToLeft.get(element);
+    console.log('starting pos :', pos);
     clearInterval(id);
     id = setInterval(frame, 5);
     function frame() {
-      if (pos === targetPos) {
+      if (pos === targetLeft) {
         clearInterval(id);
       } else {
+
+        console.log('chaging style of ', element.id, " now at ", pos);
         pos = isCollapsing ? pos - 0.5 : pos + 0.5;
-        moveSidebar.style.left = pos + 'vw';
+        element.style.left = pos + 'vw';
       }
     }
+    elementToLeft.set(element, pos);
   }
 
   // returns an event listener which creates a new element with passed info and appends it to the passed element
