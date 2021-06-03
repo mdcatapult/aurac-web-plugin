@@ -27,7 +27,11 @@
   }
   console.log('script loaded');
 
-  const elementToLeft = new Map<HTMLElement, number>();
+  const elementToLeft = new Map<HTMLElement, {
+    left?: number,
+    width?: number,
+    marginLeft?: number,
+  }>();
   const ferretSidebar = document.createElement('span');
   const buttonElement = document.createElement('button');
   ferretSidebar.appendChild(buttonElement);
@@ -35,8 +39,9 @@
   buttonElement.className = 'sidebar-button';
   buttonElement.id = 'button-id';
   ferretSidebar.id = 'ferret-sidebar-id';
-  elementToLeft.set(buttonElement, 17.5);
-  elementToLeft.set(ferretSidebar, 0);
+  elementToLeft.set(buttonElement, {left: 20.5});
+  elementToLeft.set(ferretSidebar, {left: 0});
+  elementToLeft.set(document.body, {width: 80, marginLeft: 20});
 
   let isExpanded = true;
   const sidebarTexts = document.createElement('div');
@@ -45,15 +50,15 @@
   buttonElement.addEventListener('click', () => {
     const moveButton = document.getElementById('button-id');
     const moveSidebar = document.getElementById('ferret-sidebar-id');
-    repositionSidebar(moveSidebar, isExpanded ? -16 : 0, 'left');
-    repositionSidebar(moveButton, isExpanded ? 2.5 : 17.5, 'left');
+
+    repositionSidebar(moveSidebar, isExpanded ? -21 : 0, 'left', isExpanded ? 'shrink' : 'expand');
+    repositionSidebar(moveButton, isExpanded ? 0 : 20.5, 'left', isExpanded ? 'shrink' : 'expand');
+    repositionSidebar(document.body, isExpanded ? 0 : 20, 'marginLeft', isExpanded ? 'shrink' : 'expand');
+    repositionSidebar(document.body, isExpanded ? 100 : 80, 'width', isExpanded ? 'expand' : 'shrink');
 
     isExpanded = !isExpanded;
     document.head.appendChild(newFerretStyleElement());
 
-    // document.head.getElementsByClassName('style').item(0).innerHTML = setSidebarHTML();
-    // document.body.style.width = isExpanded ? '80vw' : '100vw';
-    // document.body.style.marginLeft = isExpanded ? '20vw' : '0vw';
   });
   // @ts-ignore
   browser.runtime.onMessage.addListener((msg) => {
@@ -129,27 +134,25 @@
       color: black;
       background-color: rgb(192, 192, 192);
       position: fixed;
-      left: 17.5vw;
+      left: 20.5vw;
       top: 0.5vw;
      }`;
   };
 
-  function repositionSidebar(element: HTMLElement, target: number, property: 'left' | 'width' | 'marginLeft') {
-    const isCollapsing = isExpanded;
+  function repositionSidebar(element: HTMLElement, target: number, property: 'left' | 'width' | 'marginLeft', direction: 'expand' | 'shrink') {
     let id = null;
-    let pos = elementToLeft.get(element);
+    let pos = elementToLeft.get(element)[property];
     clearInterval(id);
     id = setInterval(frame, 5);
     function frame() {
       if (pos === target) {
         clearInterval(id);
       } else {
-        pos = isCollapsing ? pos - 0.5 : pos + 0.5;
+        pos = direction === 'shrink' ? pos - 0.5 : pos + 0.5;
         element.style[property] = pos + 'vw';
       }
     }
-
-    elementToLeft.set(element, target);
+    elementToLeft.get(element)[property] = target;
   }
 
   // returns an event listener which creates a new element with passed info and appends it to the passed element
