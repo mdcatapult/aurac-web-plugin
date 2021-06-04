@@ -183,16 +183,16 @@
         let pos = isExpanded ? elementProperty.position.expanding : elementProperty.position.collapsing;
         const target = isExpanded ? elementProperty.position.collapsing : elementProperty.position.expanding;
         clearInterval(id);
-        id = setInterval(frame, 5);
+        id = setInterval(frame, 2.5);
 
         function frame() {
           if (pos === target) {
             clearInterval(id);
           } else {
             if (!elementProperty.isReversed) {
-              pos = isExpanded ? pos + 0.5 : pos - 0.5;
+              pos = isExpanded ? pos + 0.25 : pos - 0.25;
             } else {
-              pos = isExpanded ? pos - 0.5 : pos + 0.5;
+              pos = isExpanded ? pos - 0.25 : pos + 0.25;
             }
             elementProperty.element.style[elementProperty.property] = pos + 'vw';
           }
