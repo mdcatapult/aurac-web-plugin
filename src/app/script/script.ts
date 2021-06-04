@@ -37,7 +37,7 @@
   const buttonElement = document.createElement('button');
 
   ferretSidebar.appendChild(buttonElement);
-  buttonElement.innerHTML = '&#10060';
+  buttonElement.innerHTML = '&#60;';
   buttonElement.className = 'sidebar-button';
   buttonElement.id = 'button-id';
   ferretSidebar.id = 'ferret-sidebar-id';
@@ -90,10 +90,10 @@
   ferretSidebar.appendChild(sidebarTexts);
   const entityToDiv = new EntityToDiv();
   buttonElement.addEventListener('click', () => {
-
     animateElements();
-
     isExpanded = !isExpanded;
+    buttonElement.innerHTML = isExpanded ? '&#60;' : '&#62;';
+
     document.head.appendChild(newFerretStyleElement());
 
   });
@@ -171,7 +171,7 @@
       color: black;
       background-color: rgb(192, 192, 192);
       position: fixed;
-      left: 20.5vw;
+      left: ${elementProperties.find(v => v.element === buttonElement).position.expanding}vw;
       top: 0.5vw;
      }`;
   };
