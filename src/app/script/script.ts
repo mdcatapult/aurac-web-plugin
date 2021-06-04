@@ -184,7 +184,7 @@
         const target = isExpanded ? elementProperty.position.collapsing : elementProperty.position.expanding;
         const distance = 0.25;
         clearInterval(id);
-        id = setInterval(frame, 1);
+        id = setInterval(frame, 0.25);
 
         function frame() {
           if (pos === target) {
