@@ -9,67 +9,89 @@
       source: string,
     },
   };
+
   // provides a wrapper around Map<string, HTMLDivElement>() to ensure key formatting
   class EntityToDiv {
     private m = new Map<string, HTMLDivElement>();
+
     set(text: string, html: HTMLDivElement) {
       this.m.set(text.toLowerCase(), html);
     }
+
     has(text: string): boolean {
       return this.m.has(text.toLowerCase());
     }
+
     get(text: string): HTMLDivElement {
       return this.m.get(text.toLowerCase());
     }
+
     values(): IterableIterator<HTMLDivElement> {
       return this.m.values();
     }
   }
+
   console.log('script loaded');
 
-  const elementToPosition = new Map<HTMLElement, {
-    left?: number,
-    width?: number,
-    marginLeft?: number,
-  }>();
   const ferretSidebar = document.createElement('span');
   const buttonElement = document.createElement('button');
 
-  const positions = {
-    buttonOpen : 20.5,
-    buttonClosed: 0,
-    sidebarOpen : 0,
-    sidebarClosed : -21,
-    smallViewport: 80,
-    fullViewport: 100,
-    smallMargin: 20,
-    noMargin: 0
-  };
   ferretSidebar.appendChild(buttonElement);
   buttonElement.innerHTML = '&#10060';
   buttonElement.className = 'sidebar-button';
   buttonElement.id = 'button-id';
   ferretSidebar.id = 'ferret-sidebar-id';
-  elementToPosition.set(buttonElement, {left: positions.buttonOpen});
-  elementToPosition.set(ferretSidebar, {left: positions.sidebarOpen});
-  elementToPosition.set(document.body, {width: positions.smallViewport, marginLeft: positions.smallMargin});
+  document.body.id = 'body';
 
   let isExpanded = true;
+
+  const elementProperties: {
+    element: HTMLElement,
+    position: {
+      expanding: number,
+      collapsing: number,
+    },
+    property: 'left' | 'marginLeft' | 'width'
+    isReversed?: boolean,
+  }[] = [
+    {
+      element: buttonElement,
+      property: 'left',
+      position: {
+        expanding: 20.5,
+        collapsing: 0
+      },
+    }, {
+      element: ferretSidebar,
+      property: 'left',
+      position: {
+        expanding: 0,
+        collapsing: -21
+      },
+    }, {
+      element: document.body,
+      property: 'width',
+      position: {
+        expanding: 80,
+        collapsing: 100
+      },
+      isReversed: true,
+    }, {
+      element: document.body,
+      property: 'marginLeft',
+      position: {
+        expanding: 20,
+        collapsing: 0
+      },
+    },
+  ];
+
   const sidebarTexts = document.createElement('div');
   ferretSidebar.appendChild(sidebarTexts);
   const entityToDiv = new EntityToDiv();
   buttonElement.addEventListener('click', () => {
-    const moveButton = document.getElementById('button-id');
-    const moveSidebar = document.getElementById('ferret-sidebar-id');
 
-    repositionSidebar(moveSidebar, isExpanded ? positions.sidebarClosed : positions.sidebarOpen, 'left',
-      isExpanded ? 'shrink' : 'expand');
-    repositionSidebar(moveButton, isExpanded ? positions.buttonClosed : positions.buttonOpen, 'left',
-      isExpanded ? 'shrink' : 'expand');
-    repositionSidebar(document.body, isExpanded ? positions.noMargin : positions.smallMargin, 'marginLeft',
-      isExpanded ? 'shrink' : 'expand');
-    repositionSidebar(document.body, isExpanded ? positions.fullViewport : positions.smallViewport, 'width',
-      isExpanded ? 'expand' : 'shrink');
+    animateElements();
 
     isExpanded = !isExpanded;
     document.head.appendChild(newFerretStyleElement());
@@ -154,21 +176,28 @@
      }`;
   };
 
-  // tslint:disable-next-line:max-line-length
-  function repositionSidebar(element: HTMLElement, target: number, property: 'left' | 'width' | 'marginLeft', direction: 'expand' | 'shrink') {
-    let id = null;
-    let pos = elementToPosition.get(element)[property];
-    clearInterval(id);
-    id = setInterval(frame, 5);
-    function frame() {
-      if (pos === target) {
+  function animateElements() {
+    elementProperties
+      .forEach(elementProperty => {
+        let id = null;
+        let pos = isExpanded ? elementProperty.position.expanding : elementProperty.position.collapsing;
+        const target = isExpanded ? elementProperty.position.collapsing : elementProperty.position.expanding;
         clearInterval(id);
-      } else {
-        pos = direction === 'shrink' ? pos - 0.5 : pos + 0.5;
-        element.style[property] = pos + 'vw';
-      }
-    }
-    elementToPosition.get(element)[property] = target;
+        id = setInterval(frame, 5);
+
+        function frame() {
+          if (pos === target) {
+            clearInterval(id);
+          } else {
+            if (!elementProperty.isReversed) {
+              pos = isExpanded ? pos + 0.5 : pos - 0.5;
+            } else {
+              pos = isExpanded ? pos - 0.5 : pos + 0.5;
+            }
+            elementProperty.element.style[elementProperty.property] = pos + 'vw';
+          }
+        }
+      });
   }
 
   // returns an event listener which creates a new element with passed info and appends it to the passed element
@@ -223,7 +252,7 @@
     return sidebarText;
   }
 
-  function setXRefHTML(xrefs: {databaseName: string, url: string, compoundName: string}[]): void {
+  function setXRefHTML(xrefs: { databaseName: string, url: string, compoundName: string }[]): void {
     Array.from(document.getElementsByClassName(xrefs[0] ? xrefs[0].compoundName : '')).forEach(element => element.innerHTML = '');
     xrefs.forEach(xref => {
       const xrefElement = document.getElementsByClassName(xref.compoundName).item(0);
