@@ -27,21 +27,32 @@
   }
   console.log('script loaded');
 
-  const elementToLeft = new Map<HTMLElement, {
+  const elementToPosition = new Map<HTMLElement, {
     left?: number,
     width?: number,
     marginLeft?: number,
   }>();
   const ferretSidebar = document.createElement('span');
   const buttonElement = document.createElement('button');
+
+  const positions = {
+    buttonOpen : 20.5,
+    buttonClosed: 0,
+    sidebarOpen : 0,
+    sidebarClosed : -21,
+    smallViewport: 80,
+    fullViewport: 100,
+    smallMargin: 20,
+    noMargin: 0
+  };
   ferretSidebar.appendChild(buttonElement);
   buttonElement.innerHTML = '&#10060';
   buttonElement.className = 'sidebar-button';
   buttonElement.id = 'button-id';
   ferretSidebar.id = 'ferret-sidebar-id';
-  elementToLeft.set(buttonElement, {left: 20.5});
-  elementToLeft.set(ferretSidebar, {left: 0});
-  elementToLeft.set(document.body, {width: 80, marginLeft: 20});
+  elementToPosition.set(buttonElement, {left: positions.buttonOpen});
+  elementToPosition.set(ferretSidebar, {left: positions.sidebarOpen});
+  elementToPosition.set(document.body, {width: positions.smallViewport, marginLeft: positions.smallMargin});
 
   let isExpanded = true;
   const sidebarTexts = document.createElement('div');
@@ -51,10 +62,14 @@
     const moveButton = document.getElementById('button-id');
     const moveSidebar = document.getElementById('ferret-sidebar-id');
 
-    repositionSidebar(moveSidebar, isExpanded ? -21 : 0, 'left', isExpanded ? 'shrink' : 'expand');
-    repositionSidebar(moveButton, isExpanded ? 0 : 20.5, 'left', isExpanded ? 'shrink' : 'expand');
-    repositionSidebar(document.body, isExpanded ? 0 : 20, 'marginLeft', isExpanded ? 'shrink' : 'expand');
-    repositionSidebar(document.body, isExpanded ? 100 : 80, 'width', isExpanded ? 'expand' : 'shrink');
+    repositionSidebar(moveSidebar, isExpanded ? positions.sidebarClosed : positions.sidebarOpen, 'left',
+      isExpanded ? 'shrink' : 'expand');
+    repositionSidebar(moveButton, isExpanded ? positions.buttonClosed : positions.buttonOpen, 'left',
+      isExpanded ? 'shrink' : 'expand');
+    repositionSidebar(document.body, isExpanded ? positions.noMargin : positions.smallMargin, 'marginLeft',
+      isExpanded ? 'shrink' : 'expand');
+    repositionSidebar(document.body, isExpanded ? positions.fullViewport : positions.smallViewport, 'width',
+      isExpanded ? 'expand' : 'shrink');
 
     isExpanded = !isExpanded;
     document.head.appendChild(newFerretStyleElement());
@@ -139,9 +154,10 @@
      }`;
   };
 
+  // tslint:disable-next-line:max-line-length
   function repositionSidebar(element: HTMLElement, target: number, property: 'left' | 'width' | 'marginLeft', direction: 'expand' | 'shrink') {
     let id = null;
-    let pos = elementToLeft.get(element)[property];
+    let pos = elementToPosition.get(element)[property];
     clearInterval(id);
     id = setInterval(frame, 5);
     function frame() {
@@ -152,7 +168,7 @@
         element.style[property] = pos + 'vw';
       }
     }
-    elementToLeft.get(element)[property] = target;
+    elementToPosition.get(element)[property] = target;
   }
 
   // returns an event listener which creates a new element with passed info and appends it to the passed element
