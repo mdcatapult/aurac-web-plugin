@@ -182,17 +182,18 @@
         let id = null;
         let pos = isExpanded ? elementProperty.position.expanding : elementProperty.position.collapsing;
         const target = isExpanded ? elementProperty.position.collapsing : elementProperty.position.expanding;
+        const distance = 0.25;
         clearInterval(id);
-        id = setInterval(frame, 2.5);
+        id = setInterval(frame, 1);
 
         function frame() {
           if (pos === target) {
             clearInterval(id);
           } else {
             if (!elementProperty.isReversed) {
-              pos = isExpanded ? pos + 0.25 : pos - 0.25;
+              pos = isExpanded ? pos + distance : pos - distance;
             } else {
-              pos = isExpanded ? pos - 0.25 : pos + 0.25;
+              pos = isExpanded ? pos - distance : pos + distance;
             }
             elementProperty.element.style[elementProperty.property] = pos + 'vw';
           }
