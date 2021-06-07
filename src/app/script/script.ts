@@ -46,7 +46,7 @@
   ferretSidebar.id = 'ferret-sidebar-id';
   document.body.id = 'body';
 
-  let isExpanded = false;
+  let isExpanded = true;
   let isAppOpen = false;
 
   const elementProperties: {
@@ -104,7 +104,8 @@
   // @ts-ignore
   browser.runtime.onMessage.addListener((msg) => {
     if (!isAppOpen) {
-      buttonElement.click();
+      document.body.style.width = '80vw';
+      document.body.style.marginLeft = '20vw';
       isAppOpen = true;
     }
     document.head.appendChild(newFerretStyleElement());
@@ -159,7 +160,7 @@
         position: fixed;
         z-index: 10;
         height: 100vh;
-        left: ${elementProperties.find(v => v.element === ferretSidebar).position.collapsing}vw;;
+        left: ${elementProperties.find(v => v.element === ferretSidebar).position.expanding}vw;;
         top: 0;
         width: 20vw;
         border-right: 2px solid black;
@@ -171,7 +172,7 @@
       color: black;
       background-color: rgb(192, 192, 192);
       position: fixed;
-      left: ${elementProperties.find(v => v.element === buttonElement).position.collapsing}vw;
+      left: ${elementProperties.find(v => v.element === buttonElement).position.expanding}vw;
       top: 0.5vw;
      }`;
     return styleElement;
