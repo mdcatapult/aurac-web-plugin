@@ -36,12 +36,16 @@
   const ferretSidebar = document.createElement('span');
   const buttonElement = document.createElement('button');
 
+  const collapseArrow = '&#60;';
+  const expandArrow = '&#62;';
+
   ferretSidebar.appendChild(buttonElement);
-  buttonElement.innerHTML = '&#60;';
+  buttonElement.innerHTML = collapseArrow;
   buttonElement.className = 'sidebar-button';
   buttonElement.id = 'button-id';
   ferretSidebar.id = 'ferret-sidebar-id';
   document.body.id = 'body';
+
 
   let isExpanded = true;
 
@@ -92,7 +96,7 @@
   buttonElement.addEventListener('click', () => {
     animateElements();
     isExpanded = !isExpanded;
-    buttonElement.innerHTML = isExpanded ? '&#60;' : '&#62;';
+    buttonElement.innerHTML = isExpanded ? collapseArrow : expandArrow;
 
     document.head.appendChild(newFerretStyleElement());
   });
@@ -177,9 +181,9 @@
         let id = null;
         let pos = isExpanded ? elementProperty.position.expanding : elementProperty.position.collapsing;
         const target = isExpanded ? elementProperty.position.collapsing : elementProperty.position.expanding;
-        const distance = 0.25;
+        const distance = 0.5;
         clearInterval(id);
-        id = setInterval(frame, 0.25);
+        id = setInterval(frame, 1);
 
         function frame() {
           if (pos === target) {
