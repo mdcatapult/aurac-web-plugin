@@ -95,7 +95,6 @@
     buttonElement.innerHTML = isExpanded ? '&#60;' : '&#62;';
 
     document.head.appendChild(newFerretStyleElement());
-
   });
   // @ts-ignore
   browser.runtime.onMessage.addListener((msg) => {
@@ -146,12 +145,7 @@
   // creates an HTML style element with basic styling for Ferret sidebar
   const newFerretStyleElement = () => {
     const styleElement = document.createElement('style');
-    styleElement.innerHTML = setSidebarHTML();
-    return styleElement;
-  };
-
-  const setSidebarHTML = (): string => {
-    return `.ferret-sidebar {
+    styleElement.innerHTML = `.ferret-sidebar {
         color: black;
         font-family: Arial, sans-serif;
         font-size: 14px;
@@ -174,6 +168,7 @@
       left: ${elementProperties.find(v => v.element === buttonElement).position.expanding}vw;
       top: 0.5vw;
      }`;
+    return styleElement;
   };
 
   function animateElements() {
