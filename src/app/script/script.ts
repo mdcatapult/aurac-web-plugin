@@ -46,7 +46,6 @@
   ferretSidebar.id = 'ferret-sidebar-id';
   document.body.id = 'body';
 
-
   let isExpanded = false;
   let isAppOpen = false;
 
@@ -160,7 +159,7 @@
         position: fixed;
         z-index: 10;
         height: 100vh;
-        left: 0;
+        left: ${elementProperties.find(v => v.element === ferretSidebar).position.collapsing}vw;;
         top: 0;
         width: 20vw;
         border-right: 2px solid black;
@@ -172,7 +171,7 @@
       color: black;
       background-color: rgb(192, 192, 192);
       position: fixed;
-      left: ${elementProperties.find(v => v.element === buttonElement).position.expanding}vw;
+      left: ${elementProperties.find(v => v.element === buttonElement).position.collapsing}vw;
       top: 0.5vw;
      }`;
     return styleElement;
