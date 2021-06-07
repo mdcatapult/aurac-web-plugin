@@ -47,7 +47,8 @@
   document.body.id = 'body';
 
 
-  let isExpanded = true;
+  let isExpanded = false;
+  let isAppOpen = false;
 
   const elementProperties: {
     element: HTMLElement,
@@ -100,11 +101,13 @@
 
     document.head.appendChild(newFerretStyleElement());
   });
+
   // @ts-ignore
   browser.runtime.onMessage.addListener((msg) => {
-
-    document.body.style.width = '80vw';
-    document.body.style.marginLeft = '20vw';
+    if (!isAppOpen) {
+      buttonElement.click();
+      isAppOpen = true;
+    }
     document.head.appendChild(newFerretStyleElement());
     ferretSidebar.className = 'ferret-sidebar';
     document.body.appendChild(ferretSidebar);
