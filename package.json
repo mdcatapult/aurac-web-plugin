@@ -12,7 +12,8 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "build:prod": "cross-env NODE_ENV=production ng build --prod",
-    "weblint": "cd dist/browser-plugin && web-ext lint"
+    "weblint": "cd dist/browser-plugin && web-ext lint",
+    "version": "VERSION=$(jq -r '.version' package.json) && cat <<< $(jq --arg v $VERSION '.version = $v' src/manifest.json) > src/manifest.json"
   },
   "private": true,
   "dependencies": {
