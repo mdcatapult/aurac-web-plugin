@@ -94,7 +94,7 @@
   ferretSidebar.appendChild(sidebarTexts);
   const entityToDiv = new EntityToDiv();
   buttonElement.addEventListener('click', () => {
-    resizeViewportWidth();
+    animateElements();
     isExpanded = !isExpanded;
     buttonElement.innerHTML = isExpanded ? collapseArrow : expandArrow;
 
@@ -178,8 +178,8 @@
     return styleElement;
   };
 
-  // This function will animate the sidebar opening and closing depending
-  function resizeViewportWidth() {
+  // This function will animate the sidebar opening and closing
+  function animateElements(): void {
     elementProperties
       .forEach(elementProperty => {
         let id = null;
@@ -187,7 +187,7 @@
         // it will keep closing until it has reached its closed position
         let pos = isExpanded ? elementProperty.position.expanding : elementProperty.position.collapsing;
         const target = isExpanded ? elementProperty.position.collapsing : elementProperty.position.expanding;
-        const distance = 0.5;
+        const elementDistanceSpeed = 0.5;
         clearInterval(id);
         id = setInterval(frame, 1);
         // The frame function is used to animate the sidebar moving in and out. The timeout is how many seconds it will
@@ -199,9 +199,9 @@
           } else {
             if (!elementProperty.isReversed) { // the isReversed boolean relates to the document body width, as the sidebar expands
               // on the screen, the width of the document body needs to contract and vice versa.
-              pos = isExpanded ? pos + distance : pos - distance;
+              pos = isExpanded ? pos + elementDistanceSpeed : pos - elementDistanceSpeed;
             } else {
-              pos = isExpanded ? pos - distance : pos + distance;
+              pos = isExpanded ? pos - elementDistanceSpeed : pos + elementDistanceSpeed;
             }
             elementProperty.element.style[elementProperty.property] = pos + 'vw'; // moves the respective elements directional property
           }
