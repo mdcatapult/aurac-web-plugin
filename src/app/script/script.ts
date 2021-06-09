@@ -94,7 +94,7 @@
   ferretSidebar.appendChild(sidebarTexts);
   const entityToDiv = new EntityToDiv();
   buttonElement.addEventListener('click', () => {
-    animateElements();
+    resizeViewportWidth();
     isExpanded = !isExpanded;
     buttonElement.innerHTML = isExpanded ? collapseArrow : expandArrow;
 
@@ -178,7 +178,7 @@
     return styleElement;
   };
 
-  function animateElements() {
+  function resizeViewportWidth() {
     elementProperties
       .forEach(elementProperty => {
         let id = null;
