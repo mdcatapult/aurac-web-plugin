@@ -94,7 +94,7 @@
   ferretSidebar.appendChild(sidebarTexts);
   const entityToDiv = new EntityToDiv();
   buttonElement.addEventListener('click', () => {
-    animateElements();
+    animateElements(elementProperties);
     isExpanded = !isExpanded;
     buttonElement.innerHTML = isExpanded ? collapseArrow : expandArrow;
 
@@ -179,9 +179,8 @@
   };
 
   // This function will animate the sidebar opening and closing
-  function animateElements(): void {
-    elementProperties
-      .forEach(elementProperty => {
+  function animateElements(element: typeof elementProperties): void {
+    element.forEach(elementProperty => {
         let id = null;
         // If the sidebar is currently open, then it will keep moving until it has reached its target position, otherwise
         // It will keep closing until it has reached its closed position
