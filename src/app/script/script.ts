@@ -183,27 +183,27 @@
     elementProperties
       .forEach(elementProperty => {
         let id = null;
-        // if the sidebar is currently open, then it will keep moving until it has reached its target position, otherwise
-        // it will keep closing until it has reached its closed position
+        // If the sidebar is currently open, then it will keep moving until it has reached its target position, otherwise
+        // It will keep closing until it has reached its closed position
         let pos = isExpanded ? elementProperty.position.expanding : elementProperty.position.collapsing;
         const target = isExpanded ? elementProperty.position.collapsing : elementProperty.position.expanding;
         const elementDistanceSpeed = 0.5;
         clearInterval(id);
         id = setInterval(frame, 1);
         // The frame function is used to animate the sidebar moving in and out. The timeout is how many seconds it will
-        // refresh by, while the distance is how much it will move by
+        // refresh by, while the distance is how much it will move by within this timeframe
         function frame() {
-          if (pos === target) { // if the position is equal to its target then it has reached its new position and should stop
+          if (pos === target) { // If the position is equal to its target then it has reached its new position and should stop
             // moving
-            clearInterval(id); // we reset the timer of the element back to nothing when its reached its target
+            clearInterval(id); // We reset the timer of the element back to nothing when its reached its target
           } else {
-            if (!elementProperty.isReversed) { // the isReversed boolean relates to the document body width, as the sidebar expands
+            if (!elementProperty.isReversed) { // The 'isReversed' boolean relates to the document body width, as the sidebar expands
               // on the screen, the width of the document body needs to contract and vice versa.
               pos = isExpanded ? pos + elementDistanceSpeed : pos - elementDistanceSpeed;
             } else {
               pos = isExpanded ? pos - elementDistanceSpeed : pos + elementDistanceSpeed;
             }
-            elementProperty.element.style[elementProperty.property] = pos + 'vw'; // moves the respective elements directional property
+            elementProperty.element.style[elementProperty.property] = pos + 'vw'; // Moves the respective element by a directional property
           }
         }
       });
