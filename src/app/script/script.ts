@@ -195,7 +195,7 @@
         function frame() {
           if (pos === target) { // if the position is equal to its target then it has reached its new position and should stop
             // moving
-            clearInterval(id);
+            clearInterval(id); // we reset the timer of the element back to nothing when its reached its target
           } else {
             if (!elementProperty.isReversed) { // the isReversed boolean relates to the document body width, as the sidebar expands
               // on the screen, the width of the document body needs to contract and vice versa.
@@ -203,7 +203,7 @@
             } else {
               pos = isExpanded ? pos - distance : pos + distance;
             }
-            elementProperty.element.style[elementProperty.property] = pos + 'vw';
+            elementProperty.element.style[elementProperty.property] = pos + 'vw'; // moves the respective elements directional property
           }
         }
       });
