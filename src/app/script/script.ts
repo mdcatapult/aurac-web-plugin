@@ -65,7 +65,7 @@
         element: buttonElement,
         property: 'left',
         position: {
-          expanding: 20.5,
+          expanding: 20,
           collapsing: 0
         },
       },
