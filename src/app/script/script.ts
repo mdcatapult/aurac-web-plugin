@@ -187,7 +187,6 @@
         let pos = isExpanded ? elementProperty.position.expanding : elementProperty.position.collapsing;
         const target = isExpanded ? elementProperty.position.collapsing : elementProperty.position.expanding;
         const elementDistanceSpeed = 0.5;
-        clearInterval(id);
         id = setInterval(frame, 1);
         // The frame function is used to animate the sidebar moving in and out. The timeout is how many seconds it will
         // refresh by, while the distance is how much it will move by within this timeframe
