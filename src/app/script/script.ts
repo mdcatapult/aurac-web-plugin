@@ -192,8 +192,7 @@
         // The frame function is used to animate the sidebar moving in and out. The timeout is how many seconds it will
         // refresh by, while the distance is how much it will move by within this timeframe
         function frame() {
-          if (pos === target) { // If the position is equal to its target then it has reached its new position and should stop
-            // moving
+          if (pos === target) { // If the position is equal to its target then it has reached its new position and should stop moving
             clearInterval(id); // We reset the timer of the element back to nothing when its reached its target
           } else {
             if (!elementProperty.isReversed) { // The 'isReversed' boolean relates to the document body width, as the sidebar expands
