@@ -49,6 +49,16 @@
   let isExpanded = true;
   let isAppOpen = false;
 
+  type elementPropertiesType = {
+    element: HTMLElement,
+    position: {
+      expanding: number,
+      collapsing: number
+    },
+    property: 'left' | 'marginLeft' | 'width',
+    isReversed?: boolean
+  }[];
+
   const elementProperties: {
     element: HTMLElement,
     position: {
@@ -179,31 +189,31 @@
   };
 
   // This function will animate the sidebar opening and closing
-  function animateElements(element: typeof elementProperties): void {
+  function animateElements(element: elementPropertiesType): void {
     element.forEach(elementProperty => {
-        let id = null;
-        // If the sidebar is currently open, then it will keep moving until it has reached its target position, otherwise
-        // It will keep closing until it has reached its closed position
-        let pos = isExpanded ? elementProperty.position.expanding : elementProperty.position.collapsing;
-        const target = isExpanded ? elementProperty.position.collapsing : elementProperty.position.expanding;
-        const elementDistanceSpeed = 0.5;
-        id = setInterval(frame, 1);
-        // The frame function is used to animate the sidebar moving in and out. The timeout is how many seconds it will
-        // refresh by, while the distance is how much it will move by within this timeframe
-        function frame() {
-          if (pos === target) { // If the position is equal to its target then it has reached its new position and should stop moving
-            clearInterval(id); // We reset the timer of the element back to nothing when its reached its target
+      let id = null;
+      // If the sidebar is currently open, then it will keep moving until it has reached its target position, otherwise
+      // It will keep closing until it has reached its closed position
+      let pos = isExpanded ? elementProperty.position.expanding : elementProperty.position.collapsing;
+      const target = isExpanded ? elementProperty.position.collapsing : elementProperty.position.expanding;
+      const elementDistanceSpeed = 0.5;
+      id = setInterval(frame, 1);
+      // The frame function is used to animate the sidebar moving in and out. The timeout is how many seconds it will
+      // refresh by, while the distance is how much it will move by within this timeframe
+      function frame() {
+        if (pos === target) { // If the position is equal to its target then it has reached its new position and should stop moving
+          clearInterval(id); // We reset the timer of the element back to nothing when its reached its target
+        } else {
+          if (!elementProperty.isReversed) { // The 'isReversed' boolean relates to the document body width, as the sidebar expands
+            // on the screen, the width of the document body needs to contract and vice versa.
+            pos = isExpanded ? pos + elementDistanceSpeed : pos - elementDistanceSpeed;
           } else {
-            if (!elementProperty.isReversed) { // The 'isReversed' boolean relates to the document body width, as the sidebar expands
-              // on the screen, the width of the document body needs to contract and vice versa.
-              pos = isExpanded ? pos + elementDistanceSpeed : pos - elementDistanceSpeed;
-            } else {
-              pos = isExpanded ? pos - elementDistanceSpeed : pos + elementDistanceSpeed;
-            }
-            elementProperty.element.style[elementProperty.property] = pos + 'vw'; // Moves the respective element by a directional property
+            pos = isExpanded ? pos - elementDistanceSpeed : pos + elementDistanceSpeed;
           }
+          elementProperty.element.style[elementProperty.property] = pos + 'vw'; // Moves the respective element by a directional property
         }
-      });
+      }
+    });
   }
 
   // returns an event listener which creates a new element with passed info and appends it to the passed element
