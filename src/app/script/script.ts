@@ -1,3 +1,6 @@
+import {Http, Response} from '@angular/http'
+import {browser} from "protractor";
+
 (() => {
   type Information = {
     entityText: string,
@@ -9,22 +12,28 @@
       source: string,
     },
   };
+
   // provides a wrapper around Map<string, HTMLDivElement>() to ensure key formatting
   class EntityToDiv {
     private m = new Map<string, HTMLDivElement>();
+
     set(text: string, html: HTMLDivElement) {
       this.m.set(text.toLowerCase(), html);
     }
+
     has(text: string): boolean {
       return this.m.has(text.toLowerCase());
     }
+
     get(text: string): HTMLDivElement {
       return this.m.get(text.toLowerCase());
     }
+
     values(): IterableIterator<HTMLDivElement> {
       return this.m.values();
     }
   }
+
   console.log('script loaded');
   const ferretSidebar = document.createElement('span');
   const buttonElement = document.createElement('button');
@@ -40,6 +49,7 @@
     document.body.style.marginLeft = '0';
   });
   // @ts-ignore
+
   browser.runtime.onMessage.addListener((msg) => {
 
     document.body.style.width = '80vw';
@@ -47,6 +57,7 @@
     document.head.appendChild(newFerretStyleElement());
     ferretSidebar.className = 'ferret-sidebar';
     document.body.appendChild(ferretSidebar);
+
     switch (msg.type) {
       case 'get_page_contents':
         return new Promise((resolve, reject) => {
@@ -76,6 +87,9 @@
         break;
       case 'x-ref_result':
         setXRefHTML(msg.body);
+        break;
+      case 'ping-url-response':
+        handlePingUrlResponse(msg.body)
         break;
       default:
         throw new Error('Received unexpected message from plugin');
@@ -126,7 +140,7 @@
         removeEventListener('mouseenter', populateFerretSidebar(info, element));
       } else {
         if (!entityToDiv.has(info.entityText)) {
-          entityToDiv.set(info.entityText, renderSidebar(info));
+          entityToDiv.set(info.entityText, renderSidebarElement(info));
           // @ts-ignore
           browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity]});
         }
@@ -145,8 +159,23 @@
     });
   }
 
+  function createGeneNamesUrl(hgncId: string): string {
+    const id = hgncId.split(':').pop()
+    return `https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/${id}`
+  }
+
+  function handlePingUrlResponse(url: string) : void {
+    if(url != null) {
+
+      const x = document.getE
+      sidebarText.setAttribute('data-gene-name', geneNameUrl)
+    }
+
+  }
+
+
   // Creates a sidebar element presenting information.
-  function renderSidebar(information: Information): HTMLDivElement {
+  function renderSidebarElement(information: Information): HTMLDivElement {
     const sidebarText = document.createElement('div');
     sidebarText.id = 'sidebar-text';
     sidebarText.style.border = '1px solid black';
@@ -154,7 +183,22 @@
     sidebarText.style.marginBottom = '5px';
     sidebarText.style.backgroundColor = information.recognisingDict.htmlColor;
     sidebarText.insertAdjacentHTML('afterbegin', `<p>Term: ${information.entityText}</p>`);
+
     if (information.resolvedEntity) {
+
+      if (information.entityGroup === 'Gene or Protein') {
+        const geneNameUrl = createGeneNamesUrl(information.resolvedEntity);
+
+        sidebarText.setAttribute('data-gene-name', geneNameUrl)
+
+        browser.runtime.sendMessage({type: 'ping-url-request', body:  geneNameUrl})
+
+        if (geneNameUrl != null) {
+          const text = `<p id=${geneNameUrl}>genenames link: <a href=${geneNameUrl} target="_blank">${geneNameUrl}</a></p>`;
+          sidebarText.insertAdjacentHTML('beforeend', text);
+        }
+      }
+
       sidebarText.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${information.resolvedEntity}</p>`);
     }
     sidebarText.insertAdjacentHTML('beforeend', `<p>Entity Group: ${information.entityGroup}</p>`);
@@ -167,7 +211,7 @@
     return sidebarText;
   }
 
-  function setXRefHTML(xrefs: {databaseName: string, url: string, compoundName: string}[]): void {
+  function setXRefHTML(xrefs: { databaseName: string, url: string, compoundName: string }[]): void {
     Array.from(document.getElementsByClassName(xrefs[0] ? xrefs[0].compoundName : '')).forEach(element => element.innerHTML = '');
     xrefs.forEach(xref => {
       const xrefElement = document.getElementsByClassName(xref.compoundName).item(0);

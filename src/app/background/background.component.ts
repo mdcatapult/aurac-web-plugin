@@ -46,10 +46,28 @@ export class BackgroundComponent {
         }
         case 'load-settings': {
           sendResponse(this.settings);
+          break;
+        }
+        case 'ping-url-request' : {
+          this.pingUrl(msg.body)
         }
       }
     });
   }
+
+  //
+  private pingUrl(url: string) : void {
+    this.client.get(url).subscribe(() => {
+      this.browserService.sendMessageToActiveTab({type: 'ping-url-response', body: url})
+
+    }, () => {
+      this.browserService.sendMessageToActiveTab({type: 'ping-url-response', body: null})
+    })
+  }
+
+
+
+
 
   private loadXRefs([entityTerm, resolvedEntity]: [string, string]): void {
     const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]{1}$/;
