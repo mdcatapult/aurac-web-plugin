@@ -179,7 +179,7 @@
       background-color: rgb(192, 192, 192);
       position: fixed;
       left: ${elementProperties.find(v => v.element === buttonElement).position.expanding}vw;
-      top: 0.5vw;
+      top: 50%;
      }`;
     return styleElement;
   };
@@ -194,16 +194,16 @@
       const target = isExpanded ? elementProperty.position.collapsing : elementProperty.position.expanding;
       const elementDistanceSpeed = 0.5;
       id = setInterval(frame, 1);
-      // The frame function is used to animate the sidebar moving in and out. The timeout is how many seconds it will
-      // refresh by, while the distance is how much it will move by within this timeframe
+      // The frame function is used to animate the sidebar moving in and out. setInvertal will call this function every seconds/ms
+      // depending on what number you pass to it
       function frame() {
         if (pos === target) { // If the position is equal to its target then it has reached its new position and should stop moving
           clearInterval(id); // We reset the timer of the element back to nothing when its reached its target
         } else {
           if (!elementProperty.isReversed) { // The 'isReversed' boolean relates to the document body width, as the sidebar expands
-            // on the screen, the width of the document body needs to contract and vice versa.
+            // on the screen, the width of the document body needs to contract and vice versa
             pos = isExpanded ? pos + elementDistanceSpeed : pos - elementDistanceSpeed;
-          } else {
+          } else { // The elementDistanceSpeed is how much the element will move by within this timeframe
             pos = isExpanded ? pos - elementDistanceSpeed : pos + elementDistanceSpeed;
           }
           elementProperty.element.style[elementProperty.property] = pos + 'vw'; // Moves the respective element by a directional property
