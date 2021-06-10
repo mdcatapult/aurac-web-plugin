@@ -57,7 +57,7 @@ export class BackgroundComponent {
     if (resolvedEntity) {
       if (!resolvedEntity.match(inchiKeyRegex)) {
         const encodedEntity = encodeURIComponent(resolvedEntity);
-        xRefObservable = this.client.get(encodeURI(`${this.settings.compoundConverterURL}/${encodedEntity}?from=SMILES&to=inchikey`)).pipe(
+        xRefObservable = this.client.get(`${this.settings.compoundConverterURL}/${encodedEntity}?from=SMILES&to=inchikey`).pipe(
           // @ts-ignore
           switchMap((converterResult: ConverterResult) => {
             return converterResult ? this.client.get(`${this.settings.unichemURL}/${converterResult.output}`) : of({});
