@@ -49,7 +49,7 @@
   let isExpanded = true;
   let isAppOpen = false;
 
-  type elementPropertiesType = {
+  type ElementPropertiesType = {
     element: HTMLElement,
     position: {
       expanding: number,
@@ -59,46 +59,42 @@
     isReversed?: boolean
   }[];
 
-  const elementProperties: {
-    element: HTMLElement,
-    position: {
-      expanding: number,
-      collapsing: number,
-    },
-    property: 'left' | 'marginLeft' | 'width'
-    isReversed?: boolean,
-  }[] = [
-    {
-      element: buttonElement,
-      property: 'left',
-      position: {
-        expanding: 20.5,
-        collapsing: 0
+  const elementProperties: ElementPropertiesType =
+    [
+      {
+        element: buttonElement,
+        property: 'left',
+        position: {
+          expanding: 20.5,
+          collapsing: 0
+        },
       },
-    }, {
-      element: ferretSidebar,
-      property: 'left',
-      position: {
-        expanding: 0,
-        collapsing: -21
+      {
+        element: ferretSidebar,
+        property: 'left',
+        position: {
+          expanding: 0,
+          collapsing: -21
+        },
       },
-    }, {
-      element: document.body,
-      property: 'width',
-      position: {
-        expanding: 80,
-        collapsing: 100
+      {
+        element: document.body,
+        property: 'width',
+        position: {
+          expanding: 80,
+          collapsing: 100
+        },
+        isReversed: true,
       },
-      isReversed: true,
-    }, {
-      element: document.body,
-      property: 'marginLeft',
-      position: {
-        expanding: 20,
-        collapsing: 0
+      {
+        element: document.body,
+        property: 'marginLeft',
+        position: {
+          expanding: 20,
+          collapsing: 0
+        },
       },
-    },
-  ];
+    ];
 
   const sidebarTexts = document.createElement('div');
   ferretSidebar.appendChild(sidebarTexts);
@@ -189,7 +185,7 @@
   };
 
   // This function will animate the sidebar opening and closing
-  function animateElements(element: elementPropertiesType): void {
+  function animateElements(element: ElementPropertiesType): void {
     element.forEach(elementProperty => {
       let id = null;
       // If the sidebar is currently open, then it will keep moving until it has reached its target position, otherwise
