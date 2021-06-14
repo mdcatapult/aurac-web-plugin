@@ -1,7 +1,5 @@
 
 (() => {
-
-
   type Information = {
     entityText: string,
     resolvedEntity: string,
@@ -247,11 +245,6 @@
     });
   }
 
-  function createGeneNamesUrl(hgncId: string): string {
-    const id = hgncId.split(':').pop()
-    return `https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/${id}`
-  }
-
   // Creates a sidebar element presenting information.
   function renderSidebarElement(information: Information): HTMLDivElement {
     const sidebarText: HTMLDivElement = document.createElement('div');
@@ -266,7 +259,8 @@
       sidebarText.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${information.resolvedEntity}</p>`);
 
       if (information.entityGroup === 'Gene or Protein') {
-        setGeneNameAttribute(information.resolvedEntity, sidebarText);
+        const geneNameUrl = createGeneNameLink(information.resolvedEntity);
+        sidebarText.insertAdjacentHTML('beforeend', geneNameUrl);
       }
     }
 
@@ -281,16 +275,12 @@
     return sidebarText;
   }
 
-  // if the entity group is 'Gene or Protein' add a data-gene-name attribute to the sidebarText element
-  // then send a request to the created URL via the browser.runtime.sendMessage fn, to see if a valid response is returned
-  // the response is handled in handlePingUrlResponse, which will check
-  function setGeneNameAttribute(resolvedEntity: string, sidebarText: HTMLDivElement): void {
-    const geneNameUrl = createGeneNamesUrl(resolvedEntity);
-    console.log('in setGeneNameAttribute');
-    const text = `<p id=${geneNameUrl}>Genenames link: <a href=${geneNameUrl} target="_blank">${geneNameUrl}</a></p>`;
-    sidebarText.insertAdjacentHTML('beforeend', text);
+  // if the entity group is 'Gene or Protein' addto the sidebarText element
+  function createGeneNameLink(resolvedEntity: string): string {
+    const id = resolvedEntity.split(':').pop();
+    const geneNameUrl = `https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/${id}`;
+    return `<p id=${geneNameUrl}>Genenames link: <a href=${geneNameUrl} target="_blank">${geneNameUrl}</a></p>`;
   }
-
 
   function setXRefHTML(xrefs: { databaseName: string, url: string, compoundName: string }[]): void {
     Array.from(document.getElementsByClassName(xrefs[0] ? xrefs[0].compoundName : '')).forEach(element => element.innerHTML = '');

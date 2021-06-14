@@ -46,7 +46,6 @@ export class BackgroundComponent {
         }
         case 'load-settings': {
           sendResponse(this.settings);
-          break;
         }
       }
     });
