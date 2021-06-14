@@ -48,36 +48,9 @@ export class BackgroundComponent {
           sendResponse(this.settings);
           break;
         }
-        case 'ping-url-request' : {
-          this.pingUrl(sendResponse, msg.body);
-          break;
-        }
       }
     });
   }
-
-  //
-  private pingUrl(sendResponse: (r: object) => {}, url: string): void {
-    // do the http call, if it's OK, send the url (this will be appended to the html element)
-
-    console.log('in pingUrl fn')
-    let urlObj: { response: string } = {response: ''};
-
-    this.client.get(url).subscribe(() => {
-
-      console.log('in pingUrl fn good')
-
-      urlObj.response = url
-
-      sendResponse(urlObj);
-    }, () => {
-
-      console.log('in pingUrl fn eerr')
-
-      sendResponse(urlObj)
-    })
-  }
-
 
   private loadXRefs([entityTerm, resolvedEntity]: [string, string]): void {
     const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]{1}$/;
