@@ -1,4 +1,4 @@
-import {Http, Response} from '@angular/http'
+// import {Http, Response} from '@angular/http'
 import {browser} from "protractor";
 
 (() => {
@@ -88,9 +88,9 @@ import {browser} from "protractor";
       case 'x-ref_result':
         setXRefHTML(msg.body);
         break;
-      case 'ping-url-response':
-        handlePingUrlResponse(msg.body)
-        break;
+      // case 'ping-url-response':
+      //   handlePingUrlResponse(msg.body)
+      //   break;
       default:
         throw new Error('Received unexpected message from plugin');
     }
@@ -164,19 +164,42 @@ import {browser} from "protractor";
     return `https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/${id}`
   }
 
-  function handlePingUrlResponse(url: string) : void {
-    if(url != null) {
+  // // url is either null or the actual url, in which case we can append it to the relevant html element
+  // function handlePingUrlResponse(url: string) : void {
+  //   if(url != null) {
+  //
+  //     const x = document.g
+  //   }
+  //
+  // }
 
-      const x = document.getE
-      sidebarText.setAttribute('data-gene-name', geneNameUrl)
-    }
+  // if the entity group is 'Gene or Protein' add a data-gene-name attribute to the sidebarText element
+  // then send a request to the created URL via the browser.runtime.sendMessage fn, to see if a valid response is returned
+  // the response is handled in handlePingUrlResponse, which will check
+  function setGeneNameAttribute(resolvedEntity: string, sidebarText: HTMLDivElement): void {
 
+    const geneNameUrl = createGeneNamesUrl(resolvedEntity);
+    console.log('in setGeneNameAttribute');
+    browser.runtime.sendMessage({type: 'ping-url-request', body: geneNameUrl})
+      .then((urlObject: { response: string }) => {
+        console.log('in ping-url-request then block');
+
+        if (urlObject.response != '') {
+          const text = `<p id=${geneNameUrl}>genenames link: <a href=${geneNameUrl} target="_blank">${geneNameUrl}</a></p>`;
+          sidebarText.insertAdjacentHTML('beforeend', text);
+        }
+      })
+      .catch((error) => {
+        console.log('>>>>>>');
+        console.log(error);
+      })
   }
 
+  // renderSidebarElement ->
 
   // Creates a sidebar element presenting information.
   function renderSidebarElement(information: Information): HTMLDivElement {
-    const sidebarText = document.createElement('div');
+    const sidebarText: HTMLDivElement = document.createElement('div');
     sidebarText.id = 'sidebar-text';
     sidebarText.style.border = '1px solid black';
     sidebarText.style.padding = '2px';
@@ -185,25 +208,17 @@ import {browser} from "protractor";
     sidebarText.insertAdjacentHTML('afterbegin', `<p>Term: ${information.entityText}</p>`);
 
     if (information.resolvedEntity) {
+      sidebarText.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${information.resolvedEntity}</p>`);
 
       if (information.entityGroup === 'Gene or Protein') {
-        const geneNameUrl = createGeneNamesUrl(information.resolvedEntity);
-
-        sidebarText.setAttribute('data-gene-name', geneNameUrl)
-
-        browser.runtime.sendMessage({type: 'ping-url-request', body:  geneNameUrl})
-
-        if (geneNameUrl != null) {
-          const text = `<p id=${geneNameUrl}>genenames link: <a href=${geneNameUrl} target="_blank">${geneNameUrl}</a></p>`;
-          sidebarText.insertAdjacentHTML('beforeend', text);
-        }
+        setGeneNameAttribute(information.resolvedEntity, sidebarText);
       }
-
-      sidebarText.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${information.resolvedEntity}</p>`);
     }
+
     sidebarText.insertAdjacentHTML('beforeend', `<p>Entity Group: ${information.entityGroup}</p>`);
     sidebarText.insertAdjacentHTML('beforeend', `<p>Entity Type: ${information.recognisingDict.entityType}</p>`);
     sidebarText.insertAdjacentHTML('beforeend', `<p>Dictionary Source: ${information.recognisingDict.source}</p>`);
+
     const xrefHTML = document.createElement('div');
     xrefHTML.className = information.entityText;
     sidebarText.appendChild(xrefHTML);
