@@ -49,7 +49,8 @@ export class BackgroundComponent {
           break;
         }
         case 'ping-url-request' : {
-          this.pingUrl(sendResponse, msg.body)
+          this.pingUrl(sendResponse, msg.body);
+          break;
         }
       }
     });
