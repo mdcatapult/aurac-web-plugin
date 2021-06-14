@@ -287,7 +287,7 @@
   function setGeneNameAttribute(resolvedEntity: string, sidebarText: HTMLDivElement): void {
     const geneNameUrl = createGeneNamesUrl(resolvedEntity);
     console.log('in setGeneNameAttribute');
-    const text = `<p id=${geneNameUrl}>genenames link: <a href=${geneNameUrl} target="_blank">${geneNameUrl}</a></p>`;
+    const text = `<p id=${geneNameUrl}>Genenames link: <a href=${geneNameUrl} target="_blank">${geneNameUrl}</a></p>`;
     sidebarText.insertAdjacentHTML('beforeend', text);
   }
 
