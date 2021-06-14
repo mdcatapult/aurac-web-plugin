@@ -275,7 +275,7 @@
     return sidebarText;
   }
 
-  // if the entity group is 'Gene or Protein' addto the sidebarText element
+  // if the entity group is 'Gene or Protein' add a genenames url link to the sidebarText element
   function createGeneNameLink(resolvedEntity: string): string {
     const id = resolvedEntity.split(':').pop();
     const geneNameUrl = `https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/${id}`;
