@@ -8,9 +8,7 @@ export type MessageType =
   | 'x-ref_result'
   | 'save-settings'
   | 'load-settings'
-  | 'log'
-  | 'ping-url-request'
-  | 'ping-url-response';
+  | 'log';
 
 export interface Message {
   type: MessageType;

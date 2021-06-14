@@ -259,8 +259,8 @@
       sidebarText.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${information.resolvedEntity}</p>`);
 
       if (information.entityGroup === 'Gene or Protein') {
-        const geneNameUrl = createGeneNameLink(information.resolvedEntity);
-        sidebarText.insertAdjacentHTML('beforeend', geneNameUrl);
+        const geneNameLink = createGeneNameLink(information.resolvedEntity);
+        sidebarText.insertAdjacentHTML('beforeend', geneNameLink);
       }
     }
 
