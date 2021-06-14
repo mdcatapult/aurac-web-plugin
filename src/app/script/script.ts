@@ -152,9 +152,6 @@
       case 'x-ref_result':
         setXRefHTML(msg.body);
         break;
-      // case 'ping-url-response':
-      //   handlePingUrlResponse(msg.body)
-      //   break;
       default:
         throw new Error('Received unexpected message from plugin');
     }
