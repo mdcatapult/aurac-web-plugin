@@ -35,25 +35,89 @@
   }
 
   console.log('script loaded');
+
   const ferretSidebar = document.createElement('span');
   const buttonElement = document.createElement('button');
+
+  const collapseArrow = '&#60;';
+  const expandArrow = '&#62;';
+
   ferretSidebar.appendChild(buttonElement);
-  buttonElement.innerHTML = '&#10060';
+  buttonElement.innerHTML = collapseArrow;
   buttonElement.className = 'sidebar-button';
+  buttonElement.id = 'button-id';
+  ferretSidebar.id = 'ferret-sidebar-id';
+  document.body.id = 'body';
+
+  let isExpanded = true;
+  let isAppOpen = false;
+
+  type ElementPropertiesType = {
+    element: HTMLElement,
+    position: {
+      expanding: number,
+      collapsing: number
+    },
+    property: 'left' | 'marginLeft' | 'width',
+    isReversed?: boolean
+  }[];
+
+  const elementProperties: ElementPropertiesType =
+    [
+      {
+        element: buttonElement,
+        property: 'left',
+        position: {
+          expanding: 20,
+          collapsing: 0
+        },
+      },
+      {
+        element: ferretSidebar,
+        property: 'left',
+        position: {
+          expanding: 0,
+          collapsing: -21
+        },
+      },
+      {
+        element: document.body,
+        property: 'width',
+        position: {
+          expanding: 80,
+          collapsing: 100
+        },
+        isReversed: true,
+      },
+      {
+        element: document.body,
+        property: 'marginLeft',
+        position: {
+          expanding: 20,
+          collapsing: 0
+        },
+      },
+    ];
+
   const sidebarTexts = document.createElement('div');
   ferretSidebar.appendChild(sidebarTexts);
   const entityToDiv = new EntityToDiv();
   buttonElement.addEventListener('click', () => {
-    ferretSidebar.remove();
-    document.body.style.width = '100vw';
-    document.body.style.marginLeft = '0';
+    animateElements(elementProperties);
+    isExpanded = !isExpanded;
+    buttonElement.innerHTML = isExpanded ? collapseArrow : expandArrow;
+
+    document.head.appendChild(newFerretStyleElement());
   });
+
   // @ts-ignore
 
   browser.runtime.onMessage.addListener((msg) => {
-
-    document.body.style.width = '80vw';
-    document.body.style.marginLeft = '20vw';
+    if (!isAppOpen) {
+      document.body.style.width = '80vw';
+      document.body.style.marginLeft = '20vw';
+      isAppOpen = true;
+    }
     document.head.appendChild(newFerretStyleElement());
     ferretSidebar.className = 'ferret-sidebar';
     document.body.appendChild(ferretSidebar);
@@ -102,8 +166,7 @@
   // creates an HTML style element with basic styling for Ferret sidebar
   const newFerretStyleElement = () => {
     const styleElement = document.createElement('style');
-    styleElement.innerHTML =
-      `.ferret-sidebar {
+    styleElement.innerHTML = `.ferret-sidebar {
         color: black;
         font-family: Arial, sans-serif;
         font-size: 14px;
@@ -111,7 +174,7 @@
         position: fixed;
         z-index: 10;
         height: 100vh;
-        left: 0;
+        left: ${elementProperties.find(v => v.element === ferretSidebar).position.expanding}vw;;
         top: 0;
         width: 20vw;
         border-right: 2px solid black;
@@ -123,11 +186,39 @@
       color: black;
       background-color: rgb(192, 192, 192);
       position: fixed;
-      left: 17.5vw;
-      top: 0.5vw;
+      left: ${elementProperties.find(v => v.element === buttonElement).position.expanding}vw;
+      top: 50%;
      }`;
     return styleElement;
   };
+
+  // This function will animate the sidebar opening and closing
+  function animateElements(element: ElementPropertiesType): void {
+    element.forEach(elementProperty => {
+      let id = null;
+      // If the sidebar is currently open, then it will keep moving until it has reached its target position, otherwise
+      // It will keep closing until it has reached its closed position
+      let pos = isExpanded ? elementProperty.position.expanding : elementProperty.position.collapsing;
+      const target = isExpanded ? elementProperty.position.collapsing : elementProperty.position.expanding;
+      const elementDistanceSpeed = 0.5;
+      id = setInterval(frame, 1);
+      // The frame function is used to animate the sidebar moving in and out. setInvertal will call this function every seconds/ms
+      // depending on what number you pass to it
+      function frame() {
+        if (pos === target) { // If the position is equal to its target then it has reached its new position and should stop moving
+          clearInterval(id); // We reset the timer of the element back to nothing when its reached its target
+        } else {
+          if (!elementProperty.isReversed) { // The 'isReversed' boolean relates to the document body width, as the sidebar expands
+            // on the screen, the width of the document body needs to contract and vice versa
+            pos = isExpanded ? pos + elementDistanceSpeed : pos - elementDistanceSpeed;
+          } else { // The elementDistanceSpeed is how much the element will move by within this timeframe
+            pos = isExpanded ? pos - elementDistanceSpeed : pos + elementDistanceSpeed;
+          }
+          elementProperty.element.style[elementProperty.property] = pos + 'vw'; // Moves the respective element by a directional property
+        }
+      }
+    });
+  }
 
   // returns an event listener which creates a new element with passed info and appends it to the passed element
   const populateFerretSidebar = (info: Information, element: Element) => {
