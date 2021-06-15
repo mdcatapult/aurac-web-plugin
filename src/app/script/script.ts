@@ -1,3 +1,4 @@
+
 (() => {
   type Information = {
     entityText: string,
@@ -108,6 +109,7 @@
   });
 
   // @ts-ignore
+
   browser.runtime.onMessage.addListener((msg) => {
     if (!isAppOpen) {
       document.body.style.width = '80vw';
@@ -117,6 +119,7 @@
     document.head.appendChild(newFerretStyleElement());
     ferretSidebar.className = 'ferret-sidebar';
     document.body.appendChild(ferretSidebar);
+
     switch (msg.type) {
       case 'get_page_contents':
         return new Promise((resolve, reject) => {
@@ -223,7 +226,7 @@
         removeEventListener('mouseenter', populateFerretSidebar(info, element));
       } else {
         if (!entityToDiv.has(info.entityText)) {
-          entityToDiv.set(info.entityText, renderSidebar(info));
+          entityToDiv.set(info.entityText, renderSidebarElement(info));
           // @ts-ignore
           browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity]});
         }
@@ -243,25 +246,40 @@
   }
 
   // Creates a sidebar element presenting information.
-  function renderSidebar(information: Information): HTMLDivElement {
-    const sidebarText = document.createElement('div');
+  function renderSidebarElement(information: Information): HTMLDivElement {
+    const sidebarText: HTMLDivElement = document.createElement('div');
     sidebarText.id = 'sidebar-text';
     sidebarText.style.border = '1px solid black';
     sidebarText.style.padding = '2px';
     sidebarText.style.marginBottom = '5px';
     sidebarText.style.backgroundColor = information.recognisingDict.htmlColor;
     sidebarText.insertAdjacentHTML('afterbegin', `<p>Term: ${information.entityText}</p>`);
+
     if (information.resolvedEntity) {
       sidebarText.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${information.resolvedEntity}</p>`);
+
+      if (information.entityGroup === 'Gene or Protein') {
+        const geneNameLink = createGeneNameLink(information.resolvedEntity);
+        sidebarText.insertAdjacentHTML('beforeend', geneNameLink);
+      }
     }
+
     sidebarText.insertAdjacentHTML('beforeend', `<p>Entity Group: ${information.entityGroup}</p>`);
     sidebarText.insertAdjacentHTML('beforeend', `<p>Entity Type: ${information.recognisingDict.entityType}</p>`);
     sidebarText.insertAdjacentHTML('beforeend', `<p>Dictionary Source: ${information.recognisingDict.source}</p>`);
+
     const xrefHTML = document.createElement('div');
     xrefHTML.className = information.entityText;
     sidebarText.appendChild(xrefHTML);
     sidebarTexts.appendChild(sidebarText);
     return sidebarText;
+  }
+
+  // if the entity group is 'Gene or Protein' add a genenames url link to the sidebarText element
+  function createGeneNameLink(resolvedEntity: string): string {
+    const id = resolvedEntity.split(':').pop();
+    const geneNameUrl = `https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/${id}`;
+    return `<p id=${geneNameUrl}>Genenames link: <a href=${geneNameUrl} target="_blank">${geneNameUrl}</a></p>`;
   }
 
   function setXRefHTML(xrefs: { databaseName: string, url: string, compoundName: string }[]): void {

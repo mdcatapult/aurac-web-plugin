@@ -73,49 +73,49 @@ export class BackgroundComponent {
 
       xRefObservable.subscribe((xrefs: XRef[]) => {
         this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs});
-        });
-      }
+      });
     }
+  }
 
 
   private addCompoundNameToXRefObject = (entityTerm: string) => map((xrefs: XRef[]) => xrefs.map(xref => {
-      if (xref) {
-        xref.compoundName = entityTerm;
-      }
-      return xref;
-    }))
+    if (xref) {
+      xref.compoundName = entityTerm;
+    }
+    return xref;
+  }))
 
 
   private nerCurrentPage(dictionary: validDict): void {
     console.log('Getting content of active tab...');
     this.browserService.sendMessageToActiveTab({type: 'get_page_contents'})
-        .catch(e => console.error(e))
-        .then(result => {
-          if (!result || !result.body) {
-            console.log('No content');
-            return;
-          }
-          result = result as StringMessage;
-          console.log('Sending page contents to leadmine...');
-          let queryParams: HttpParams = new HttpParams()
-            .set('inchikey', 'false');
-          if (dictionary === 'chemical-inchi') {
-            dictionary = 'chemical-entities';
-            queryParams = new HttpParams().set('inchikey', 'true');
-          }
-          this.client.post<LeadminerResult>(
-            `${this.settings.leadmineURL}/${dictionary}/entities`,
-            result.body,
-            {observe: 'response', params: queryParams})
-            .subscribe((response) => {
-              console.log('Received results from leadmine...');
-              if (!response.body) {
-                return;
-              }
-              const uniqueEntities = this.getUniqueEntities(response.body!);
-              this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities});
-            });
-        });
+      .catch(e => console.error(e))
+      .then(result => {
+        if (!result || !result.body) {
+          console.log('No content');
+          return;
+        }
+        result = result as StringMessage;
+        console.log('Sending page contents to leadmine...');
+        let queryParams: HttpParams = new HttpParams()
+          .set('inchikey', 'false');
+        if (dictionary === 'chemical-inchi') {
+          dictionary = 'chemical-entities';
+          queryParams = new HttpParams().set('inchikey', 'true');
+        }
+        this.client.post<LeadminerResult>(
+          `${this.settings.leadmineURL}/${dictionary}/entities`,
+          result.body,
+          {observe: 'response', params: queryParams})
+          .subscribe((response) => {
+            console.log('Received results from leadmine...');
+            if (!response.body) {
+              return;
+            }
+            const uniqueEntities = this.getUniqueEntities(response.body!);
+            this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities});
+          });
+      });
   }
 
   getUniqueEntities(leadmineResponse: LeadminerResult): Array<LeadminerEntity> {
