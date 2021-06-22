@@ -135,11 +135,11 @@
             // Try/catch for edge cases.
             try {
               const replacementNode = document.createElement('span');
-              replacementNode.innerHTML = element.nodeValue.replace(term, highlightTerm(term, entity));
+              replacementNode.innerHTML = element.nodeValue.replaceAll(term, highlightTerm(term, entity));
               element.parentNode.insertBefore(replacementNode, element);
               element.parentNode.removeChild(element);
-              const childValue = getFerretHighlightChildren(replacementNode);
-              childValue[0].addEventListener('mouseenter', populateFerretSidebar(entity, replacementNode));
+              const childValues = getFerretHighlightChildren(replacementNode);
+              childValues.forEach(childValue => childValue.addEventListener('mouseenter', populateFerretSidebar(entity, replacementNode)));
             } catch (e) {
               console.error(e);
             }
