@@ -303,25 +303,23 @@
 
   // Recursively find all text nodes which match regex
   function allDescendants(node: HTMLElement, elements: Array<Element>, re: RegExp) {
-    if (node && node.classList.contains('ferret-sidebar')) {
+    if ((node && node.classList.contains('ferret-sidebar')) || !allowedTagType(node)) {
       return;
     }
     try {
-      if (allowedTagType(node)) {
-        node.childNodes.forEach(child => {
-          const element = child as HTMLElement;
-          if (allowedNodeType(element)) {
-            if (element.nodeType === Node.TEXT_NODE) {
-              if (element.nodeValue.match(re)) {
-                elements.push(element);
-              }
-              // tslint:disable-next-line:max-line-length
-            } else if (!element.classList.contains('tooltipped') && !element.classList.contains('tooltipped-click') && element.style.display !== 'none') {
-              allDescendants(element, elements, re);
+      node.childNodes.forEach(child => {
+        const element = child as HTMLElement;
+        if (allowedNodeType(element)) {
+          if (element.nodeType === Node.TEXT_NODE) {
+            if (element.nodeValue.match(re)) {
+              elements.push(element);
             }
+            // tslint:disable-next-line:max-line-length
+          } else if (!element.classList.contains('tooltipped') && !element.classList.contains('tooltipped-click') && element.style.display !== 'none') {
+            allDescendants(element, elements, re);
           }
-        });
-      }
+        }
+      });
     } catch (e) {
       // There are so many things that could go wrong.
       // The DOM is a wild west
@@ -331,21 +329,22 @@
 
   // Recursively find all text nodes which match regex
   function allTextNodes(node: HTMLElement, textNodes: Array<string>) {
+    if (!allowedTagType(node)) {
+      return;
+    }
     try {
-      if (allowedTagType(node)) {
-        node.childNodes.forEach(child => {
-          const element = child as HTMLElement;
-          if (allowedNodeType(element)) {
-            if (element.nodeType === Node.TEXT_NODE) {
-              textNodes.push(element.textContent + '\n');
-            } else if (!element.classList.contains('tooltipped') &&
-              !element.classList.contains('tooltipped-click') &&
-              element.style.display !== 'none') {
-              allTextNodes(element, textNodes);
-            }
+      node.childNodes.forEach(child => {
+        const element = child as HTMLElement;
+        if (allowedNodeType(element)) {
+          if (element.nodeType === Node.TEXT_NODE) {
+            textNodes.push(element.textContent + '\n');
+          } else if (!element.classList.contains('tooltipped') &&
+            !element.classList.contains('tooltipped-click') &&
+            element.style.display !== 'none') {
+            allTextNodes(element, textNodes);
           }
-        });
-      }
+        }
+      });
     } catch (e) {
       // There are so many things that could go wrong.
       // The DOM is a wild west
@@ -359,16 +358,12 @@
       && element.nodeType !== Node.PROCESSING_INSTRUCTION_NODE && element.nodeType !== Node.DOCUMENT_TYPE_NODE;
   };
 
-  const allowedTagType = (element: HTMLElement): boolean => {
-    if (element.tagName) {
-      return !(element instanceof HTMLScriptElement ||
-        element instanceof HTMLStyleElement ||
-        element instanceof SVGElement ||
-        element instanceof HTMLButtonElement ||
-        element instanceof HTMLInputElement);
-    } else {
-      return true;
-    }
-  };
+  const forbiddenTags = [HTMLScriptElement,
+    HTMLStyleElement,
+    SVGElement,
+    HTMLButtonElement,
+    HTMLButtonElement];
+
+  const allowedTagType = (element: HTMLElement): boolean => element.tagName ? !forbiddenTags.some(tag => element instanceof tag) : true;
 
 })();
