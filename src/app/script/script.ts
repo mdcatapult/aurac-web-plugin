@@ -307,19 +307,21 @@
       return;
     }
     try {
-      node.childNodes.forEach(child => {
-        const element = child as HTMLElement;
-        if (allowedNodeType(element)) {
-          if (element.nodeType === Node.TEXT_NODE) {
-            if (element.nodeValue.match(re)) {
-              elements.push(element);
+      if (allowedTagType(node)) {
+        node.childNodes.forEach(child => {
+          const element = child as HTMLElement;
+          if (allowedNodeType(element)) {
+            if (element.nodeType === Node.TEXT_NODE) {
+              if (element.nodeValue.match(re)) {
+                elements.push(element);
+              }
+              // tslint:disable-next-line:max-line-length
+            } else if (!element.classList.contains('tooltipped') && !element.classList.contains('tooltipped-click') && element.style.display !== 'none') {
+              allDescendants(element, elements, re);
             }
-            // tslint:disable-next-line:max-line-length
-          } else if (!element.classList.contains('tooltipped') && !element.classList.contains('tooltipped-click') && element.style.display !== 'none') {
-            allDescendants(element, elements, re);
           }
-        }
-      });
+        });
+      }
     } catch (e) {
       // There are so many things that could go wrong.
       // The DOM is a wild west
@@ -331,18 +333,18 @@
   function allTextNodes(node: HTMLElement, textNodes: Array<string>) {
     try {
       if (allowedTagType(node)) {
-      node.childNodes.forEach(child => {
-        const element = child as HTMLElement;
-        if (allowedNodeType(element)) {
-          if (element.nodeType === Node.TEXT_NODE) {
-            textNodes.push(element.textContent + '\n');
-          } else if (!element.classList.contains('tooltipped') &&
-            !element.classList.contains('tooltipped-click') &&
-            element.style.display !== 'none') {
-            allTextNodes(element, textNodes);
+        node.childNodes.forEach(child => {
+          const element = child as HTMLElement;
+          if (allowedNodeType(element)) {
+            if (element.nodeType === Node.TEXT_NODE) {
+              textNodes.push(element.textContent + '\n');
+            } else if (!element.classList.contains('tooltipped') &&
+              !element.classList.contains('tooltipped-click') &&
+              element.style.display !== 'none') {
+              allTextNodes(element, textNodes);
+            }
           }
-        }
-      });
+        });
       }
     } catch (e) {
       // There are so many things that could go wrong.
@@ -359,14 +361,14 @@
 
   const allowedTagType = (element: HTMLElement): boolean => {
     if (element.tagName) {
-      return  !(element instanceof HTMLScriptElement ||
+      return !(element instanceof HTMLScriptElement ||
         element instanceof HTMLStyleElement ||
         element instanceof SVGElement ||
         element instanceof HTMLButtonElement ||
         element instanceof HTMLInputElement);
-      } else {
-        return true;
-      }
+    } else {
+      return true;
+    }
   };
 
 })();
