@@ -1,4 +1,3 @@
-
 (() => {
   type Information = {
     entityText: string,
@@ -331,17 +330,20 @@
   // Recursively find all text nodes which match regex
   function allTextNodes(node: HTMLElement, textNodes: Array<string>) {
     try {
+      if (allowedTagType(node)) {
       node.childNodes.forEach(child => {
         const element = child as HTMLElement;
         if (allowedNodeType(element)) {
           if (element.nodeType === Node.TEXT_NODE) {
             textNodes.push(element.textContent + '\n');
-            // tslint:disable-next-line:max-line-length
-          } else if (!element.classList.contains('tooltipped') && !element.classList.contains('tooltipped-click') && element.style.display !== 'none') {
+          } else if (!element.classList.contains('tooltipped') &&
+            !element.classList.contains('tooltipped-click') &&
+            element.style.display !== 'none') {
             allTextNodes(element, textNodes);
           }
         }
       });
+      }
     } catch (e) {
       // There are so many things that could go wrong.
       // The DOM is a wild west
@@ -354,4 +356,17 @@
     return element.nodeType !== Node.COMMENT_NODE && element.nodeType !== Node.CDATA_SECTION_NODE
       && element.nodeType !== Node.PROCESSING_INSTRUCTION_NODE && element.nodeType !== Node.DOCUMENT_TYPE_NODE;
   };
+
+  const allowedTagType = (element: HTMLElement): boolean => {
+    if (element.tagName) {
+      return  !(element instanceof HTMLScriptElement ||
+        element instanceof HTMLStyleElement ||
+        element instanceof SVGElement ||
+        element instanceof HTMLButtonElement ||
+        element instanceof HTMLInputElement);
+      } else {
+        return true;
+      }
+  };
+
 })();
