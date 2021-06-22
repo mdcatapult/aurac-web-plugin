@@ -364,6 +364,6 @@
     HTMLButtonElement,
     HTMLButtonElement];
 
-  const allowedTagType = (element: HTMLElement): boolean => element.tagName ? !forbiddenTags.some(tag => element instanceof tag) : true;
+  const allowedTagType = (element: HTMLElement): boolean => !forbiddenTags.some(tag => element instanceof tag);
 
 })();
