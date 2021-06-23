@@ -1,4 +1,3 @@
-
 (() => {
   type Information = {
     entityText: string,
@@ -136,11 +135,11 @@
             // Try/catch for edge cases.
             try {
               const replacementNode = document.createElement('span');
-              replacementNode.innerHTML = element.nodeValue.replace(term, highlightTerm(term, entity));
+              replacementNode.innerHTML = element.nodeValue.replaceAll(term, highlightTerm(term, entity));
               element.parentNode.insertBefore(replacementNode, element);
               element.parentNode.removeChild(element);
-              const childValue = getFerretHighlightChildren(replacementNode);
-              childValue[0].addEventListener('mouseenter', populateFerretSidebar(entity, replacementNode));
+              const childValues = getFerretHighlightChildren(replacementNode);
+              childValues.forEach(childValue => childValue.addEventListener('mouseenter', populateFerretSidebar(entity, replacementNode)));
             } catch (e) {
               console.error(e);
             }
@@ -304,7 +303,7 @@
 
   // Recursively find all text nodes which match regex
   function allDescendants(node: HTMLElement, elements: Array<Element>, re: RegExp) {
-    if (node && node.classList.contains('ferret-sidebar')) {
+    if ((node && node.classList.contains('ferret-sidebar')) || !allowedTagType(node)) {
       return;
     }
     try {
@@ -330,14 +329,18 @@
 
   // Recursively find all text nodes which match regex
   function allTextNodes(node: HTMLElement, textNodes: Array<string>) {
+    if (!allowedTagType(node)) {
+      return;
+    }
     try {
       node.childNodes.forEach(child => {
         const element = child as HTMLElement;
         if (allowedNodeType(element)) {
           if (element.nodeType === Node.TEXT_NODE) {
             textNodes.push(element.textContent + '\n');
-            // tslint:disable-next-line:max-line-length
-          } else if (!element.classList.contains('tooltipped') && !element.classList.contains('tooltipped-click') && element.style.display !== 'none') {
+          } else if (!element.classList.contains('tooltipped') &&
+            !element.classList.contains('tooltipped-click') &&
+            element.style.display !== 'none') {
             allTextNodes(element, textNodes);
           }
         }
@@ -354,4 +357,13 @@
     return element.nodeType !== Node.COMMENT_NODE && element.nodeType !== Node.CDATA_SECTION_NODE
       && element.nodeType !== Node.PROCESSING_INSTRUCTION_NODE && element.nodeType !== Node.DOCUMENT_TYPE_NODE;
   };
+
+  const forbiddenTags = [HTMLScriptElement,
+    HTMLStyleElement,
+    SVGElement,
+    HTMLButtonElement,
+    HTMLButtonElement];
+
+  const allowedTagType = (element: HTMLElement): boolean => !forbiddenTags.some(tag => element instanceof tag);
+
 })();
