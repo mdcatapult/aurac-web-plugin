@@ -38,6 +38,10 @@
 
   const collapseArrow = '&#60;';
   const expandArrow = '&#62;';
+  const rightArrow = '&#8594';
+  const leftArrow = '&#8592';
+  let htmlColoursSet = false;
+  const ferretHighlightElements: Array<FerretHighlightHtmlColours> = [];
 
   ferretSidebar.appendChild(buttonElement);
   buttonElement.innerHTML = collapseArrow;
@@ -95,6 +99,64 @@
         },
       },
     ];
+
+  // This class stores the properties of each button as well as their respective highlighted elements, how many of that element there are
+  // and the current position of it that the user is searching for
+  class NERArrowButtonProperties {
+    nerElements: Array<Element> = [];
+    nerTerm: string;
+    positionInArray = 0;
+    scrollTermIntoView = 0;
+    firstClick = true;
+    leftButtonClicked: boolean;
+    rightButtonClicked: boolean;
+    nerColour: string;
+
+    constructor(nerTerm, nerColour) {
+      this.nerTerm = nerTerm;
+      this.nerColour = nerColour;
+    }
+
+    leftButtonAlterIndex(): void {
+      if (this.leftButtonClicked && this.scrollTermIntoView !== 0) { // If we've clicked the left button and
+        // were not on the beginning element perform these actions. We would get an array OOB exception without this
+        this.scrollTermIntoView--;
+      }
+      scrollNerIntoView(this);
+    }
+
+    rightButtonAlterIndex(endOfTerms): void {
+      // When we have reached the end of the NER terms, on right button click we reset back to the beginning term within the array
+      if (this.scrollTermIntoView === endOfTerms) {
+        this.scrollTermIntoView = 0;
+        scrollNerIntoView(this);
+      }
+      // If we clicked the right button perform these actions
+      else if (this.firstClick) { // On first click we cannot increment the array position as we want to see the value at index 0
+        scrollNerIntoView(this);
+        this.firstClick = false; // Need to set this to false so we don't keep duplicating NER elements inside array
+      } else { // If we have already clicked an arrow button once then increment the array and display the ner term on screen
+        this.scrollTermIntoView++;
+        scrollNerIntoView(this);
+      }
+    }
+  }
+
+  // This class stores the HTML of all ferret-highlight elements before and after we change them. That way when they are no longer
+  // highlighted by our search they can return to their original HTML state
+  class FerretHighlightHtmlColours {
+    index: number;
+    elementName: Element;
+    colourBefore: string;
+    colourAfter: string;
+
+    constructor(index: number, elementName: Element, colourBefore: string, colourAfter: string) {
+      this.index = index;
+      this.elementName = elementName;
+      this.colourBefore = colourBefore;
+      this.colourAfter = colourAfter;
+    }
+  }
 
   const sidebarTexts = document.createElement('div');
   ferretSidebar.appendChild(sidebarTexts);
@@ -168,7 +230,7 @@
         position: fixed;
         z-index: 10;
         height: 100vh;
-        left: ${elementProperties.find(v => v.element === ferretSidebar).position.expanding}vw;;
+        left: ${elementProperties.find(v => v.element === ferretSidebar).position.expanding}vw;
         top: 0;
         width: 20vw;
         border-right: 2px solid black;
@@ -182,7 +244,22 @@
       position: fixed;
       left: ${elementProperties.find(v => v.element === buttonElement).position.expanding}vw;
       top: 50%;
-     }`;
+     }
+     .right-arrow-button {
+      color: black;
+      background-color: rgb(192, 192, 192);
+      position: absolute;
+      top: 0;
+      left: 92%;
+      padding: 5px;
+     }
+     .left-arrow-button {
+      color: black;
+      background-color: rgb(192, 192, 192);
+      position: absolute;
+      top: 0;
+      left: 84%;
+      padding: 5px`;
     return styleElement;
   };
 
@@ -247,6 +324,10 @@
   // Creates a sidebar element presenting information.
   function renderSidebarElement(information: Information): HTMLDivElement {
     const sidebarText: HTMLDivElement = document.createElement('div');
+    // If the parent element is relative and its children are position absolute. They will be positioned based on the parents location.
+    sidebarText.style.position = 'relative';
+    renderArrowButtonElements(sidebarText, information);
+
     sidebarText.id = 'sidebar-text';
     sidebarText.style.border = '1px solid black';
     sidebarText.style.padding = '2px';
@@ -274,7 +355,84 @@
     return sidebarText;
   }
 
-  // if the entity group is 'Gene or Protein' add a genenames url link to the sidebarText element
+  function renderArrowButtonElements(sidebarText: HTMLDivElement, information: Information): void {
+    const rightArrowButtonElement = document.createElement('button');
+    sidebarText.appendChild(rightArrowButtonElement);
+    rightArrowButtonElement.innerHTML = rightArrow;
+    rightArrowButtonElement.className = 'right-arrow-button';
+
+    const leftArrowButtonElement = document.createElement('button');
+    sidebarText.appendChild(leftArrowButtonElement);
+    leftArrowButtonElement.innerHTML = leftArrow;
+    leftArrowButtonElement.className = 'left-arrow-button';
+
+    const nerTerm = information.entityText;
+    const nerColour = information.recognisingDict.htmlColor;
+    const arrowProperties = new NERArrowButtonProperties(nerTerm, nerColour);
+
+    leftArrowButtonElement.addEventListener('click', () => {
+      arrowProperties.leftButtonClicked = true;
+      arrowProperties.rightButtonClicked = false;
+      pressArrowButton(arrowProperties);
+    });
+
+    rightArrowButtonElement.addEventListener('click', () => {
+      arrowProperties.rightButtonClicked = true;
+      arrowProperties.leftButtonClicked = false;
+      pressArrowButton(arrowProperties);
+    });
+  }
+
+  function pressArrowButton(arrowProperties: NERArrowButtonProperties): void {
+    const endOfTerms = arrowProperties.nerElements.length - 1;
+    const highlightedNerTerms: HTMLCollectionOf<Element> = document.getElementsByClassName('ferret-highlight');
+    // Scan the document body for NER terms that match with the term we are looking for, if there is a match then add the elements with that
+    // term to our array. We only want to add the NER elements to the array on the first click. Otherwise we would keep adding them to the
+    // array everytime we clicked an arrow button
+    const ferretHighlightArray = Array.from(highlightedNerTerms);
+    ferretHighlightArray.forEach((element, index) => {
+      if (element.textContent === arrowProperties.nerTerm && arrowProperties.firstClick) {
+        arrowProperties.nerElements[arrowProperties.positionInArray] = ferretHighlightArray[index];
+        arrowProperties.positionInArray++;
+      }
+    });
+    setNerHtmlColours(highlightedNerTerms);
+    if (arrowProperties.leftButtonClicked) {
+      arrowProperties.leftButtonAlterIndex();
+    } else if (arrowProperties.rightButtonClicked) {
+      arrowProperties.rightButtonAlterIndex(endOfTerms);
+    }
+  }
+
+  function scrollNerIntoView(arrowProperties: NERArrowButtonProperties): void {
+    const currentNerElement = arrowProperties.nerElements[arrowProperties.scrollTermIntoView];
+    currentNerElement.scrollIntoView({behavior: 'smooth'});
+    setHtmlColours(currentNerElement);
+  }
+
+  function setNerHtmlColours(highlightedNerTerms: HTMLCollectionOf<Element>): void {
+    if (!htmlColoursSet) {
+      const ferretHighlightArray = Array.from(highlightedNerTerms);
+      ferretHighlightArray.forEach(element => {
+        const index = ferretHighlightArray.indexOf(element);
+        const elementName = element;
+        const colourBefore = element.innerHTML;
+        const colourAfter = element.textContent.fontcolor('blue');
+        const nerHtmlColour = new FerretHighlightHtmlColours(index, elementName, colourBefore, colourAfter);
+        ferretHighlightElements.push(nerHtmlColour);
+      });
+    }
+    htmlColoursSet = true;
+  }
+
+  function setHtmlColours(nerElement: Element): void {
+    const ferretHighlightArray = Array.from(ferretHighlightElements);
+    ferretHighlightArray.forEach(element => {
+      element.elementName.innerHTML = element.elementName === nerElement ? element.colourAfter : element.colourBefore;
+    });
+  }
+
+// if the entity group is 'Gene or Protein' add a genenames url link to the sidebarText element
   function createGeneNameLink(resolvedEntity: string): string {
     const id = resolvedEntity.split(':').pop();
     const geneNameUrl = `https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/${id}`;
