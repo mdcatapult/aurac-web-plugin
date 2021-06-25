@@ -379,7 +379,6 @@
         const remainingText: string = text.slice(currentText.length);
         // We found the string but is it in the middle of something else like abcdMyString1234? ie is it a word boundary or not
         // or is it at the start or end of the string
-        // TODO use a regex to test if the text is a non word boundary ie a-z,A-Z,0-9
         // tslint:disable-next-line:max-line-length
         if ((removeTermFromCurrentText === '' || removeTermFromCurrentText.charAt(removeTermFromCurrentText.length - 1) === ' ') && (remainingText.startsWith(' ') || remainingText === '')) {
           found.push(term);
