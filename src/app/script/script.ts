@@ -375,11 +375,13 @@
     text.split('').forEach(letter => {
       currentText += letter;
       if (currentText.indexOf(term) !== -1 && !foundTerm) {
-        const removeChars = currentText.replace(term, '');
+        const removeTermFromCurrentText: string = currentText.replace(term, '');
+        const remainingText: string = text.slice(currentText.length);
         // We found the string but is it in the middle of something else like abcdMyString1234? ie is it a word boundary or not
-        // or is it at the start of the string
-        // TODO also check the first character after the string to check it is a word boundary
-        if (removeChars === '' || removeChars.charAt(removeChars.length - 1) === ' ') {
+        // or is it at the start or end of the string
+        // TODO use a regex to test if the text is a non word boundary ie a-z,A-Z,0-9
+        // tslint:disable-next-line:max-line-length
+        if ((removeTermFromCurrentText === '' || removeTermFromCurrentText.charAt(removeTermFromCurrentText.length - 1) === ' ') && (remainingText.startsWith(' ') || remainingText === '')) {
           found.push(term);
           foundTerm = true;
         }
