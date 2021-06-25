@@ -376,7 +376,8 @@
       currentText += letter;
       if (currentText.indexOf(term) !== -1 && !foundTerm) {
         const removeTermFromCurrentText: string = currentText.replace(term, '');
-        const remainingText: string = text.slice(currentText.length);
+        // Find the remaining bit of text but also remove any line breaks from it
+        const remainingText: string = text.slice(currentText.length).replace(/(\r\n|\n|\r)/gm, '');
         // We found the string but is it in the middle of something else like abcdMyString1234? ie is it a word boundary or not
         // or is it at the start or end of the string
         // tslint:disable-next-line:max-line-length
