@@ -388,6 +388,6 @@
         currentText = '';
       }
     });
-    return found.length === 0 ? false : true;
+    return found.length !== 0;
   }
 })();
