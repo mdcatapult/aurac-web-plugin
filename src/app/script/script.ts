@@ -370,24 +370,27 @@
     let currentText = '';
     const found: string[] = [];
     let foundTerm = false;
-    // Step through the string 1 letter at a time until it matches the term.
+    // First check if the term is found within the entire string
+    // If it does then step through the string 1 letter at a time until it matches the term.
     // Then check if the matched part is inside a word boundary.
-    text.split('').forEach(letter => {
-      currentText += letter;
-      if (currentText.indexOf(term) !== -1 && !foundTerm) {
-        const removeTermFromCurrentText: string = currentText.replace(term, '');
-        // Find the remaining bit of text but also remove any line breaks from it
-        const remainingText: string = text.slice(currentText.length).replace(/(\r\n|\n|\r)/gm, '');
-        // We found the string but is it in the middle of something else like abcdMyString1234? ie is it a word boundary or not
-        // or is it at the start or end of the string
-        // tslint:disable-next-line:max-line-length
-        if ((removeTermFromCurrentText === '' || removeTermFromCurrentText.charAt(removeTermFromCurrentText.length - 1) === ' ') && (remainingText.startsWith(' ') || remainingText === '')) {
-          found.push(term);
-          foundTerm = true;
+    if (text.includes(term)) {
+      text.split('').forEach(letter => {
+        currentText += letter;
+        if (currentText.includes(term) && !foundTerm) {
+          const removeTermFromCurrentText: string = currentText.replace(term, '');
+          // Find the remaining bit of text but also remove any line breaks from it
+          const remainingText: string = text.slice(currentText.length).replace(/(\r\n|\n|\r)/gm, '');
+          // We found the string but is it in the middle of something else like abcdMyString1234? ie is it a word boundary or not
+          // or is it at the start or end of the string
+          // tslint:disable-next-line:max-line-length
+          if ((removeTermFromCurrentText === '' || removeTermFromCurrentText.charAt(removeTermFromCurrentText.length - 1) === ' ') && (remainingText.startsWith(' ') || remainingText === '')) {
+            found.push(term);
+            foundTerm = true;
+          }
+          currentText = '';
         }
-        currentText = '';
-      }
-    });
-    return found.length !== 0;
+      });
+      return found.length !== 0;
+    }
   }
 })();
