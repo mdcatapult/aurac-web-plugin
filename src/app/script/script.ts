@@ -519,7 +519,6 @@
   const forbiddenTags = [HTMLScriptElement,
     HTMLStyleElement,
     SVGElement,
-    HTMLButtonElement,
     HTMLButtonElement];
 
   const allowedTagType = (element: HTMLElement): boolean => !forbiddenTags.some(tag => element instanceof tag);
