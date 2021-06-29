@@ -27,8 +27,7 @@ export class BackgroundComponent {
   dictionary?: validDict;
 
   constructor(private client: HttpClient, private browserService: BrowserService) {
-    this.browserService.addListener((msg: Partial<Message>, listener: MessageSender,
-                                     sendResponse: (response: object) => {}) => {
+    this.browserService.addListener((msg: Partial<Message>) => {
       console.log('Received message from popup...', msg);
       switch (msg.type) {
         case 'ner_current_page': {
@@ -45,7 +44,7 @@ export class BackgroundComponent {
           break;
         }
         case 'load-settings': {
-          sendResponse(this.settings);
+          return Promise.resolve(this.settings);
         }
       }
     });

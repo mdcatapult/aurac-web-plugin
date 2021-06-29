@@ -16,8 +16,7 @@ export class BrowserService {
       .catch((e: any) => this.log.Error(`Failed to send ${msg}: ${e}`));
   }
 
-  addListener(f: (msg: Partial<Message>, listener: MessageSender, sendResponse: (response: object) => {})
-    => void): void  {
+  addListener(f: (msg: Partial<Message>) => Promise<DictionaryURLs> | undefined): void  {
     browser.runtime.onMessage.addListener(f);
   }
 
