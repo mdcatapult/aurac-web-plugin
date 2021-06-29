@@ -52,7 +52,7 @@ export class BackgroundComponent {
   }
 
   private loadXRefs([entityTerm, resolvedEntity]: [string, string]): void {
-    const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]{1}$/;
+    const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]$/;
     let xRefObservable: Observable<XRef[]>;
     if (resolvedEntity) {
       if (!resolvedEntity.match(inchiKeyRegex)) {
@@ -72,7 +72,8 @@ export class BackgroundComponent {
       }
 
       xRefObservable.subscribe((xrefs: XRef[]) => {
-        this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs});
+        this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
+          .catch(e => console.error(e));
       });
     }
   }
@@ -113,7 +114,8 @@ export class BackgroundComponent {
               return;
             }
             const uniqueEntities = this.getUniqueEntities(response.body!);
-            this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities});
+            this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
+              .catch(e => console.error(e));
           });
       });
   }
