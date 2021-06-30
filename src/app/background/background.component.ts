@@ -27,8 +27,7 @@ export class BackgroundComponent {
   dictionary?: validDict;
 
   constructor(private client: HttpClient, private browserService: BrowserService) {
-    this.browserService.addListener((msg: Partial<Message>, listener: MessageSender,
-                                     sendResponse: (response: object) => {}) => {
+    this.browserService.addListener((msg: Partial<Message>) => {
       console.log('Received message from popup...', msg);
       switch (msg.type) {
         case 'ner_current_page': {
@@ -45,14 +44,14 @@ export class BackgroundComponent {
           break;
         }
         case 'load-settings': {
-          sendResponse(this.settings);
+          return Promise.resolve(this.settings);
         }
       }
     });
   }
 
   private loadXRefs([entityTerm, resolvedEntity]: [string, string]): void {
-    const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]{1}$/;
+    const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]$/;
     let xRefObservable: Observable<XRef[]>;
     if (resolvedEntity) {
       if (!resolvedEntity.match(inchiKeyRegex)) {
@@ -72,7 +71,8 @@ export class BackgroundComponent {
       }
 
       xRefObservable.subscribe((xrefs: XRef[]) => {
-        this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs});
+        this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
+          .catch(e => console.error(e));
       });
     }
   }
@@ -113,7 +113,8 @@ export class BackgroundComponent {
               return;
             }
             const uniqueEntities = this.getUniqueEntities(response.body!);
-            this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities});
+            this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
+              .catch(e => console.error(e));
           });
       });
   }

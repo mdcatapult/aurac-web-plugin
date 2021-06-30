@@ -183,7 +183,7 @@
 
     switch (msg.type) {
       case 'get_page_contents':
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, _) => {
           const textNodes: Array<string> = [];
           allTextNodes(document.body, textNodes);
           resolve({type: 'leadmine', body: textNodes.join('\n')});
@@ -304,7 +304,8 @@
         if (!entityToDiv.has(info.entityText)) {
           entityToDiv.set(info.entityText, renderSidebarElement(info));
           // @ts-ignore
-          browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity]});
+          browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity]})
+            .catch(e => console.error(e));
         }
       }
       const div = entityToDiv.get(info.entityText);
