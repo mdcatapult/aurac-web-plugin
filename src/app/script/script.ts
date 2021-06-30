@@ -486,11 +486,22 @@
     }
   }
 
+
   // Recursively find all text nodes which match regex
   function allTextNodes(node: HTMLElement, textNodes: Array<string>) {
-    if (!allowedTagType(node)) {
+    if (!allowedTagType(node) || node.classList.contains('ferret-sidebar')) {
       return;
     }
+
+    // N.B we cannot do this at the document.body level as we need to join the childnodes
+    if (Array.from(node.childNodes).some(childNode => childNode.nodeName === 'SUB')) {
+      removeTags(node, 'SUB');
+      let text = '';
+      node.childNodes.forEach(childNode => text += childNode.textContent);
+      textNodes.push(text.replace(/[\r\n\s]+/gm, '') + '\n');
+      return;
+    }
+
     try {
       node.childNodes.forEach(child => {
         const element = child as HTMLElement;
@@ -499,6 +510,7 @@
             textNodes.push(element.textContent + '\n');
           } else if (!element.classList.contains('tooltipped') &&
             !element.classList.contains('tooltipped-click') &&
+            !element.classList.contains('ferret-sidebar') &&
             element.style.display !== 'none') {
             allTextNodes(element, textNodes);
           }
@@ -524,5 +536,20 @@
     HTMLButtonElement];
 
   const allowedTagType = (element: HTMLElement): boolean => !forbiddenTags.some(tag => element instanceof tag);
+
+  // TODO: don't actually manipulate the DOM...or maybe we should - doing so will facilitate highlighting terms
+  // TODO: join the childnodes into a single node to enable highlighting
+  const removeTags = (node: HTMLElement, tagName: string) => {
+    const tags = node.getElementsByTagName(tagName);
+    // create a deep copy so as not to actually manipulate the DOM
+    const tagCopy = JSON.parse(JSON.stringify(tags));
+    while (tagCopy.length) {
+      const parent = tagCopy[0].parentNode;
+      while (tagCopy[0].firstChild) {
+        parent.insertBefore(tagCopy[0].firstChild, tagCopy[0]);
+      }
+      parent.removeChild(tagCopy[0]);
+    }
+  };
 
 })();
