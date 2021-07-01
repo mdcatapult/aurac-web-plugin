@@ -273,7 +273,7 @@
       const target = isExpanded ? elementProperty.position.collapsing : elementProperty.position.expanding;
       const elementDistanceSpeed = 0.5;
       id = setInterval(frame, 1);
-      // The frame function is used to animate the sidebar moving in and out. setInvertal will call this function every seconds/ms
+      // The frame function is used to animate the sidebar moving in and out. setInterval will call this function every seconds/ms
       // depending on what number you pass to it
       function frame() {
         if (pos === target) { // If the position is equal to its target then it has reached its new position and should stop moving
@@ -537,10 +537,10 @@
 
   const allowedTagType = (element: HTMLElement): boolean => !forbiddenTags.some(tag => element instanceof tag);
 
-  // TODO: don't actually manipulate the DOM...or maybe we should - doing so will facilitate highlighting terms
-  // TODO: join the childnodes into a single node to enable highlighting
   const removeTags = (node: HTMLElement, tagName: string) => {
     const tags = node.getElementsByTagName(tagName);
+    // add class to node to enable us to retrieve it
+    node.className += 'aurac-formula';
     // create a deep copy so as not to actually manipulate the DOM
     const tagCopy = JSON.parse(JSON.stringify(tags));
     while (tagCopy.length) {
