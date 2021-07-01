@@ -194,7 +194,7 @@
           const term = entity.entityText;
           const sel = getSelectors(term);
 
-          // check if entity is a formula, if so push parent element to sel array
+          // if entity is a chemical formula, wrap innerHTML in highlight span and add event listener
           for (const formula of chemicalFormulae) {
             const formulaNode = formula.formulaNode;
             if (formula.formulaText === term) {
@@ -506,6 +506,9 @@
     }
   }
 
+  // chemical formulae use <sub> tags, the content of which needs to be extracted and concatenated to form a complete formula which can
+  // be sent to be NER'd.  This type enables the mapping of a chemical formula to its parent node so that the entire formula
+  // (which is split across several nodes in the DOM) can be highlighted
   type chemicalFormula = {
     formulaNode: Element;
     formulaText: string;
@@ -520,12 +523,12 @@
     }
 
     // if the node contains any <sub> children concatenate the text content of its child nodes
-    // N.B we cannot do this at the document.body level as we need to join the childnodes
     if (Array.from(node.childNodes).some(childNode => childNode.nodeName === 'SUB')) {
       let text = '';
       node.childNodes.forEach(childNode => text += childNode.textContent);
-      // join formula by stripping out any whitespace or return characters
+      // join text by stripping out any whitespace or return characters
       const formattedText = text.replace(/[\r\n\s]+/gm, '');
+      // push chemical formula to textNodes to be NER'd
       textNodes.push(formattedText + '\n');
       chemicalFormulae.push({formulaNode: node, formulaText: formattedText});
       return;
