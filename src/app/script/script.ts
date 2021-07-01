@@ -453,15 +453,13 @@
   }
 
   const getSelectors = (entity) => {
-    // Create regex for entity.
-    const re = new RegExp(`\\b${entity}\\b`);
     const allElements: Array<Element> = [];
-    allDescendants(document.body, allElements, re);
+    allDescendants(document.body, allElements, entity);
     return allElements;
   };
 
-  // Recursively find all text nodes which match regex
-  function allDescendants(node: HTMLElement, elements: Array<Element>, re: RegExp) {
+  // Recursively find all text nodes which match entity
+  function allDescendants(node: HTMLElement, elements: Array<Element>, entity: string) {
     if ((node && node.classList.contains('ferret-sidebar')) || !allowedTagType(node)) {
       return;
     }
@@ -470,12 +468,12 @@
         const element = child as HTMLElement;
         if (allowedNodeType(element)) {
           if (element.nodeType === Node.TEXT_NODE) {
-            if (element.nodeValue.match(re)) {
+            if (textContainsTerm(element.nodeValue, entity)) {
               elements.push(element);
             }
             // tslint:disable-next-line:max-line-length
           } else if (!element.classList.contains('tooltipped') && !element.classList.contains('tooltipped-click') && element.style.display !== 'none') {
-            allDescendants(element, elements, re);
+            allDescendants(element, elements, entity);
           }
         }
       });
@@ -525,4 +523,33 @@
 
   const allowedTagType = (element: HTMLElement): boolean => !forbiddenTags.some(tag => element instanceof tag);
 
+  // If a string contains at least one instance of a  particular term between word boundaries then return true
+  // Can handle non latin unicode terms which at the moment JS Regex can't.
+  function textContainsTerm(text: string, term: string): boolean {
+    let currentText = '';
+    const found: string[] = [];
+    let foundTerm = false;
+    // First check if the term is found within the entire string
+    // If it does then step through the string 1 letter at a time until it matches the term.
+    // Then check if the matched part is inside a word boundary.
+    if (text.includes(term)) {
+      text.split('').forEach(letter => {
+        currentText += letter;
+        if (currentText.includes(term) && !foundTerm) {
+          const removeTermFromCurrentText: string = currentText.replace(term, '');
+          // Find the remaining bit of text but also remove any line breaks from it
+          const remainingText: string = text.slice(currentText.length).replace(/(\r\n|\n|\r)/gm, '');
+          // We found the string but is it in the middle of something else like abcdMyString1234? ie is it a word boundary or not
+          // or is it at the start or end of the string
+          // tslint:disable-next-line:max-line-length
+          if ((removeTermFromCurrentText === '' || removeTermFromCurrentText.charAt(removeTermFromCurrentText.length - 1) === ' ') && (remainingText.startsWith(' ') || remainingText === '')) {
+            found.push(term);
+            foundTerm = true;
+          }
+          currentText = '';
+        }
+      });
+      return found.length !== 0;
+    }
+  }
 })();
