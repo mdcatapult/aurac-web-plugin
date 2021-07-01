@@ -193,6 +193,28 @@
         msg.body.map((entity) => {
           const term = entity.entityText;
           const sel = getSelectors(term);
+
+          // check if entity is a formula, if so push parent element to sel array
+          for (const formula of chemicalFormulae) {
+            const formulaNode = formula.formulaNode;
+            if (formula.formulaText === term) {
+              try {
+                const replacementNode = document.createElement('span');
+                replacementNode.innerHTML = highlightTerm(formulaNode.innerHTML, entity);
+                formulaNode.parentNode.insertBefore(replacementNode, formulaNode);
+                formulaNode.parentNode.removeChild(formulaNode);
+                const childValues = getFerretHighlightChildren(replacementNode);
+                childValues.forEach(childValue => {
+                  childValue.addEventListener('mouseenter', populateFerretSidebar(entity, replacementNode));
+                });
+              } catch (e) {
+                console.error(e);
+              }
+              // exit the loop as soon as we find a match
+              break;
+            }
+          }
+
           sel.map(element => {
             // Try/catch for edge cases.
             try {
@@ -484,18 +506,28 @@
     }
   }
 
+  type chemicalFormula = {
+    formulaNode: Element;
+    formulaText: string;
+  };
+
+  const chemicalFormulae: chemicalFormula[] = [];
+
   // Recursively find all text nodes which match regex
   function allTextNodes(node: HTMLElement, textNodes: Array<string>) {
     if (!allowedTagType(node) || node.classList.contains('ferret-sidebar')) {
       return;
     }
 
+    // if the node contains any <sub> children concatenate the text content of its child nodes
     // N.B we cannot do this at the document.body level as we need to join the childnodes
     if (Array.from(node.childNodes).some(childNode => childNode.nodeName === 'SUB')) {
-      removeTags(node, 'SUB');
       let text = '';
       node.childNodes.forEach(childNode => text += childNode.textContent);
-      textNodes.push(text.replace(/[\r\n\s]+/gm, '') + '\n');
+      // join formula by stripping out any whitespace or return characters
+      const formattedText = text.replace(/[\r\n\s]+/gm, '');
+      textNodes.push(formattedText + '\n');
+      chemicalFormulae.push({formulaNode: node, formulaText: formattedText});
       return;
     }
 
@@ -534,21 +566,6 @@
 
   const allowedTagType = (element: HTMLElement): boolean => !forbiddenTags.some(tag => element instanceof tag);
 
-  const removeTags = (node: HTMLElement, tagName: string) => {
-    const tags = node.getElementsByTagName(tagName);
-    // add class to node to enable us to retrieve it
-    node.className += 'aurac-formula';
-    // create a deep copy so as not to actually manipulate the DOM
-    const tagCopy = JSON.parse(JSON.stringify(tags));
-    while (tagCopy.length) {
-      const parent = tagCopy[0].parentNode;
-      while (tagCopy[0].firstChild) {
-        parent.insertBefore(tagCopy[0].firstChild, tagCopy[0]);
-      }
-      parent.removeChild(tagCopy[0]);
-    }
-  };
-
   // If a string contains at least one instance of a  particular term between word boundaries then return true
   // Can handle non latin unicode terms which at the moment JS Regex can't.
   function textContainsTerm(text: string, term: string): boolean {
@@ -575,7 +592,7 @@
           currentText = '';
         }
       });
-      return found.length !== 0;
+      return !!found.length;
     }
   }
 })();
