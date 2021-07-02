@@ -177,8 +177,6 @@
 
   browser.runtime.onMessage.addListener((msg) => {
     if (!isAppOpen && msg.type !== 'sidebar_rendered') {
-      console.log(msg.type);
-      console.log('inside message type');
       document.body.style.width = '80vw';
       document.body.style.marginLeft = '20vw';
       ferretSidebar.className = 'ferret-sidebar';
