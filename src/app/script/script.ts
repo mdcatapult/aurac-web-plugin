@@ -36,6 +36,10 @@
   const ferretSidebar = document.createElement('span');
   const buttonElement = document.createElement('button');
 
+  const sidebarOpenScreenWidth = '80vw';
+  const sidebarClosedScreenWidth = '100vw';
+  let hasNERLookupOccurred = false;
+
   const collapseArrow = '&#60;';
   const expandArrow = '&#62;';
   const rightArrow = '&#8594';
@@ -162,28 +166,29 @@
   ferretSidebar.appendChild(sidebarTexts);
   const entityToDiv = new EntityToDiv();
   buttonElement.addEventListener('click', () => {
-    animateElements(elementProperties);
-    isExpanded = !isExpanded;
+    if (document.body.style.width === sidebarOpenScreenWidth || document.body.style.width === sidebarClosedScreenWidth) {
+      animateElements(elementProperties);
+    }
     buttonElement.innerHTML = isExpanded ? collapseArrow : expandArrow;
-
     document.head.appendChild(newFerretStyleElement());
   });
 
   // @ts-ignore
 
   browser.runtime.onMessage.addListener((msg) => {
-    if (!isAppOpen) {
+    if (!isAppOpen && msg.type !== 'sidebar_rendered') {
+      console.log(msg.type);
+      console.log('inside message type');
       document.body.style.width = '80vw';
       document.body.style.marginLeft = '20vw';
+      ferretSidebar.className = 'ferret-sidebar';
+      document.body.appendChild(ferretSidebar);
       isAppOpen = true;
+      document.head.appendChild(newFerretStyleElement());
     }
-    document.head.appendChild(newFerretStyleElement());
-    ferretSidebar.className = 'ferret-sidebar';
-    document.body.appendChild(ferretSidebar);
-
     switch (msg.type) {
       case 'get_page_contents':
-        return new Promise((resolve, _) => {
+        return new Promise(resolve => {
           const textNodes: Array<string> = [];
           allTextNodes(document.body, textNodes);
           resolve({type: 'leadmine', body: textNodes.join('\n')});
@@ -210,6 +215,20 @@
         break;
       case 'x-ref_result':
         setXRefHTML(msg.body);
+        break;
+      case 'toggle_sidebar':
+        if (document.body.style.width === sidebarOpenScreenWidth || document.body.style.width === sidebarClosedScreenWidth) {
+          animateElements(elementProperties);
+          buttonElement.innerHTML = isExpanded ? collapseArrow : expandArrow;
+        }
+        break;
+      case 'sidebar_rendered':
+        return new Promise((resolve) => {
+          const result = String(hasNERLookupOccurred);
+          resolve({type: 'resolved', body: result});
+        });
+      case 'ner_lookup_performed':
+        hasNERLookupOccurred = true;
         break;
       default:
         throw new Error('Received unexpected message from plugin');
@@ -289,6 +308,7 @@
         }
       }
     });
+    isExpanded = !isExpanded;
   }
 
   // returns an event listener which creates a new element with passed info and appends it to the passed element

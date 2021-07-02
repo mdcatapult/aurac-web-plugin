@@ -1,7 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {DictionaryURLs, Message} from 'src/types';
+import {DictionaryURLs, Message, StringMessage} from 'src/types';
 import {LogService} from './log.service';
 import {validDict} from '../background/types';
+import {BrowserService} from '../browser.service';
+import {logger} from 'codelyzer/util/logger';
 
 @Component({
   selector: 'app-popup',
@@ -11,11 +13,22 @@ import {validDict} from '../background/types';
 export class PopupComponent implements OnInit {
 
   isSettings = false;
+  isSidebarRendered = false;
+  isNerLoaded = false;
 
-  constructor(private log: LogService) {
+  constructor(private log: LogService, private browserService: BrowserService) {
   }
 
   ngOnInit(): void {
+    const result = this.browserService.sendMessageToActiveTab({type: 'sidebar_rendered'})
+      .catch(e => this.log.Error(`Couldn't send message of type 'sidebar_rendered': ${e}`));
+    result.then((a) => {
+      const res = a as StringMessage;
+      this.isNerLoaded = res.body.includes('true');
+      if (this.isNerLoaded) {
+        this.isSidebarRendered = true;
+      }
+    }).catch(e => this.log.Error(`Unable to retrieve sidebar data from the script': ${e}`));
   }
 
   settingsClicked() {
@@ -28,8 +41,21 @@ export class PopupComponent implements OnInit {
   }
 
   nerCurrentPage(dictionary: validDict) {
+    this.isSidebarRendered = true;
+    this.isNerLoaded = true;
+    this.sendNERToPage();
     this.log.Log('Sending message to background page...');
     browser.runtime.sendMessage<Message>({type: 'ner_current_page', body: dictionary})
       .catch(e => this.log.Error(`Couldn't send message to background page: ${e}`));
+  }
+
+  toggleSidebar()  {
+    this.browserService.sendMessageToActiveTab({type: 'toggle_sidebar'})
+      .catch(e => this.log.Error(`Couldn't send message of type 'toggle_sidebar' : ${e}`));
+  }
+
+  sendNERToPage() {
+    this.browserService.sendMessageToActiveTab({type: 'ner_lookup_performed'})
+      .catch(e => this.log.Error(`Couldn't send message that NER has been performed: ${e}`));
   }
 }
