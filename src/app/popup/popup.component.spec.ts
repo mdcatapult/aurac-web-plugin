@@ -1,24 +1,28 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { PopupComponent } from './popup.component';
 import { Component } from '@angular/core';
+import { TestBrowserService } from '../test-browser.service';
 
 describe('PopupComponent', () => {
-  let component: PopupComponent;
-  let fixture: ComponentFixture<PopupComponent>;
+  let component: TestBrowserService;
+  // ComponentFixtures enable you to debug your tests. This does not currently work with our TestBrowserService as we get IVY compiler
+  // errors https://redmine.mdcatapult.io/issues/2278
 
+  // let fixture: ComponentFixture<TestBrowserService>;
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    declarations: [
+      declarations: [
         PopupComponent,
         MockSettingsComponent
-    ]})
-    .compileComponents();
+      ]})
+      .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PopupComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    TestBed.configureTestingModule({});
+    component = TestBed.inject(TestBrowserService);
+    // fixture = TestBed.createComponent(TestBrowserService);
+    // fixture.detectChanges();
   });
 
   it('should create', () => {

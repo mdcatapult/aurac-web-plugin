@@ -8,7 +8,10 @@ export type MessageType =
   | 'x-ref_result'
   | 'save-settings'
   | 'load-settings'
-  | 'log';
+  | 'log'
+  | 'toggle_sidebar'
+  | 'sidebar_rendered'
+  | 'ner_lookup_performed';
 
 export interface Message {
   type: MessageType;
