@@ -177,8 +177,6 @@
 
   browser.runtime.onMessage.addListener((msg) => {
     if (!isAppOpen && msg.type !== 'sidebar_rendered') {
-      console.log(msg.type);
-      console.log('inside message type');
       document.body.style.width = '80vw';
       document.body.style.marginLeft = '20vw';
       ferretSidebar.className = 'ferret-sidebar';
@@ -198,6 +196,28 @@
         msg.body.map((entity) => {
           const term = entity.entityText;
           const sel = getSelectors(term);
+
+          // if entity is a chemical formula, wrap innerHTML in highlight span and add event listener
+          for (const formula of chemicalFormulae) {
+            const formulaNode = formula.formulaNode;
+            if (formula.formulaText === term) {
+              try {
+                const replacementNode = document.createElement('span');
+                replacementNode.innerHTML = highlightTerm(formulaNode.innerHTML, entity);
+                formulaNode.parentNode.insertBefore(replacementNode, formulaNode);
+                formulaNode.parentNode.removeChild(formulaNode);
+                const childValues = getFerretHighlightChildren(replacementNode);
+                childValues.forEach(childValue => {
+                  childValue.addEventListener('mouseenter', populateFerretSidebar(entity, replacementNode));
+                });
+              } catch (e) {
+                console.error(e);
+              }
+              // exit the loop as soon as we find a match
+              break;
+            }
+          }
+
           sel.map(element => {
             // Try/catch for edge cases.
             try {
@@ -292,7 +312,7 @@
       const target = isExpanded ? elementProperty.position.collapsing : elementProperty.position.expanding;
       const elementDistanceSpeed = 0.5;
       id = setInterval(frame, 1);
-      // The frame function is used to animate the sidebar moving in and out. setInvertal will call this function every seconds/ms
+      // The frame function is used to animate the sidebar moving in and out. setInterval will call this function every seconds/ms
       // depending on what number you pass to it
       function frame() {
         if (pos === target) { // If the position is equal to its target then it has reached its new position and should stop moving
@@ -504,11 +524,34 @@
     }
   }
 
+  // chemical formulae use <sub> tags, the content of which needs to be extracted and concatenated to form a complete formula which can
+  // be sent to be NER'd.  This type enables the mapping of a chemical formula to its parent node so that the entire formula
+  // (which is split across several nodes in the DOM) can be highlighted
+  type chemicalFormula = {
+    formulaNode: Element;
+    formulaText: string;
+  };
+
+  const chemicalFormulae: chemicalFormula[] = [];
+
   // Recursively find all text nodes which match regex
   function allTextNodes(node: HTMLElement, textNodes: Array<string>) {
-    if (!allowedTagType(node)) {
+    if (!allowedTagType(node) || node.classList.contains('ferret-sidebar')) {
       return;
     }
+
+    // if the node contains any <sub> children concatenate the text content of its child nodes
+    if (Array.from(node.childNodes).some(childNode => childNode.nodeName === 'SUB')) {
+      let text = '';
+      node.childNodes.forEach(childNode => text += childNode.textContent);
+      // join text by stripping out any whitespace or return characters
+      const formattedText = text.replace(/[\r\n\s]+/gm, '');
+      // push chemical formula to textNodes to be NER'd
+      textNodes.push(formattedText + '\n');
+      chemicalFormulae.push({formulaNode: node, formulaText: formattedText});
+      return;
+    }
+
     try {
       node.childNodes.forEach(child => {
         const element = child as HTMLElement;
@@ -517,6 +560,7 @@
             textNodes.push(element.textContent + '\n');
           } else if (!element.classList.contains('tooltipped') &&
             !element.classList.contains('tooltipped-click') &&
+            !element.classList.contains('ferret-sidebar') &&
             element.style.display !== 'none') {
             allTextNodes(element, textNodes);
           }
@@ -569,7 +613,7 @@
           currentText = '';
         }
       });
-      return found.length !== 0;
+      return !!found.length;
     }
   }
 })();
