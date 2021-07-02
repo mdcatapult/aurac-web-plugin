@@ -20,8 +20,7 @@ export class PopupComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const result = this.browserService.sendMessageToActiveTab({type: 'sidebar_rendered'})
-      .catch(e => this.log.Error(`Couldn't send message of type 'sidebar_rendered': ${e}`));
+    const result = this.browserService.sendMessageToActiveTab({type: 'sidebar_rendered'});
     result.then((a) => {
       const res = a as StringMessage;
       this.isNerLoaded = res.body.includes('true');
