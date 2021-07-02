@@ -1,6 +1,6 @@
 {
   "name": "Ferret",
-  "version": "0.0.1",
+  "version": "0.8.0",
   "description": "NER browser extension",
   "manifest_version": 2,
   "browser_action": {
@@ -12,11 +12,18 @@
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["browser-polyfill.min.js", "assets/script.js"]
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "browser-polyfill.min.js",
+        "assets/script.js"
+      ]
     }
   ],
-  "permissions": ["tabs"],
+  "permissions": [
+    "tabs"
+  ],
   "icons": {
     "48": "assets/Ferret.icon.48.png",
     "128": "assets/Ferret.icon.128.png"
