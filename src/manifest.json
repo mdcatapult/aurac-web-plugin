@@ -4,7 +4,7 @@
   "description": "NER browser extension",
   "manifest_version": 2,
   "browser_action": {
-    "default_icon": "assets/favicon.ico",
+    "default_icon": "assets/head-brains.icon.48.png",
     "default_popup": "index.html?page=popup"
   },
   "background": {
@@ -18,7 +18,7 @@
   ],
   "permissions": ["tabs"],
   "icons": {
-    "48": "assets/Ferret.icon.48.png",
-    "128": "assets/Ferret.icon.128.png"
+    "48": "assets/head-brains.icon.48.png",
+    "128": "assets/head-brains.icon.128.png"
   }
 }
