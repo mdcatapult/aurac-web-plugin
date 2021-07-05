@@ -33,7 +33,7 @@
 
   console.log('script loaded');
 
-  const ferretSidebar = document.createElement('span');
+  const auracSidebar = document.createElement('span');
   const buttonElement = document.createElement('button');
 
   const sidebarOpenScreenWidth = '80vw';
@@ -45,13 +45,13 @@
   const rightArrow = '&#8594';
   const leftArrow = '&#8592';
   let htmlColoursSet = false;
-  const ferretHighlightElements: Array<FerretHighlightHtmlColours> = [];
+  const auracHighlightElements: Array<AuracHighlightHtmlColours> = [];
 
-  ferretSidebar.appendChild(buttonElement);
+  auracSidebar.appendChild(buttonElement);
   buttonElement.innerHTML = collapseArrow;
   buttonElement.className = 'sidebar-button';
   buttonElement.id = 'button-id';
-  ferretSidebar.id = 'ferret-sidebar-id';
+  auracSidebar.id = 'aurac-sidebar-id';
   document.body.id = 'body';
 
   let isExpanded = true;
@@ -78,7 +78,7 @@
         },
       },
       {
-        element: ferretSidebar,
+        element: auracSidebar,
         property: 'left',
         position: {
           expanding: 0,
@@ -146,9 +146,9 @@
     }
   }
 
-  // This class stores the HTML of all ferret-highlight elements before and after we change them. That way when they are no longer
+  // This class stores the HTML of all aurac-highlight elements before and after we change them. That way when they are no longer
   // highlighted by our search they can return to their original HTML state
-  class FerretHighlightHtmlColours {
+  class AuracHighlightHtmlColours {
     index: number;
     elementName: Element;
     colourBefore: string;
@@ -163,14 +163,14 @@
   }
 
   const sidebarTexts = document.createElement('div');
-  ferretSidebar.appendChild(sidebarTexts);
+  auracSidebar.appendChild(sidebarTexts);
   const entityToDiv = new EntityToDiv();
   buttonElement.addEventListener('click', () => {
     if (document.body.style.width === sidebarOpenScreenWidth || document.body.style.width === sidebarClosedScreenWidth) {
       animateElements(elementProperties);
     }
     buttonElement.innerHTML = isExpanded ? collapseArrow : expandArrow;
-    document.head.appendChild(newFerretStyleElement());
+    document.head.appendChild(newAuracStyleElement());
   });
 
   // @ts-ignore
@@ -179,10 +179,10 @@
     if (!isAppOpen && msg.type !== 'sidebar_rendered') {
       document.body.style.width = '80vw';
       document.body.style.marginLeft = '20vw';
-      ferretSidebar.className = 'ferret-sidebar';
-      document.body.appendChild(ferretSidebar);
+      auracSidebar.className = 'aurac-sidebar';
+      document.body.appendChild(auracSidebar);
       isAppOpen = true;
-      document.head.appendChild(newFerretStyleElement());
+      document.head.appendChild(newAuracStyleElement());
     }
     switch (msg.type) {
       case 'get_page_contents':
@@ -192,7 +192,7 @@
           resolve({type: 'leadmine', body: textNodes.join('\n')});
         });
       case 'markup_page':
-        document.head.appendChild(newFerretStyleElement());
+        document.head.appendChild(newAuracStyleElement());
         msg.body.map((entity) => {
           const term = entity.entityText;
           const sel = getSelectors(term);
@@ -206,9 +206,9 @@
                 replacementNode.innerHTML = highlightTerm(formulaNode.innerHTML, entity);
                 formulaNode.parentNode.insertBefore(replacementNode, formulaNode);
                 formulaNode.parentNode.removeChild(formulaNode);
-                const childValues = getFerretHighlightChildren(replacementNode);
+                const childValues = getAuracHighlightChildren(replacementNode);
                 childValues.forEach(childValue => {
-                  childValue.addEventListener('mouseenter', populateFerretSidebar(entity, replacementNode));
+                  childValue.addEventListener('mouseenter', populateAuracSidebar(entity, replacementNode));
                 });
               } catch (e) {
                 console.error(e);
@@ -225,8 +225,8 @@
               replacementNode.innerHTML = element.nodeValue.replaceAll(term, highlightTerm(term, entity));
               element.parentNode.insertBefore(replacementNode, element);
               element.parentNode.removeChild(element);
-              const childValues = getFerretHighlightChildren(replacementNode);
-              childValues.forEach(childValue => childValue.addEventListener('mouseenter', populateFerretSidebar(entity, replacementNode)));
+              const childValues = getAuracHighlightChildren(replacementNode);
+              childValues.forEach(childValue => childValue.addEventListener('mouseenter', populateAuracSidebar(entity, replacementNode)));
             } catch (e) {
               console.error(e);
             }
@@ -256,12 +256,12 @@
   });
 
   // highlights a term by wrapping it an HTML span
-  const highlightTerm = (term, entity) => `<span class="ferret-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative;">${term}</span>`;
+  const highlightTerm = (term, entity) => `<span class="aurac-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative;">${term}</span>`;
 
-  // creates an HTML style element with basic styling for Ferret sidebar
-  const newFerretStyleElement = () => {
+  // creates an HTML style element with basic styling for Aurac sidebar
+  const newAuracStyleElement = () => {
     const styleElement = document.createElement('style');
-    styleElement.innerHTML = `.ferret-sidebar {
+    styleElement.innerHTML = `.aurac-sidebar {
         color: black;
         font-family: Arial, sans-serif;
         font-size: 14px;
@@ -269,7 +269,7 @@
         position: fixed;
         z-index: 10;
         height: 100vh;
-        left: ${elementProperties.find(v => v.element === ferretSidebar).position.expanding}vw;
+        left: ${elementProperties.find(v => v.element === auracSidebar).position.expanding}vw;
         top: 0;
         width: 20vw;
         border-right: 2px solid black;
@@ -332,14 +332,14 @@
   }
 
   // returns an event listener which creates a new element with passed info and appends it to the passed element
-  const populateFerretSidebar = (info: Information, element: Element) => {
+  const populateAuracSidebar = (info: Information, element: Element) => {
     return (event) => {
       if (event.type !== 'mouseenter') {
         return;
       }
-      if (getFerretHighlightChildren(element).some(child => child.className === 'ferret-highlight')
-        && element.parentElement.className === 'ferret-highlight') {
-        removeEventListener('mouseenter', populateFerretSidebar(info, element));
+      if (getAuracHighlightChildren(element).some(child => child.className === 'aurac-highlight')
+        && element.parentElement.className === 'aurac-highlight') {
+        removeEventListener('mouseenter', populateAuracSidebar(info, element));
       } else {
         if (!entityToDiv.has(info.entityText)) {
           entityToDiv.set(info.entityText, renderSidebarElement(info));
@@ -426,14 +426,14 @@
 
   function pressArrowButton(arrowProperties: NERArrowButtonProperties): void {
     const endOfTerms = arrowProperties.nerElements.length - 1;
-    const highlightedNerTerms: HTMLCollectionOf<Element> = document.getElementsByClassName('ferret-highlight');
+    const highlightedNerTerms: HTMLCollectionOf<Element> = document.getElementsByClassName('aurac-highlight');
     // Scan the document body for NER terms that match with the term we are looking for, if there is a match then add the elements with that
     // term to our array. We only want to add the NER elements to the array on the first click. Otherwise we would keep adding them to the
     // array everytime we clicked an arrow button
-    const ferretHighlightArray = Array.from(highlightedNerTerms);
-    ferretHighlightArray.forEach((element, index) => {
+    const auracHighlightArray = Array.from(highlightedNerTerms);
+    auracHighlightArray.forEach((element, index) => {
       if (element.textContent === arrowProperties.nerTerm && arrowProperties.firstClick) {
-        arrowProperties.nerElements[arrowProperties.positionInArray] = ferretHighlightArray[index];
+        arrowProperties.nerElements[arrowProperties.positionInArray] = auracHighlightArray[index];
         arrowProperties.positionInArray++;
       }
     });
@@ -453,22 +453,22 @@
 
   function setNerHtmlColours(highlightedNerTerms: HTMLCollectionOf<Element>): void {
     if (!htmlColoursSet) {
-      const ferretHighlightArray = Array.from(highlightedNerTerms);
-      ferretHighlightArray.forEach(element => {
-        const index = ferretHighlightArray.indexOf(element);
+      const auracHighlightArray = Array.from(highlightedNerTerms);
+      auracHighlightArray.forEach(element => {
+        const index = auracHighlightArray.indexOf(element);
         const elementName = element;
         const colourBefore = element.innerHTML;
         const colourAfter = element.textContent.fontcolor('blue');
-        const nerHtmlColour = new FerretHighlightHtmlColours(index, elementName, colourBefore, colourAfter);
-        ferretHighlightElements.push(nerHtmlColour);
+        const nerHtmlColour = new AuracHighlightHtmlColours(index, elementName, colourBefore, colourAfter);
+        auracHighlightElements.push(nerHtmlColour);
       });
     }
     htmlColoursSet = true;
   }
 
   function setHtmlColours(nerElement: Element): void {
-    const ferretHighlightArray = Array.from(ferretHighlightElements);
-    ferretHighlightArray.forEach(element => {
+    const auracHighlightArray = Array.from(auracHighlightElements);
+    auracHighlightArray.forEach(element => {
       element.elementName.innerHTML = element.elementName === nerElement ? element.colourAfter : element.colourBefore;
     });
   }
@@ -488,8 +488,8 @@
     });
   }
 
-  function getFerretHighlightChildren(element: Element) {
-    return Array.from(element.children).filter(child => child.className === 'ferret-highlight');
+  function getAuracHighlightChildren(element: Element) {
+    return Array.from(element.children).filter(child => child.className === 'aurac-highlight');
   }
 
   const getSelectors = (entity) => {
@@ -500,7 +500,7 @@
 
   // Recursively find all text nodes which match entity
   function allDescendants(node: HTMLElement, elements: Array<Element>, entity: string) {
-    if ((node && node.classList.contains('ferret-sidebar')) || !allowedTagType(node)) {
+    if ((node && node.classList.contains('aurac-sidebar')) || !allowedTagType(node)) {
       return;
     }
     try {
@@ -536,7 +536,7 @@
 
   // Recursively find all text nodes which match regex
   function allTextNodes(node: HTMLElement, textNodes: Array<string>) {
-    if (!allowedTagType(node) || node.classList.contains('ferret-sidebar')) {
+    if (!allowedTagType(node) || node.classList.contains('aurac-sidebar')) {
       return;
     }
 
@@ -560,7 +560,7 @@
             textNodes.push(element.textContent + '\n');
           } else if (!element.classList.contains('tooltipped') &&
             !element.classList.contains('tooltipped-click') &&
-            !element.classList.contains('ferret-sidebar') &&
+            !element.classList.contains('aurac-sidebar') &&
             element.style.display !== 'none') {
             allTextNodes(element, textNodes);
           }
