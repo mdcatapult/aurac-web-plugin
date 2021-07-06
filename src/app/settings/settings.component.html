@@ -1,122 +1,129 @@
-<div class="settings">
-  <button (click)="closeSettings()">&#10060;</button>
-  <br>
-  <form [formGroup]="settingsForm">
+<!DOCTYPE html>
+<div class="settings bg-gray-50 flex-col">
+  <button class="content-start" (click)="closeSettings()">&#10060;</button>
+  <div class="flex items-center justify-center flex-initial">
+    <img src="./assets/head-brains.icon.128.png" alt="logo" class="bg-gray-50 pb-2">
+  </div>
+  <div class="rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden">
+    <div class="relative grid gap-6 bg-white px-3 py-3 sm:gap-8 sm:p-8">
 
-    <!--    Leadmine-->
-    <div class="shadow sm:rounded-md sm:overflow-hidden">
-      <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
-        <div class="grid grid-cols-3 gap-6">
-          <div class="col-span-3 sm:col-span-2">
-            <label for="{{urlKeys.leadmineURL}}" class="block text-sm font-medium text-gray-700">
-              Leadmine URL
-            </label>
-            <div class="mt-1 flex rounded-md shadow-sm">
-              <input
-                type="text"
-                [ngStyle]="getBorderColor(urlKeys.leadmineURL)"
-                name="{{urlKeys.leadmineURL}}"
-                formControlName="{{urlKeys.leadmineURL}}"
-                id="{{urlKeys.leadmineURL}}"
-                class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300"
-              >
+      <form [formGroup]="settingsForm">
+
+        <!--    Leadmine-->
+        <div class="shadow sm:rounded-md sm:overflow-hidden">
+          <div class="px-4 py-5 bg-gray-50 space-y-6 sm:p-6">
+            <div class="grid grid-cols-3 gap-6">
+              <div class="col-span-3 sm:col-span-2">
+                <label for="{{urlKeys.leadmineURL}}" class="block text-sm font-medium text-gray-700">
+                  Leadmine URL
+                </label>
+                <div class="mt-1 flex rounded-md shadow-sm bg-white">
+                  <input
+                    type="text"
+                    [ngStyle]="getBorderColor(urlKeys.leadmineURL)"
+                    name="{{urlKeys.leadmineURL}}"
+                    formControlName="{{urlKeys.leadmineURL}}"
+                    id="{{urlKeys.leadmineURL}}"
+                    class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-l-md rounded-r-md sm:text-sm border-gray-300"
+                  >
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!--    Compound converter -->
-    <div class="shadow sm:rounded-md sm:overflow-hidden">
-      <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
-        <div class="grid grid-cols-3 gap-6">
-          <div class="col-span-3 sm:col-span-2">
-            <label for="{{urlKeys.compoundConverterURL}}" class="block text-sm font-medium text-gray-700">
-              Compound Converter URL
-            </label>
-            <div class="mt-1 flex rounded-md shadow-sm">
-              <input
-                type="text"
-                [ngStyle]="getBorderColor(urlKeys.compoundConverterURL)"
-                name="{{urlKeys.compoundConverterURL}}"
-                formControlName="{{urlKeys.compoundConverterURL}}"
-                id="{{urlKeys.compoundConverterURL}}"
-                class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300"
-              >
+        <!--    Compound converter -->
+        <div class="shadow sm:rounded-md sm:overflow-hidden">
+          <div class="px-4 py-5 bg-gray-50 space-y-6 sm:p-6">
+            <div class="grid grid-cols-3 gap-6">
+              <div class="col-span-3 sm:col-span-2">
+                <label for="{{urlKeys.compoundConverterURL}}" class="block text-sm font-medium text-gray-700">
+                  Compound Converter URL
+                </label>
+                <div class="mt-1 flex rounded-md shadow-sm bg-white">
+                  <input
+                    type="text"
+                    [ngStyle]="getBorderColor(urlKeys.compoundConverterURL)"
+                    name="{{urlKeys.compoundConverterURL}}"
+                    formControlName="{{urlKeys.compoundConverterURL}}"
+                    id="{{urlKeys.compoundConverterURL}}"
+                    class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-l-md rounded-r-md sm:text-sm border-gray-300"
+                  >
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!--    Unichem-->
-    <div class="shadow sm:rounded-md sm:overflow-hidden">
-      <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
-        <div class="grid grid-cols-3 gap-6">
-          <div class="col-span-3 sm:col-span-2">
-            <label for="{{urlKeys.unichemURL}}" class="block text-sm font-medium text-gray-700">
-              Unichem URL
-            </label>
-            <div class="mt-1 flex rounded-md shadow-sm">
-              <input
-                type="text"
-                [ngStyle]="getBorderColor(urlKeys.unichemURL)"
-                name="{{urlKeys.unichemURL}}"
-                formControlName="{{urlKeys.unichemURL}}"
-                id="{{urlKeys.unichemURL}}"
-                class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300"
-              >
+        <!--    Unichem-->
+        <div class="shadow sm:rounded-md sm:overflow-hidden">
+          <div class="px-4 py-5 bg-gray-50 space-y-6 sm:p-6">
+            <div class="grid grid-cols-3 gap-6">
+              <div class="col-span-3 sm:col-span-2">
+                <label for="{{urlKeys.unichemURL}}" class="block text-sm font-medium text-gray-700">
+                  Unichem URL
+                </label>
+                <div class="mt-1 flex rounded-md shadow-sm bg-white">
+                  <input
+                    type="text"
+                    [ngStyle]="getBorderColor(urlKeys.unichemURL)"
+                    name="{{urlKeys.unichemURL}}"
+                    formControlName="{{urlKeys.unichemURL}}"
+                    id="{{urlKeys.unichemURL}}"
+                    class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-l-md rounded-r-md sm:text-sm border-gray-300"
+                  >
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <input
-      type="file"
-      class="file-input"
-      style="display:none"
-      (change)="onFileSelected($event)"
-      #fileUpload
-    >
+        <input
+          type="file"
+          class="file-input"
+          style="display:none"
+          (change)="onFileSelected($event)"
+          #fileUpload
+        >
 
-    <div id="button-container">
-      <button
-        (click)="save()"
-        [disabled]="!settingsForm.valid"
-        class="button-element child save inline-flex justify-center py-2 px-4 border border-transparent text-sm font-medium
+        <div class="flex items-center justify-center pt-2">
+          <button
+            (click)="save()"
+            [disabled]="!settingsForm.valid"
+            class="button-element child save inline-flex justify-center py-2 px-4 border border-transparent text-sm font-medium
       rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2
       focus:ring-indigo-500"
-        [ngClass]="!settingsForm.valid ? 'disabled' : '' "
-      >
-        Save
-      </button>
+            [ngClass]="!settingsForm.valid ? 'disabled' : '' "
+          >
+            Save
+          </button>
 
-      <!--show if validURls -->
-      <a *ngIf="settingsForm.valid" class="button-element child export inline-flex justify-center py-2 px-4 border border-transparent
+          <!--show if validURls -->
+          <a *ngIf="settingsForm.valid" class="button-element child export inline-flex justify-center py-2 px-4 border border-transparent
     text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2
     focus:ring-offset-2 focus:ring-indigo-500"
-         title="Export"
-         [href]="downloadJsonHref"
-         download="aurac-url-settings.json">
-        Export
-      </a>
+             title="Export"
+             [href]="downloadJsonHref"
+             download="aurac-url-settings.json">
+            Export
+          </a>
 
-      <a *ngIf="!settingsForm.valid" class="button-element child export inline-flex justify-center py-2 px-4 border
+          <a *ngIf="!settingsForm.valid" class="button-element child export inline-flex justify-center py-2 px-4 border
     border-transparent text-sm font-medium rounded-md text-white disabled focus:outline-none focus:ring-2
     focus:ring-offset-2 focus:ring-indigo-500"
-         title="Export"
-         download="aurac-url-settings.json">
-        Export
-      </a>
+             title="Export"
+             download="aurac-url-settings.json">
+            Export
+          </a>
 
-      <button
-        (click)="fileUpload.click()"
-        class="file-upload button-element child load inline-flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white
+          <button
+            (click)="fileUpload.click()"
+            class="file-upload button-element child load inline-flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white
     bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-        Load
-      </button>
+            Load
+          </button>
+        </div>
+      </form>
     </div>
-
-  </form>
+  </div>
 </div>
