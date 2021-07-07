@@ -4,7 +4,6 @@ stages:
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
-  CI_DEBUG_TRACE: "true"
 
 test-lint-build:
   stage: test-lint-build
