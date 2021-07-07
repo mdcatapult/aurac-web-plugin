@@ -287,17 +287,11 @@
      .right-arrow-button {
       color: black;
       background-color: rgb(192, 192, 192);
-      position: absolute;
-      top: 0;
-      left: 92%;
       padding: 5px;
      }
      .left-arrow-button {
       color: black;
       background-color: rgb(192, 192, 192);
-      position: absolute;
-      top: 0;
-      left: 84%;
       padding: 5px`;
     return styleElement;
   };
@@ -366,10 +360,13 @@
   function renderSidebarElement(information: Information): HTMLDivElement {
     const sidebarText: HTMLDivElement = document.createElement('div');
     // If the parent element is relative and its children are position absolute. They will be positioned based on the parents location.
-    sidebarText.style.position = 'relative';
-    renderArrowButtonElements(sidebarText, information);
-
+    // sidebarText.style.position = 'relative';
     sidebarText.id = 'sidebar-text';
+    sidebarText.style.display = 'flex';
+    renderArrowButtonElements(sidebarText, information);
+    sidebarText.style.flexDirection = 'column';
+    sidebarText.style.justifyContent = 'flex-start';
+    sidebarText.style.flexWrap = 'wrap';
     sidebarText.style.border = '1px solid black';
     sidebarText.style.padding = '2px';
     sidebarText.style.marginBottom = '5px';
@@ -401,11 +398,17 @@
     sidebarText.appendChild(rightArrowButtonElement);
     rightArrowButtonElement.innerHTML = rightArrow;
     rightArrowButtonElement.className = 'right-arrow-button';
+    // rightArrowButtonElement.style.flexWrap = 'wrap';
+    rightArrowButtonElement.style.flexDirection = 'row';
+    rightArrowButtonElement.style.justifyContent = 'flex-end';
 
     const leftArrowButtonElement = document.createElement('button');
     sidebarText.appendChild(leftArrowButtonElement);
     leftArrowButtonElement.innerHTML = leftArrow;
     leftArrowButtonElement.className = 'left-arrow-button';
+    // leftArrowButtonElement.style.flexWrap = 'wrap';
+    leftArrowButtonElement.style.flexDirection = 'row';
+    leftArrowButtonElement.style.justifyContent = 'flex-end';
 
     const nerTerm = information.entityText;
     const nerColour = information.recognisingDict.htmlColor;
