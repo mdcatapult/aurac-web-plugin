@@ -45,7 +45,7 @@
   const rightArrow = '&#8594';
   const leftArrow = '&#8592';
   let htmlColoursSet = false;
-  const ferretHighlightElements: Array<FerretHighlightHtmlColours> = [];
+  let ferretHighlightElements: Array<FerretHighlightHtmlColours> = [];
 
   ferretSidebar.appendChild(buttonElement);
   buttonElement.innerHTML = collapseArrow;
@@ -104,47 +104,12 @@
       },
     ];
 
-  // This class stores the properties of each button as well as their respective highlighted elements, how many of that element there are
-  // and the current position of it that the user is searching for
-  class NERArrowButtonProperties {
-    nerElements: Array<Element> = [];
-    nerTerm: string;
-    positionInArray = 0;
-    scrollTermIntoView = 0;
-    firstClick = true;
-    leftButtonClicked: boolean;
-    rightButtonClicked: boolean;
-    nerColour: string;
-
-    constructor(nerTerm, nerColour) {
-      this.nerTerm = nerTerm;
-      this.nerColour = nerColour;
-    }
-
-    leftButtonAlterIndex(): void {
-      if (this.leftButtonClicked && this.scrollTermIntoView !== 0) { // If we've clicked the left button and
-        // were not on the beginning element perform these actions. We would get an array OOB exception without this
-        this.scrollTermIntoView--;
-      }
-      scrollNerIntoView(this);
-    }
-
-    rightButtonAlterIndex(endOfTerms): void {
-      // When we have reached the end of the NER terms, on right button click we reset back to the beginning term within the array
-      if (this.scrollTermIntoView === endOfTerms) {
-        this.scrollTermIntoView = 0;
-        scrollNerIntoView(this);
-      }
-      // If we clicked the right button perform these actions
-      else if (this.firstClick) { // On first click we cannot increment the array position as we want to see the value at index 0
-        scrollNerIntoView(this);
-        this.firstClick = false; // Need to set this to false so we don't keep duplicating NER elements inside array
-      } else { // If we have already clicked an arrow button once then increment the array and display the ner term on screen
-        this.scrollTermIntoView++;
-        scrollNerIntoView(this);
-      }
-    }
-  }
+type ArrowButtonProperties = {
+  nerTerm: string,
+  nerColor: string,
+  positionInArray: number,
+  isClicked: boolean,
+}
 
   // This class stores the HTML of all ferret-highlight elements before and after we change them. That way when they are no longer
   // highlighted by our search they can return to their original HTML state
@@ -165,9 +130,8 @@
   const sidebarTexts = document.createElement('div');
   ferretSidebar.appendChild(sidebarTexts);
   const entityToDiv = new EntityToDiv();
-  const entityToOccurrenceCount = new Map<string, number>();
+  const entityToOccurrence = new Map<string, Element[]>();
   const entityToArrowButtons = new Map<string, ArrowButtons>();
-  // const entityToArrowProperties = new Map<string, NERArrowButtonProperties>(); // keeps the arrow buttons in step with scrolling
 
   type ArrowButtons = {
     left: HTMLButtonElement,
@@ -414,13 +378,10 @@
 
   function populateEntityToOccurrences(entityText: string, occurrence: Element): void {
 
-    // Get position of element. Subtract 1 so that using the arrows to scroll to top of screen includes this element
-    // on the screen.
-    const elementY = occurrence.getBoundingClientRect().y - 1;
-    if (!entityToOccurrenceCount.has(entityText)) {
-      entityToOccurrenceCount.set(entityText, 1);
+    if (!entityToOccurrence.has(entityText)) {
+      entityToOccurrence.set(entityText, [occurrence]);
     } else {
-      entityToOccurrenceCount.set(entityText, entityToOccurrenceCount.get(entityText) + 1);
+      entityToOccurrence.get(entityText).push(occurrence);
     }
   }
 
@@ -428,11 +389,12 @@
     const entityText = information.entityText;
     const occurrenceElement = document.createElement('span');
     occurrenceElement.id = `${entityText}-occurrences`;
-    occurrenceElement.innerText = `${entityToOccurrenceCount.get(entityText)} matches found`;
+    occurrenceElement.innerText = `${entityToOccurrence.get(entityText).length} matches found`;
     sidebarText.appendChild(occurrenceElement);
   }
 
   function renderArrowButtonElements(sidebarText: HTMLDivElement, information: Information): void {
+
     const rightArrowButtonElement = document.createElement('button');
     sidebarText.appendChild(rightArrowButtonElement);
     rightArrowButtonElement.innerHTML = rightArrow;
@@ -443,54 +405,52 @@
     leftArrowButtonElement.innerHTML = leftArrow;
     leftArrowButtonElement.className = 'left-arrow-button';
 
-    const nerTerm = information.entityText;
-    const nerColour = information.recognisingDict.htmlColor;
-    const arrowProperties = new NERArrowButtonProperties(nerTerm, nerColour);
+
+    const arrowProperties: ArrowButtonProperties = {
+      nerTerm: information.entityText, nerColor: information.recognisingDict.htmlColor, positionInArray: 0, isClicked: false
+    };
 
     leftArrowButtonElement.addEventListener('click', () => {
-      arrowProperties.leftButtonClicked = true;
-      arrowProperties.rightButtonClicked = false;
-      pressArrowButton(arrowProperties);
+      pressArrowButton(arrowProperties, 'left');
     });
 
     rightArrowButtonElement.addEventListener('click', () => {
-      arrowProperties.rightButtonClicked = true;
-      arrowProperties.leftButtonClicked = false;
-      pressArrowButton(arrowProperties);
+      pressArrowButton(arrowProperties, 'right');
     });
   }
 
-  function pressArrowButton(arrowProperties: NERArrowButtonProperties): void {
-    const endOfTerms = arrowProperties.nerElements.length - 1;
-    const highlightedNerTerms: HTMLCollectionOf<Element> = document.getElementsByClassName('ferret-highlight');
-    // Scan the document body for NER terms that match with the term we are looking for, if there is a match then add the elements with that
-    // term to our array. We only want to add the NER elements to the array on the first click. Otherwise we would keep adding them to the
-    // array everytime we clicked an arrow button
-    const ferretHighlightArray = Array.from(highlightedNerTerms);
-    ferretHighlightArray.forEach((element, index) => {
-      if (element.textContent === arrowProperties.nerTerm && arrowProperties.firstClick) {
-        arrowProperties.nerElements[arrowProperties.positionInArray] = ferretHighlightArray[index];
+  function pressArrowButton(arrowProperties: ArrowButtonProperties, direction: 'left' | 'right'): void {
+
+    Array.from(entityToOccurrence.values()).forEach(entity => {
+      entity.forEach(occurrence => setHtmlColours(occurrence));
+    })
+
+    if (direction === 'right') {
+      if (arrowProperties.positionInArray >= entityToOccurrence.get(arrowProperties.nerTerm).length - 1) {
+        arrowProperties.positionInArray = 0;
+      } else if (arrowProperties.isClicked){
         arrowProperties.positionInArray++;
       }
-    });
-    setNerHtmlColours(highlightedNerTerms);
-    if (arrowProperties.leftButtonClicked) {
-      arrowProperties.leftButtonAlterIndex();
-    } else if (arrowProperties.rightButtonClicked) {
-      arrowProperties.rightButtonAlterIndex(endOfTerms);
+    } else if (arrowProperties.positionInArray > 0 ){ // direction is 'left'
+      arrowProperties.positionInArray--;
     }
+
+    setNerHtmlColours(entityToOccurrence.get(arrowProperties.nerTerm))
+
+    const targetElement = entityToOccurrence.get(arrowProperties.nerTerm)[arrowProperties.positionInArray];
+    targetElement.scrollIntoView({behavior: 'smooth'});
+
+    setHtmlColours(targetElement);
+
+
+
+    const occurrencesElement = document.getElementById(`${arrowProperties.nerTerm}-occurrences`);
+    occurrencesElement.innerText = `${arrowProperties.positionInArray + 1} / ${entityToOccurrence.get(arrowProperties.nerTerm).length}`;
+    arrowProperties.isClicked = true;
   }
 
-  function scrollNerIntoView(arrowProperties: NERArrowButtonProperties): void {
-    const currentNerElement = arrowProperties.nerElements[arrowProperties.scrollTermIntoView];
-    currentNerElement.scrollIntoView({behavior: 'smooth'});
-    const occurrenceElement = document.getElementById(`${arrowProperties.nerTerm}-occurrences`);
-    occurrenceElement.innerText = `${arrowProperties.scrollTermIntoView + 1} / ${arrowProperties.nerElements.length}`;
-    setHtmlColours(currentNerElement);
-  }
-
-  function setNerHtmlColours(highlightedNerTerms: HTMLCollectionOf<Element>): void {
-    if (!htmlColoursSet) {
+  function setNerHtmlColours(highlightedNerTerms: Element[]): void {
+    ferretHighlightElements = [];
       const ferretHighlightArray = Array.from(highlightedNerTerms);
       ferretHighlightArray.forEach(element => {
         const index = ferretHighlightArray.indexOf(element);
@@ -500,8 +460,6 @@
         const nerHtmlColour = new FerretHighlightHtmlColours(index, elementName, colourBefore, colourAfter);
         ferretHighlightElements.push(nerHtmlColour);
       });
-    }
-    htmlColoursSet = true;
   }
 
   function setHtmlColours(nerElement: Element): void {
@@ -654,4 +612,6 @@
       return !!found.length;
     }
   }
-})();
+}
+
+)();
