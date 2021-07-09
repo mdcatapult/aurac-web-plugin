@@ -1,6 +1,6 @@
 {
   "name": "Ferret",
-  "version": "0.8.5",
+  "version": "0.8.6",
   "description": "NER browser extension",
   "manifest_version": 2,
   "browser_action": {
