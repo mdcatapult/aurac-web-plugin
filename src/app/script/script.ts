@@ -427,6 +427,7 @@ type ArrowButtonProperties = {
 
     if (direction === 'right') {
       if (arrowProperties.positionInArray >= entityToOccurrence.get(arrowProperties.nerTerm).length - 1) {
+        // gone off the end of the array - reset
         arrowProperties.positionInArray = 0;
       } else if (arrowProperties.isClicked){
         arrowProperties.positionInArray++;
