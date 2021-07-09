@@ -47,6 +47,10 @@
   let htmlColoursSet = false;
   const ferretHighlightElements: Array<FerretHighlightHtmlColours> = [];
 
+  const specialCharacters: string[] = ['(', ')', '\\n', '\'', '\"'];
+  const noSpace = '';
+  const space = ' ';
+
   ferretSidebar.appendChild(buttonElement);
   buttonElement.innerHTML = collapseArrow;
   buttonElement.className = 'sidebar-button';
@@ -587,7 +591,7 @@
 
   const allowedTagType = (element: HTMLElement): boolean => !forbiddenTags.some(tag => element instanceof tag);
 
-  // If a string contains at least one instance of a  particular term between word boundaries then return true
+  // If a string contains at least one instance of a particular term between word boundaries then return true
   // Can handle non latin unicode terms which at the moment JS Regex can't.
   function textContainsTerm(text: string, term: string): boolean {
     let currentText = '';
@@ -602,13 +606,21 @@
         if (currentText.includes(term) && !foundTerm) {
           const removeTermFromCurrentText: string = currentText.replace(term, '');
           // Find the remaining bit of text but also remove any line breaks from it
-          const remainingText: string = text.slice(currentText.length).replace(/(\r\n|\n|\r)/gm, '');
+          const remainingText: string = text.slice(currentText.length);
           // We found the string but is it in the middle of something else like abcdMyString1234? ie is it a word boundary or not
-          // or is it at the start or end of the string
-          // tslint:disable-next-line:max-line-length
-          if ((removeTermFromCurrentText === '' || removeTermFromCurrentText.charAt(removeTermFromCurrentText.length - 1) === ' ') && (remainingText.startsWith(' ') || remainingText === '')) {
+          // or is it at the start or end of the string. If it's within a word boundary we don't want to highlight it. If however, it is
+          // encapsulated by a special character then we do.
+          if ((removeTermFromCurrentText === noSpace || removeTermFromCurrentText.charAt(removeTermFromCurrentText.length - 1)
+            === space) && (remainingText.startsWith(space) || remainingText === noSpace)) {
             found.push(term);
             foundTerm = true;
+          } else {
+            specialCharacters.forEach((character) => {
+              if (removeTermFromCurrentText.includes(character) || remainingText.endsWith(character)) {
+                found.push(term);
+                foundTerm = true;
+              }
+            });
           }
           currentText = '';
         }
