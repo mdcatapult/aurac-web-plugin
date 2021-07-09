@@ -395,30 +395,34 @@
 
   function renderArrowButtonElements(sidebarText: HTMLDivElement, information: Information): void {
     const rightArrowButtonElement = document.createElement('button');
+    rightArrowButtonElement.style.display = 'flex';
     sidebarText.appendChild(rightArrowButtonElement);
     rightArrowButtonElement.innerHTML = rightArrow;
     rightArrowButtonElement.className = 'right-arrow-button';
-    // rightArrowButtonElement.style.flexWrap = 'wrap';
-    rightArrowButtonElement.style.flexDirection = 'row';
+    rightArrowButtonElement.style.flexWrap = 'wrap';
+    /*rightArrowButtonElement.style.flexDirection = 'row';
     rightArrowButtonElement.style.justifyContent = 'flex-end';
+    rightArrowButtonElement.style.padding = '5px';*/
 
-    const leftArrowButtonElement = document.createElement('button');
+    // WHEN TESTING CODE, CHANGE ARROW WIDTH TO FIT-CONTENT AND ALIGN-SELF TO CENTER OR WHATEVER THEN IT WILL CHANGE WITH IT
+
+    /*const leftArrowButtonElement = document.createElement('button');
     sidebarText.appendChild(leftArrowButtonElement);
     leftArrowButtonElement.innerHTML = leftArrow;
-    leftArrowButtonElement.className = 'left-arrow-button';
+    leftArrowButtonElement.className = 'left-arrow-button';*/
     // leftArrowButtonElement.style.flexWrap = 'wrap';
-    leftArrowButtonElement.style.flexDirection = 'row';
-    leftArrowButtonElement.style.justifyContent = 'flex-end';
+    /*leftArrowButtonElement.style.flexDirection = 'row';
+    leftArrowButtonElement.style.justifyContent = 'flex-end';*/
 
     const nerTerm = information.entityText;
     const nerColour = information.recognisingDict.htmlColor;
     const arrowProperties = new NERArrowButtonProperties(nerTerm, nerColour);
 
-    leftArrowButtonElement.addEventListener('click', () => {
+    /*leftArrowButtonElement.addEventListener('click', () => {
       arrowProperties.leftButtonClicked = true;
       arrowProperties.rightButtonClicked = false;
       pressArrowButton(arrowProperties);
-    });
+    });*/
 
     rightArrowButtonElement.addEventListener('click', () => {
       arrowProperties.rightButtonClicked = true;

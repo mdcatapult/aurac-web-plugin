@@ -104,7 +104,7 @@ export class BackgroundComponent {
           queryParams = new HttpParams().set('inchikey', 'true');
         }
         this.client.post<LeadminerResult>(
-          `${this.settings.leadmineURL}/entities`,
+          `${this.settings.leadmineURL}/${dictionary}/entities`,
           result.body,
           {observe: 'response', params: queryParams})
           .subscribe((response) => {
