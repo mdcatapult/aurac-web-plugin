@@ -165,6 +165,15 @@
   const sidebarTexts = document.createElement('div');
   ferretSidebar.appendChild(sidebarTexts);
   const entityToDiv = new EntityToDiv();
+  const entityToOccurrenceCount = new Map<string, number>();
+  const entityToArrowButtons = new Map<string, ArrowButtons>();
+  // const entityToArrowProperties = new Map<string, NERArrowButtonProperties>(); // keeps the arrow buttons in step with scrolling
+
+  type ArrowButtons = {
+    left: HTMLButtonElement,
+    right: HTMLButtonElement
+  }
+
   buttonElement.addEventListener('click', () => {
     if (document.body.style.width === sidebarOpenScreenWidth || document.body.style.width === sidebarClosedScreenWidth) {
       animateElements(elementProperties);
@@ -223,10 +232,16 @@
             try {
               const replacementNode = document.createElement('span');
               replacementNode.innerHTML = element.nodeValue.replaceAll(term, highlightTerm(term, entity));
+
               element.parentNode.insertBefore(replacementNode, element);
               element.parentNode.removeChild(element);
+
+
               const childValues = getFerretHighlightChildren(replacementNode);
-              childValues.forEach(childValue => childValue.addEventListener('mouseenter', populateFerretSidebar(entity, replacementNode)));
+              childValues.forEach(childValue => {
+                populateEntityToOccurrences(entity.entityText, childValue);
+                childValue.addEventListener('mouseenter', populateFerretSidebar(entity, replacementNode))
+              });
             } catch (e) {
               console.error(e);
             }
@@ -368,6 +383,7 @@
     // If the parent element is relative and its children are position absolute. They will be positioned based on the parents location.
     sidebarText.style.position = 'relative';
     renderArrowButtonElements(sidebarText, information);
+    renderOccurrenceCounts(sidebarText, information);
 
     sidebarText.id = 'sidebar-text';
     sidebarText.style.border = '1px solid black';
@@ -394,6 +410,26 @@
     sidebarText.appendChild(xrefHTML);
     sidebarTexts.appendChild(sidebarText);
     return sidebarText;
+  }
+
+  function populateEntityToOccurrences(entityText: string, occurrence: Element): void {
+
+    // Get position of element. Subtract 1 so that using the arrows to scroll to top of screen includes this element
+    // on the screen.
+    const elementY = occurrence.getBoundingClientRect().y - 1;
+    if (!entityToOccurrenceCount.has(entityText)) {
+      entityToOccurrenceCount.set(entityText, 1);
+    } else {
+      entityToOccurrenceCount.set(entityText, entityToOccurrenceCount.get(entityText) + 1);
+    }
+  }
+
+  function renderOccurrenceCounts(sidebarText: HTMLDivElement, information: Information): void {
+    const entityText = information.entityText;
+    const occurrenceElement = document.createElement('span');
+    occurrenceElement.id = `${entityText}-occurrences`;
+    occurrenceElement.innerText = `${entityToOccurrenceCount.get(entityText)} matches found`;
+    sidebarText.appendChild(occurrenceElement);
   }
 
   function renderArrowButtonElements(sidebarText: HTMLDivElement, information: Information): void {
@@ -448,6 +484,8 @@
   function scrollNerIntoView(arrowProperties: NERArrowButtonProperties): void {
     const currentNerElement = arrowProperties.nerElements[arrowProperties.scrollTermIntoView];
     currentNerElement.scrollIntoView({behavior: 'smooth'});
+    const occurrenceElement = document.getElementById(`${arrowProperties.nerTerm}-occurrences`);
+    occurrenceElement.innerText = `${arrowProperties.scrollTermIntoView + 1} / ${arrowProperties.nerElements.length}`;
     setHtmlColours(currentNerElement);
   }
 
