@@ -44,7 +44,6 @@
   const expandArrow = '&#62;';
   const rightArrow = '&#8594';
   const leftArrow = '&#8592';
-  let htmlColoursSet = false;
   let ferretHighlightElements: Array<FerretHighlightHtmlColours> = [];
 
   ferretSidebar.appendChild(buttonElement);
@@ -131,7 +130,6 @@ type ArrowButtonProperties = {
   ferretSidebar.appendChild(sidebarTexts);
   const entityToDiv = new EntityToDiv();
   const entityToOccurrence = new Map<string, Element[]>();
-  const entityToArrowButtons = new Map<string, ArrowButtons>();
 
   type ArrowButtons = {
     left: HTMLButtonElement,
