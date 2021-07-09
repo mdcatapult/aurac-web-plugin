@@ -359,60 +359,60 @@
   // Creates a sidebar element presenting information.
   function renderSidebarElement(information: Information): HTMLDivElement {
     const sidebarText: HTMLDivElement = document.createElement('div');
-    // If the parent element is relative and its children are position absolute. They will be positioned based on the parents location.
-    // sidebarText.style.position = 'relative';
-    sidebarText.id = 'sidebar-text';
     sidebarText.style.display = 'flex';
-    renderArrowButtonElements(sidebarText, information);
-    sidebarText.style.flexDirection = 'column';
-    sidebarText.style.justifyContent = 'flex-start';
     sidebarText.style.flexWrap = 'wrap';
+    sidebarText.id = 'sidebar-text';
     sidebarText.style.border = '1px solid black';
     sidebarText.style.padding = '2px';
     sidebarText.style.marginBottom = '5px';
     sidebarText.style.backgroundColor = information.recognisingDict.htmlColor;
-    sidebarText.insertAdjacentHTML('afterbegin', `<p>Term: ${information.entityText}</p>`);
+
+    const subSidebarText: HTMLDivElement = document.createElement('div');
+    subSidebarText.id = 'sub-sidebar-text';
+    subSidebarText.style.flexDirection = 'column';
+    // renderArrowButtonElements(mainSidebarText, information); //pass in main sidebar text and make arrow buttons children of it
+    subSidebarText.insertAdjacentHTML('afterbegin', `<p>Term: ${information.entityText}</p>`);
 
     if (information.resolvedEntity) {
-      sidebarText.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${information.resolvedEntity}</p>`);
+      subSidebarText.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${information.resolvedEntity}</p>`);
 
       if (information.entityGroup === 'Gene or Protein') {
         const geneNameLink = createGeneNameLink(information.resolvedEntity);
-        sidebarText.insertAdjacentHTML('beforeend', geneNameLink);
+        subSidebarText.insertAdjacentHTML('beforeend', geneNameLink);
       }
     }
 
-    sidebarText.insertAdjacentHTML('beforeend', `<p>Entity Group: ${information.entityGroup}</p>`);
-    sidebarText.insertAdjacentHTML('beforeend', `<p>Entity Type: ${information.recognisingDict.entityType}</p>`);
-    sidebarText.insertAdjacentHTML('beforeend', `<p>Dictionary Source: ${information.recognisingDict.source}</p>`);
+    subSidebarText.insertAdjacentHTML('beforeend', `<p>Entity Group: ${information.entityGroup}</p>`);
+    subSidebarText.insertAdjacentHTML('beforeend', `<p>Entity Type: ${information.recognisingDict.entityType}</p>`);
+    subSidebarText.insertAdjacentHTML('beforeend', `<p>Dictionary Source: ${information.recognisingDict.source}</p>`);
 
+    sidebarText.appendChild(subSidebarText);
     const xrefHTML = document.createElement('div');
     xrefHTML.className = information.entityText;
-    sidebarText.appendChild(xrefHTML);
+    subSidebarText.appendChild(xrefHTML);
     sidebarTexts.appendChild(sidebarText);
     return sidebarText;
   }
 
   function renderArrowButtonElements(sidebarText: HTMLDivElement, information: Information): void {
     const rightArrowButtonElement = document.createElement('button');
-    rightArrowButtonElement.style.display = 'flex';
+    // rightArrowButtonElement.style.display = 'flex';
     sidebarText.appendChild(rightArrowButtonElement);
-    rightArrowButtonElement.innerHTML = rightArrow;
     rightArrowButtonElement.className = 'right-arrow-button';
-    rightArrowButtonElement.style.flexWrap = 'wrap';
+    rightArrowButtonElement.innerHTML = rightArrow;
+    // rightArrowButtonElement.style.flexWrap = 'wrap';
     /*rightArrowButtonElement.style.flexDirection = 'row';
     rightArrowButtonElement.style.justifyContent = 'flex-end';
     rightArrowButtonElement.style.padding = '5px';*/
 
     // WHEN TESTING CODE, CHANGE ARROW WIDTH TO FIT-CONTENT AND ALIGN-SELF TO CENTER OR WHATEVER THEN IT WILL CHANGE WITH IT
 
-    /*const leftArrowButtonElement = document.createElement('button');
+    const leftArrowButtonElement = document.createElement('button');
     sidebarText.appendChild(leftArrowButtonElement);
+    leftArrowButtonElement.className = 'left-arrow-button';
     leftArrowButtonElement.innerHTML = leftArrow;
-    leftArrowButtonElement.className = 'left-arrow-button';*/
-    // leftArrowButtonElement.style.flexWrap = 'wrap';
-    /*leftArrowButtonElement.style.flexDirection = 'row';
-    leftArrowButtonElement.style.justifyContent = 'flex-end';*/
+    leftArrowButtonElement.style.flexDirection = 'row';
+    leftArrowButtonElement.style.justifyContent = 'flex-end';
 
     const nerTerm = information.entityText;
     const nerColour = information.recognisingDict.htmlColor;
