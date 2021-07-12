@@ -44,7 +44,7 @@
   const expandArrow = '&#62;';
   const rightArrow = '&#8594';
   const leftArrow = '&#8592';
-  let ferretHighlightElements: Array<FerretHighlightHtmlColours> = [];
+  const ferretHighlightElements: Array<FerretHighlightHtmlColours> = [];
 
   ferretSidebar.appendChild(buttonElement);
   buttonElement.innerHTML = collapseArrow;
@@ -466,10 +466,8 @@
   }
 
   function setNerHtmlColours(highlightedNerTerms: Element[]): void {
-    ferretHighlightElements = [];
-    const ferretHighlightArray = Array.from(highlightedNerTerms);
-    ferretHighlightArray.forEach(element => {
-      const index = ferretHighlightArray.indexOf(element);
+    highlightedNerTerms.forEach(element => {
+      const index = highlightedNerTerms.indexOf(element);
       const elementName = element;
       const colourBefore = element.innerHTML;
       const colourAfter = element.textContent.fontcolor('blue');
