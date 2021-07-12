@@ -132,8 +132,8 @@
     }
   }
 
-    // This class stores the HTML of all ferret-highlight elements before and after we change them. That way when they are no longer
-    // highlighted by our search they can return to their original HTML state
+  // This class stores the HTML of all ferret-highlight elements before and after we change them. That way when they are no longer
+  // highlighted by our search they can return to their original HTML state
   class FerretHighlightHtmlColours {
     index: number;
     elementName: Element;
@@ -487,7 +487,7 @@
     });
   }
 
-// if the entity group is 'Gene or Protein' add a genenames url link to the sidebarText element
+  // if the entity group is 'Gene or Protein' add a genenames url link to the sidebarText element
   function createGeneNameLink(resolvedEntity: string): string {
     const id = resolvedEntity.split(':').pop();
     const geneNameUrl = `https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/${id}`;
