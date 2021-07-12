@@ -628,6 +628,4 @@
       return !!found.length;
     }
   }
-}
-
-)();
+})();
