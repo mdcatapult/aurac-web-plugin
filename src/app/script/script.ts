@@ -211,11 +211,13 @@
         if (formula.formulaText === term) {
           try {
             const replacementNode = document.createElement('span');
+            // Retrieves the specific highlight colour to use for this NER term
             replacementNode.innerHTML = highlightTerm(formulaNode.innerHTML, entity);
+            // This new highlighted term will replace the current child (same term but with no highlight) of this parent element
             formulaNode.parentNode.insertBefore(replacementNode, formulaNode);
             formulaNode.parentNode.removeChild(formulaNode);
             const childValues = getFerretHighlightChildren(replacementNode);
-            childValues.forEach(childValue => {
+            childValues.forEach(childValue => { // For each highlighted element, we will add an event listener to add it to our sidebar
               childValue.addEventListener('mouseenter', populateFerretSidebar(entity, replacementNode));
             });
           } catch (e) {
@@ -233,12 +235,15 @@
     selector.map(element => {
       // Try/catch for edge cases.
       try {
+        // For each term, we want to replace it's original HTML with a highlight colour
         const replacementNode = document.createElement('span');
         replacementNode.innerHTML = element.nodeValue.replaceAll(term, highlightTerm(term, entity));
 
+        // This new highlighted term will will replace the current child (same term but with no highlight) of this parent element.
         element.parentNode.insertBefore(replacementNode, element);
         element.parentNode.removeChild(element);
 
+        // For each value we find that is a highlighted term, we want to add it to our sidebar and find it's occurrences within the page
         const childValues = getFerretHighlightChildren(replacementNode);
         childValues.forEach(childValue => {
           populateEntityToOccurrences(entity.entityText, childValue);
@@ -393,7 +398,6 @@
   }
 
   function populateEntityToOccurrences(entityText: string, occurrence: Element): void {
-
     if (!entityToOccurrence.has(entityText)) {
       entityToOccurrence.set(entityText, [occurrence]);
     } else {
@@ -434,7 +438,6 @@
   }
 
   function pressArrowButton(arrowProperties: ArrowButtonProperties, direction: 'left' | 'right'): void {
-
     Array.from(entityToOccurrence.values()).forEach(entity => {
       entity.forEach(occurrence => setHtmlColours(occurrence));
     });
