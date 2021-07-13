@@ -44,8 +44,11 @@
   const expandArrow = '&#62;';
   const rightArrow = '&#8594';
   const leftArrow = '&#8592';
-  let htmlColoursSet = false;
   const ferretHighlightElements: Array<FerretHighlightHtmlColours> = [];
+
+  const specialCharacters: string[] = ['(', ')', '\\n', '\'', '\"'];
+  const noSpace = '';
+  const space = ' ';
 
   ferretSidebar.appendChild(buttonElement);
   buttonElement.innerHTML = collapseArrow;
@@ -104,6 +107,13 @@
       },
     ];
 
+  type ArrowButtonProperties = {
+    nerTerm: string,
+    nerColor: string,
+    positionInArray: number,
+    isClicked: boolean,
+  };
+
   // This class stores the properties of each button as well as their respective highlighted elements, how many of that element there are
   // and the current position of it that the user is searching for
   class NERArrowButtonProperties {
@@ -119,30 +129,6 @@
     constructor(nerTerm, nerColour) {
       this.nerTerm = nerTerm;
       this.nerColour = nerColour;
-    }
-
-    leftButtonAlterIndex(): void {
-      if (this.leftButtonClicked && this.scrollTermIntoView !== 0) { // If we've clicked the left button and
-        // were not on the beginning element perform these actions. We would get an array OOB exception without this
-        this.scrollTermIntoView--;
-      }
-      scrollNerIntoView(this);
-    }
-
-    rightButtonAlterIndex(endOfTerms): void {
-      // When we have reached the end of the NER terms, on right button click we reset back to the beginning term within the array
-      if (this.scrollTermIntoView === endOfTerms) {
-        this.scrollTermIntoView = 0;
-        scrollNerIntoView(this);
-      }
-      // If we clicked the right button perform these actions
-      else if (this.firstClick) { // On first click we cannot increment the array position as we want to see the value at index 0
-        scrollNerIntoView(this);
-        this.firstClick = false; // Need to set this to false so we don't keep duplicating NER elements inside array
-      } else { // If we have already clicked an arrow button once then increment the array and display the ner term on screen
-        this.scrollTermIntoView++;
-        scrollNerIntoView(this);
-      }
     }
   }
 
@@ -165,6 +151,7 @@
   const sidebarTexts = document.createElement('div');
   ferretSidebar.appendChild(sidebarTexts);
   const entityToDiv = new EntityToDiv();
+  const entityToOccurrence = new Map<string, Element[]>();
   buttonElement.addEventListener('click', () => {
     if (document.body.style.width === sidebarOpenScreenWidth || document.body.style.width === sidebarClosedScreenWidth) {
       animateElements(elementProperties);
@@ -192,46 +179,7 @@
           resolve({type: 'leadmine', body: textNodes.join('\n')});
         });
       case 'markup_page':
-        document.head.appendChild(newFerretStyleElement());
-        msg.body.map((entity) => {
-          const term = entity.entityText;
-          const sel = getSelectors(term);
-
-          // if entity is a chemical formula, wrap innerHTML in highlight span and add event listener
-          for (const formula of chemicalFormulae) {
-            const formulaNode = formula.formulaNode;
-            if (formula.formulaText === term) {
-              try {
-                const replacementNode = document.createElement('span');
-                replacementNode.innerHTML = highlightTerm(formulaNode.innerHTML, entity);
-                formulaNode.parentNode.insertBefore(replacementNode, formulaNode);
-                formulaNode.parentNode.removeChild(formulaNode);
-                const childValues = getFerretHighlightChildren(replacementNode);
-                childValues.forEach(childValue => {
-                  childValue.addEventListener('mouseenter', populateFerretSidebar(entity, replacementNode));
-                });
-              } catch (e) {
-                console.error(e);
-              }
-              // exit the loop as soon as we find a match
-              break;
-            }
-          }
-
-          sel.map(element => {
-            // Try/catch for edge cases.
-            try {
-              const replacementNode = document.createElement('span');
-              replacementNode.innerHTML = element.nodeValue.replaceAll(term, highlightTerm(term, entity));
-              element.parentNode.insertBefore(replacementNode, element);
-              element.parentNode.removeChild(element);
-              const childValues = getFerretHighlightChildren(replacementNode);
-              childValues.forEach(childValue => childValue.addEventListener('mouseenter', populateFerretSidebar(entity, replacementNode)));
-            } catch (e) {
-              console.error(e);
-            }
-          });
-        });
+        wrapChemicalFormulaWithHighlight(msg);
         break;
       case 'x-ref_result':
         setXRefHTML(msg.body);
@@ -254,6 +202,62 @@
         throw new Error('Received unexpected message from plugin');
     }
   });
+
+  function wrapChemicalFormulaWithHighlight(msg: any) {
+    document.head.appendChild(newFerretStyleElement());
+    msg.body.map((entity) => {
+      const term = entity.entityText;
+      const selectors = getSelectors(term);
+
+      // if entity is a chemical formula, wrap innerHTML in highlight span and add event listener
+      for (const formula of chemicalFormulae) {
+        const formulaNode = formula.formulaNode;
+        if (formula.formulaText === term) {
+          try {
+            const replacementNode = document.createElement('span');
+            // Retrieves the specific highlight colour to use for this NER term
+            replacementNode.innerHTML = highlightTerm(formulaNode.innerHTML, entity);
+            // This new highlighted term will replace the current child (same term but with no highlight) of this parent element
+            formulaNode.parentNode.insertBefore(replacementNode, formulaNode);
+            formulaNode.parentNode.removeChild(formulaNode);
+            const childValues = getFerretHighlightChildren(replacementNode);
+            childValues.forEach(childValue => { // For each highlighted element, we will add an event listener to add it to our sidebar
+              childValue.addEventListener('mouseenter', populateFerretSidebar(entity, replacementNode));
+            });
+          } catch (e) {
+            console.error(e);
+          }
+          // exit the loop as soon as we find a match
+          break;
+        }
+      }
+      addHighlightEventListeners(selectors, term, entity);
+    });
+  }
+
+  function addHighlightEventListeners(selector: Element[], term: string, entity: Information) {
+    selector.map(element => {
+      // Try/catch for edge cases.
+      try {
+        // For each term, we want to replace it's original HTML with a highlight colour
+        const replacementNode = document.createElement('span');
+        replacementNode.innerHTML = element.nodeValue.replaceAll(term, highlightTerm(term, entity));
+
+        // This new highlighted term will will replace the current child (same term but with no highlight) of this parent element.
+        element.parentNode.insertBefore(replacementNode, element);
+        element.parentNode.removeChild(element);
+
+        // For each value we find that is a highlighted term, we want to add it to our sidebar and find it's occurrences within the page
+        const childValues = getFerretHighlightChildren(replacementNode);
+        childValues.forEach(childValue => {
+          populateEntityToOccurrences(entity.entityText, childValue);
+          childValue.addEventListener('mouseenter', populateFerretSidebar(entity, replacementNode));
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    });
+  }
 
   // highlights a term by wrapping it an HTML span
   const highlightTerm = (term, entity) => `<span class="ferret-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative;">${term}</span>`;
@@ -287,11 +291,17 @@
      .right-arrow-button {
       color: black;
       background-color: rgb(192, 192, 192);
+      position: absolute;
+      top: 0;
+      left: 92%;
       padding: 5px;
      }
      .left-arrow-button {
       color: black;
       background-color: rgb(192, 192, 192);
+      position: absolute;
+      top: 0;
+      left: 84%;
       padding: 5px`;
     return styleElement;
   };
@@ -359,6 +369,11 @@
   // Creates a sidebar element presenting information.
   function renderSidebarElement(information: Information): HTMLDivElement {
     const sidebarText: HTMLDivElement = document.createElement('div');
+    // If the parent element is relative and its children are position absolute. They will be positioned based on the parents location.
+    sidebarText.style.position = 'relative';
+    renderArrowButtonElements(sidebarText, information);
+    renderOccurrenceCounts(sidebarText, information);
+
     sidebarText.style.display = 'flex';
     sidebarText.style.flexWrap = 'wrap';
     sidebarText.id = 'sidebar-text';
@@ -394,83 +409,86 @@
     return sidebarText;
   }
 
+  function populateEntityToOccurrences(entityText: string, occurrence: Element): void {
+    if (!entityToOccurrence.has(entityText)) {
+      entityToOccurrence.set(entityText, [occurrence]);
+    } else {
+      entityToOccurrence.get(entityText).push(occurrence);
+    }
+  }
+
+  function renderOccurrenceCounts(sidebarText: HTMLDivElement, information: Information): void {
+    const entityText = information.entityText;
+    const occurrenceElement = document.createElement('span');
+    occurrenceElement.id = `${entityText}-occurrences`;
+    occurrenceElement.innerText = `${entityToOccurrence.get(entityText).length} matches found`;
+    sidebarText.appendChild(occurrenceElement);
+  }
+
   function renderArrowButtonElements(sidebarText: HTMLDivElement, information: Information): void {
     const rightArrowButtonElement = document.createElement('button');
-    // rightArrowButtonElement.style.display = 'flex';
     sidebarText.appendChild(rightArrowButtonElement);
-    rightArrowButtonElement.className = 'right-arrow-button';
     rightArrowButtonElement.innerHTML = rightArrow;
-    // rightArrowButtonElement.style.flexWrap = 'wrap';
-    /*rightArrowButtonElement.style.flexDirection = 'row';
-    rightArrowButtonElement.style.justifyContent = 'flex-end';
-    rightArrowButtonElement.style.padding = '5px';*/
-
-    // WHEN TESTING CODE, CHANGE ARROW WIDTH TO FIT-CONTENT AND ALIGN-SELF TO CENTER OR WHATEVER THEN IT WILL CHANGE WITH IT
+    rightArrowButtonElement.className = 'right-arrow-button';
 
     const leftArrowButtonElement = document.createElement('button');
     sidebarText.appendChild(leftArrowButtonElement);
+    leftArrowButtonElement.innerHTML = leftArrow;
     leftArrowButtonElement.className = 'left-arrow-button';
     leftArrowButtonElement.innerHTML = leftArrow;
     leftArrowButtonElement.style.flexDirection = 'row';
     leftArrowButtonElement.style.justifyContent = 'flex-end';
 
-    const nerTerm = information.entityText;
-    const nerColour = information.recognisingDict.htmlColor;
-    const arrowProperties = new NERArrowButtonProperties(nerTerm, nerColour);
+    const arrowProperties: ArrowButtonProperties = {
+      nerTerm: information.entityText, nerColor: information.recognisingDict.htmlColor, positionInArray: 0, isClicked: false
+    };
 
-    /*leftArrowButtonElement.addEventListener('click', () => {
-      arrowProperties.leftButtonClicked = true;
-      arrowProperties.rightButtonClicked = false;
-      pressArrowButton(arrowProperties);
-    });*/
+    leftArrowButtonElement.addEventListener('click', () => {
+      pressArrowButton(arrowProperties, 'left');
+    });
 
     rightArrowButtonElement.addEventListener('click', () => {
-      arrowProperties.rightButtonClicked = true;
-      arrowProperties.leftButtonClicked = false;
-      pressArrowButton(arrowProperties);
+      pressArrowButton(arrowProperties, 'right');
     });
   }
 
-  function pressArrowButton(arrowProperties: NERArrowButtonProperties): void {
-    const endOfTerms = arrowProperties.nerElements.length - 1;
-    const highlightedNerTerms: HTMLCollectionOf<Element> = document.getElementsByClassName('ferret-highlight');
-    // Scan the document body for NER terms that match with the term we are looking for, if there is a match then add the elements with that
-    // term to our array. We only want to add the NER elements to the array on the first click. Otherwise we would keep adding them to the
-    // array everytime we clicked an arrow button
-    const ferretHighlightArray = Array.from(highlightedNerTerms);
-    ferretHighlightArray.forEach((element, index) => {
-      if (element.textContent === arrowProperties.nerTerm && arrowProperties.firstClick) {
-        arrowProperties.nerElements[arrowProperties.positionInArray] = ferretHighlightArray[index];
+  function pressArrowButton(arrowProperties: ArrowButtonProperties, direction: 'left' | 'right'): void {
+    Array.from(entityToOccurrence.values()).forEach(entity => {
+      entity.forEach(occurrence => setHtmlColours(occurrence));
+    });
+
+    if (direction === 'right') {
+      if (arrowProperties.positionInArray >= entityToOccurrence.get(arrowProperties.nerTerm).length - 1) {
+        // gone off the end of the array - reset
+        arrowProperties.positionInArray = 0;
+      } else if (arrowProperties.isClicked) {
         arrowProperties.positionInArray++;
       }
+    } else if (arrowProperties.positionInArray > 0) { // direction is 'left'
+      arrowProperties.positionInArray--;
+    }
+
+    setNerHtmlColours(entityToOccurrence.get(arrowProperties.nerTerm));
+
+    const targetElement = entityToOccurrence.get(arrowProperties.nerTerm)[arrowProperties.positionInArray];
+    targetElement.scrollIntoView({behavior: 'smooth'});
+
+    setHtmlColours(targetElement);
+
+    const occurrencesElement = document.getElementById(`${arrowProperties.nerTerm}-occurrences`);
+    occurrencesElement.innerText = `${arrowProperties.positionInArray + 1} / ${entityToOccurrence.get(arrowProperties.nerTerm).length}`;
+    arrowProperties.isClicked = true;
+  }
+
+  function setNerHtmlColours(highlightedNerTerms: Element[]): void {
+    highlightedNerTerms.forEach(element => {
+      const index = highlightedNerTerms.indexOf(element);
+      const elementName = element;
+      const colourBefore = element.innerHTML;
+      const colourAfter = element.textContent.fontcolor('blue');
+      const nerHtmlColour = new FerretHighlightHtmlColours(index, elementName, colourBefore, colourAfter);
+      ferretHighlightElements.push(nerHtmlColour);
     });
-    setNerHtmlColours(highlightedNerTerms);
-    if (arrowProperties.leftButtonClicked) {
-      arrowProperties.leftButtonAlterIndex();
-    } else if (arrowProperties.rightButtonClicked) {
-      arrowProperties.rightButtonAlterIndex(endOfTerms);
-    }
-  }
-
-  function scrollNerIntoView(arrowProperties: NERArrowButtonProperties): void {
-    const currentNerElement = arrowProperties.nerElements[arrowProperties.scrollTermIntoView];
-    currentNerElement.scrollIntoView({behavior: 'smooth'});
-    setHtmlColours(currentNerElement);
-  }
-
-  function setNerHtmlColours(highlightedNerTerms: HTMLCollectionOf<Element>): void {
-    if (!htmlColoursSet) {
-      const ferretHighlightArray = Array.from(highlightedNerTerms);
-      ferretHighlightArray.forEach(element => {
-        const index = ferretHighlightArray.indexOf(element);
-        const elementName = element;
-        const colourBefore = element.innerHTML;
-        const colourAfter = element.textContent.fontcolor('blue');
-        const nerHtmlColour = new FerretHighlightHtmlColours(index, elementName, colourBefore, colourAfter);
-        ferretHighlightElements.push(nerHtmlColour);
-      });
-    }
-    htmlColoursSet = true;
   }
 
   function setHtmlColours(nerElement: Element): void {
@@ -480,7 +498,7 @@
     });
   }
 
-// if the entity group is 'Gene or Protein' add a genenames url link to the sidebarText element
+  // if the entity group is 'Gene or Protein' add a genenames url link to the sidebarText element
   function createGeneNameLink(resolvedEntity: string): string {
     const id = resolvedEntity.split(':').pop();
     const geneNameUrl = `https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/${id}`;
@@ -594,7 +612,7 @@
 
   const allowedTagType = (element: HTMLElement): boolean => !forbiddenTags.some(tag => element instanceof tag);
 
-  // If a string contains at least one instance of a  particular term between word boundaries then return true
+  // If a string contains at least one instance of a particular term between word boundaries then return true
   // Can handle non latin unicode terms which at the moment JS Regex can't.
   function textContainsTerm(text: string, term: string): boolean {
     let currentText = '';
@@ -609,13 +627,21 @@
         if (currentText.includes(term) && !foundTerm) {
           const removeTermFromCurrentText: string = currentText.replace(term, '');
           // Find the remaining bit of text but also remove any line breaks from it
-          const remainingText: string = text.slice(currentText.length).replace(/(\r\n|\n|\r)/gm, '');
+          const remainingText: string = text.slice(currentText.length);
           // We found the string but is it in the middle of something else like abcdMyString1234? ie is it a word boundary or not
-          // or is it at the start or end of the string
-          // tslint:disable-next-line:max-line-length
-          if ((removeTermFromCurrentText === '' || removeTermFromCurrentText.charAt(removeTermFromCurrentText.length - 1) === ' ') && (remainingText.startsWith(' ') || remainingText === '')) {
+          // or is it at the start or end of the string. If it's within a word boundary we don't want to highlight it. If however, it is
+          // encapsulated by a special character then we do.
+          if ((removeTermFromCurrentText === noSpace || removeTermFromCurrentText.charAt(removeTermFromCurrentText.length - 1)
+            === space) && (remainingText.startsWith(space) || remainingText === noSpace)) {
             found.push(term);
             foundTerm = true;
+          } else {
+            specialCharacters.forEach((character) => {
+              if (removeTermFromCurrentText.includes(character) || remainingText.endsWith(character)) {
+                found.push(term);
+                foundTerm = true;
+              }
+            });
           }
           currentText = '';
         }
