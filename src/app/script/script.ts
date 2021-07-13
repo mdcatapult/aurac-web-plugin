@@ -375,20 +375,18 @@
     sidebarText.style.marginBottom = '5px';
     sidebarText.style.backgroundColor = information.recognisingDict.htmlColor;
 
-    sidebarText.insertAdjacentHTML('afterbegin', `<p style="order: 4">Term: ${information.entityText}</p>`);
-
     if (information.resolvedEntity) {
-      sidebarText.insertAdjacentHTML('beforeend', `<p style="order: 5">Resolved entity: ${information.resolvedEntity}</p>`);
+      sidebarText.insertAdjacentHTML('beforeend', `<p style="order: 6">Resolved entity: ${information.resolvedEntity}</p>`);
 
       if (information.entityGroup === 'Gene or Protein') {
         const geneNameLink = createGeneNameLink(information.resolvedEntity);
-        sidebarText.insertAdjacentHTML('beforeend', geneNameLink);
+        sidebarText.insertAdjacentHTML('beforeend', `<p>${geneNameLink}<p/>`);
       }
     }
-
-    sidebarText.insertAdjacentHTML('beforeend', `<p style="order: 6">Entity Group: ${information.entityGroup}</p>`);
-    sidebarText.insertAdjacentHTML('beforeend', `<p style="order: 7">Entity Type: ${information.recognisingDict.entityType}</p>`);
-    sidebarText.insertAdjacentHTML('beforeend', `<p style="order: 8">Dictionary Source: ${information.recognisingDict.source}</p>`);
+    sidebarText.insertAdjacentHTML('afterbegin', `<p style="order: 5">Term: ${information.entityText}</p>`);
+    sidebarText.insertAdjacentHTML('beforeend', `<p style="order: 7">Entity Group: ${information.entityGroup}</p>`);
+    sidebarText.insertAdjacentHTML('beforeend', `<p style="order: 8">Entity Type: ${information.recognisingDict.entityType}</p>`);
+    sidebarText.insertAdjacentHTML('beforeend', `<p style="order: 9">Dictionary Source: ${information.recognisingDict.source}</p>`);
 
     const xrefHTML = document.createElement('div');
     xrefHTML.className = information.entityText;
@@ -504,7 +502,7 @@
   function createGeneNameLink(resolvedEntity: string): string {
     const id = resolvedEntity.split(':').pop();
     const geneNameUrl = `https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/${id}`;
-    return `<p id=${geneNameUrl}>Genenames link: <a href=${geneNameUrl} target="_blank">${geneNameUrl}</a></p>`;
+    return `<p style="order: 5" id=${geneNameUrl}>Genenames link: <a href=${geneNameUrl} target="_blank">${geneNameUrl}</a></p>`;
   }
 
   function setXRefHTML(xrefs: { databaseName: string, url: string, compoundName: string }[]): void {
