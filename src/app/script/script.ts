@@ -291,15 +291,11 @@
      .right-arrow-button {
       color: black;
       background-color: rgb(192, 192, 192);
-      top: 0;
-      left: 92%;
       padding: 5px;
      }
      .left-arrow-button {
       color: black;
       background-color: rgb(192, 192, 192);
-      top: 0;
-      left: 84%;
       padding: 5px`;
     return styleElement;
   };
@@ -379,10 +375,10 @@
     sidebarText.style.marginBottom = '5px';
     sidebarText.style.backgroundColor = information.recognisingDict.htmlColor;
 
-    sidebarText.insertAdjacentHTML('afterbegin', `<p style="order: 3">Term: ${information.entityText}</p>`);
+    sidebarText.insertAdjacentHTML('afterbegin', `<p style="order: 4">Term: ${information.entityText}</p>`);
 
     if (information.resolvedEntity) {
-      sidebarText.insertAdjacentHTML('beforeend', `<p style="order: 4">Resolved entity: ${information.resolvedEntity}</p>`);
+      sidebarText.insertAdjacentHTML('beforeend', `<p style="order: 5">Resolved entity: ${information.resolvedEntity}</p>`);
 
       if (information.entityGroup === 'Gene or Protein') {
         const geneNameLink = createGeneNameLink(information.resolvedEntity);
@@ -390,9 +386,9 @@
       }
     }
 
-    sidebarText.insertAdjacentHTML('beforeend', `<p style="order: 5">Entity Group: ${information.entityGroup}</p>`);
-    sidebarText.insertAdjacentHTML('beforeend', `<p style="order: 6">Entity Type: ${information.recognisingDict.entityType}</p>`);
-    sidebarText.insertAdjacentHTML('beforeend', `<p style="order: 7">Dictionary Source: ${information.recognisingDict.source}</p>`);
+    sidebarText.insertAdjacentHTML('beforeend', `<p style="order: 6">Entity Group: ${information.entityGroup}</p>`);
+    sidebarText.insertAdjacentHTML('beforeend', `<p style="order: 7">Entity Type: ${information.recognisingDict.entityType}</p>`);
+    sidebarText.insertAdjacentHTML('beforeend', `<p style="order: 8">Dictionary Source: ${information.recognisingDict.source}</p>`);
 
     const xrefHTML = document.createElement('div');
     xrefHTML.className = information.entityText;
@@ -413,7 +409,11 @@
     const entityText = information.entityText;
     const occurrenceElement = document.createElement('span');
     occurrenceElement.id = `${entityText}-occurrences`;
-    // occurrenceElement.innerText = `${entityToOccurrence.get(entityText).length} matches found`;
+    occurrenceElement.style.display = 'flex';
+    occurrenceElement.style.flexDirection = 'row';
+    occurrenceElement.style.order = '3';
+    occurrenceElement.style.justifyContent = 'flex-end';
+    occurrenceElement.innerText = `${entityToOccurrence.get(entityText).length} matches found`;
     sidebarText.appendChild(occurrenceElement);
   }
 
