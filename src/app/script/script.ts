@@ -115,7 +115,25 @@
     isClicked: boolean,
   };
 
-  // This class stores the HTML of all aurac-highlight elements before and after we change them. That way when they are no longer
+  // This class stores the properties of each button as well as their respective highlighted elements, how many of that element there are
+  // and the current position of it that the user is searching for
+  class NERArrowButtonProperties {
+    nerElements: Array<Element> = [];
+    nerTerm: string;
+    positionInArray = 0;
+    scrollTermIntoView = 0;
+    firstClick = true;
+    leftButtonClicked: boolean;
+    rightButtonClicked: boolean;
+    nerColour: string;
+
+    constructor(nerTerm, nerColour) {
+      this.nerTerm = nerTerm;
+      this.nerColour = nerColour;
+    }
+  }
+
+  // This class stores the HTML of all ferret-highlight elements before and after we change them. That way when they are no longer
   // highlighted by our search they can return to their original HTML state
   class AuracHighlightHtmlColours {
     index: number;
