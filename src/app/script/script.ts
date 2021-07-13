@@ -367,8 +367,6 @@
   // Creates a sidebar element presenting information.
   function renderSidebarElement(information: Information): HTMLDivElement {
     const sidebarText: HTMLDivElement = document.createElement('div');
-    // If the parent element is relative and its children are position absolute. They will be positioned based on the parents location.
-
 
     renderArrowButtonElements(sidebarText, information);
     renderOccurrenceCounts(sidebarText, information);
@@ -376,7 +374,6 @@
     sidebarText.id = 'sidebar-text';
     sidebarText.style.display = 'flex';
     sidebarText.style.flexDirection = 'column';
-    sidebarText.style.flexWrap = 'wrap';
     sidebarText.style.border = '1px solid black';
     sidebarText.style.padding = '2px';
     sidebarText.style.marginBottom = '5px';
@@ -389,13 +386,13 @@
 
       if (information.entityGroup === 'Gene or Protein') {
         const geneNameLink = createGeneNameLink(information.resolvedEntity);
-        // sidebarText.insertAdjacentHTML('beforeend', geneNameLink);
+        sidebarText.insertAdjacentHTML('beforeend', geneNameLink);
       }
     }
 
     sidebarText.insertAdjacentHTML('beforeend', `<p style="order: 5">Entity Group: ${information.entityGroup}</p>`);
     sidebarText.insertAdjacentHTML('beforeend', `<p style="order: 6">Entity Type: ${information.recognisingDict.entityType}</p>`);
-    // sidebarText.insertAdjacentHTML('beforeend', `<p style="order: 7">Dictionary Source: ${information.recognisingDict.source}</p>`);
+    sidebarText.insertAdjacentHTML('beforeend', `<p style="order: 7">Dictionary Source: ${information.recognisingDict.source}</p>`);
 
     const xrefHTML = document.createElement('div');
     xrefHTML.className = information.entityText;
@@ -425,7 +422,6 @@
     sidebarText.appendChild(sidebarText2);
     sidebarText2.id = 'arrow-buttons';
     sidebarText2.style.display = 'flex';
-    sidebarText2.style.flexWrap = 'wrap';
     sidebarText2.style.justifyContent = 'flex-end';
     sidebarText2.style.flexDirection = 'row';
 
