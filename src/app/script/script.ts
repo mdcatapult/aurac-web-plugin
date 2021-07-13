@@ -368,26 +368,20 @@
     renderOccurrenceCounts(sidebarText, information);
 
     sidebarText.id = 'sidebar-text';
-    sidebarText.style.display = 'flex';
-    sidebarText.style.flexDirection = 'column';
     sidebarText.style.border = '1px solid black';
     sidebarText.style.padding = '2px';
     sidebarText.style.marginBottom = '5px';
     sidebarText.style.backgroundColor = information.recognisingDict.htmlColor;
 
+    sidebarText.insertAdjacentHTML('beforeend', `<p>Term: ${information.entityText}</p>`);
+    sidebarText.insertAdjacentHTML('beforeend', `<p>Entity Type: ${information.recognisingDict.entityType}</p>`);
     if (information.resolvedEntity) {
-      sidebarText.insertAdjacentHTML('beforeend', `<p style="order: 6">Resolved entity: ${information.resolvedEntity}</p>`);
-
+      sidebarText.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${information.resolvedEntity}</p>`);
       if (information.entityGroup === 'Gene or Protein') {
         const geneNameLink = createGeneNameLink(information.resolvedEntity);
         sidebarText.insertAdjacentHTML('beforeend', `<p>${geneNameLink}<p/>`);
       }
     }
-    sidebarText.insertAdjacentHTML('afterbegin', `<p style="order: 5">Term: ${information.entityText}</p>`);
-    sidebarText.insertAdjacentHTML('beforeend', `<p style="order: 7">Entity Group: ${information.entityGroup}</p>`);
-    sidebarText.insertAdjacentHTML('beforeend', `<p style="order: 8">Entity Type: ${information.recognisingDict.entityType}</p>`);
-    sidebarText.insertAdjacentHTML('beforeend', `<p style="order: 9">Dictionary Source: ${information.recognisingDict.source}</p>`);
-
     const xrefHTML = document.createElement('div');
     xrefHTML.className = information.entityText;
     sidebarText.appendChild(xrefHTML);
@@ -408,36 +402,30 @@
     const occurrenceElement = document.createElement('span');
     occurrenceElement.id = `${entityText}-occurrences`;
     occurrenceElement.style.display = 'flex';
-    occurrenceElement.style.flexDirection = 'row';
-    occurrenceElement.style.order = '3';
     occurrenceElement.style.justifyContent = 'flex-end';
     occurrenceElement.innerText = `${entityToOccurrence.get(entityText).length} matches found`;
     sidebarText.appendChild(occurrenceElement);
   }
 
   function renderArrowButtonElements(sidebarText: HTMLDivElement, information: Information): void {
-    const sidebarText2: HTMLDivElement = document.createElement('div');
-    sidebarText.appendChild(sidebarText2);
-    sidebarText2.id = 'arrow-buttons';
-    sidebarText2.style.display = 'flex';
-    sidebarText2.style.justifyContent = 'flex-end';
-    sidebarText2.style.flexDirection = 'row';
-
-    const rightArrowButtonElement = document.createElement('button');
-    sidebarText2.appendChild(rightArrowButtonElement);
-    rightArrowButtonElement.style.order = '2';
-    rightArrowButtonElement.style.width = 'fit-content';
-    rightArrowButtonElement.style.height = 'fit-content';
-    rightArrowButtonElement.innerHTML = rightArrow;
-    rightArrowButtonElement.className = 'right-arrow-button';
+    const arrowFlexProperties: HTMLDivElement = document.createElement('div');
+    arrowFlexProperties.id = 'arrow-buttons';
+    arrowFlexProperties.style.display = 'flex';
+    arrowFlexProperties.style.justifyContent = 'flex-end';
+    arrowFlexProperties.style.flexDirection = 'row';
+    sidebarText.appendChild(arrowFlexProperties);
 
     const leftArrowButtonElement = document.createElement('button');
-    sidebarText2.appendChild(leftArrowButtonElement);
     leftArrowButtonElement.style.order = '1';
-    leftArrowButtonElement.style.width = 'fit-content';
-    leftArrowButtonElement.style.height = 'fit-content';
     leftArrowButtonElement.innerHTML = leftArrow;
     leftArrowButtonElement.className = 'left-arrow-button';
+    arrowFlexProperties.appendChild(leftArrowButtonElement);
+
+    const rightArrowButtonElement = document.createElement('button');
+    rightArrowButtonElement.style.order = '2';
+    rightArrowButtonElement.innerHTML = rightArrow;
+    rightArrowButtonElement.className = 'right-arrow-button';
+    arrowFlexProperties.appendChild(rightArrowButtonElement);
 
     const arrowProperties: ArrowButtonProperties = {
       nerTerm: information.entityText, nerColor: information.recognisingDict.htmlColor, positionInArray: 0, isClicked: false
@@ -502,7 +490,7 @@
   function createGeneNameLink(resolvedEntity: string): string {
     const id = resolvedEntity.split(':').pop();
     const geneNameUrl = `https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/${id}`;
-    return `<p style="order: 5" id=${geneNameUrl}>Genenames link: <a href=${geneNameUrl} target="_blank">${geneNameUrl}</a></p>`;
+    return `<p id=${geneNameUrl}>Genenames link: <a href=${geneNameUrl} target="_blank">${geneNameUrl}</a></p>`;
   }
 
   function setXRefHTML(xrefs: { databaseName: string, url: string, compoundName: string }[]): void {
