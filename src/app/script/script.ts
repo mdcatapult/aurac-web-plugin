@@ -291,7 +291,6 @@
      .right-arrow-button {
       color: black;
       background-color: rgb(192, 192, 192);
-      position: absolute;
       top: 0;
       left: 92%;
       padding: 5px;
@@ -299,7 +298,6 @@
      .left-arrow-button {
       color: black;
       background-color: rgb(192, 192, 192);
-      position: absolute;
       top: 0;
       left: 84%;
       padding: 5px`;
@@ -370,41 +368,38 @@
   function renderSidebarElement(information: Information): HTMLDivElement {
     const sidebarText: HTMLDivElement = document.createElement('div');
     // If the parent element is relative and its children are position absolute. They will be positioned based on the parents location.
-    sidebarText.style.position = 'relative';
+
+
     renderArrowButtonElements(sidebarText, information);
     renderOccurrenceCounts(sidebarText, information);
 
-    sidebarText.style.display = 'flex';
-    sidebarText.style.flexWrap = 'wrap';
     sidebarText.id = 'sidebar-text';
+    sidebarText.style.display = 'flex';
+    sidebarText.style.flexDirection = 'column';
+    sidebarText.style.flexWrap = 'wrap';
     sidebarText.style.border = '1px solid black';
     sidebarText.style.padding = '2px';
     sidebarText.style.marginBottom = '5px';
     sidebarText.style.backgroundColor = information.recognisingDict.htmlColor;
 
-    const subSidebarText: HTMLDivElement = document.createElement('div');
-    subSidebarText.id = 'sub-sidebar-text';
-    subSidebarText.style.flexDirection = 'column';
-    // renderArrowButtonElements(mainSidebarText, information); //pass in main sidebar text and make arrow buttons children of it
-    subSidebarText.insertAdjacentHTML('afterbegin', `<p>Term: ${information.entityText}</p>`);
+    sidebarText.insertAdjacentHTML('afterbegin', `<p style="order: 3">Term: ${information.entityText}</p>`);
 
     if (information.resolvedEntity) {
-      subSidebarText.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${information.resolvedEntity}</p>`);
+      sidebarText.insertAdjacentHTML('beforeend', `<p style="order: 4">Resolved entity: ${information.resolvedEntity}</p>`);
 
       if (information.entityGroup === 'Gene or Protein') {
         const geneNameLink = createGeneNameLink(information.resolvedEntity);
-        subSidebarText.insertAdjacentHTML('beforeend', geneNameLink);
+        // sidebarText.insertAdjacentHTML('beforeend', geneNameLink);
       }
     }
 
-    subSidebarText.insertAdjacentHTML('beforeend', `<p>Entity Group: ${information.entityGroup}</p>`);
-    subSidebarText.insertAdjacentHTML('beforeend', `<p>Entity Type: ${information.recognisingDict.entityType}</p>`);
-    subSidebarText.insertAdjacentHTML('beforeend', `<p>Dictionary Source: ${information.recognisingDict.source}</p>`);
+    sidebarText.insertAdjacentHTML('beforeend', `<p style="order: 5">Entity Group: ${information.entityGroup}</p>`);
+    sidebarText.insertAdjacentHTML('beforeend', `<p style="order: 6">Entity Type: ${information.recognisingDict.entityType}</p>`);
+    // sidebarText.insertAdjacentHTML('beforeend', `<p style="order: 7">Dictionary Source: ${information.recognisingDict.source}</p>`);
 
-    sidebarText.appendChild(subSidebarText);
     const xrefHTML = document.createElement('div');
     xrefHTML.className = information.entityText;
-    subSidebarText.appendChild(xrefHTML);
+    sidebarText.appendChild(xrefHTML);
     sidebarTexts.appendChild(sidebarText);
     return sidebarText;
   }
@@ -421,23 +416,34 @@
     const entityText = information.entityText;
     const occurrenceElement = document.createElement('span');
     occurrenceElement.id = `${entityText}-occurrences`;
-    occurrenceElement.innerText = `${entityToOccurrence.get(entityText).length} matches found`;
+    // occurrenceElement.innerText = `${entityToOccurrence.get(entityText).length} matches found`;
     sidebarText.appendChild(occurrenceElement);
   }
 
   function renderArrowButtonElements(sidebarText: HTMLDivElement, information: Information): void {
+    const sidebarText2: HTMLDivElement = document.createElement('div');
+    sidebarText.appendChild(sidebarText2);
+    sidebarText2.id = 'arrow-buttons';
+    sidebarText2.style.display = 'flex';
+    sidebarText2.style.flexWrap = 'wrap';
+    sidebarText2.style.justifyContent = 'flex-end';
+    sidebarText2.style.flexDirection = 'row';
+
     const rightArrowButtonElement = document.createElement('button');
-    sidebarText.appendChild(rightArrowButtonElement);
+    sidebarText2.appendChild(rightArrowButtonElement);
+    rightArrowButtonElement.style.order = '2';
+    rightArrowButtonElement.style.width = 'fit-content';
+    rightArrowButtonElement.style.height = 'fit-content';
     rightArrowButtonElement.innerHTML = rightArrow;
     rightArrowButtonElement.className = 'right-arrow-button';
 
     const leftArrowButtonElement = document.createElement('button');
-    sidebarText.appendChild(leftArrowButtonElement);
+    sidebarText2.appendChild(leftArrowButtonElement);
+    leftArrowButtonElement.style.order = '1';
+    leftArrowButtonElement.style.width = 'fit-content';
+    leftArrowButtonElement.style.height = 'fit-content';
     leftArrowButtonElement.innerHTML = leftArrow;
     leftArrowButtonElement.className = 'left-arrow-button';
-    leftArrowButtonElement.innerHTML = leftArrow;
-    leftArrowButtonElement.style.flexDirection = 'row';
-    leftArrowButtonElement.style.justifyContent = 'flex-end';
 
     const arrowProperties: ArrowButtonProperties = {
       nerTerm: information.entityText, nerColor: information.recognisingDict.htmlColor, positionInArray: 0, isClicked: false
