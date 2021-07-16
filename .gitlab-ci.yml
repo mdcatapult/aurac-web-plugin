@@ -27,15 +27,14 @@ test-lint-build:
     variables:
       - $CI_COMMIT_MESSAGE =~ /^Setting version to.*/
 
-# TODO: The release stage currently increments the version in the package.json *only*.
-# Must also update the version in the manifest.json that is packaged at build time.
+
 release:
   stage: release
   image: registry.mdcatapult.io/informatics/docker-images/ci/node
   tags:
     - wopr
   script:
-    - /scripts/release.sh -b -r develop -u 'dist/browser-plugin/web-ext-artifacts/ferret-*.zip'
+    - /scripts/release.sh -b -r develop -u 'dist/browser-plugin/web-ext-artifacts/aurac-*.zip'
   only:
     - master
   except:
