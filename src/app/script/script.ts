@@ -115,25 +115,7 @@
     isClicked: boolean,
   };
 
-  // This class stores the properties of each button as well as their respective highlighted elements, how many of that element there are
-  // and the current position of it that the user is searching for
-  class NERArrowButtonProperties {
-    nerElements: Array<Element> = [];
-    nerTerm: string;
-    positionInArray = 0;
-    scrollTermIntoView = 0;
-    firstClick = true;
-    leftButtonClicked: boolean;
-    rightButtonClicked: boolean;
-    nerColour: string;
-
-    constructor(nerTerm, nerColour) {
-      this.nerTerm = nerTerm;
-      this.nerColour = nerColour;
-    }
-  }
-
-  // This class stores the HTML of all ferret-highlight elements before and after we change them. That way when they are no longer
+  // This class stores the HTML of all aurac-highlight elements before and after we change them. That way when they are no longer
   // highlighted by our search they can return to their original HTML state
   class AuracHighlightHtmlColours {
     index: number;
@@ -289,21 +271,23 @@
       left: ${elementProperties.find(v => v.element === buttonElement).position.expanding}vw;
       top: 50%;
      }
-     .right-arrow-button {
-      color: black;
-      background-color: rgb(192, 192, 192);
-      position: absolute;
-      top: 0;
-      left: 92%;
-      padding: 5px;
-     }
      .left-arrow-button {
       color: black;
       background-color: rgb(192, 192, 192);
-      position: absolute;
-      top: 0;
-      left: 84%;
-      padding: 5px`;
+      order: 1;
+      padding: 5px;
+     }
+     .right-arrow-button {
+      color: black;
+      background-color: rgb(192, 192, 192);
+      order: 2;
+      padding: 5px;
+     }
+     .arrow-buttons {
+     display: flex;
+     justify-content: flex-end;
+     flex-direction: row;
+     }`;
     return styleElement;
   };
 
@@ -370,8 +354,6 @@
   // Creates a sidebar element presenting information.
   function renderSidebarElement(information: Information): HTMLDivElement {
     const sidebarText: HTMLDivElement = document.createElement('div');
-    // If the parent element is relative and its children are position absolute. They will be positioned based on the parents location.
-    sidebarText.style.position = 'relative';
     renderArrowButtonElements(sidebarText, information);
     renderOccurrenceCounts(sidebarText, information);
 
@@ -380,8 +362,8 @@
     sidebarText.style.padding = '2px';
     sidebarText.style.marginBottom = '5px';
     sidebarText.style.backgroundColor = information.recognisingDict.htmlColor;
-    sidebarText.insertAdjacentHTML('afterbegin', `<p>Term: ${information.entityText}</p>`);
 
+    sidebarText.insertAdjacentHTML('beforeend', `<p>Term: ${information.entityText}</p>`);
     if (information.resolvedEntity) {
       sidebarText.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${information.resolvedEntity}</p>`);
 
@@ -412,20 +394,27 @@
     const entityText = information.entityText;
     const occurrenceElement = document.createElement('span');
     occurrenceElement.id = `${entityText}-occurrences`;
+    occurrenceElement.style.display = 'flex';
+    occurrenceElement.style.justifyContent = 'flex-end';
+
     occurrenceElement.innerText = `${entityToOccurrence.get(entityText).length} matches found`;
     sidebarText.appendChild(occurrenceElement);
   }
 
   function renderArrowButtonElements(sidebarText: HTMLDivElement, information: Information): void {
-    const rightArrowButtonElement = document.createElement('button');
-    sidebarText.appendChild(rightArrowButtonElement);
-    rightArrowButtonElement.innerHTML = rightArrow;
-    rightArrowButtonElement.className = 'right-arrow-button';
+    const arrowFlexProperties: HTMLDivElement = document.createElement('div');
+    arrowFlexProperties.className = 'arrow-buttons';
+    sidebarText.appendChild(arrowFlexProperties);
 
     const leftArrowButtonElement = document.createElement('button');
-    sidebarText.appendChild(leftArrowButtonElement);
     leftArrowButtonElement.innerHTML = leftArrow;
     leftArrowButtonElement.className = 'left-arrow-button';
+    arrowFlexProperties.appendChild(leftArrowButtonElement);
+
+    const rightArrowButtonElement = document.createElement('button');
+    rightArrowButtonElement.innerHTML = rightArrow;
+    rightArrowButtonElement.className = 'right-arrow-button';
+    arrowFlexProperties.appendChild(rightArrowButtonElement);
 
     const arrowProperties: ArrowButtonProperties = {
       nerTerm: information.entityText, nerColor: information.recognisingDict.htmlColor, positionInArray: 0, isClicked: false
