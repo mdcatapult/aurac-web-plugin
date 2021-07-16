@@ -271,15 +271,23 @@
       left: ${elementProperties.find(v => v.element === buttonElement).position.expanding}vw;
       top: 50%;
      }
-     .right-arrow-button {
-      color: black;
-      background-color: rgb(192, 192, 192);
-      padding: 5px;
-     }
      .left-arrow-button {
       color: black;
       background-color: rgb(192, 192, 192);
-      padding: 5px`;
+      order: 1;
+      padding: 5px;
+     }
+     .right-arrow-button {
+      color: black;
+      background-color: rgb(192, 192, 192);
+      order: 2;
+      padding: 5px;
+     }
+     .arrow-buttons {
+     display: flex;
+     justify-content: flex-end;
+     flex-direction: row;
+     }`;
     return styleElement;
   };
 
@@ -395,20 +403,15 @@
 
   function renderArrowButtonElements(sidebarText: HTMLDivElement, information: Information): void {
     const arrowFlexProperties: HTMLDivElement = document.createElement('div');
-    arrowFlexProperties.id = 'arrow-buttons';
-    arrowFlexProperties.style.display = 'flex';
-    arrowFlexProperties.style.justifyContent = 'flex-end';
-    arrowFlexProperties.style.flexDirection = 'row';
+    arrowFlexProperties.className = 'arrow-buttons';
     sidebarText.appendChild(arrowFlexProperties);
 
     const leftArrowButtonElement = document.createElement('button');
-    leftArrowButtonElement.style.order = '1';
     leftArrowButtonElement.innerHTML = leftArrow;
     leftArrowButtonElement.className = 'left-arrow-button';
     arrowFlexProperties.appendChild(leftArrowButtonElement);
 
     const rightArrowButtonElement = document.createElement('button');
-    rightArrowButtonElement.style.order = '2';
     rightArrowButtonElement.innerHTML = rightArrow;
     rightArrowButtonElement.className = 'right-arrow-button';
     arrowFlexProperties.appendChild(rightArrowButtonElement);
