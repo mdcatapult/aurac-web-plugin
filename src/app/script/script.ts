@@ -115,24 +115,6 @@
     isClicked: boolean,
   };
 
-  // This class stores the properties of each button as well as their respective highlighted elements, how many of that element there are
-  // and the current position of it that the user is searching for
-  class NERArrowButtonProperties {
-    nerElements: Array<Element> = [];
-    nerTerm: string;
-    positionInArray = 0;
-    scrollTermIntoView = 0;
-    firstClick = true;
-    leftButtonClicked: boolean;
-    rightButtonClicked: boolean;
-    nerColour: string;
-
-    constructor(nerTerm, nerColour) {
-      this.nerTerm = nerTerm;
-      this.nerColour = nerColour;
-    }
-  }
-
   // This class stores the HTML of all aurac-highlight elements before and after we change them. That way when they are no longer
   // highlighted by our search they can return to their original HTML state
   class AuracHighlightHtmlColours {
@@ -292,17 +274,11 @@
      .right-arrow-button {
       color: black;
       background-color: rgb(192, 192, 192);
-      position: absolute;
-      top: 0;
-      left: 92%;
       padding: 5px;
      }
      .left-arrow-button {
       color: black;
       background-color: rgb(192, 192, 192);
-      position: absolute;
-      top: 0;
-      left: 84%;
       padding: 5px`;
     return styleElement;
   };
@@ -370,8 +346,6 @@
   // Creates a sidebar element presenting information.
   function renderSidebarElement(information: Information): HTMLDivElement {
     const sidebarText: HTMLDivElement = document.createElement('div');
-    // If the parent element is relative and its children are position absolute. They will be positioned based on the parents location.
-    sidebarText.style.position = 'relative';
     renderArrowButtonElements(sidebarText, information);
     renderOccurrenceCounts(sidebarText, information);
 
@@ -414,6 +388,7 @@
     occurrenceElement.id = `${entityText}-occurrences`;
     occurrenceElement.style.display = 'flex';
     occurrenceElement.style.justifyContent = 'flex-end';
+
     occurrenceElement.innerText = `${entityToOccurrence.get(entityText).length} matches found`;
     sidebarText.appendChild(occurrenceElement);
   }
