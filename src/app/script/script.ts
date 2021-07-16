@@ -33,7 +33,7 @@
 
   console.log('script loaded');
 
-  const ferretSidebar = document.createElement('span');
+  const auracSidebar = document.createElement('span');
   const buttonElement = document.createElement('button');
 
   const sidebarOpenScreenWidth = '80vw';
@@ -44,18 +44,18 @@
   const expandArrow = '&#62;';
   const rightArrow = '&#8594';
   const leftArrow = '&#8592';
-  let htmlColoursSet = false;
-  const ferretHighlightElements: Array<FerretHighlightHtmlColours> = [];
+  const auracHighlightElements: Array<AuracHighlightHtmlColours> = [];
 
+  auracSidebar.appendChild(buttonElement);
   const specialCharacters: string[] = ['(', ')', '\\n', '\'', '\"'];
   const noSpace = '';
   const space = ' ';
 
-  ferretSidebar.appendChild(buttonElement);
+  auracSidebar.appendChild(buttonElement);
   buttonElement.innerHTML = collapseArrow;
   buttonElement.className = 'sidebar-button';
   buttonElement.id = 'button-id';
-  ferretSidebar.id = 'ferret-sidebar-id';
+  auracSidebar.id = 'aurac-sidebar-id';
   document.body.id = 'body';
 
   let isExpanded = true;
@@ -82,7 +82,7 @@
         },
       },
       {
-        element: ferretSidebar,
+        element: auracSidebar,
         property: 'left',
         position: {
           expanding: 0,
@@ -108,51 +108,16 @@
       },
     ];
 
-  // This class stores the properties of each button as well as their respective highlighted elements, how many of that element there are
-  // and the current position of it that the user is searching for
-  class NERArrowButtonProperties {
-    nerElements: Array<Element> = [];
-    nerTerm: string;
-    positionInArray = 0;
-    scrollTermIntoView = 0;
-    firstClick = true;
-    leftButtonClicked: boolean;
-    rightButtonClicked: boolean;
-    nerColour: string;
+  type ArrowButtonProperties = {
+    nerTerm: string,
+    nerColor: string,
+    positionInArray: number,
+    isClicked: boolean,
+  };
 
-    constructor(nerTerm, nerColour) {
-      this.nerTerm = nerTerm;
-      this.nerColour = nerColour;
-    }
-
-    leftButtonAlterIndex(): void {
-      if (this.leftButtonClicked && this.scrollTermIntoView !== 0) { // If we've clicked the left button and
-        // were not on the beginning element perform these actions. We would get an array OOB exception without this
-        this.scrollTermIntoView--;
-      }
-      scrollNerIntoView(this);
-    }
-
-    rightButtonAlterIndex(endOfTerms): void {
-      // When we have reached the end of the NER terms, on right button click we reset back to the beginning term within the array
-      if (this.scrollTermIntoView === endOfTerms) {
-        this.scrollTermIntoView = 0;
-        scrollNerIntoView(this);
-      }
-      // If we clicked the right button perform these actions
-      else if (this.firstClick) { // On first click we cannot increment the array position as we want to see the value at index 0
-        scrollNerIntoView(this);
-        this.firstClick = false; // Need to set this to false so we don't keep duplicating NER elements inside array
-      } else { // If we have already clicked an arrow button once then increment the array and display the ner term on screen
-        this.scrollTermIntoView++;
-        scrollNerIntoView(this);
-      }
-    }
-  }
-
-  // This class stores the HTML of all ferret-highlight elements before and after we change them. That way when they are no longer
+  // This class stores the HTML of all aurac-highlight elements before and after we change them. That way when they are no longer
   // highlighted by our search they can return to their original HTML state
-  class FerretHighlightHtmlColours {
+  class AuracHighlightHtmlColours {
     index: number;
     elementName: Element;
     colourBefore: string;
@@ -167,14 +132,15 @@
   }
 
   const sidebarTexts = document.createElement('div');
-  ferretSidebar.appendChild(sidebarTexts);
+  auracSidebar.appendChild(sidebarTexts);
   const entityToDiv = new EntityToDiv();
+  const entityToOccurrence = new Map<string, Element[]>();
   buttonElement.addEventListener('click', () => {
     if (document.body.style.width === sidebarOpenScreenWidth || document.body.style.width === sidebarClosedScreenWidth) {
       animateElements(elementProperties);
     }
     buttonElement.innerHTML = isExpanded ? collapseArrow : expandArrow;
-    document.head.appendChild(newFerretStyleElement());
+    document.head.appendChild(newAuracStyleElement());
   });
 
   // @ts-ignore
@@ -183,10 +149,10 @@
     if (!isAppOpen && msg.type !== 'sidebar_rendered') {
       document.body.style.width = '80vw';
       document.body.style.marginLeft = '20vw';
-      ferretSidebar.className = 'ferret-sidebar';
-      document.body.appendChild(ferretSidebar);
+      auracSidebar.className = 'aurac-sidebar';
+      document.body.appendChild(auracSidebar);
       isAppOpen = true;
-      document.head.appendChild(newFerretStyleElement());
+      document.head.appendChild(newAuracStyleElement());
     }
     switch (msg.type) {
       case 'get_page_contents':
@@ -196,46 +162,7 @@
           resolve({type: 'leadmine', body: textNodes.join('\n')});
         });
       case 'markup_page':
-        document.head.appendChild(newFerretStyleElement());
-        msg.body.map((entity) => {
-          const term = entity.entityText;
-          const sel = getSelectors(term);
-
-          // if entity is a chemical formula, wrap innerHTML in highlight span and add event listener
-          for (const formula of chemicalFormulae) {
-            const formulaNode = formula.formulaNode;
-            if (formula.formulaText === term) {
-              try {
-                const replacementNode = document.createElement('span');
-                replacementNode.innerHTML = highlightTerm(formulaNode.innerHTML, entity);
-                formulaNode.parentNode.insertBefore(replacementNode, formulaNode);
-                formulaNode.parentNode.removeChild(formulaNode);
-                const childValues = getFerretHighlightChildren(replacementNode);
-                childValues.forEach(childValue => {
-                  childValue.addEventListener('mouseenter', populateFerretSidebar(entity, replacementNode));
-                });
-              } catch (e) {
-                console.error(e);
-              }
-              // exit the loop as soon as we find a match
-              break;
-            }
-          }
-
-          sel.map(element => {
-            // Try/catch for edge cases.
-            try {
-              const replacementNode = document.createElement('span');
-              replacementNode.innerHTML = element.nodeValue.replaceAll(term, highlightTerm(term, entity));
-              element.parentNode.insertBefore(replacementNode, element);
-              element.parentNode.removeChild(element);
-              const childValues = getFerretHighlightChildren(replacementNode);
-              childValues.forEach(childValue => childValue.addEventListener('mouseenter', populateFerretSidebar(entity, replacementNode)));
-            } catch (e) {
-              console.error(e);
-            }
-          });
-        });
+        wrapChemicalFormulaWithHighlight(msg);
         break;
       case 'x-ref_result':
         setXRefHTML(msg.body);
@@ -259,13 +186,69 @@
     }
   });
 
-  // highlights a term by wrapping it an HTML span
-  const highlightTerm = (term, entity) => `<span class="ferret-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative;">${term}</span>`;
+  function wrapChemicalFormulaWithHighlight(msg: any) {
+    document.head.appendChild(newAuracStyleElement());
+    msg.body.map((entity) => {
+      const term = entity.entityText;
+      const selectors = getSelectors(term);
 
-  // creates an HTML style element with basic styling for Ferret sidebar
-  const newFerretStyleElement = () => {
+      // if entity is a chemical formula, wrap innerHTML in highlight span and add event listener
+      for (const formula of chemicalFormulae) {
+        const formulaNode = formula.formulaNode;
+        if (formula.formulaText === term) {
+          try {
+            const replacementNode = document.createElement('span');
+            // Retrieves the specific highlight colour to use for this NER term
+            replacementNode.innerHTML = highlightTerm(formulaNode.innerHTML, entity);
+            // This new highlighted term will replace the current child (same term but with no highlight) of this parent element
+            formulaNode.parentNode.insertBefore(replacementNode, formulaNode);
+            formulaNode.parentNode.removeChild(formulaNode);
+            const childValues = getAuracHighlightChildren(replacementNode);
+            childValues.forEach(childValue => { // For each highlighted element, we will add an event listener to add it to our sidebar
+              childValue.addEventListener('mouseenter', populateAuracSidebar(entity, replacementNode));
+            });
+          } catch (e) {
+            console.error(e);
+          }
+          // exit the loop as soon as we find a match
+          break;
+        }
+      }
+      addHighlightEventListeners(selectors, term, entity);
+    });
+  }
+
+  function addHighlightEventListeners(selector: Element[], term: string, entity: Information) {
+    selector.map(element => {
+      // Try/catch for edge cases.
+      try {
+        // For each term, we want to replace it's original HTML with a highlight colour
+        const replacementNode = document.createElement('span');
+        replacementNode.innerHTML = element.nodeValue.replaceAll(term, highlightTerm(term, entity));
+
+        // This new highlighted term will will replace the current child (same term but with no highlight) of this parent element.
+        element.parentNode.insertBefore(replacementNode, element);
+        element.parentNode.removeChild(element);
+
+        // For each value we find that is a highlighted term, we want to add it to our sidebar and find it's occurrences within the page
+        const childValues = getAuracHighlightChildren(replacementNode);
+        childValues.forEach(childValue => {
+          populateEntityToOccurrences(entity.entityText, childValue);
+          childValue.addEventListener('mouseenter', populateAuracSidebar(entity, replacementNode));
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    });
+  }
+
+  // highlights a term by wrapping it an HTML span
+  const highlightTerm = (term, entity) => `<span class="aurac-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative;">${term}</span>`;
+
+  // creates an HTML style element with basic styling for Aurac sidebar
+  const newAuracStyleElement = () => {
     const styleElement = document.createElement('style');
-    styleElement.innerHTML = `.ferret-sidebar {
+    styleElement.innerHTML = `.aurac-sidebar {
         color: black;
         font-family: Arial, sans-serif;
         font-size: 14px;
@@ -273,7 +256,7 @@
         position: fixed;
         z-index: 10;
         height: 100vh;
-        left: ${elementProperties.find(v => v.element === ferretSidebar).position.expanding}vw;
+        left: ${elementProperties.find(v => v.element === auracSidebar).position.expanding}vw;
         top: 0;
         width: 20vw;
         border-right: 2px solid black;
@@ -288,21 +271,23 @@
       left: ${elementProperties.find(v => v.element === buttonElement).position.expanding}vw;
       top: 50%;
      }
-     .right-arrow-button {
-      color: black;
-      background-color: rgb(192, 192, 192);
-      position: absolute;
-      top: 0;
-      left: 92%;
-      padding: 5px;
-     }
      .left-arrow-button {
       color: black;
       background-color: rgb(192, 192, 192);
-      position: absolute;
-      top: 0;
-      left: 84%;
-      padding: 5px`;
+      order: 1;
+      padding: 5px;
+     }
+     .right-arrow-button {
+      color: black;
+      background-color: rgb(192, 192, 192);
+      order: 2;
+      padding: 5px;
+     }
+     .arrow-buttons {
+     display: flex;
+     justify-content: flex-end;
+     flex-direction: row;
+     }`;
     return styleElement;
   };
 
@@ -336,14 +321,14 @@
   }
 
   // returns an event listener which creates a new element with passed info and appends it to the passed element
-  const populateFerretSidebar = (info: Information, element: Element) => {
+  const populateAuracSidebar = (info: Information, element: Element) => {
     return (event) => {
       if (event.type !== 'mouseenter') {
         return;
       }
-      if (getFerretHighlightChildren(element).some(child => child.className === 'ferret-highlight')
-        && element.parentElement.className === 'ferret-highlight') {
-        removeEventListener('mouseenter', populateFerretSidebar(info, element));
+      if (getAuracHighlightChildren(element).some(child => child.className === 'aurac-highlight')
+        && element.parentElement.className === 'aurac-highlight') {
+        removeEventListener('mouseenter', populateAuracSidebar(info, element));
       } else {
         if (!entityToDiv.has(info.entityText)) {
           entityToDiv.set(info.entityText, renderSidebarElement(info));
@@ -369,17 +354,16 @@
   // Creates a sidebar element presenting information.
   function renderSidebarElement(information: Information): HTMLDivElement {
     const sidebarText: HTMLDivElement = document.createElement('div');
-    // If the parent element is relative and its children are position absolute. They will be positioned based on the parents location.
-    sidebarText.style.position = 'relative';
     renderArrowButtonElements(sidebarText, information);
+    renderOccurrenceCounts(sidebarText, information);
 
     sidebarText.id = 'sidebar-text';
     sidebarText.style.border = '1px solid black';
     sidebarText.style.padding = '2px';
     sidebarText.style.marginBottom = '5px';
     sidebarText.style.backgroundColor = information.recognisingDict.htmlColor;
-    sidebarText.insertAdjacentHTML('afterbegin', `<p>Term: ${information.entityText}</p>`);
 
+    sidebarText.insertAdjacentHTML('beforeend', `<p>Term: ${information.entityText}</p>`);
     if (information.resolvedEntity) {
       sidebarText.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${information.resolvedEntity}</p>`);
 
@@ -389,9 +373,7 @@
       }
     }
 
-    sidebarText.insertAdjacentHTML('beforeend', `<p>Entity Group: ${information.entityGroup}</p>`);
     sidebarText.insertAdjacentHTML('beforeend', `<p>Entity Type: ${information.recognisingDict.entityType}</p>`);
-    sidebarText.insertAdjacentHTML('beforeend', `<p>Dictionary Source: ${information.recognisingDict.source}</p>`);
 
     const xrefHTML = document.createElement('div');
     xrefHTML.className = information.entityText;
@@ -400,84 +382,100 @@
     return sidebarText;
   }
 
+  function populateEntityToOccurrences(entityText: string, occurrence: Element): void {
+    if (!entityToOccurrence.has(entityText)) {
+      entityToOccurrence.set(entityText, [occurrence]);
+    } else {
+      entityToOccurrence.get(entityText).push(occurrence);
+    }
+  }
+
+  function renderOccurrenceCounts(sidebarText: HTMLDivElement, information: Information): void {
+    const entityText = information.entityText;
+    const occurrenceElement = document.createElement('span');
+    occurrenceElement.id = `${entityText}-occurrences`;
+    occurrenceElement.style.display = 'flex';
+    occurrenceElement.style.justifyContent = 'flex-end';
+
+    occurrenceElement.innerText = `${entityToOccurrence.get(entityText).length} matches found`;
+    sidebarText.appendChild(occurrenceElement);
+  }
+
   function renderArrowButtonElements(sidebarText: HTMLDivElement, information: Information): void {
-    const rightArrowButtonElement = document.createElement('button');
-    sidebarText.appendChild(rightArrowButtonElement);
-    rightArrowButtonElement.innerHTML = rightArrow;
-    rightArrowButtonElement.className = 'right-arrow-button';
+    const arrowFlexProperties: HTMLDivElement = document.createElement('div');
+    arrowFlexProperties.className = 'arrow-buttons';
+    sidebarText.appendChild(arrowFlexProperties);
 
     const leftArrowButtonElement = document.createElement('button');
-    sidebarText.appendChild(leftArrowButtonElement);
     leftArrowButtonElement.innerHTML = leftArrow;
     leftArrowButtonElement.className = 'left-arrow-button';
+    arrowFlexProperties.appendChild(leftArrowButtonElement);
 
-    const nerTerm = information.entityText;
-    const nerColour = information.recognisingDict.htmlColor;
-    const arrowProperties = new NERArrowButtonProperties(nerTerm, nerColour);
+    const rightArrowButtonElement = document.createElement('button');
+    rightArrowButtonElement.innerHTML = rightArrow;
+    rightArrowButtonElement.className = 'right-arrow-button';
+    arrowFlexProperties.appendChild(rightArrowButtonElement);
+
+    const arrowProperties: ArrowButtonProperties = {
+      nerTerm: information.entityText, nerColor: information.recognisingDict.htmlColor, positionInArray: 0, isClicked: false
+    };
 
     leftArrowButtonElement.addEventListener('click', () => {
-      arrowProperties.leftButtonClicked = true;
-      arrowProperties.rightButtonClicked = false;
-      pressArrowButton(arrowProperties);
+      pressArrowButton(arrowProperties, 'left');
     });
 
     rightArrowButtonElement.addEventListener('click', () => {
-      arrowProperties.rightButtonClicked = true;
-      arrowProperties.leftButtonClicked = false;
-      pressArrowButton(arrowProperties);
+      pressArrowButton(arrowProperties, 'right');
     });
   }
 
-  function pressArrowButton(arrowProperties: NERArrowButtonProperties): void {
-    const endOfTerms = arrowProperties.nerElements.length - 1;
-    const highlightedNerTerms: HTMLCollectionOf<Element> = document.getElementsByClassName('ferret-highlight');
-    // Scan the document body for NER terms that match with the term we are looking for, if there is a match then add the elements with that
-    // term to our array. We only want to add the NER elements to the array on the first click. Otherwise we would keep adding them to the
-    // array everytime we clicked an arrow button
-    const ferretHighlightArray = Array.from(highlightedNerTerms);
-    ferretHighlightArray.forEach((element, index) => {
-      if (element.textContent === arrowProperties.nerTerm && arrowProperties.firstClick) {
-        arrowProperties.nerElements[arrowProperties.positionInArray] = ferretHighlightArray[index];
+  function pressArrowButton(arrowProperties: ArrowButtonProperties, direction: 'left' | 'right'): void {
+    Array.from(entityToOccurrence.values()).forEach(entity => {
+      entity.forEach(occurrence => setHtmlColours(occurrence));
+    });
+
+    if (direction === 'right') {
+      if (arrowProperties.positionInArray >= entityToOccurrence.get(arrowProperties.nerTerm).length - 1) {
+        // gone off the end of the array - reset
+        arrowProperties.positionInArray = 0;
+      } else if (arrowProperties.isClicked) {
         arrowProperties.positionInArray++;
       }
+    } else if (arrowProperties.positionInArray > 0) { // direction is 'left'
+      arrowProperties.positionInArray--;
+    }
+
+    setNerHtmlColours(entityToOccurrence.get(arrowProperties.nerTerm));
+
+    const targetElement = entityToOccurrence.get(arrowProperties.nerTerm)[arrowProperties.positionInArray];
+    targetElement.scrollIntoView({behavior: 'smooth'});
+
+    setHtmlColours(targetElement);
+
+    const occurrencesElement = document.getElementById(`${arrowProperties.nerTerm}-occurrences`);
+    occurrencesElement.innerText = `${arrowProperties.positionInArray + 1} / ${entityToOccurrence.get(arrowProperties.nerTerm).length}`;
+    arrowProperties.isClicked = true;
+  }
+
+  function setNerHtmlColours(highlightedNerTerms: Element[]): void {
+    highlightedNerTerms.forEach(element => {
+      const index = highlightedNerTerms.indexOf(element);
+      const elementName = element;
+      const colourBefore = element.innerHTML;
+      const colourAfter = element.textContent.fontcolor('blue');
+      const nerHtmlColour = new AuracHighlightHtmlColours(index, elementName, colourBefore, colourAfter);
+      auracHighlightElements.push(nerHtmlColour);
     });
-    setNerHtmlColours(highlightedNerTerms);
-    if (arrowProperties.leftButtonClicked) {
-      arrowProperties.leftButtonAlterIndex();
-    } else if (arrowProperties.rightButtonClicked) {
-      arrowProperties.rightButtonAlterIndex(endOfTerms);
-    }
-  }
-
-  function scrollNerIntoView(arrowProperties: NERArrowButtonProperties): void {
-    const currentNerElement = arrowProperties.nerElements[arrowProperties.scrollTermIntoView];
-    currentNerElement.scrollIntoView({behavior: 'smooth'});
-    setHtmlColours(currentNerElement);
-  }
-
-  function setNerHtmlColours(highlightedNerTerms: HTMLCollectionOf<Element>): void {
-    if (!htmlColoursSet) {
-      const ferretHighlightArray = Array.from(highlightedNerTerms);
-      ferretHighlightArray.forEach(element => {
-        const index = ferretHighlightArray.indexOf(element);
-        const elementName = element;
-        const colourBefore = element.innerHTML;
-        const colourAfter = element.textContent.fontcolor('blue');
-        const nerHtmlColour = new FerretHighlightHtmlColours(index, elementName, colourBefore, colourAfter);
-        ferretHighlightElements.push(nerHtmlColour);
-      });
-    }
-    htmlColoursSet = true;
   }
 
   function setHtmlColours(nerElement: Element): void {
-    const ferretHighlightArray = Array.from(ferretHighlightElements);
-    ferretHighlightArray.forEach(element => {
+    const auracHighlightArray = Array.from(auracHighlightElements);
+    auracHighlightArray.forEach(element => {
       element.elementName.innerHTML = element.elementName === nerElement ? element.colourAfter : element.colourBefore;
     });
   }
 
-// if the entity group is 'Gene or Protein' add a genenames url link to the sidebarText element
+  // if the entity group is 'Gene or Protein' add a genenames url link to the sidebarText element
   function createGeneNameLink(resolvedEntity: string): string {
     const id = resolvedEntity.split(':').pop();
     const geneNameUrl = `https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/${id}`;
@@ -492,8 +490,8 @@
     });
   }
 
-  function getFerretHighlightChildren(element: Element) {
-    return Array.from(element.children).filter(child => child.className === 'ferret-highlight');
+  function getAuracHighlightChildren(element: Element) {
+    return Array.from(element.children).filter(child => child.className === 'aurac-highlight');
   }
 
   const getSelectors = (entity) => {
@@ -504,7 +502,7 @@
 
   // Recursively find all text nodes which match entity
   function allDescendants(node: HTMLElement, elements: Array<Element>, entity: string) {
-    if ((node && node.classList.contains('ferret-sidebar')) || !allowedTagType(node)) {
+    if ((node && node.classList.contains('aurac-sidebar')) || !allowedTagType(node)) {
       return;
     }
     try {
@@ -540,7 +538,7 @@
 
   // Recursively find all text nodes which match regex
   function allTextNodes(node: HTMLElement, textNodes: Array<string>) {
-    if (!allowedTagType(node) || node.classList.contains('ferret-sidebar')) {
+    if (!allowedTagType(node) || node.classList.contains('aurac-sidebar')) {
       return;
     }
 
@@ -564,7 +562,7 @@
             textNodes.push(element.textContent + '\n');
           } else if (!element.classList.contains('tooltipped') &&
             !element.classList.contains('tooltipped-click') &&
-            !element.classList.contains('ferret-sidebar') &&
+            !element.classList.contains('aurac-sidebar') &&
             element.style.display !== 'none') {
             allTextNodes(element, textNodes);
           }

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <div *ngIf="!isSettings" class="bg-gray-50">
-  <img src="./assets/Ferret.png" width="220" height="142" class="bg-gray-50">
+  <img src="./assets/head-brains.icon.128.png" alt="logo" class="bg-gray-50" style="padding:15px 0px 15px 45px;">
   <div class="rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden">
     <div class="relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8">
       <button (click)="nerCurrentPage('proteins')" class="-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50">
@@ -87,8 +87,10 @@
     <button [disabled]="!isSidebarRendered" (click)="toggleSidebar()"
             class="-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="#D3D3D3">
-      <path fill-rule="evenodd" d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z" clip-rule="evenodd" />
-    </svg>
+        <path fill-rule="evenodd"
+              d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z"
+              clip-rule="evenodd"/>
+      </svg>
       <div class="ml-2">
         <p [class]="isNerLoaded ? 'text-base font-medium text-gray-900' : 'text-base font-medium text-gray-400'">
           Toggle Sidebar

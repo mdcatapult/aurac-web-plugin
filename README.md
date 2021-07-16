@@ -5,7 +5,7 @@
 The plugin runs Leadmine over a web page in a Chrome or Firefox browser, logging the result.  
 Once the extension is loaded you will see the following icon:
 
-![image](./src/assets/favicon.ico)
+![image](src/assets/head-brains.icon.48.png)
 
 Clicking this icon will reveal a popup, which currently has 5 NER options (the `Settings` button is not yet functional), corresponding to a specific Leadmine deployment:
 * Genes/Proteins
@@ -92,3 +92,6 @@ There are various convenience scripts inside the `package.json` that can be run 
 * start - start up a browser with the plugin pre-loaded
 * weblint - lint the code using web-ext
 * build - build the plugin
+
+### Credits
+Designed using elements from Heroicon and Vecteezy.com.
