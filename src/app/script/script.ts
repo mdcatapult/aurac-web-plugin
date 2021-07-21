@@ -191,7 +191,6 @@
     msg.body.map((entity) => {
       const term = entity.entityText;
       const selectors = getSelectors(term);
-      console.log(chemicalFormulae);
       // if entity is a chemical formula, wrap innerHTML in highlight span and add event listener
       for (const formula of chemicalFormulae) {
         const formulaNode = formula.formulaNode;
@@ -548,8 +547,6 @@
       const formattedText = text.replace(/[\r\n\s]+/gm, '');
       // push chemical formula to textNodes to be NER'd
       textNodes.push(formattedText + '\n');
-      // console.log('here! ', node, node.childNodes, formattedText)
-      console.log('pushing to formulae: ', {formulaNode: node, formulaText: formattedText});
       chemicalFormulae.push({formulaNode: node, formulaText: formattedText});
       return;
     }
