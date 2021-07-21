@@ -211,8 +211,6 @@
           } catch (e) {
             console.error(e);
           }
-          // exit the loop as soon as we find a match
-          // break;
         }
       }
       addHighlightEventListeners(selectors, term, entity);
@@ -449,7 +447,7 @@
     setNerHtmlColours(entityToOccurrence.get(arrowProperties.nerTerm));
 
     const targetElement = entityToOccurrence.get(arrowProperties.nerTerm)[arrowProperties.positionInArray];
-    targetElement.scrollIntoView({behavior: 'smooth', block: 'center'});
+    targetElement.scrollIntoView({block: 'center'});
 
     setHtmlColours(targetElement);
 
