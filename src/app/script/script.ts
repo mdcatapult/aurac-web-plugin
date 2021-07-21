@@ -205,6 +205,7 @@
             formulaNode.parentNode.removeChild(formulaNode);
             const childValues = getAuracHighlightChildren(replacementNode);
             childValues.forEach(childValue => { // For each highlighted element, we will add an event listener to add it to our sidebar
+              populateEntityToOccurrences(entity.entityText, childValue);
               childValue.addEventListener('mouseenter', populateAuracSidebar(entity, replacementNode));
             });
           } catch (e) {
