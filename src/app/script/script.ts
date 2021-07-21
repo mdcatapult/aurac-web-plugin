@@ -14,8 +14,8 @@
   class EntityMap<T> {
     private m = new Map<string, T>();
 
-    set(text: string, html: T) {
-      this.m.set(text.toLowerCase(), html);
+    set(entityText: string, value: T) {
+      this.m.set(entityText.toLowerCase(), value);
     }
 
     has(text: string): boolean {
