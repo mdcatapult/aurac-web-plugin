@@ -211,7 +211,7 @@
             console.error(e);
           }
           // exit the loop as soon as we find a match
-          break;
+          // break;
         }
       }
       addHighlightEventListeners(selectors, term, entity);
@@ -254,7 +254,7 @@
         font-size: 14px;
         background: rgb(192,192,192);
         position: fixed;
-        z-index: 10;
+        z-index: 1000000;
         height: 100vh;
         left: ${elementProperties.find(v => v.element === auracSidebar).position.expanding}vw;
         top: 0;
@@ -448,7 +448,7 @@
     setNerHtmlColours(entityToOccurrence.get(arrowProperties.nerTerm));
 
     const targetElement = entityToOccurrence.get(arrowProperties.nerTerm)[arrowProperties.positionInArray];
-    targetElement.scrollIntoView({behavior: 'smooth'});
+    targetElement.scrollIntoView({behavior: 'smooth', block: 'center'});
 
     setHtmlColours(targetElement);
 
