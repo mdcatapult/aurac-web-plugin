@@ -253,7 +253,7 @@
         font-size: 14px;
         background: rgb(192,192,192);
         position: fixed;
-        z-index: 1000000;
+        z-index: 2147483647;
         height: 100vh;
         left: ${elementProperties.find(v => v.element === auracSidebar).position.expanding}vw;
         top: 0;
