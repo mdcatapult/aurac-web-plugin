@@ -191,7 +191,6 @@
     msg.body.map((entity) => {
       const term = entity.entityText;
       const selectors = getSelectors(term);
-
       // if entity is a chemical formula, wrap innerHTML in highlight span and add event listener
       for (const formula of chemicalFormulae) {
         const formulaNode = formula.formulaNode;
