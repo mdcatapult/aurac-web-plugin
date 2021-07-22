@@ -162,7 +162,7 @@
           resolve({type: 'leadmine', body: textNodes.join('\n')});
         });
       case 'markup_page':
-        wrapChemicalFormulaWithHighlight(msg);
+        wrapEntitiesWithHighlight(msg);
         break;
       case 'x-ref_result':
         setXRefHTML(msg.body);
@@ -186,7 +186,7 @@
     }
   });
 
-  function wrapChemicalFormulaWithHighlight(msg: any) {
+  function wrapEntitiesWithHighlight(msg: any) {
     document.head.appendChild(newAuracStyleElement());
     msg.body.map((entity) => {
       const term = entity.entityText;
