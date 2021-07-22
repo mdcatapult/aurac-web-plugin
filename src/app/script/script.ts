@@ -10,23 +10,23 @@
     },
   };
 
-  // provides a wrapper around Map<string, HTMLDivElement>() to ensure key formatting
-  class EntityToDiv {
-    private m = new Map<string, HTMLDivElement>();
+  // provides a wrapper around Map<string, T>() to ensure key formatting
+  class EntityMap<T> {
+    private m = new Map<string, T>();
 
-    set(text: string, html: HTMLDivElement) {
-      this.m.set(text.toLowerCase(), html);
+    set(entityText: string, value: T) {
+      this.m.set(entityText.toLowerCase(), value);
     }
 
     has(text: string): boolean {
       return this.m.has(text.toLowerCase());
     }
 
-    get(text: string): HTMLDivElement {
+    get(text: string): T {
       return this.m.get(text.toLowerCase());
     }
 
-    values(): IterableIterator<HTMLDivElement> {
+    values(): IterableIterator<T> {
       return this.m.values();
     }
   }
@@ -133,8 +133,8 @@
 
   const sidebarTexts = document.createElement('div');
   auracSidebar.appendChild(sidebarTexts);
-  const entityToDiv = new EntityToDiv();
-  const entityToOccurrence = new Map<string, Element[]>();
+  const entityToDiv = new EntityMap<HTMLDivElement>();
+  const entityToOccurrence = new EntityMap<Element[]>();
   buttonElement.addEventListener('click', () => {
     if (document.body.style.width === sidebarOpenScreenWidth || document.body.style.width === sidebarClosedScreenWidth) {
       animateElements(elementProperties);
@@ -204,6 +204,7 @@
             formulaNode.parentNode.removeChild(formulaNode);
             const childValues = getAuracHighlightChildren(replacementNode);
             childValues.forEach(childValue => { // For each highlighted element, we will add an event listener to add it to our sidebar
+              populateEntityToOccurrences(entity.entityText, childValue);
               childValue.addEventListener('mouseenter', populateAuracSidebar(entity, replacementNode));
             });
           } catch (e) {
@@ -227,7 +228,7 @@
         element.parentNode.insertBefore(replacementNode, element);
         element.parentNode.removeChild(element);
 
-        // For each value we find that is a highlighted term, we want to add it to our sidebar and find it's occurrences within the page
+        // For each value we find that is a highlighted term, we want to add it to our sidebar and find its occurrences within the page
         const childValues = getAuracHighlightChildren(replacementNode);
         childValues.forEach(childValue => {
           populateEntityToOccurrences(entity.entityText, childValue);
