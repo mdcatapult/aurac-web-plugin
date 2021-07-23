@@ -47,7 +47,7 @@
   const auracHighlightElements: Array<AuracHighlightHtmlColours> = [];
 
   auracSidebar.appendChild(buttonElement);
-  const specialCharacters: string[] = ['(', ')', '\\n', '\'', '\"', ',', ';', '.', '-'];
+  const delimiters: string[] = ['(', ')', '\\n', '\'', '\"', ',', ';', '.', '-'];
   const noSpace = '';
   const space = ' ';
 
@@ -190,7 +190,7 @@
     document.head.appendChild(newAuracStyleElement());
     // sort entities by length of entityText (descending) - this will ensure that we can capture e.g. VPS26A, which would not be
     // highlighted if VPS26 has already been highlighted, because the text VPS26A is now spread across more than one node
-    msg.body.sort((a, b) => (a.entityText.length < b.entityText.length) ? 1 : ((b.entityText.length < a.entityText.length) ? -1 : 0))
+    msg.body.sort((a, b) => b.entityText.length - a.entityText.length)
       .map((entity) => {
         const selectors = getSelectors(entity.entityText);
         wrapChemicalFormulaeWithHighlight(entity);
@@ -610,13 +610,13 @@
           const remainingText: string = text.slice(currentText.length);
           // We found the string but is it in the middle of something else like abcdMyString1234? ie is it a word boundary or not
           // or is it at the start or end of the string. If it's within a word boundary we don't want to highlight it. If however, it is
-          // encapsulated by a special character then we do.
+          // encapsulated by a special character delimiter then we do.
           if ((removeTermFromCurrentText === noSpace || removeTermFromCurrentText.charAt(removeTermFromCurrentText.length - 1)
             === space) && (remainingText.startsWith(space) || remainingText === noSpace)) {
             found.push(term);
             foundTerm = true;
           } else {
-            specialCharacters.forEach((character) => {
+            delimiters.forEach((character) => {
               if (removeTermFromCurrentText.includes(character) ||
                 remainingText.endsWith(character) ||
                 remainingText.startsWith(character)) {
