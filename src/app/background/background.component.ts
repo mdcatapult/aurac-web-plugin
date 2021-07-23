@@ -103,13 +103,9 @@ export class BackgroundComponent {
           dictionary = 'chemical-entities';
           queryParams = new HttpParams().set('inchikey', 'true');
         }
-        let leadmineURL;
-        if (this.settings.leadmineURL.includes('http://localhost:')) {
-          leadmineURL = `${this.settings.leadmineURL}/entities`;
-        } else {
-          leadmineURL = `${this.settings.leadmineURL}/${dictionary}/entities`;
-        }
-        console.log(` value is` + leadmineURL);
+        const leadmineURL = this.settings.leadmineURL.includes('http://localhost:') ? `${this.settings.leadmineURL}/entities` :
+          `${this.settings.leadmineURL}/${dictionary}/entities`;
+
         this.client.post<LeadminerResult>(
           leadmineURL,
           result.body,
