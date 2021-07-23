@@ -1,5 +1,7 @@
 import {Component} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
+import {environment} from '../../environments/environment';
+
 import {
   ConverterResult,
   defaultSettings,
@@ -103,9 +105,8 @@ export class BackgroundComponent {
           dictionary = 'chemical-entities';
           queryParams = new HttpParams().set('inchikey', 'true');
         }
-        const leadmineLocalHost = 'http://localhost:8081';
-        const leadmineURL = this.settings.leadmineURL.includes(leadmineLocalHost) ? `${this.settings.leadmineURL}/entities` :
-          `${this.settings.leadmineURL}/${dictionary}/entities`;
+        const leadmineURL = environment.production ? `${this.settings.leadmineURL}/${dictionary}/entities` :
+           `${this.settings.leadmineURL}/entities`;
 
         this.client.post<LeadminerResult>(
           leadmineURL,
