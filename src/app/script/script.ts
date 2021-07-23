@@ -47,7 +47,7 @@
   const auracHighlightElements: Array<AuracHighlightHtmlColours> = [];
 
   auracSidebar.appendChild(buttonElement);
-  const specialCharacters: string[] = ['(', ')', '\\n', '\'', '\"', ',', ';', '.'];
+  const specialCharacters: string[] = ['(', ')', '\\n', '\'', '\"', ',', ';', '.', '-'];
   const noSpace = '';
   const space = ' ';
 
@@ -188,11 +188,14 @@
 
   function wrapEntitiesWithHighlight(msg: any) {
     document.head.appendChild(newAuracStyleElement());
-    msg.body.map((entity) => {
-      const selectors = getSelectors(entity.entityText);
-      wrapChemicalFormulaeWithHighlight(entity);
-      addHighlightAndEventListeners(selectors, entity);
-    });
+    // sort entities by length of entityText (descending) - this will ensure that we can capture e.g. VPS26A, which would not be
+    // highlighted if VPS26 has already been highlighted, because the text VPS26A is now spread across more than one node
+    msg.body.sort((a, b) => (a.entityText.length < b.entityText.length) ? 1 : ((b.entityText.length < a.entityText.length) ? -1 : 0))
+      .map((entity) => {
+        const selectors = getSelectors(entity.entityText);
+        wrapChemicalFormulaeWithHighlight(entity);
+        addHighlightAndEventListeners(selectors, entity);
+      });
   }
 
   function wrapChemicalFormulaeWithHighlight(entity) {
