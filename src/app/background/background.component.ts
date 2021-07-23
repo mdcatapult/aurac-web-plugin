@@ -105,8 +105,7 @@ export class BackgroundComponent {
           dictionary = 'chemical-entities';
           queryParams = new HttpParams().set('inchikey', 'true');
         }
-        const leadmineURL = environment.production ? `${this.settings.leadmineURL}/${dictionary}/entities` :
-           `${this.settings.leadmineURL}/entities`;
+        const leadmineURL = `${this.settings.leadmineURL}${environment.production ? `/${dictionary}` : ''}/entities`;
 
         this.client.post<LeadminerResult>(
           leadmineURL,
