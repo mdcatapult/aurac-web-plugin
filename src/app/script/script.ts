@@ -10,23 +10,23 @@
     },
   };
 
-  // provides a wrapper around Map<string, HTMLDivElement>() to ensure key formatting
-  class EntityToDiv {
-    private m = new Map<string, HTMLDivElement>();
+  // provides a wrapper around Map<string, T>() to ensure key formatting
+  class EntityMap<T> {
+    private m = new Map<string, T>();
 
-    set(text: string, html: HTMLDivElement) {
-      this.m.set(text.toLowerCase(), html);
+    set(entityText: string, value: T) {
+      this.m.set(entityText.toLowerCase(), value);
     }
 
     has(text: string): boolean {
       return this.m.has(text.toLowerCase());
     }
 
-    get(text: string): HTMLDivElement {
+    get(text: string): T {
       return this.m.get(text.toLowerCase());
     }
 
-    values(): IterableIterator<HTMLDivElement> {
+    values(): IterableIterator<T> {
       return this.m.values();
     }
   }
@@ -133,8 +133,8 @@
 
   const sidebarTexts = document.createElement('div');
   auracSidebar.appendChild(sidebarTexts);
-  const entityToDiv = new EntityToDiv();
-  const entityToOccurrence = new Map<string, Element[]>();
+  const entityToDiv = new EntityMap<HTMLDivElement>();
+  const entityToOccurrence = new EntityMap<Element[]>();
   buttonElement.addEventListener('click', () => {
     if (document.body.style.width === sidebarOpenScreenWidth || document.body.style.width === sidebarClosedScreenWidth) {
       animateElements(elementProperties);
@@ -162,7 +162,7 @@
           resolve({type: 'leadmine', body: textNodes.join('\n')});
         });
       case 'markup_page':
-        wrapChemicalFormulaWithHighlight(msg);
+        wrapEntitiesWithHighlight(msg);
         break;
       case 'x-ref_result':
         setXRefHTML(msg.body);
@@ -186,51 +186,51 @@
     }
   });
 
-  function wrapChemicalFormulaWithHighlight(msg: any) {
+  function wrapEntitiesWithHighlight(msg: any) {
     document.head.appendChild(newAuracStyleElement());
     msg.body.map((entity) => {
-      const term = entity.entityText;
-      const selectors = getSelectors(term);
-
-      // if entity is a chemical formula, wrap innerHTML in highlight span and add event listener
-      for (const formula of chemicalFormulae) {
-        const formulaNode = formula.formulaNode;
-        if (formula.formulaText === term) {
-          try {
-            const replacementNode = document.createElement('span');
-            // Retrieves the specific highlight colour to use for this NER term
-            replacementNode.innerHTML = highlightTerm(formulaNode.innerHTML, entity);
-            // This new highlighted term will replace the current child (same term but with no highlight) of this parent element
-            formulaNode.parentNode.insertBefore(replacementNode, formulaNode);
-            formulaNode.parentNode.removeChild(formulaNode);
-            const childValues = getAuracHighlightChildren(replacementNode);
-            childValues.forEach(childValue => { // For each highlighted element, we will add an event listener to add it to our sidebar
-              childValue.addEventListener('mouseenter', populateAuracSidebar(entity, replacementNode));
-            });
-          } catch (e) {
-            console.error(e);
-          }
-          // exit the loop as soon as we find a match
-          break;
-        }
-      }
-      addHighlightEventListeners(selectors, term, entity);
+      const selectors = getSelectors(entity.entityText);
+      wrapChemicalFormulaeWithHighlight(entity);
+      addHighlightAndEventListeners(selectors, entity);
     });
   }
 
-  function addHighlightEventListeners(selector: Element[], term: string, entity: Information) {
+  function wrapChemicalFormulaeWithHighlight(entity) {
+    for (const formula of chemicalFormulae) {
+      const formulaNode = formula.formulaNode;
+      if (formula.formulaText === entity.entityText) {
+        try {
+          const replacementNode = document.createElement('span');
+          // Retrieves the specific highlight colour to use for this NER term
+          replacementNode.innerHTML = highlightTerm(formulaNode.innerHTML, entity);
+          // This new highlighted term will replace the current child (same term but with no highlight) of this parent element
+          formulaNode.parentNode.insertBefore(replacementNode, formulaNode);
+          formulaNode.parentNode.removeChild(formulaNode);
+          const childValues = getAuracHighlightChildren(replacementNode);
+          childValues.forEach(childValue => { // For each highlighted element, we will add an event listener to add it to our sidebar
+            populateEntityToOccurrences(entity.entityText, childValue);
+            childValue.addEventListener('mouseenter', populateAuracSidebar(entity, replacementNode));
+          });
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    }
+  }
+
+  function addHighlightAndEventListeners(selector: Element[], entity: Information) {
     selector.map(element => {
       // Try/catch for edge cases.
       try {
         // For each term, we want to replace it's original HTML with a highlight colour
         const replacementNode = document.createElement('span');
-        replacementNode.innerHTML = element.nodeValue.replaceAll(term, highlightTerm(term, entity));
+        replacementNode.innerHTML = element.nodeValue.replaceAll(entity.entityText, highlightTerm(entity.entityText, entity));
 
         // This new highlighted term will will replace the current child (same term but with no highlight) of this parent element.
         element.parentNode.insertBefore(replacementNode, element);
         element.parentNode.removeChild(element);
 
-        // For each value we find that is a highlighted term, we want to add it to our sidebar and find it's occurrences within the page
+        // For each value we find that is a highlighted term, we want to add it to our sidebar and find its occurrences within the page
         const childValues = getAuracHighlightChildren(replacementNode);
         childValues.forEach(childValue => {
           populateEntityToOccurrences(entity.entityText, childValue);
@@ -254,7 +254,7 @@
         font-size: 14px;
         background: rgb(192,192,192);
         position: fixed;
-        z-index: 10;
+        z-index: 2147483647;
         height: 100vh;
         left: ${elementProperties.find(v => v.element === auracSidebar).position.expanding}vw;
         top: 0;
@@ -448,7 +448,7 @@
     setNerHtmlColours(entityToOccurrence.get(arrowProperties.nerTerm));
 
     const targetElement = entityToOccurrence.get(arrowProperties.nerTerm)[arrowProperties.positionInArray];
-    targetElement.scrollIntoView({behavior: 'smooth'});
+    targetElement.scrollIntoView({block: 'center'});
 
     setHtmlColours(targetElement);
 
