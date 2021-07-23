@@ -47,7 +47,7 @@
   const auracHighlightElements: Array<AuracHighlightHtmlColours> = [];
 
   auracSidebar.appendChild(buttonElement);
-  const specialCharacters: string[] = ['(', ')', '\\n', '\'', '\"', ',', ';'];
+  const specialCharacters: string[] = ['(', ')', '\\n', '\'', '\"', ',', ';', '.'];
   const noSpace = '';
   const space = ' ';
 
@@ -614,7 +614,9 @@
             foundTerm = true;
           } else {
             specialCharacters.forEach((character) => {
-              if (removeTermFromCurrentText.includes(character) || remainingText.endsWith(character)) {
+              if (removeTermFromCurrentText.includes(character) ||
+                remainingText.endsWith(character) ||
+                remainingText.startsWith(character)) {
                 found.push(term);
                 foundTerm = true;
               }
