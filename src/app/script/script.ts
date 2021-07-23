@@ -47,7 +47,7 @@
   const auracHighlightElements: Array<AuracHighlightHtmlColours> = [];
 
   auracSidebar.appendChild(buttonElement);
-  const specialCharacters: string[] = ['(', ')', '\\n', '\'', '\"'];
+  const specialCharacters: string[] = ['(', ')', '\\n', '\'', '\"', ','];
   const noSpace = '';
   const space = ' ';
 
