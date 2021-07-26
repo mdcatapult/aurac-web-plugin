@@ -85,7 +85,7 @@ export type XRef = {
 
 export type Settings = {
   urls: DictionaryURLs,
-  xRefSources?: any,
+  xRefSources: {[key: string]: boolean},
 }
 
 export type DictionaryURLs = {
@@ -100,6 +100,7 @@ export const defaultSettings: Settings = {
     compoundConverterURL: environment.compoundConverterURL,
     unichemURL: environment.unichemURL,
   },
+  xRefSources: {},
 };
 
 export const DictionaryURLKeys = {

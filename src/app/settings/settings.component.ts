@@ -42,12 +42,10 @@ export class SettingsComponent implements OnInit {
         Validators.compose([Validators.required, SettingsService.validator])
       )
     }),
-    xRefConfig: this.fb.group({})
+    xRefConfig: new FormGroup({}),
   });
 
   ngOnInit(): void {
-    this.log.Log('loading:')
-    this.log.Log(window.localStorage.getItem('settings'))
     this.settingsForm.reset(JSON.parse(window.localStorage.getItem('settings')!));
   }
 
@@ -88,11 +86,9 @@ export class SettingsComponent implements OnInit {
   }
 
   save(): void {
-
     if (this.settingsForm.valid) {
       this.closed.emit(true);
       window.localStorage.setItem('settings', JSON.stringify(this.settingsForm.value));
-      this.log.Log('set:')
       this.log.Log(window.localStorage.getItem('settings'))
     }
   }

@@ -58,7 +58,7 @@ export class BackgroundComponent {
         xRefObservable = this.client.get(`${this.settings.urls.compoundConverterURL}/${encodedEntity}?from=SMILES&to=inchikey`).pipe(
           // @ts-ignore
           switchMap((converterResult: ConverterResult) => {
-            return converterResult ? this.client.get(`${this.settings.urls.unichemURL}/${converterResult.output}`) : of({});
+            return converterResult ? this.client.get(`${this.settings.urls.unichemURL}/x-ref/${converterResult.output}`) : of({});
           }),
           this.addCompoundNameToXRefObject(entityTerm)
         );

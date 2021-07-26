@@ -6,7 +6,9 @@
     ></app-urls>
   </mat-tab>
   <mat-tab label="Sources">
-    <app-x-ref-sources></app-x-ref-sources>
+    <app-x-ref-sources
+      [sourcesForm]="settingsForm.get('xRefConfig')"
+    ></app-x-ref-sources>
   </mat-tab>
 </mat-tab-group>
 
