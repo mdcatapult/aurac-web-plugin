@@ -1,0 +1,58 @@
+<button class="content-start p-1" (click)="closeSettings()">&#10060;</button>
+<mat-tab-group>
+  <mat-tab label="URLs">
+    <app-urls
+      [urlsForm]="settingsForm.get('urls')"
+    ></app-urls>
+  </mat-tab>
+  <mat-tab label="Sources">
+    <app-x-ref-sources></app-x-ref-sources>
+  </mat-tab>
+</mat-tab-group>
+
+<input
+  type="file"
+  class="file-input"
+  style="display:none"
+  (change)="onFileSelected($event)"
+  #fileUpload
+>
+
+<div class="flex items-center justify-center pt-2">
+  <button
+    (click)="save()"
+    [disabled]="!settingsForm.valid"
+    class="button-element child save inline-flex justify-center py-2 px-4 border border-transparent text-sm font-medium
+      rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2
+      focus:ring-indigo-500"
+    [ngClass]="!settingsForm.valid ? 'disabled' : '' "
+  >
+    Save
+  </button>
+
+  <!--show if validURls -->
+  <a *ngIf="settingsForm.valid" class="button-element child export inline-flex justify-center py-2 px-4 border border-transparent
+    text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2
+    focus:ring-offset-2 focus:ring-indigo-500"
+     title="Export"
+     [href]="downloadJsonHref"
+     download="aurac-url-settings.json">
+    Export
+  </a>
+
+  <a *ngIf="!settingsForm.valid" class="button-element child export inline-flex justify-center py-2 px-4 border
+    border-transparent text-sm font-medium rounded-md text-white disabled focus:outline-none focus:ring-2
+    focus:ring-offset-2 focus:ring-indigo-500"
+     title="Export"
+     download="aurac-url-settings.json">
+    Export
+  </a>
+
+  <button
+    (click)="fileUpload.click()"
+    class="file-upload button-element child load inline-flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white
+    bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+    Load
+  </button>
+</div>
+

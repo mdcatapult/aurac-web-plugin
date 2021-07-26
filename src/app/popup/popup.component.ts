@@ -35,12 +35,7 @@ export class PopupComponent implements OnInit {
   settingsClicked() {
     this.isSettings = true;
   }
-
-  onSaveSettings(settings: DictionaryURLs) {
-    browser.runtime.sendMessage<Message>({type: 'save-settings', body: settings})
-      .catch(e => this.log.Error(`Couldn't send message to background page: ${JSON.stringify(e)}`));
-  }
-
+  
   nerCurrentPage(dictionary: validDict) {
     this.isSidebarRendered = true;
     this.isNerLoaded = true;

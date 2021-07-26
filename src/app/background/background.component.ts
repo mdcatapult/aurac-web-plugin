@@ -7,6 +7,7 @@ import {
   LeadminerEntity,
   LeadminerResult,
   Message,
+  Settings,
   StringMessage,
   XRef
 } from 'src/types';
@@ -23,10 +24,12 @@ import MessageSender = browser.runtime.MessageSender;
 
 export class BackgroundComponent {
 
-  settings: DictionaryURLs = defaultSettings;
+  settings: Settings = defaultSettings;
   dictionary?: validDict;
 
   constructor(private client: HttpClient, private browserService: BrowserService) {
+
+    window.localStorage.setItem('settings', JSON.stringify(this.settings));
     this.browserService.addListener((msg: Partial<Message>) => {
       console.log('Received message from popup...', msg);
       switch (msg.type) {
@@ -37,10 +40,6 @@ export class BackgroundComponent {
         }
         case 'compound_x-refs' : {
           this.loadXRefs(msg.body);
-          break;
-        }
-        case 'save-settings' : {
-          this.settings = msg.body;
           break;
         }
         case 'load-settings': {
@@ -56,15 +55,15 @@ export class BackgroundComponent {
     if (resolvedEntity) {
       if (!resolvedEntity.match(inchiKeyRegex)) {
         const encodedEntity = encodeURIComponent(resolvedEntity);
-        xRefObservable = this.client.get(`${this.settings.compoundConverterURL}/${encodedEntity}?from=SMILES&to=inchikey`).pipe(
+        xRefObservable = this.client.get(`${this.settings.urls.compoundConverterURL}/${encodedEntity}?from=SMILES&to=inchikey`).pipe(
           // @ts-ignore
           switchMap((converterResult: ConverterResult) => {
-            return converterResult ? this.client.get(`${this.settings.unichemURL}/${converterResult.output}`) : of({});
+            return converterResult ? this.client.get(`${this.settings.urls.unichemURL}/${converterResult.output}`) : of({});
           }),
           this.addCompoundNameToXRefObject(entityTerm)
         );
       } else {
-        xRefObservable = this.client.get(`${this.settings.unichemURL}/${resolvedEntity}`).pipe(
+        xRefObservable = this.client.get(`${this.settings.urls.unichemURL}/${resolvedEntity}`).pipe(
           // @ts-ignore
           this.addCompoundNameToXRefObject(entityTerm)
         );
@@ -104,7 +103,7 @@ export class BackgroundComponent {
           queryParams = new HttpParams().set('inchikey', 'true');
         }
         this.client.post<LeadminerResult>(
-          `${this.settings.leadmineURL}/${dictionary}/entities`,
+          `${this.settings.urls.leadmineURL}/${dictionary}/entities`,
           result.body,
           {observe: 'response', params: queryParams})
           .subscribe((response) => {

@@ -99,11 +99,9 @@
     </button>
   </div>
 </div>
-<div
-  [hidden]="!isSettings"
->
-  <app-urls
+<div class="settings" [hidden]="!isSettings">
+  <app-settings
     (closed)="isSettings=false"
-    (saved)="onSaveSettings($event)"
-  ></app-urls>
+  ></app-settings>
+
 </div>
