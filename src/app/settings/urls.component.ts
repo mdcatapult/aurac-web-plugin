@@ -5,15 +5,15 @@ import {LogService} from '../popup/log.service';
 import {BrowserService} from '../browser.service';
 
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import {SettingsService} from './settings.service';
+import {SettingsService} from './urls.service';
 
 
 @Component({
-  selector: 'app-settings',
-  templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.scss']
+  selector: 'app-urls',
+  templateUrl: './urls.component.html',
+  styleUrls: ['./urls.component.scss']
 })
-export class SettingsComponent implements OnInit {
+export class UrlsComponent implements OnInit {
 
   @Output() saved = new EventEmitter<DictionaryURLs>();
   @Output() closed = new EventEmitter<boolean>();

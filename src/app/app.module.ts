@@ -8,8 +8,9 @@ import { PopupComponent } from './popup/popup.component';
 import { RouterComponent } from './router/router.component';
 import { Routes, RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
-import {SettingsComponent} from './settings/settings.component';
+import {UrlsComponent} from './settings/urls.component';
 import {ReactiveFormsModule} from '@angular/forms';
+import { XRefSourcesComponent } from './x-ref-sources/x-ref-sources.component';
 
 const routes: Routes = [
   {path: '**', component: RouterComponent}
@@ -22,7 +23,8 @@ const routes: Routes = [
     LoggerComponent,
     PopupComponent,
     RouterComponent,
-    SettingsComponent
+    UrlsComponent,
+    XRefSourcesComponent
   ],
   imports: [
     BrowserModule,

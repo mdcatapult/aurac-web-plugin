@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  leadmineURL: 'http://localhost:8081',
+  leadmineURL: 'https://leadmine.wopr.inf.mdc',
   compoundConverterURL: 'http://localhost:8082/convert',
   unichemURL: 'http://localhost:8080/x-ref',
 };
