@@ -12,7 +12,7 @@ import {
   XRef
 } from 'src/types';
 import {validDict} from './types';
-import {map, switchMap} from 'rxjs/operators';
+import {map, switchMap, tap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {BrowserService} from '../browser.service';
 import MessageSender = browser.runtime.MessageSender;
@@ -61,13 +61,16 @@ export class BackgroundComponent {
             return converterResult ?
               this.client.post(
                 `${this.settings.urls.unichemURL}/x-ref/${converterResult.output}`,
-                this.settings.xRefSources
+                this.settings.xRefConfig
               ) : of({});
           }),
           this.addCompoundNameToXRefObject(entityTerm)
         );
       } else {
-        xRefObservable = this.client.get(`${this.settings.urls.unichemURL}/${resolvedEntity}`).pipe(
+        xRefObservable = this.client.post(
+          `${this.settings.urls.unichemURL}/x-ref/${resolvedEntity}`,
+          this.settings.xRefConfig
+        ).pipe(
           // @ts-ignore
           this.addCompoundNameToXRefObject(entityTerm)
         );

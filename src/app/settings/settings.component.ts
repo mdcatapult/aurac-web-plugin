@@ -1,7 +1,7 @@
 import {Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import {defaultSettings, DictionaryURLs, Message} from 'src/types';
+import {defaultSettings, DictionaryURLs, Message, Settings} from 'src/types';
 import {BrowserService} from '../browser.service';
 import {LogService} from '../popup/log.service';
 import {SettingsService} from '../urls/urls.service';
@@ -21,6 +21,7 @@ export class SettingsComponent implements OnInit {
   fileUploadElementRef: ElementRef | undefined;
   downloadJsonHref: SafeUrl | undefined; // used to as HREF link from HTML file
   private fb = new FormBuilder()
+  settings?: Settings
   dictionaryUrls = defaultSettings.urls;
 
   constructor(private log: LogService, private browserService: BrowserService) {
@@ -46,7 +47,8 @@ export class SettingsComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.settingsForm.reset(JSON.parse(window.localStorage.getItem('settings')!));
+    this.settings = JSON.parse(window.localStorage.getItem('settings')!)
+    this.settingsForm.reset(this.settings);
   }
 
   onFileSelected(ev: Event): void {

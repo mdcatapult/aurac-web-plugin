@@ -13,21 +13,21 @@ import {LogService} from '../popup/log.service';
 export class XRefSourcesComponent implements OnInit {
 
   @Input() sourcesForm?: FormGroup
+  @Input() settings: {[key: string]: boolean} = {}
   loadedSources = false
 
   constructor(private client: HttpClient, private log: LogService) {
   }
 
   ngOnInit(): void {
-
     const unichemURL = (<Settings>JSON.parse(window.localStorage.getItem('settings')!)).urls.unichemURL
     this.client.get<string[]>(`${unichemURL}/sources`).subscribe(sources => {
       sources.forEach(source => {
-        this.sourcesForm!.addControl(source, new FormControl(false))
+        const initialValue = this.settings[source] || false
+        this.sourcesForm!.addControl(source, new FormControl(initialValue))
       })
       this.loadedSources = true
     }, (err) => this.log.Error(`error retrieving sources: ${err}`))
-
   }
 
 }
