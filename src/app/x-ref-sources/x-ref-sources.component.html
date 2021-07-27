@@ -1,9 +1,14 @@
-<p>x-ref-sources works!</p>
 <div *ngIf="loadedSources && sourcesForm">
   <form [formGroup]="sourcesForm">
-    <div *ngFor="let control of sourcesForm.value | keyvalue">
+    <table class="table">
+      <tr *ngFor="let control of sourcesForm.value | keyvalue">
+        <td>
           {{control.key}}
+        </td>
+        <td>
           <input type="checkbox" [value]="control.value" [formControlName]="control.key">
-    </div>
+        </td>
+      </tr>
+    </table>
   </form>
 </div>
