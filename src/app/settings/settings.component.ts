@@ -24,7 +24,7 @@ export class SettingsComponent implements OnInit {
   settings?: Settings
   dictionaryUrls = defaultSettings.urls;
 
-  constructor(private log: LogService, private browserService: BrowserService) {
+  constructor(private log: LogService, private browserService: BrowserService, private sanitizer: DomSanitizer) {
   }
 
 
@@ -49,10 +49,28 @@ export class SettingsComponent implements OnInit {
   ngOnInit(): void {
     this.settings = JSON.parse(window.localStorage.getItem('settings')!)
     this.settingsForm.reset(this.settings);
+
+    this.settingsForm.valueChanges.subscribe(settings => {
+
+      if (this.settingsForm.valid) {
+        try {
+          const json = JSON.stringify(settings);
+
+          this.downloadJsonHref =
+            this.sanitizer.bypassSecurityTrustResourceUrl('data:text/json;charset=UTF-8,' + encodeURIComponent(json));
+        } catch (e) {
+          this.log.Info(`error creating JSON from settings: ${e}`);
+        }
+      } else {
+        this.log.Info('error, dictionary URLs invalid');
+      }
+    })
   }
 
   onFileSelected(ev: Event): void {
+    this.log.Log("FILE SELECTED")
     const event = ev.target as HTMLInputElement;
+    this.log.Log(event)
 
     if (event.files && event.files.length > 0) {
 
@@ -63,12 +81,15 @@ export class SettingsComponent implements OnInit {
 
       reader.onloadend = () => {
 
+        this.log.Log('LOADING')
         try {
-          const dictionaryURLs = JSON.parse(reader.result as string) as DictionaryURLs;
+          const settings = JSON.parse(reader.result as string) as Settings;
 
-          if (SettingsService.validURLs(dictionaryURLs)) {
-            this.settingsForm.reset(dictionaryURLs);
-            this.dictionaryUrls = dictionaryURLs;
+          this.log.Log('GOT SETTINGS: ')
+          this.log.Log(settings);
+          if (SettingsService.validURLs(settings.urls)) {
+            this.settingsForm.reset(settings);
+            this.settings = settings;
           } else {
             // some URLs not valid
             // TODO error popup?
@@ -94,8 +115,7 @@ export class SettingsComponent implements OnInit {
       this.log.Log(window.localStorage.getItem('settings'))
     }
   }
-
-
+  
   closeSettings(): void {
     this.closed.emit(true);
   }
