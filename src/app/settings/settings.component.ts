@@ -4,7 +4,7 @@ import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {defaultSettings, DictionaryURLs, Message, Settings} from 'src/types';
 import {BrowserService} from '../browser.service';
 import {LogService} from '../popup/log.service';
-import {SettingsService} from '../urls/urls.service';
+import {UrlsService} from '../urls/urls.service';
 
 @Component({
   selector: 'app-settings',
@@ -32,15 +32,15 @@ export class SettingsComponent implements OnInit {
     urls: this.fb.group({
       leadmineURL: new FormControl(
         defaultSettings.urls.leadmineURL,
-        Validators.compose([Validators.required, SettingsService.validator])
+        Validators.compose([Validators.required, UrlsService.validator])
       ),
       compoundConverterURL: new FormControl(
         defaultSettings.urls.compoundConverterURL,
-        Validators.compose([Validators.required, SettingsService.validator])
+        Validators.compose([Validators.required, UrlsService.validator])
       ),
       unichemURL: new FormControl(
         defaultSettings.urls.unichemURL,
-        Validators.compose([Validators.required, SettingsService.validator])
+        Validators.compose([Validators.required, UrlsService.validator])
       )
     }),
     xRefConfig: new FormGroup({}),
@@ -69,7 +69,6 @@ export class SettingsComponent implements OnInit {
 
   onFileSelected(ev: Event): void {
     const event = ev.target as HTMLInputElement;
-    this.log.Log(event)
 
     if (event.files && event.files.length > 0) {
 
@@ -83,7 +82,7 @@ export class SettingsComponent implements OnInit {
         try {
           const settings = JSON.parse(reader.result as string) as Settings;
           this.log.Log(settings);
-          if (SettingsService.validURLs(settings.urls)) {
+          if (UrlsService.validURLs(settings.urls)) {
             this.settingsForm.reset(settings);
             this.settings = settings;
           } else {

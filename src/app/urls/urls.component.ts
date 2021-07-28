@@ -5,7 +5,7 @@ import {LogService} from '../popup/log.service';
 import {BrowserService} from '../browser.service';
 
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import {SettingsService} from './urls.service';
+import {UrlsService} from './urls.service';
 
 
 @Component({

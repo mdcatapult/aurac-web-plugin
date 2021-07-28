@@ -5,7 +5,7 @@ import {AbstractControl} from '@angular/forms';
 @Injectable({
   providedIn: 'root'
 })
-export class SettingsService {
+export class UrlsService {
 
   constructor() {
   }
@@ -34,6 +34,6 @@ export class SettingsService {
   }
 
   static validator(control: AbstractControl): { [key: string]: string } | null {
-    return SettingsService.isValidURL(control.value) ? null : {'invalid URL': control.value};
+    return UrlsService.isValidURL(control.value) ? null : {'invalid URL': control.value};
   }
 }
