@@ -27,7 +27,7 @@ export class XRefSourcesComponent implements OnInit {
         this.sourcesForm!.addControl(source, new FormControl(initialValue))
       })
       this.loadedSources = true
-    }, (err) => this.log.Error(`error retrieving sources: ${err}`))
+    }, (err) => this.log.Error(`error retrieving sources: ${JSON.stringify(err)}`))
   }
 
 }

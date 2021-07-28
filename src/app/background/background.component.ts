@@ -12,7 +12,7 @@ import {
   XRef
 } from 'src/types';
 import {validDict} from './types';
-import {map, switchMap, tap} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {BrowserService} from '../browser.service';
 import MessageSender = browser.runtime.MessageSender;
