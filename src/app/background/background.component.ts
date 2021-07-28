@@ -62,16 +62,15 @@ export class BackgroundComponent {
             return converterResult ?
               this.client.post(
                 `${this.settings.urls.unichemURL}/x-ref/${converterResult.output}`,
-                this.getTruthyKeys(this.settings.xRefConfig)
+                this.getTrueKeys(this.settings.xRefConfig)
               ) : of({});
           }),
           this.addCompoundNameToXRefObject(entityTerm)
         );
       } else {
-        console.log('oioi', this.settings.xRefConfig)
         xRefObservable = this.client.post(
           `${this.settings.urls.unichemURL}/x-ref/${resolvedEntity}`,
-          this.getTruthyKeys(this.settings.xRefConfig)
+          this.getTrueKeys(this.settings.xRefConfig)
         ).pipe(
           // @ts-ignore
           this.addCompoundNameToXRefObject(entityTerm)
@@ -137,7 +136,7 @@ export class BackgroundComponent {
     return uniqueEntities;
   }
 
-  private getTruthyKeys(v: {[_: string]: boolean}): string[] {
+  private getTrueKeys(v: {[_: string]: boolean}): string[] {
     return Object.keys(v).filter(k => v[k] === true);
   }
 }

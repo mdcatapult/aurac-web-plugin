@@ -68,7 +68,6 @@ export class SettingsComponent implements OnInit {
   }
 
   onFileSelected(ev: Event): void {
-    this.log.Log("FILE SELECTED")
     const event = ev.target as HTMLInputElement;
     this.log.Log(event)
 
@@ -81,11 +80,8 @@ export class SettingsComponent implements OnInit {
 
       reader.onloadend = () => {
 
-        this.log.Log('LOADING')
         try {
           const settings = JSON.parse(reader.result as string) as Settings;
-
-          this.log.Log('GOT SETTINGS: ')
           this.log.Log(settings);
           if (SettingsService.validURLs(settings.urls)) {
             this.settingsForm.reset(settings);
@@ -115,7 +111,7 @@ export class SettingsComponent implements OnInit {
       this.log.Log(window.localStorage.getItem('settings'))
     }
   }
-  
+
   closeSettings(): void {
     this.closed.emit(true);
   }
