@@ -47,8 +47,12 @@ export class SettingsComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.settings = JSON.parse(window.localStorage.getItem('settings')!)
-    this.settingsForm.reset(this.settings);
+    const storedSettings = window.localStorage.getItem('settings')
+    if (storedSettings) {
+      this.settings = JSON.parse(storedSettings)
+      this.settingsForm.reset(this.settings);
+    }
+
 
     this.settingsForm.valueChanges.subscribe(settings => {
 

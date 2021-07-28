@@ -20,7 +20,12 @@ export class XRefSourcesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const unichemURL = (<Settings>JSON.parse(window.localStorage.getItem('settings')!)).urls.unichemURL
+
+    const storedSettings = window.localStorage.getItem('settings')
+    if (!storedSettings) {
+      return
+    }
+    const unichemURL = (<Settings>JSON.parse(storedSettings)).urls.unichemURL
     this.client.get<string[]>(`${unichemURL}/sources`).subscribe(sources => {
       sources.forEach(source => {
         const initialValue = this.settings[source] || false
