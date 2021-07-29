@@ -17,6 +17,7 @@ export class XRefSourcesComponent implements OnChanges {
   @Input() unichemURL = ""
 
   loadedSources = false
+  private defaultCheckbox = true
 
   constructor(private client: HttpClient, private log: LogService) {
   }
@@ -28,7 +29,7 @@ export class XRefSourcesComponent implements OnChanges {
     }
     this.client.get<string[]>(`${this.unichemURL}/sources`).subscribe(sources => {
       sources.forEach(source => {
-        const initialValue = this.settings[source] || true
+        const initialValue = this.settings[source] !== undefined ? this.settings[source] : this.defaultCheckbox
         this.sourcesForm!.addControl(source, new FormControl(initialValue))
       })
       this.loadedSources = true
