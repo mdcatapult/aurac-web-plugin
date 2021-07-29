@@ -9,6 +9,7 @@
     <app-x-ref-sources
       [sourcesForm]="settingsForm.get('xRefConfig')"
       [settings]="settings ? settings.xRefConfig : {}"
+      [unichemURL]="settings ? settings.urls.unichemURL : ''"
     ></app-x-ref-sources>
   </mat-tab>
 </mat-tab-group>
