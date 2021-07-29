@@ -111,8 +111,6 @@ export class SettingsComponent implements OnInit {
     if (this.settingsForm.valid) {
       this.closed.emit(true);
       window.localStorage.setItem('settings', JSON.stringify(this.settingsForm.value));
-      // this.settings = this.settingsForm.value
-      this.log.Log(window.localStorage.getItem('settings'))
     }
   }
 
