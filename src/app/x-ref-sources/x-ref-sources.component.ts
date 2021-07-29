@@ -14,7 +14,7 @@ export class XRefSourcesComponent implements OnChanges {
 
   @Input() sourcesForm?: FormGroup
   @Input() settings: {[key: string]: boolean} = {}
-  @Input() unichemURL = ""
+  @Input() unichemURL = ''
 
   loadedSources = false
   private defaultCheckbox = true

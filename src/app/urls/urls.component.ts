@@ -21,7 +21,7 @@ export class UrlsComponent {
   readonly urlKeys = DictionaryURLKeys;
 
   constructor(private log: LogService) {}
-  
+
   getBorderColor(formName: string): object {
     let colour = 'gray';
     if (!this.urlsForm!.get(formName)!.valid) {
