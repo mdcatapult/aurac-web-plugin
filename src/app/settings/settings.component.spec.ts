@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SettingsComponent } from './settings.component';
+import {TestBrowserService} from './../test-browser.service';
+import {LogService} from '../popup/log.service';
 
 describe('SettingsComponent', () => {
   let component: SettingsComponent;
@@ -14,9 +16,7 @@ describe('SettingsComponent', () => {
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SettingsComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    component = new SettingsComponent(new LogService(), new TestBrowserService(new LogService()))
   });
 
   it('should create', () => {

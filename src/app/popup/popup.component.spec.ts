@@ -21,8 +21,6 @@ describe('PopupComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({});
     component = TestBed.inject(TestBrowserService);
-    // fixture = TestBed.createComponent(TestBrowserService);
-    // fixture.detectChanges();
   });
 
   it('should create', () => {

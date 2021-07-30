@@ -20,7 +20,7 @@ export class SettingsComponent implements OnInit {
   settings?: Settings
   dictionaryUrls = defaultSettings.urls;
 
-  constructor(private log: LogService, private browserService: BrowserService, private sanitizer: DomSanitizer) {
+  constructor(private log: LogService, private browserService: BrowserService) {
   }
 
   settingsForm = this.fb.group({
