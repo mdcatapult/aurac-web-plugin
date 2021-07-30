@@ -3,7 +3,9 @@
     <table class="table">
       <tr *ngFor="let control of sourcesForm.value | keyvalue">
         <td>
+          <label [for]="control.key">
           {{control.key}}
+          </label>
         </td>
         <td>
           <input type="checkbox" [id]="control.key" [value]="control.value" [formControlName]="control.key">
