@@ -43,7 +43,7 @@ export class SettingsComponent implements OnInit {
 
   ngOnInit(): void {
     this.browserService.loadSettings().then(settings => {
-      this.settings = settings
+      this.settings = settings || defaultSettings
       this.settingsForm.reset(this.settings)
     })
 
