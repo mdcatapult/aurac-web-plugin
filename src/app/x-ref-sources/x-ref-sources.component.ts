@@ -23,10 +23,20 @@ export class XRefSourcesComponent implements OnChanges {
   }
 
   ngOnChanges(): void {
-    const storedSettings = window.localStorage.getItem('settings')
-    if (!storedSettings) {
-      return
-    }
+    browser.storage.local.get('settings').then(
+      (settings) => {
+        // @ts-ignore
+        this.refresh(settings.settings as Settings)
+      },
+      (err) => this.log.Error(`error loading settings: ${JSON.stringify(err)}`)
+    )
+
+    // const storedSettings = window.localStorage.getItem('settings')
+    // if (!storedSettings) {
+    //   return
+    // }
+  }
+  private refresh(settings: Settings): void {
     this.client.get<string[]>(`${this.unichemURL}/sources`).subscribe(sources => {
       sources.forEach(source => {
         const initialValue = this.settings[source] !== undefined ? this.settings[source] : this.defaultCheckbox
@@ -35,5 +45,4 @@ export class XRefSourcesComponent implements OnChanges {
       this.loadedSources = true
     }, (err) => this.log.Error(`error retrieving sources: ${JSON.stringify(err)}`))
   }
-
 }

@@ -16,10 +16,6 @@ export class SettingsComponent implements OnInit {
   @Output() saved = new EventEmitter<DictionaryURLs>();
   @Output() closed = new EventEmitter<boolean>();
 
-  // used to keep track of native fileUpload
-  @ViewChild('fileUpload')
-  fileUploadElementRef: ElementRef | undefined;
-  downloadJsonHref: SafeUrl | undefined; // used to as HREF link from HTML file
   private fb = new FormBuilder()
   settings?: Settings
   dictionaryUrls = defaultSettings.urls;
@@ -47,70 +43,35 @@ export class SettingsComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    const storedSettings = window.localStorage.getItem('settings')
-    if (storedSettings) {
-      this.settings = JSON.parse(storedSettings)
-      this.settingsForm.reset(this.settings);
-    }
-
+    browser.storage.local.get('settings').then(
+      (settings) => {
+        // @ts-ignore
+        this.settings = settings.settings
+        this.settingsForm.reset(this.settings)
+      },
+      (err) => this.log.Error(`error loading settings: ${JSON.stringify(err)}`)
+    )
     this.settingsForm.valueChanges.subscribe(settings => {
 
       if (this.settingsForm.valid) {
         this.settings!.urls = settings.urls
-        try {
-          const json = JSON.stringify(settings);
-
-          this.downloadJsonHref =
-            this.sanitizer.bypassSecurityTrustResourceUrl('data:text/json;charset=UTF-8,' + encodeURIComponent(json));
-        } catch (e) {
-          this.log.Info(`error creating JSON from settings: ${e}`);
-        }
+        this.save()
       } else {
         this.log.Info('error, dictionary URLs invalid');
       }
     })
   }
 
-  onFileSelected(ev: Event): void {
-    const event = ev.target as HTMLInputElement;
-
-    if (event.files && event.files.length > 0) {
-
-      const file: File = event.files[0];
-      const reader = new FileReader();
-
-      // TODO check file size?
-
-      reader.onloadend = () => {
-
-        try {
-          const settings = JSON.parse(reader.result as string) as Settings;
-          this.log.Log(settings);
-          if (UrlsService.validURLs(settings.urls)) {
-            this.settingsForm.reset(settings);
-            this.settings = settings;
-          } else {
-            // some URLs not valid
-            // TODO error popup?
-          }
-        } catch (e) {
-          this.log.Error(`error validating dictionary URLs from file: ${e}`);
-        }
-
-        // reset the file element to allow reloading of the same file
-        this.fileUploadElementRef!.nativeElement.value = '';
-      };
-
-      reader.readAsText(file);
-    } else {
-      this.log.Error('No file selected');
-    }
-  }
 
   save(): void {
     if (this.settingsForm.valid) {
-      this.closed.emit(true);
-      window.localStorage.setItem('settings', JSON.stringify(this.settingsForm.value));
+      // this.closed.emit(true);
+      this.log.Log('saving')
+      browser.storage.local.set({settings: this.settingsForm.value}).then(
+        () => {},
+        // () => {this.log.Log('set::::'); this.log.Log(this.settingsForm.value)},
+        (err) => this.log.Log(`error saving settings', ${err}`)
+      )
     }
   }
 
