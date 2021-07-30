@@ -6,7 +6,6 @@ import {LogService} from '../popup/log.service';
 
 describe('SettingsComponent', () => {
   let component: SettingsComponent;
-  let fixture: ComponentFixture<SettingsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({

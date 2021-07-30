@@ -33,7 +33,7 @@ export class BrowserService {
   }
 
   saveSettings(settings: Settings): void {
-    browser.storage.local.set({settings: settings}).then(
+    browser.storage.local.set({settings}).then(
       () => {},
       (err) => this.log.Log(`error saving settings', ${err}`)
     )

@@ -11,7 +11,7 @@ export class TestBrowserService extends BrowserService {
   loadSettings(): Promise<Settings> {
     return new Promise(() => {});
   }
-  
+
   addListener(f: (msg: Partial<Message>, listener: MessageSender, sendResponse: (response: object) => {}) => void): void {}
 
   getActiveTab(): Promise<Tab> {
