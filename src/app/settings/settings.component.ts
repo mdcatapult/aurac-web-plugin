@@ -65,11 +65,9 @@ export class SettingsComponent implements OnInit {
 
   save(): void {
     if (this.settingsForm.valid) {
-      // this.closed.emit(true);
       this.log.Log('saving')
       browser.storage.local.set({settings: this.settingsForm.value}).then(
         () => {},
-        // () => {this.log.Log('set::::'); this.log.Log(this.settingsForm.value)},
         (err) => this.log.Log(`error saving settings', ${err}`)
       )
     }

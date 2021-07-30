@@ -30,11 +30,7 @@ export class XRefSourcesComponent implements OnChanges {
       },
       (err) => this.log.Error(`error loading settings: ${JSON.stringify(err)}`)
     )
-
-    // const storedSettings = window.localStorage.getItem('settings')
-    // if (!storedSettings) {
-    //   return
-    // }
+    
   }
   private refresh(settings: Settings): void {
     this.client.get<string[]>(`${this.unichemURL}/sources`).subscribe(sources => {
