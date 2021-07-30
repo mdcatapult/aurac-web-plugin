@@ -29,11 +29,10 @@ export class BackgroundComponent {
 
   constructor(private client: HttpClient, private browserService: BrowserService) {
 
-    browser.storage.local.get('settings').then(
-      // @ts-ignore
-      (settings) => {this.settings = settings},
-      (err) => console.log(`error saving settings', ${err}`)
-    )
+    this.browserService.loadSettings().then(settings => {
+      this.settings = settings
+    })
+
 
     this.browserService.addListener((msg: Partial<Message>) => {
       console.log('Received message from popup...', msg);

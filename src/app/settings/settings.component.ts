@@ -23,7 +23,6 @@ export class SettingsComponent implements OnInit {
   constructor(private log: LogService, private browserService: BrowserService, private sanitizer: DomSanitizer) {
   }
 
-
   settingsForm = this.fb.group({
     urls: this.fb.group({
       leadmineURL: new FormControl(
@@ -43,14 +42,11 @@ export class SettingsComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    browser.storage.local.get('settings').then(
-      (settings) => {
-        // @ts-ignore
-        this.settings = settings.settings
-        this.settingsForm.reset(this.settings)
-      },
-      (err) => this.log.Error(`error loading settings: ${JSON.stringify(err)}`)
-    )
+    this.browserService.loadSettings().then(settings => {
+      this.settings = settings
+      this.settingsForm.reset(this.settings)
+    })
+
     this.settingsForm.valueChanges.subscribe(settings => {
 
       if (this.settingsForm.valid) {
@@ -65,11 +61,7 @@ export class SettingsComponent implements OnInit {
 
   save(): void {
     if (this.settingsForm.valid) {
-      this.log.Log('saving')
-      browser.storage.local.set({settings: this.settingsForm.value}).then(
-        () => {},
-        (err) => this.log.Log(`error saving settings', ${err}`)
-      )
+      this.browserService.saveSettings(this.settingsForm.value)
     }
   }
 

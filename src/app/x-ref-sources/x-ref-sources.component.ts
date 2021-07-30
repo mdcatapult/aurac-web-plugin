@@ -2,6 +2,7 @@ import {HttpClient} from '@angular/common/http';
 import {Component, Input, OnChanges} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {Settings} from 'src/types'
+import { BrowserService } from '../browser.service';
 import {LogService} from '../popup/log.service';
 
 
@@ -19,19 +20,15 @@ export class XRefSourcesComponent implements OnChanges {
   loadedSources = false
   private defaultCheckbox = true
 
-  constructor(private client: HttpClient, private log: LogService) {
+  constructor(private client: HttpClient, private log: LogService, private browserService: BrowserService) {
   }
 
   ngOnChanges(): void {
-    browser.storage.local.get('settings').then(
-      (settings) => {
-        // @ts-ignore
-        this.refresh(settings.settings as Settings)
-      },
-      (err) => this.log.Error(`error loading settings: ${JSON.stringify(err)}`)
-    )
-    
+    this.browserService.loadSettings().then(settings => {
+      this.refresh(settings)
+    })
   }
+
   private refresh(settings: Settings): void {
     this.client.get<string[]>(`${this.unichemURL}/sources`).subscribe(sources => {
       sources.forEach(source => {
