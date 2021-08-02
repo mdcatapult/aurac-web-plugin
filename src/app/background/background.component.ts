@@ -1,5 +1,7 @@
 import {Component} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
+import {environment} from '../../environments/environment';
+
 import {
   ConverterResult,
   defaultSettings,
@@ -110,8 +112,10 @@ export class BackgroundComponent {
           dictionary = 'chemical-entities';
           queryParams = new HttpParams().set('inchikey', 'true');
         }
+        const leadmineURL = `${this.settings.urls.leadmineURL}${environment.production ? `/${dictionary}` : ''}/entities`;
+
         this.client.post<LeadminerResult>(
-          `${this.settings.urls.leadmineURL}/${dictionary}/entities`,
+          leadmineURL,
           result.body,
           {observe: 'response', params: queryParams})
           .subscribe((response) => {
