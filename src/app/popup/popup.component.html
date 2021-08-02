@@ -99,9 +99,9 @@
     </button>
   </div>
 </div>
-<app-settings
-  [hidden]="!isSettings"
-  (closed)="isSettings=false"
-  (saved)="onSaveSettings($event)"
-></app-settings>
+<div class="settings" [hidden]="!isSettings">
+  <app-settings
+    (closed)="isSettings=false"
+  ></app-settings>
 
+</div>

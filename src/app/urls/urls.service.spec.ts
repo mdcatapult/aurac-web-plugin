@@ -1,14 +1,14 @@
 import {TestBed} from '@angular/core/testing';
 
-import {SettingsService} from './settings.service';
+import {UrlsService} from './urls.service';
 import {DictionaryURLs} from '../../types';
 
 describe('SettingsService', () => {
-  let service: SettingsService;
+  let service: UrlsService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(SettingsService);
+    service = TestBed.inject(UrlsService);
   });
 
   it('should be created', () => {
@@ -22,7 +22,7 @@ describe('SettingsService', () => {
       unichemURL: '/dfdsf/asd???=asdf',
     };
 
-    expect(SettingsService.validURLs(invalidUrls)).toBeFalse();
+    expect(UrlsService.validURLs(invalidUrls)).toBeFalse();
   });
 
   it('should return false given some valid and invalid URLs', () => {
@@ -32,7 +32,7 @@ describe('SettingsService', () => {
       unichemURL: 'http://unichem-plus.wopr.inf.mdc/x-ref'
     };
 
-    expect(SettingsService.validURLs(validURLs)).toBeFalse();
+    expect(UrlsService.validURLs(validURLs)).toBeFalse();
   });
 
   it('should return true given valid URLs', () => {
@@ -42,7 +42,7 @@ describe('SettingsService', () => {
       unichemURL: 'http://unichem-plus.wopr.inf.mdc/x-ref'
     };
 
-    expect(SettingsService.validURLs(validURLs)).toBeTruthy();
+    expect(UrlsService.validURLs(validURLs)).toBeTruthy();
   });
 
   it('should return false given invalid dictionary URL keys', () => {
@@ -53,6 +53,6 @@ describe('SettingsService', () => {
 
     const urlsWithInvalidKey = JSON.parse(invalidJsonString) as DictionaryURLs;
 
-    expect(SettingsService.validURLs(urlsWithInvalidKey)).toBeFalse();
+    expect(UrlsService.validURLs(urlsWithInvalidKey)).toBeFalse();
   });
 });
