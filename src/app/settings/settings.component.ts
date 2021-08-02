@@ -1,12 +1,10 @@
 import {Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {defaultSettings, DictionaryURLKeys, DictionaryURLs, Message} from '../../types';
-import {LogService} from '../popup/log.service';
-import {BrowserService} from '../browser.service';
-
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import {SettingsService} from './settings.service';
-
+import {defaultSettings, DictionaryURLs, Message, Settings} from 'src/types';
+import {BrowserService} from '../browser.service';
+import {LogService} from '../popup/log.service';
+import {UrlsService} from '../urls/urls.service';
 
 @Component({
   selector: 'app-settings',
@@ -18,74 +16,59 @@ export class SettingsComponent implements OnInit {
   @Output() saved = new EventEmitter<DictionaryURLs>();
   @Output() closed = new EventEmitter<boolean>();
 
-  dictionaryUrls = defaultSettings;
-  downloadJsonHref: SafeUrl | undefined; // used to as HREF link from HTML file
-  readonly urlKeys = DictionaryURLKeys;
-
-
   // used to keep track of native fileUpload
   @ViewChild('fileUpload')
   fileUploadElementRef: ElementRef | undefined;
+  downloadJsonHref: SafeUrl | undefined; // used to as HREF link from HTML file
+  private fb = new FormBuilder()
+  settings?: Settings
+  dictionaryUrls = defaultSettings.urls;
 
-  settingsForm = new FormGroup({
-    leadmineURL: new FormControl(
-      defaultSettings.leadmineURL,
-      Validators.compose([Validators.required, SettingsService.validator])
-    ),
-    compoundConverterURL: new FormControl(
-      defaultSettings.compoundConverterURL,
-      Validators.compose([Validators.required, SettingsService.validator])
-    ),
-    unichemURL: new FormControl(
-      defaultSettings.unichemURL,
-      Validators.compose([Validators.required, SettingsService.validator])
-    ),
+  constructor(private log: LogService, private browserService: BrowserService, private sanitizer: DomSanitizer) {
+  }
+
+
+  settingsForm = this.fb.group({
+    urls: this.fb.group({
+      leadmineURL: new FormControl(
+        defaultSettings.urls.leadmineURL,
+        Validators.compose([Validators.required, UrlsService.validator])
+      ),
+      compoundConverterURL: new FormControl(
+        defaultSettings.urls.compoundConverterURL,
+        Validators.compose([Validators.required, UrlsService.validator])
+      ),
+      unichemURL: new FormControl(
+        defaultSettings.urls.unichemURL,
+        Validators.compose([Validators.required, UrlsService.validator])
+      )
+    }),
+    xRefConfig: new FormGroup({}),
   });
 
-  constructor(private log: LogService, private browserService: BrowserService, private sanitizer: DomSanitizer) {}
-
   ngOnInit(): void {
+    const storedSettings = window.localStorage.getItem('settings')
+    if (storedSettings) {
+      this.settings = JSON.parse(storedSettings)
+      this.settingsForm.reset(this.settings);
+    }
 
-    this.log.Log('sending load settings msg');
-    this.browserService.sendMessage('load-settings')
-      .then((settings: DictionaryURLs) => {
-        this.settingsForm.reset(settings);
-      });
-
-    // listen for form URL value changes and verify URLs are valid
-    this.settingsForm.valueChanges.subscribe(formValues => {
-
-      this.dictionaryUrls = formValues;
+    this.settingsForm.valueChanges.subscribe(settings => {
 
       if (this.settingsForm.valid) {
+        this.settings!.urls = settings.urls
         try {
-          const json = JSON.stringify(this.dictionaryUrls);
+          const json = JSON.stringify(settings);
 
           this.downloadJsonHref =
             this.sanitizer.bypassSecurityTrustResourceUrl('data:text/json;charset=UTF-8,' + encodeURIComponent(json));
-
         } catch (e) {
-          this.log.Info(`error creating JSON from URLs: ${e}`);
+          this.log.Info(`error creating JSON from settings: ${e}`);
         }
       } else {
         this.log.Info('error, dictionary URLs invalid');
       }
-    });
-  }
-
-  getBorderColor(formName: string): object {
-    let colour = 'gray';
-    if (!this.settingsForm.get(formName)!.valid) {
-      colour = 'red';
-    }
-    return {'border-color': colour};
-  }
-
-  save(): void {
-    if (this.settingsForm.valid) {
-      this.saved.emit(this.settingsForm.value);
-      this.closed.emit(true);
-    }
+    })
   }
 
   onFileSelected(ev: Event): void {
@@ -101,11 +84,11 @@ export class SettingsComponent implements OnInit {
       reader.onloadend = () => {
 
         try {
-          const dictionaryURLs = JSON.parse(reader.result as string) as DictionaryURLs;
-
-          if (SettingsService.validURLs(dictionaryURLs)) {
-            this.settingsForm.reset(dictionaryURLs);
-            this.dictionaryUrls = dictionaryURLs;
+          const settings = JSON.parse(reader.result as string) as Settings;
+          this.log.Log(settings);
+          if (UrlsService.validURLs(settings.urls)) {
+            this.settingsForm.reset(settings);
+            this.settings = settings;
           } else {
             // some URLs not valid
             // TODO error popup?
@@ -124,8 +107,14 @@ export class SettingsComponent implements OnInit {
     }
   }
 
+  save(): void {
+    if (this.settingsForm.valid) {
+      this.closed.emit(true);
+      window.localStorage.setItem('settings', JSON.stringify(this.settingsForm.value));
+    }
+  }
+
   closeSettings(): void {
     this.closed.emit(true);
   }
-
 }

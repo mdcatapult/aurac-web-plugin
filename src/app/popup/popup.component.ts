@@ -36,11 +36,6 @@ export class PopupComponent implements OnInit {
     this.isSettings = true;
   }
 
-  onSaveSettings(settings: DictionaryURLs) {
-    browser.runtime.sendMessage<Message>({type: 'save-settings', body: settings})
-      .catch(e => this.log.Error(`Couldn't send message to background page: ${JSON.stringify(e)}`));
-  }
-
   nerCurrentPage(dictionary: validDict) {
     this.isSidebarRendered = true;
     this.isNerLoaded = true;
@@ -50,7 +45,7 @@ export class PopupComponent implements OnInit {
       .catch(e => this.log.Error(`Couldn't send message to background page: ${JSON.stringify(e)}`));
   }
 
-  toggleSidebar()  {
+  toggleSidebar() {
     this.browserService.sendMessageToActiveTab({type: 'toggle_sidebar'})
       .catch(e => this.log.Error(`Couldn't send message of type 'toggle_sidebar' : ${JSON.stringify(e)}`));
   }

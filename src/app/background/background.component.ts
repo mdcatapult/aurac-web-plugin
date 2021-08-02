@@ -9,6 +9,7 @@ import {
   LeadminerEntity,
   LeadminerResult,
   Message,
+  Settings,
   StringMessage,
   XRef
 } from 'src/types';
@@ -25,10 +26,12 @@ import MessageSender = browser.runtime.MessageSender;
 
 export class BackgroundComponent {
 
-  settings: DictionaryURLs = defaultSettings;
+  settings: Settings = defaultSettings;
   dictionary?: validDict;
 
   constructor(private client: HttpClient, private browserService: BrowserService) {
+
+    window.localStorage.setItem('settings', JSON.stringify(this.settings));
     this.browserService.addListener((msg: Partial<Message>) => {
       console.log('Received message from popup...', msg);
       switch (msg.type) {
@@ -41,10 +44,6 @@ export class BackgroundComponent {
           this.loadXRefs(msg.body);
           break;
         }
-        case 'save-settings' : {
-          this.settings = msg.body;
-          break;
-        }
         case 'load-settings': {
           return Promise.resolve(this.settings);
         }
@@ -53,20 +52,28 @@ export class BackgroundComponent {
   }
 
   private loadXRefs([entityTerm, resolvedEntity]: [string, string]): void {
+    this.settings = JSON.parse(window.localStorage.getItem('settings')!)
     const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]$/;
     let xRefObservable: Observable<XRef[]>;
     if (resolvedEntity) {
       if (!resolvedEntity.match(inchiKeyRegex)) {
         const encodedEntity = encodeURIComponent(resolvedEntity);
-        xRefObservable = this.client.get(`${this.settings.compoundConverterURL}/${encodedEntity}?from=SMILES&to=inchikey`).pipe(
+        xRefObservable = this.client.get(`${this.settings.urls.compoundConverterURL}/${encodedEntity}?from=SMILES&to=inchikey`).pipe(
           // @ts-ignore
           switchMap((converterResult: ConverterResult) => {
-            return converterResult ? this.client.get(`${this.settings.unichemURL}/${converterResult.output}`) : of({});
+            return converterResult ?
+              this.client.post(
+                `${this.settings.urls.unichemURL}/x-ref/${converterResult.output}`,
+                this.getTrueKeys(this.settings.xRefConfig)
+              ) : of({});
           }),
           this.addCompoundNameToXRefObject(entityTerm)
         );
       } else {
-        xRefObservable = this.client.get(`${this.settings.unichemURL}/${resolvedEntity}`).pipe(
+        xRefObservable = this.client.post(
+          `${this.settings.urls.unichemURL}/x-ref/${resolvedEntity}`,
+          this.getTrueKeys(this.settings.xRefConfig)
+        ).pipe(
           // @ts-ignore
           this.addCompoundNameToXRefObject(entityTerm)
         );
@@ -105,7 +112,7 @@ export class BackgroundComponent {
           dictionary = 'chemical-entities';
           queryParams = new HttpParams().set('inchikey', 'true');
         }
-        const leadmineURL = `${this.settings.leadmineURL}${environment.production ? `/${dictionary}` : ''}/entities`;
+        const leadmineURL = `${this.settings.urls.leadmineURL}${environment.production ? `/${dictionary}` : ''}/entities`;
 
         this.client.post<LeadminerResult>(
           leadmineURL,
@@ -131,5 +138,9 @@ export class BackgroundComponent {
       }
     });
     return uniqueEntities;
+  }
+
+  private getTrueKeys(v: {[_: string]: boolean}): string[] {
+    return Object.keys(v).filter(k => v[k] === true);
   }
 }
