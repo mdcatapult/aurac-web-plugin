@@ -65,7 +65,14 @@ export class SettingsComponent implements OnInit {
     }
   }
 
+  reset(): void {
+    this.settingsForm.reset(defaultSettings)
+  }
+
   closeSettings(): void {
+    if (!this.settingsForm.valid) {
+      this.settingsForm.get('urls')!.reset(defaultSettings.urls)
+    }
     this.closed.emit(true);
   }
 }
