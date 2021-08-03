@@ -22,7 +22,8 @@
     }
   ],
   "permissions": [
-    "tabs"
+    "tabs",
+    "storage"
   ],
   "icons": {
     "48": "assets/head-brains.icon.48.png",
