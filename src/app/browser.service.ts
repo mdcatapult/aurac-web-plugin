@@ -42,7 +42,7 @@ export class BrowserService {
   loadSettings(): Promise<Settings> {
     return browser.storage.local.get('settings').then(
       (settings) => Promise.resolve(settings.settings),
-      (err) => this.log.Log(`error saving settings', ${JSON.stringify(err)}`)
+      (err) => this.log.Log(`error loading settings', ${JSON.stringify(err)}`)
     ) as Promise<Settings>
   }
 }
