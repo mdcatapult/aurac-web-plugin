@@ -212,7 +212,7 @@
           const childValues = getAuracHighlightChildren(replacementNode);
           childValues.forEach(childValue => { // For each highlighted element, we will add an event listener to add it to our sidebar
             populateEntityToOccurrences(entity.entityText, childValue);
-            childValue.addEventListener('mouseenter', populateAuracSidebar(entity, replacementNode));
+            childValue.addEventListener('click', populateAuracSidebar(entity, replacementNode));
           });
         } catch (e) {
           console.error(e);
@@ -237,7 +237,7 @@
         const childValues = getAuracHighlightChildren(replacementNode);
         childValues.forEach(childValue => {
           populateEntityToOccurrences(entity.entityText, childValue);
-          childValue.addEventListener('mouseenter', populateAuracSidebar(entity, replacementNode));
+          childValue.addEventListener('click', populateAuracSidebar(entity, replacementNode));
         });
       } catch (e) {
         console.error(e);
@@ -246,7 +246,7 @@
   }
 
   // highlights a term by wrapping it an HTML span
-  const highlightTerm = (term, entity) => `<span class="aurac-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative;">${term}</span>`;
+  const highlightTerm = (term, entity) => `<span class="aurac-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative; cursor: pointer">${term}</span>`;
 
   // creates an HTML style element with basic styling for Aurac sidebar
   const newAuracStyleElement = () => {
@@ -326,12 +326,12 @@
   // returns an event listener which creates a new element with passed info and appends it to the passed element
   const populateAuracSidebar = (info: Information, element: Element) => {
     return (event) => {
-      if (event.type !== 'mouseenter') {
+      if (event.type !== 'click') {
         return;
       }
       if (getAuracHighlightChildren(element).some(child => child.className === 'aurac-highlight')
         && element.parentElement.className === 'aurac-highlight') {
-        removeEventListener('mouseenter', populateAuracSidebar(info, element));
+        removeEventListener('click', populateAuracSidebar(info, element));
       } else {
         if (!entityToDiv.has(info.entityText)) {
           entityToDiv.set(info.entityText, renderSidebarElement(info));
@@ -588,7 +588,9 @@
     HTMLStyleElement,
     SVGElement,
     HTMLInputElement,
-    HTMLButtonElement];
+    HTMLButtonElement,
+    HTMLAnchorElement,
+  ];
 
   const allowedTagType = (element: HTMLElement): boolean => !forbiddenTags.some(tag => element instanceof tag);
 
