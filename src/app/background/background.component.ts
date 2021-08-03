@@ -47,8 +47,9 @@ export class BackgroundComponent {
           this.loadXRefs(msg.body);
           break;
         }
-        case 'load-settings': {
-          return Promise.resolve(this.settings);
+        case 'settings-changed': {
+          this.settings = msg.body;
+          break;
         }
       }
     });
