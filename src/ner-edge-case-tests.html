@@ -6,23 +6,53 @@
 </head>
 <body>
   <h1 style="color: blue">NER Edge Case Tests</h1>
-  <p><b>The purpose of this page is to test all the various edge cases that may appear when we try to run NER on a
-  page.</b>
+  <p><b>The purpose of this page is to test all the various edge cases that may appear when we try to run NER on a page.</b>
   </p>
-  <h2 style="color: blue">Terms</h2>protein<br>Protein<br>proteins<br>Proteins<br>mdoD<br>Glucans biosynthesis protein D
-  <br>OPG<br>k12<br>K12<p style="font-size: 20px; color: blue">
+  <h2 style="color: blue">Terms</h2>
+  <text>protein</text>
+  <br>Protein
+  <br>proteins
+  <br>Proteins
+  <br>mdoD
+  <br>Glucans biosynthesis protein D
+  <br>OPG
+  <br>k12
+  <br>K12
   <h2 style="color: blue">Delimiters</h2>
   <text>(k12)</text>
-  <br>(protein)<br>(proteins)<br>(Protein)<br>(opg)<br>\nk12\n<br>k12.<br>k12,<br>K12"/<br>k12;<br>k12-<br>k12.<br>k12,
-  <br>k12\",<br>k12\'<br>\nk12\n<br>termiswithinthisline(OPG)termnowreached<br>\nopg\n<br>\nmdoD\n<br>(opg)<br>mdoD!
-  <br>(mdoD)<br>"k12"<br>'k12'<br>opg<br>(K12)<br>OPG-
+  <br>(protein)
+  <br>(proteins)
+  <br>(Protein)
+  <br>(opg)
+  <br>\nk12\n
+  <br>k12.
+  <br>k12,
+  <br>K12"/
+  <br>k12;
+  <br>k12-
+  <br>k12.
+  <br>k12,
+  <br>k12\",
+  <br>k12\'
+  <br>\nk12\n
+  <br>termiswithinthisline(OPG)termnowreached
+  <br>\nopg\n
+  <br>\nmdoD\n
+  <br>(opg)
+  <br>mdoD!
+  <br>(mdoD)
+  <br>"k12"
+  <br>'k12'
+  <br>opg
+  <br>(K12)
+  <br>OPG-
   <br>
-  <p style="font-size: 20px; color: blue">
   <h2 style="color: blue">Other</h2>
   <p id="script-tag-test"></p>
   <script>document.getElementById("script-tag-test").innerHTML = "This sentence that contains the term 'protein' was written in a script tag";</script>
-  sdf Protein sdf<sub>protein in a sub tag<sub>second protein in a sub tag</sub></sub>
-  <p>These terms are within a p tag. protein, Protein, protein-, protein\n. protein\', protein\", (protein), \protein\,
+  <text>sdf Protein sdf<sub>protein in a sub tag<sub>second protein in a sub tag</sub></sub></text>
+  <p>
+    These terms are within a p tag. protein, Protein, protein-, protein\n. protein\', protein\", (protein), \protein\,
     -protein-, \nprotein\n, \'protein\', \"protein\"
     <text>nested protein</text>
     <text>nested protein</text>
@@ -31,12 +61,26 @@
   <h1>Protein H1</h1>
   <h2>Protein H2</h2>
   <h3>Protein H3</h3>
-  <p>Testing if NER works with nested elements<b> k12 nest1,<b> k12 nest2,<b> k12 nest3,<b> k12 nest4,<b> k12 nest5,</b></b></b></b><b>
-    opg</b><b> protein</b><b> k12</b><b>
-    k12</b><b>k12</b><b>k12</b><b>k12</b><b>OPG</b><b>Protein</b><b>k12</b><b>k12</b><b>k12</b><b>k12</b><b>k12</b><b>this
-    should still ner the term k12.</b><b> Proteins</b><b>k12</b><b>k12</b><b>opg</b><b>mdoD</b><b>k12</b><b>mdoD</b></b>
+  <p>
+    Testing if NER works with nested elements
+    <b> k12 nest1,
+      <b> k12 nest2,
+        <b> k12 nest3,
+          <b> k12 nest4,
+            <b> k12 nest5,
+            </b>
+          </b>
+        </b>
+      </b>
+    </b>
   </p>
-  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla Glucans biosynthesis protein D OPG- dolor, et
+  <p>
+    <b>opg</b><b> protein</b><b> k12</b><b>k12</b><b>k12</b><b>k12</b><b>k12</b><b>OPG</b><b>Protein</b>
+    <b>k12</b><b>k12</b><b>k12</b><b>k12</b><b>k12</b><b>this should still ner the term k12.</b>
+    <b> Proteins</b><b>k12</b><b>k12</b><b>opg</b><b>mdoD</b><b>k12</b><b>mdoD</b>
+  </p>
+  <p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla Glucans biosynthesis protein D OPG- dolor, et
     cursus nulla interdum id. Pellentesque habitant k12k12k12 tristique senectus et netus et malesuada fames ac turpis
     egestas. Donec quis (Glucans biosynthesis protein D), ex, sed opg, lectus. Proin lacinia tincidunt fringilla.
     Nunc purus (k12), mdoD! nec protein! et, dictum a dolor. proteinmdoDk12 vel mauris \nmdoD\n. Ut iaculis
@@ -47,7 +91,8 @@
     gravida nec vel diam. Donec ut ante protein. Praesent dui neque, proteins. in sapien mdoD, fringilla ultrices
     tortor.
   </p>
-  <p>This text contains<sub>protein</sub>within sub text and also<sub>protein</sub> within sub text<sub>protein
+  <p>
+    This text contains<sub>protein</sub>within sub text and also<sub>protein</sub> within sub text<sub>protein
       <sub>protein<sub>protein<sub>protein<sub>protein</sub></sub></sub></sub></sub>
   </p>
 </body>
