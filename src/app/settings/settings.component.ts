@@ -62,6 +62,7 @@ export class SettingsComponent implements OnInit {
   save(): void {
     if (this.settingsForm.valid) {
       this.browserService.saveSettings(this.settingsForm.value)
+      this.browserService.sendMessage('settings-changed', this.settingsForm.value)
     }
   }
 

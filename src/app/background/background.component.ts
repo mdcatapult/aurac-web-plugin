@@ -32,7 +32,7 @@ export class BackgroundComponent {
   constructor(private client: HttpClient, private browserService: BrowserService) {
 
     this.browserService.loadSettings().then(settings => {
-      this.settings = settings
+      this.settings = settings || defaultSettings
     })
 
     this.browserService.addListener((msg: Partial<Message>) => {
@@ -47,8 +47,9 @@ export class BackgroundComponent {
           this.loadXRefs(msg.body);
           break;
         }
-        case 'load-settings': {
-          return Promise.resolve(this.settings);
+        case 'settings-changed': {
+          this.settings = msg.body;
+          break;
         }
       }
     });
