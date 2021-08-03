@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {Message, MessageType, StringMessage } from '../types';
+import {Message, MessageType, Settings, StringMessage } from '../types';
 import {LogService} from './popup/log.service';
 import Tab = browser.tabs.Tab;
 
@@ -27,7 +27,22 @@ export class BrowserService {
   sendMessageToTab(tabId: number, message: Message): Promise<void | StringMessage> {
     return browser.tabs.sendMessage<Message, StringMessage>(tabId, message);
   }
+
   sendMessageToActiveTab(msg: Message): Promise<void | StringMessage> {
     return this.getActiveTab().then(tab => this.sendMessageToTab(tab.id!, msg));
+  }
+
+  saveSettings(settings: Settings): void {
+    browser.storage.local.set({settings}).then(
+      () => {},
+      (err) => this.log.Log(`error saving settings', ${err}`)
+    )
+  }
+
+  loadSettings(): Promise<Settings> {
+    return browser.storage.local.get('settings').then(
+      (settings) => Promise.resolve(settings.settings),
+      (err) => this.log.Log(`error saving settings', ${JSON.stringify(err)}`)
+    ) as Promise<Settings>
   }
 }

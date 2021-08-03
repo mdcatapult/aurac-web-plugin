@@ -31,7 +31,10 @@ export class BackgroundComponent {
 
   constructor(private client: HttpClient, private browserService: BrowserService) {
 
-    window.localStorage.setItem('settings', JSON.stringify(this.settings));
+    this.browserService.loadSettings().then(settings => {
+      this.settings = settings
+    })
+
     this.browserService.addListener((msg: Partial<Message>) => {
       console.log('Received message from popup...', msg);
       switch (msg.type) {
@@ -52,7 +55,6 @@ export class BackgroundComponent {
   }
 
   private loadXRefs([entityTerm, resolvedEntity]: [string, string]): void {
-    this.settings = JSON.parse(window.localStorage.getItem('settings')!)
     const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]$/;
     let xRefObservable: Observable<XRef[]>;
     if (resolvedEntity) {
