@@ -6,8 +6,7 @@ export type MessageType =
   | 'markup_page'
   | 'compound_x-refs'
   | 'x-ref_result'
-  | 'save-settings'
-  | 'load-settings'
+  | 'settings-changed'
   | 'log'
   | 'toggle_sidebar'
   | 'sidebar_rendered'
@@ -83,16 +82,24 @@ export type XRef = {
   url: string,
 };
 
+export type Settings = {
+  urls: DictionaryURLs,
+  xRefConfig: {[key: string]: boolean},
+}
+
 export type DictionaryURLs = {
   leadmineURL: string,
   compoundConverterURL: string,
   unichemURL: string,
 };
 
-export const defaultSettings: DictionaryURLs = {
-  leadmineURL: environment.leadmineURL,
-  compoundConverterURL: environment.compoundConverterURL,
-  unichemURL: environment.unichemURL,
+export const defaultSettings: Settings = {
+  urls: {
+    leadmineURL: environment.leadmineURL,
+    compoundConverterURL: environment.compoundConverterURL,
+    unichemURL: environment.unichemURL,
+  },
+  xRefConfig: {},
 };
 
 export const DictionaryURLKeys = {
