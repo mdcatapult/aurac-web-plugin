@@ -29,6 +29,10 @@
     values(): IterableIterator<T> {
       return this.m.values();
     }
+
+    delete(entityText: string) {
+      this.m.delete(entityText.toLowerCase());
+    }
   }
 
   console.log('script loaded');
@@ -44,6 +48,7 @@
   const expandArrow = '&#62;';
   const rightArrow = '&#8594';
   const leftArrow = '&#8592';
+  const crossButton = '&#215;'
   const auracHighlightElements: Array<AuracHighlightHtmlColours> = [];
 
   auracSidebar.appendChild(buttonElement);
@@ -290,7 +295,14 @@
      display: flex;
      justify-content: flex-end;
      flex-direction: row;
-     }`;
+     }
+     .cross-button {
+      color: black;
+      background-color: rgb(192, 192, 192);
+      order: 2;
+      padding: 5px;
+      }
+     `;
     return styleElement;
   };
 
@@ -359,6 +371,7 @@
     const sidebarText: HTMLDivElement = document.createElement('div');
     renderArrowButtonElements(sidebarText, information);
     renderOccurrenceCounts(sidebarText, information);
+    renderCrossButtonElement(sidebarText, information);
 
     sidebarText.id = 'sidebar-text';
     sidebarText.style.border = '1px solid black';
@@ -458,6 +471,27 @@
     const occurrencesElement = document.getElementById(`${arrowProperties.nerTerm}-occurrences`);
     occurrencesElement.innerText = `${arrowProperties.positionInArray + 1} / ${entityToOccurrence.get(arrowProperties.nerTerm).length}`;
     arrowProperties.isClicked = true;
+  }
+
+  function renderCrossButtonElement(sidebarText: HTMLDivElement, information: Information): void {
+    
+    const crossButtonElement = document.createElement('button');
+    crossButtonElement.innerHTML = crossButton;
+    crossButtonElement.className = 'cross-button';
+    sidebarText.appendChild(crossButtonElement);
+
+    crossButtonElement.addEventListener('click', () => {
+      pressCrossButton(information);
+    });
+
+  }
+
+  function pressCrossButton(information: Information): void {
+    entityToDiv.delete(information.entityText);
+    const elementLocator: Element = document.getElementsByClassName(information.entityText)[0];
+    const divToDelete: Node = elementLocator.parentNode
+    const nodeAboveDivToDelete: Node = divToDelete.parentNode
+    nodeAboveDivToDelete.removeChild(divToDelete)
   }
 
   function setNerHtmlColours(highlightedNerTerms: Element[]): void {
