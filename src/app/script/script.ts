@@ -34,6 +34,18 @@
   console.log('script loaded');
 
   const auracSidebar = document.createElement('span');
+  const auracLogo = document.createElement('img');
+  // @ts-ignore
+  auracLogo.src = browser.runtime.getURL('assets/head-brains.png')
+  auracLogo.style.width = '10vw';
+  auracLogo.style.height = '10vw';
+  auracLogo.style.display = 'block';
+  auracLogo.style.marginLeft = 'auto';
+  auracLogo.style.marginRight = 'auto';
+  auracSidebar.appendChild(auracLogo);
+  const narrative = document.createElement('p');
+  narrative.innerText = 'Click on a highlighted entity to display further information and links below'
+  auracSidebar.appendChild(narrative);
   const buttonElement = document.createElement('button');
 
   const sidebarOpenScreenWidth = '80vw';
