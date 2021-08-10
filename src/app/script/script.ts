@@ -35,16 +35,13 @@
 
   const auracSidebar = document.createElement('span');
   const auracLogo = document.createElement('img');
+  auracLogo.id = 'aurac-logo';
   // @ts-ignore
   auracLogo.src = browser.runtime.getURL('assets/head-brains.png')
-  auracLogo.style.width = '10vw';
-  auracLogo.style.height = '10vw';
-  auracLogo.style.display = 'block';
-  auracLogo.style.marginLeft = 'auto';
-  auracLogo.style.marginRight = 'auto';
   auracSidebar.appendChild(auracLogo);
-  const narrative = document.createElement('p');
-  narrative.innerText = 'Click on a highlighted entity to display further information and links below'
+  const narrative = document.createElement('h4');
+  narrative.innerText = 'Click on a highlighted entity to display further information and links below...'
+  narrative.id = 'aurac-narrative';
   auracSidebar.appendChild(narrative);
   const buttonElement = document.createElement('button');
 
@@ -302,6 +299,18 @@
      display: flex;
      justify-content: flex-end;
      flex-direction: row;
+     }
+     #aurac-logo {
+     width: 5vw;
+     height: 5vw;
+     display: block;
+     margin-left: auto;
+     margin-right: auto;
+     margin-top: 0.3vw;
+     margin-bottom: 0.3vw;
+     }
+     #aurac-narrative {
+     text-align: center;
      }`;
     return styleElement;
   };
@@ -341,6 +350,7 @@
       if (event.type !== 'click') {
         return;
       }
+      document.getElementById('aurac-narrative').style.display = 'none';
       if (getAuracHighlightChildren(element).some(child => child.className === 'aurac-highlight')
         && element.parentElement.className === 'aurac-highlight') {
         removeEventListener('click', populateAuracSidebar(info, element));
