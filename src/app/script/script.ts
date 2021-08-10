@@ -32,6 +32,9 @@
 
     delete(entityText: string) {
       this.m.delete(entityText.toLowerCase());
+      if (this.m.size === 0) {
+        document.getElementById('aurac-narrative').style.display = 'block';
+      }
     }
   }
 
