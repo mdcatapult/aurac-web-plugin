@@ -30,7 +30,7 @@
       return this.m.values();
     }
 
-    delete(entityText: string) {
+    delete(entityText: string): void {
       this.m.delete(entityText.toLowerCase());
       if (this.m.size === 0) {
         document.getElementById('aurac-narrative').style.display = 'block';
@@ -396,7 +396,7 @@
     const sidebarText: HTMLDivElement = document.createElement('div');
     renderArrowButtonElements(sidebarText, information);
     renderOccurrenceCounts(sidebarText, information);
-    renderCrossButtonElement(sidebarText, information);
+    renderRemoveEntityFromSidebarButtonElement(sidebarText, information);
 
     sidebarText.id = 'sidebar-text';
     sidebarText.style.border = '1px solid black';
@@ -498,25 +498,27 @@
     arrowProperties.isClicked = true;
   }
 
-  function renderCrossButtonElement(sidebarText: HTMLDivElement, information: Information): void {
+  function renderRemoveEntityFromSidebarButtonElement(sidebarText: HTMLDivElement, information: Information): void {
 
-    const crossButtonElement = document.createElement('button');
-    crossButtonElement.innerHTML = crossButton;
-    crossButtonElement.className = 'cross-button';
-    sidebarText.appendChild(crossButtonElement);
+    const removeEntityFromSidebarButtonElement = document.createElement('button');
+    removeEntityFromSidebarButtonElement.innerHTML = crossButton;
+    removeEntityFromSidebarButtonElement.className = 'cross-button';
+    sidebarText.appendChild(removeEntityFromSidebarButtonElement);
 
-    crossButtonElement.addEventListener('click', () => {
-      pressCrossButton(information);
+    removeEntityFromSidebarButtonElement.addEventListener('click', () => {
+      pressRemoveEntityFromSidebarButtonElement(information);
     });
 
   }
 
-  function pressCrossButton(information: Information): void {
+  function pressRemoveEntityFromSidebarButtonElement(information: Information): void {
+    if (!document.getElementsByClassName(information.entityText).length){
+      return;
+    }
     entityToDiv.delete(information.entityText);
     const elementLocator: Element = document.getElementsByClassName(information.entityText)[0];
-    const divToDelete: Node = elementLocator.parentNode
-    const nodeAboveDivToDelete: Node = divToDelete.parentNode
-    nodeAboveDivToDelete.removeChild(divToDelete)
+    const divToDelete: Element = elementLocator.parentElement;
+    divToDelete.remove()
   }
 
   function setNerHtmlColours(highlightedNerTerms: Element[]): void {
