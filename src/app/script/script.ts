@@ -516,7 +516,21 @@
       return;
     }
     entityToDiv.delete(information.entityText);
-    const elementLocator: Element = document.getElementsByClassName(information.entityText)[0];
+    var elementList: HTMLCollectionOf<Element> = document.getElementsByClassName(information.entityText);
+    if (elementList.length > 1) {
+      for(let i = 0; i < elementList.length; i++){
+        if (elementList.item(i).className === information.entityText){
+          console.log(information.entityText)
+          const elementLocator: Element = elementList.item(i);
+          console.log(elementLocator)
+          const divToDelete: Element = elementLocator.parentElement;
+          console.log(divToDelete)
+          divToDelete.remove()
+        }
+      }
+      return
+    }
+    const elementLocator: Element = elementList[0];
     const divToDelete: Element = elementLocator.parentElement;
     divToDelete.remove()
   }
