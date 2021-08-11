@@ -1,0 +1,16 @@
+<div *ngIf="preferencesForm">
+  <form [formGroup]="preferencesForm">
+    <table class="table">
+      <tr *ngFor="let length of WordLengthLimit">
+        <td>
+          <label [for]="length.name">
+            {{length.name}}
+          </label>
+        </td>
+        <td>
+          <input type="checkbox" [id]="length.key" [value]="length.value" [formControlName]="length.key">
+        </td>
+      </tr>
+    </table>
+  </form>
+</div>

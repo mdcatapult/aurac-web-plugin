@@ -14,6 +14,7 @@ import {UrlsComponent} from './urls/urls.component';
 import {ReactiveFormsModule} from '@angular/forms';
 import { XRefSourcesComponent } from './x-ref-sources/x-ref-sources.component';
 import { SettingsComponent } from './settings/settings.component';
+import { PreferencesComponent } from './preferences/preferences.component';
 
 const routes: Routes = [
   {path: '**', component: RouterComponent}
@@ -28,7 +29,8 @@ const routes: Routes = [
     RouterComponent,
     UrlsComponent,
     XRefSourcesComponent,
-    SettingsComponent
+    SettingsComponent,
+    PreferencesComponent
   ],
   imports: [
     BrowserModule,

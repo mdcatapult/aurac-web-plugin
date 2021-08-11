@@ -39,6 +39,7 @@ export class SettingsComponent implements OnInit {
       )
     }),
     xRefConfig: new FormGroup({}),
+    preferences: new FormGroup({})
   });
 
   ngOnInit(): void {
