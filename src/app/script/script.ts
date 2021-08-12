@@ -29,6 +29,10 @@
     values(): IterableIterator<T> {
       return this.m.values();
     }
+
+    delete(entityText: string): void {
+      this.m.delete(entityText.toLowerCase());
+    }
   }
 
   console.log('script loaded');
@@ -44,6 +48,7 @@
   const expandArrow = '&#62;';
   const rightArrow = '&#8594';
   const leftArrow = '&#8592';
+  const crossButton = '&#215;'
   const auracHighlightElements: Array<AuracHighlightHtmlColours> = [];
 
   auracSidebar.appendChild(buttonElement);
@@ -290,7 +295,16 @@
      display: flex;
      justify-content: flex-end;
      flex-direction: row;
-     }`;
+     }
+     .cross-button {
+      position: relative;
+      top: -45px;
+      left: 1px;
+      color: red;
+      background-color: rgb(192, 192, 192);
+      padding: 5px;
+      }
+     `;
     return styleElement;
   };
 
@@ -359,6 +373,7 @@
     const sidebarText: HTMLDivElement = document.createElement('div');
     renderArrowButtonElements(sidebarText, information);
     renderOccurrenceCounts(sidebarText, information);
+    renderRemoveEntityFromSidebarButtonElement(sidebarText, information);
 
     sidebarText.id = 'sidebar-text';
     sidebarText.style.border = '1px solid black';
@@ -459,6 +474,34 @@
     occurrencesElement.innerText = `${arrowProperties.positionInArray + 1} / ${entityToOccurrence.get(arrowProperties.nerTerm).length}`;
     arrowProperties.isClicked = true;
   }
+
+  function renderRemoveEntityFromSidebarButtonElement(sidebarText: HTMLDivElement, information: Information): void {
+    
+    const removeEntityFromSidebarButtonElement = document.createElement('button');
+    removeEntityFromSidebarButtonElement.innerHTML = crossButton;
+    removeEntityFromSidebarButtonElement.className = 'cross-button';
+    sidebarText.appendChild(removeEntityFromSidebarButtonElement);
+
+    removeEntityFromSidebarButtonElement.addEventListener('click', () => {
+      pressRemoveEntityFromSidebarButtonElement(information);
+    });
+
+  }
+
+  function pressRemoveEntityFromSidebarButtonElement(information: Information): void {
+    if (!document.getElementsByClassName(information.entityText).length){
+      return;
+    }
+    entityToDiv.delete(information.entityText);
+    var elementList: HTMLCollectionOf<Element> = document.getElementsByClassName(information.entityText);
+    for(let i = 0; i < elementList.length; i++){
+      if (elementList.item(i).className === information.entityText){
+        const elementLocator: Element = elementList.item(i);
+        const divToDelete: Element = elementLocator.parentElement;
+        divToDelete.remove();
+      };
+    };
+  };
 
   function setNerHtmlColours(highlightedNerTerms: Element[]): void {
     highlightedNerTerms.forEach(element => {
