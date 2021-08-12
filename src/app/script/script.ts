@@ -297,9 +297,11 @@
      flex-direction: row;
      }
      .cross-button {
-      color: black;
+      position: absolute;
+      top: 1%;
+      left: 2%;
+      color: red;
       background-color: rgb(192, 192, 192);
-      order: 2;
       padding: 5px;
       }
      `;
