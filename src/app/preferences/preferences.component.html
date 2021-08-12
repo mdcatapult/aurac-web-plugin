@@ -1,14 +1,24 @@
 <div *ngIf="preferencesForm">
   <form [formGroup]="preferencesForm">
     <table class="table">
-      <tr *ngFor="let length of WordLengthLimit">
+      <tr>
         <td>
-          <label [for]="length.name">
-            {{length.name}}
+          <label [for]="settings.hideUnresolved">
+            Hide unresolved entities
           </label>
         </td>
         <td>
-          <input type="checkbox" [id]="length.key" [value]="length.value" [formControlName]="length.key">
+          <input type="checkbox" [checked]="settings.hideUnresolved" [formControlName]="settings.hideUnresolved">
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label [for]="settings.minEntityLength">
+          Minimum entity length
+          </label>
+        </td>
+        <td>
+          <input type="number" [value]="settings.minEntityLength" min="1" [formControlName]="settings.minEntityLength">
         </td>
       </tr>
     </table>

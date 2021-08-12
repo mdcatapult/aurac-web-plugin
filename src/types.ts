@@ -82,9 +82,15 @@ export type XRef = {
   url: string,
 };
 
+export type Preferences = {
+  hideUnresolved: boolean,
+  minEntityLength: number
+}
+
 export type Settings = {
   urls: DictionaryURLs,
   xRefConfig: {[key: string]: boolean},
+  preferences: Preferences
 }
 
 export type DictionaryURLs = {
@@ -100,6 +106,10 @@ export const defaultSettings: Settings = {
     unichemURL: environment.unichemURL,
   },
   xRefConfig: {},
+  preferences: {
+    hideUnresolved: true,
+    minEntityLength: 2
+  }
 };
 
 export const DictionaryURLKeys = {

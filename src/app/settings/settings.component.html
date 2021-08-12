@@ -20,9 +20,10 @@
       ></app-x-ref-sources>
     </mat-tab>
     <mat-tab label="Preferences">
-      <app-preferences>
-
-      </app-preferences>
+      <app-preferences
+        [preferencesForm]="settingsForm.get('preferences')"
+        [settings]="settings ? settings.preferences: preferences"
+      ></app-preferences>
     </mat-tab>
   </mat-tab-group>
 
