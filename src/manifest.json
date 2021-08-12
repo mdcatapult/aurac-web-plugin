@@ -1,6 +1,6 @@
 {
   "name": "Aurac",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "description": "NER browser extension",
   "manifest_version": 2,
   "browser_action": {
@@ -29,5 +29,7 @@
     "48": "assets/head-brains.icon.48.png",
     "128": "assets/head-brains.icon.128.png"
   },
-  "web_accessible_resources": ["assets/head-brains.png"]
+  "web_accessible_resources": [
+    "assets/head-brains.png"
+  ]
 }
