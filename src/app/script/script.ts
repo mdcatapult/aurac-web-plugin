@@ -32,12 +32,24 @@
 
     delete(entityText: string): void {
       this.m.delete(entityText.toLowerCase());
+      if (this.m.size === 0) {
+        document.getElementById('aurac-narrative').style.display = 'block';
+      }
     }
   }
 
   console.log('script loaded');
 
   const auracSidebar = document.createElement('span');
+  const auracLogo = document.createElement('img');
+  auracLogo.id = 'aurac-logo';
+  // @ts-ignore
+  auracLogo.src = browser.runtime.getURL('assets/head-brains.png')
+  auracSidebar.appendChild(auracLogo);
+  const narrative = document.createElement('h4');
+  narrative.innerText = 'Click on a highlighted entity to display further information and links below...'
+  narrative.id = 'aurac-narrative';
+  auracSidebar.appendChild(narrative);
   const buttonElement = document.createElement('button');
 
   const sidebarOpenScreenWidth = '80vw';
@@ -296,6 +308,18 @@
      justify-content: flex-end;
      flex-direction: row;
      }
+     #aurac-logo {
+     width: 5vw;
+     height: 5vw;
+     display: block;
+     margin-left: auto;
+     margin-right: auto;
+     margin-top: 0.3vw;
+     margin-bottom: 0.3vw;
+     }
+     #aurac-narrative {
+     text-align: center;
+     }
      .cross-button {
       position: relative;
       top: -45px;
@@ -343,6 +367,7 @@
       if (event.type !== 'click') {
         return;
       }
+      document.getElementById('aurac-narrative').style.display = 'none';
       if (getAuracHighlightChildren(element).some(child => child.className === 'aurac-highlight')
         && element.parentElement.className === 'aurac-highlight') {
         removeEventListener('click', populateAuracSidebar(info, element));
@@ -476,7 +501,7 @@
   }
 
   function renderRemoveEntityFromSidebarButtonElement(sidebarText: HTMLDivElement, information: Information): void {
-    
+
     const removeEntityFromSidebarButtonElement = document.createElement('button');
     removeEntityFromSidebarButtonElement.innerHTML = crossButton;
     removeEntityFromSidebarButtonElement.className = 'cross-button';
