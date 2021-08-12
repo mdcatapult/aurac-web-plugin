@@ -321,9 +321,11 @@
      text-align: center;
      }
      .cross-button {
-      color: black;
+      position: relative;
+      top: -45px;
+      left: 1px;
+      color: red;
       background-color: rgb(192, 192, 192);
-      order: 2;
       padding: 5px;
       }
      `;
@@ -517,23 +519,14 @@
     }
     entityToDiv.delete(information.entityText);
     var elementList: HTMLCollectionOf<Element> = document.getElementsByClassName(information.entityText);
-    if (elementList.length > 1) {
-      for(let i = 0; i < elementList.length; i++){
-        if (elementList.item(i).className === information.entityText){
-          console.log(information.entityText)
-          const elementLocator: Element = elementList.item(i);
-          console.log(elementLocator)
-          const divToDelete: Element = elementLocator.parentElement;
-          console.log(divToDelete)
-          divToDelete.remove()
-        }
-      }
-      return
-    }
-    const elementLocator: Element = elementList[0];
-    const divToDelete: Element = elementLocator.parentElement;
-    divToDelete.remove()
-  }
+    for(let i = 0; i < elementList.length; i++){
+      if (elementList.item(i).className === information.entityText){
+        const elementLocator: Element = elementList.item(i);
+        const divToDelete: Element = elementLocator.parentElement;
+        divToDelete.remove();
+      };
+    };
+  };
 
   function setNerHtmlColours(highlightedNerTerms: Element[]): void {
     highlightedNerTerms.forEach(element => {
