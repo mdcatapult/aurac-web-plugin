@@ -1,24 +1,16 @@
 <div *ngIf="preferencesForm">
   <form [formGroup]="preferencesForm">
     <table class="table">
-      <tr>
+      <tr *ngFor="let preference of preferencesForm.value | keyvalue">
         <td>
-          <label [for]="settings.hideUnresolved">
-            Hide unresolved entities
+          <label [for]="preference.key">
+            {{preference.key}}
           </label>
         </td>
         <td>
-          <input type="checkbox" [checked]="settings.hideUnresolved" [formControlName]="settings.hideUnresolved">
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <label [for]="settings.minEntityLength">
-          Minimum entity length
-          </label>
-        </td>
-        <td>
-          <input type="number" [value]="settings.minEntityLength" min="1" [formControlName]="settings.minEntityLength">
+          <input [type]="preference.key === 'minEntityLength' ? 'number' : 'checkbox'"
+                 [value]="preference.value"
+                 [formControlName]="preference.key">
         </td>
       </tr>
     </table>

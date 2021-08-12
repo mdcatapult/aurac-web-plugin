@@ -1,33 +1,17 @@
-import {Component, Input, OnChanges, OnInit} from '@angular/core';
-import {FormGroup, FormControl} from '@angular/forms';
-import {Preferences} from '../../types';
-import {BrowserService} from '../browser.service';
+import {Component, Input, OnChanges} from '@angular/core';
+import {FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'app-preferences',
   templateUrl: './preferences.component.html',
   styleUrls: ['./preferences.component.scss']
 })
-export class PreferencesComponent implements OnInit, OnChanges {
+export class PreferencesComponent implements OnChanges {
 
   @Input() preferencesForm?: FormGroup;
-  @Input() settings: Preferences = {} as Preferences;
 
-  constructor(private browserService: BrowserService) {}
-
-  ngOnInit(): void {
-    this.browserService.loadSettings().then(settings => {
-      this.refresh(settings.preferences)
-    })
-  }
+  constructor() {}
 
   ngOnChanges(): void {}
-
-  private refresh(preferences: Preferences): void {
-      Object.keys(this.settings).forEach(pref => {
-        const initialValue = preferences[pref as keyof Preferences]
-        this.preferencesForm!.addControl(pref, new FormControl(initialValue))
-      })
-    }
 
 }

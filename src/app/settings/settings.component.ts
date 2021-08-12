@@ -16,10 +16,9 @@ export class SettingsComponent implements OnInit {
   @Output() saved = new EventEmitter<DictionaryURLs>();
   @Output() closed = new EventEmitter<boolean>();
 
-  private fb = new FormBuilder()
-  settings?: Settings
+  private fb = new FormBuilder();
+  settings?: Settings;
   dictionaryUrls = defaultSettings.urls;
-  preferences: Preferences = {} as Preferences;
 
   constructor(private log: LogService, private browserService: BrowserService) {
   }
@@ -40,41 +39,48 @@ export class SettingsComponent implements OnInit {
       )
     }),
     xRefConfig: new FormGroup({}),
-    preferences: new FormGroup({})
+    preferences: this.fb.group({
+      hideUnresolved: new FormControl(
+        defaultSettings.preferences.hideUnresolved
+      ),
+      minEntityLength: new FormControl(
+        defaultSettings.preferences.minEntityLength
+      )
+    })
   });
 
   ngOnInit(): void {
     this.browserService.loadSettings().then(settings => {
-      this.settings = settings || defaultSettings
-      this.settingsForm.reset(this.settings)
-    })
+      this.settings = settings || defaultSettings;
+      this.settingsForm.reset(this.settings);
+    });
 
     this.settingsForm.valueChanges.subscribe(settings => {
 
       if (this.settingsForm.valid) {
-        this.settings!.urls = settings.urls
-        this.save()
+        this.settings!.urls = settings.urls;
+        this.save();
       } else {
         this.log.Info('error, dictionary URLs invalid');
       }
-    })
+    });
   }
 
 
   save(): void {
     if (this.settingsForm.valid) {
-      this.browserService.saveSettings(this.settingsForm.value)
-      this.browserService.sendMessage('settings-changed', this.settingsForm.value)
+      this.browserService.saveSettings(this.settingsForm.value);
+      this.browserService.sendMessage('settings-changed', this.settingsForm.value);
     }
   }
 
   reset(): void {
-    this.settingsForm.reset(defaultSettings)
+    this.settingsForm.reset(defaultSettings);
   }
 
   closeSettings(): void {
     if (!this.settingsForm.valid) {
-      this.settingsForm.get('urls')!.reset(defaultSettings.urls)
+      this.settingsForm.get('urls')!.reset(defaultSettings.urls);
     }
     this.closed.emit(true);
   }
