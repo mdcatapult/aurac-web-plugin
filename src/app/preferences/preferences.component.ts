@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 
 @Component({
@@ -6,12 +6,16 @@ import {FormGroup} from '@angular/forms';
   templateUrl: './preferences.component.html',
   styleUrls: ['./preferences.component.scss']
 })
-export class PreferencesComponent implements OnChanges {
+export class PreferencesComponent implements OnInit {
 
+  isLoaded = false;
   @Input() preferencesForm?: FormGroup;
 
   constructor() {}
 
-  ngOnChanges(): void {}
+  ngOnInit(): void {
+    this.isLoaded = true;
+  }
 
 }
+

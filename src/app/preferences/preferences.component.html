@@ -1,18 +1,28 @@
-<div *ngIf="preferencesForm">
+<div *ngIf="isLoaded">
   <form [formGroup]="preferencesForm">
     <table class="table">
-      <tr *ngFor="let preference of preferencesForm.value | keyvalue">
+      <tr>
         <td>
-          <label [for]="preference.key">
-            {{preference.key}}
+          <label [for]="preferencesForm!.get('hideUnresolved')">
+            Hide unresolved entities
           </label>
         </td>
         <td>
-          <input [type]="preference.key === 'minEntityLength' ? 'number' : 'checkbox'"
-                 [value]="preference.value"
-                 [formControlName]="preference.key">
+          <input type="checkbox"
+                 [formControl]="preferencesForm!.get('hideUnresolved')">
+        </td>
+      </tr>
+      <tr>
+        <td>
+            Minimum entity length
+        </td>
+        <td>
+          <input type="number"
+                 [formControl]="preferencesForm!.get('minEntityLength')"
+                 min="1">
         </td>
       </tr>
     </table>
   </form>
 </div>
+

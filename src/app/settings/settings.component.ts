@@ -19,6 +19,7 @@ export class SettingsComponent implements OnInit {
   private fb = new FormBuilder();
   settings?: Settings;
   dictionaryUrls = defaultSettings.urls;
+  preferences: Preferences = {} as Preferences;
 
   constructor(private log: LogService, private browserService: BrowserService) {
   }
