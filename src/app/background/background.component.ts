@@ -8,7 +8,7 @@ import {
   DictionaryURLs,
   LeadminerEntity,
   LeadminerResult,
-  Message,
+  Message, Preferences,
   Settings,
   StringMessage,
   XRef
@@ -49,14 +49,17 @@ export class BackgroundComponent {
           break;
         }
         case 'settings-changed': {
+          const minEntityLengthChanged = this.settings.preferences.minEntityLength !== (msg.body as Settings).preferences.minEntityLength;
           this.settings = msg.body;
-          this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
-            .catch(e => console.error(e))
-            .then(() => {
-              if (this.leadmineResult) {
-                this.getUniqueEntities(this.leadmineResult);
-              }
-            });
+          if (minEntityLengthChanged) {
+            this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
+              .catch(e => console.error(e))
+              .then(() => {
+                if (this.leadmineResult) {
+                  this.getUniqueEntities(this.leadmineResult);
+                }
+              });
+          }
           break;
         }
       }
