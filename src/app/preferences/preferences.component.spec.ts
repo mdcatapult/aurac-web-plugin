@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PreferencesComponent } from './preferences.component';
+import {ReactiveFormsModule} from '@angular/forms';
 
 describe('PreferencesComponent', () => {
   let component: PreferencesComponent;
@@ -8,7 +9,8 @@ describe('PreferencesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PreferencesComponent ]
+      declarations: [ PreferencesComponent ],
+      imports: [ReactiveFormsModule]
     })
     .compileComponents();
   });
