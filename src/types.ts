@@ -10,7 +10,8 @@ export type MessageType =
   | 'log'
   | 'toggle_sidebar'
   | 'sidebar_rendered'
-  | 'ner_lookup_performed';
+  | 'ner_lookup_performed'
+  | 'remove_highlights';
 
 export interface Message {
   type: MessageType;

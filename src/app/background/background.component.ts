@@ -28,12 +28,13 @@ export class BackgroundComponent {
 
   settings: Settings = defaultSettings;
   dictionary?: validDict;
+  leadmineResult?: LeadminerResult;
 
   constructor(private client: HttpClient, private browserService: BrowserService) {
 
     this.browserService.loadSettings().then(settings => {
-      this.settings = settings || defaultSettings
-    })
+      this.settings = settings || defaultSettings;
+    });
 
     this.browserService.addListener((msg: Partial<Message>) => {
       console.log('Received message from popup...', msg);
@@ -49,6 +50,13 @@ export class BackgroundComponent {
         }
         case 'settings-changed': {
           this.settings = msg.body;
+          this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
+            .catch(e => console.error(e))
+            .then(() => {
+              if (this.leadmineResult) {
+                this.getUniqueEntities(this.leadmineResult);
+              }
+            });
           break;
         }
       }
@@ -95,7 +103,7 @@ export class BackgroundComponent {
       xref.compoundName = entityTerm;
     }
     return xref;
-  }))
+  }));
 
 
   private nerCurrentPage(dictionary: validDict): void {
@@ -126,24 +134,29 @@ export class BackgroundComponent {
             if (!response.body) {
               return;
             }
-            const uniqueEntities = this.getUniqueEntities(response.body!);
-            this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
-              .catch(e => console.error(e));
+            this.leadmineResult = response.body;
+            this.getUniqueEntities(this.leadmineResult!);
+
           });
       });
   }
 
-  getUniqueEntities(leadmineResponse: LeadminerResult): Array<LeadminerEntity> {
+  getUniqueEntities(leadmineResponse: LeadminerResult): void {
     const uniqueEntities = new Array<LeadminerEntity>();
-    leadmineResponse.entities.forEach((entity: LeadminerEntity) => {
-      if (uniqueEntities.every(uniqueEntity => uniqueEntity.entityText !== entity.entityText)) {
-        uniqueEntities.push(entity);
-      }
-    });
-    return uniqueEntities;
+    leadmineResponse.entities.filter(entity => {
+      return entity.resolvedEntity && entity.entityText.length >= this.settings.preferences.minEntityLength;
+    })
+      .forEach((entity: LeadminerEntity) => {
+        if (uniqueEntities.every(uniqueEntity => uniqueEntity.entityText !== entity.entityText)) {
+          uniqueEntities.push(entity);
+        }
+      });
+    // return uniqueEntities;
+    this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
+      .catch(e => console.error(e));
   }
 
-  private getTrueKeys(v: {[_: string]: boolean}): string[] {
+  private getTrueKeys(v: { [_: string]: boolean }): string[] {
     return Object.keys(v).filter(k => v[k] === true);
   }
 }

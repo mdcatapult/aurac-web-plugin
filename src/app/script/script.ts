@@ -44,10 +44,10 @@
   const auracLogo = document.createElement('img');
   auracLogo.id = 'aurac-logo';
   // @ts-ignore
-  auracLogo.src = browser.runtime.getURL('assets/head-brains.png')
+  auracLogo.src = browser.runtime.getURL('assets/head-brains.png');
   auracSidebar.appendChild(auracLogo);
   const narrative = document.createElement('h4');
-  narrative.innerText = 'Click on a highlighted entity to display further information and links below...'
+  narrative.innerText = 'Click on a highlighted entity to display further information and links below...';
   narrative.id = 'aurac-narrative';
   auracSidebar.appendChild(narrative);
   const buttonElement = document.createElement('button');
@@ -60,7 +60,7 @@
   const expandArrow = '&#62;';
   const rightArrow = '&#8594';
   const leftArrow = '&#8592';
-  const crossButton = '&#215;'
+  const crossButton = '&#215;';
   const auracHighlightElements: Array<AuracHighlightHtmlColours> = [];
 
   auracSidebar.appendChild(buttonElement);
@@ -198,6 +198,9 @@
       case 'ner_lookup_performed':
         hasNERLookupOccurred = true;
         break;
+      case 'remove_highlights':
+        removeHighlights();
+        break;
       default:
         throw new Error('Received unexpected message from plugin');
     }
@@ -236,6 +239,11 @@
         }
       }
     }
+  }
+
+  function removeHighlights() {
+    return Array.from(document.getElementsByClassName('aurac-highlight'))
+      .forEach(element => element.replaceWith(...Array.from(element.childNodes)))
   }
 
   function addHighlightAndEventListeners(selector: Element[], entity: Information) {
@@ -514,19 +522,19 @@
   }
 
   function pressRemoveEntityFromSidebarButtonElement(information: Information): void {
-    if (!document.getElementsByClassName(information.entityText).length){
+    if (!document.getElementsByClassName(information.entityText).length) {
       return;
     }
     entityToDiv.delete(information.entityText);
-    var elementList: HTMLCollectionOf<Element> = document.getElementsByClassName(information.entityText);
-    for(let i = 0; i < elementList.length; i++){
-      if (elementList.item(i).className === information.entityText){
+    const elementList: HTMLCollectionOf<Element> = document.getElementsByClassName(information.entityText);
+    for (let i = 0; i < elementList.length; i++) {
+      if (elementList.item(i).className === information.entityText) {
         const elementLocator: Element = elementList.item(i);
         const divToDelete: Element = elementLocator.parentElement;
         divToDelete.remove();
-      };
-    };
-  };
+      }
+    }
+  }
 
   function setNerHtmlColours(highlightedNerTerms: Element[]): void {
     highlightedNerTerms.forEach(element => {
