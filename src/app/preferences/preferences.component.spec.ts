@@ -1,16 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PreferencesComponent } from './preferences.component';
-import {ReactiveFormsModule} from '@angular/forms';
+import {FormBuilder, FormControl} from '@angular/forms';
+import {defaultSettings} from '../../types';
 
 describe('PreferencesComponent', () => {
   let component: PreferencesComponent;
   let fixture: ComponentFixture<PreferencesComponent>;
+  const fb = new FormBuilder();
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PreferencesComponent ],
-      imports: [ReactiveFormsModule]
+      declarations: [ PreferencesComponent ]
     })
     .compileComponents();
   });
@@ -18,6 +19,14 @@ describe('PreferencesComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(PreferencesComponent);
     component = fixture.componentInstance;
+    component.preferencesForm = fb.group({
+      hideUnresolved: new FormControl(
+        defaultSettings.preferences.hideUnresolved
+      ),
+      minEntityLength: new FormControl(
+        defaultSettings.preferences.minEntityLength
+      )
+    })
     fixture.detectChanges();
   });
 
