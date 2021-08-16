@@ -17,9 +17,10 @@
             Minimum entity length
         </td>
         <td>
-          <input type="number"
-                 [formControl]="preferencesForm!.get('minEntityLength')"
-                 min="1">
+          <input type="text"
+                 [ngStyle]="{'border': preferencesForm!.get('minEntityLength')!
+                 .valid ? '1px solid gray' : '1px solid red'}"
+                 [formControl]="preferencesForm!.get('minEntityLength')">
         </td>
       </tr>
     </table>

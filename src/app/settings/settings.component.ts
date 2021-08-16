@@ -45,7 +45,8 @@ export class SettingsComponent implements OnInit {
         defaultSettings.preferences.hideUnresolved
       ),
       minEntityLength: new FormControl(
-        defaultSettings.preferences.minEntityLength
+        defaultSettings.preferences.minEntityLength,
+        Validators.pattern(/^[1-9]$/)
       )
     })
   });
