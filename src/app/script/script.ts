@@ -64,11 +64,6 @@
   const auracHighlightElements: Array<AuracHighlightHtmlColours> = [];
 
   auracSidebar.appendChild(buttonElement);
-  const delimiters: string[] = ['(', ')', '\\n', '\'', '\"', ',', ';', '.', '-'];
-  const noSpace = '';
-  const space = ' ';
-
-  auracSidebar.appendChild(buttonElement);
   buttonElement.innerHTML = collapseArrow;
   buttonElement.className = 'sidebar-button';
   buttonElement.id = 'button-id';
@@ -243,7 +238,7 @@
 
   function removeHighlights() {
     return Array.from(document.getElementsByClassName('aurac-highlight'))
-      .forEach(element => element.replaceWith(...Array.from(element.childNodes)))
+      .forEach(element => element.replaceWith(...Array.from(element.childNodes)));
   }
 
   function addHighlightAndEventListeners(selector: Element[], entity: Information) {
@@ -670,34 +665,46 @@
 
   const allowedTagType = (element: HTMLElement): boolean => !forbiddenTags.some(tag => element instanceof tag);
 
-  // If a string contains at least one instance of a particular term between word boundaries then return true
+  const delimiters: string[] = ['(', ')', '\\n', '\'', '\"', ',', ';', '.'];
+
+  // Returns true if a string contains at least one instance of a particular term between word boundaries, i.e. not immediately
+  // followed or preceded by either a non white-space character or one of the special characters in the delimiters array.
   // Can handle non latin unicode terms which at the moment JS Regex can't.
   function textContainsTerm(text: string, term: string): boolean {
+    const startsWithWhiteSpaceRegex = /^\s+.*/;
+    const endsWithWhiteSpaceRegex = /.*\s+$/;
     let currentText = '';
     const found: string[] = [];
     let foundTerm = false;
+
     // First check if the term is found within the entire string
     // If it does then step through the string 1 letter at a time until it matches the term.
     // Then check if the matched part is inside a word boundary.
     if (text.includes(term)) {
-      text.split('').forEach(letter => {
+      text.split('').forEach((letter) => {
         currentText += letter;
+
         if (currentText.includes(term) && !foundTerm) {
-          const removeTermFromCurrentText: string = currentText.replace(term, '');
+          const textPrecedingTerm: string = currentText.replace(term, '');
+
           // Find the remaining bit of text but also remove any line breaks from it
-          const remainingText: string = text.slice(currentText.length);
+          const textFollowingTerm: string = text.slice(currentText.length);
+
           // We found the string but is it in the middle of something else like abcdMyString1234? ie is it a word boundary or not
           // or is it at the start or end of the string. If it's within a word boundary we don't want to highlight it. If however, it is
           // encapsulated by a special character delimiter then we do.
-          if ((removeTermFromCurrentText === noSpace || removeTermFromCurrentText.charAt(removeTermFromCurrentText.length - 1)
-            === space) && (remainingText.startsWith(space) || remainingText === noSpace)) {
+          if (
+            (textPrecedingTerm.match(endsWithWhiteSpaceRegex) || !textPrecedingTerm.length) &&
+            (textFollowingTerm.match(startsWithWhiteSpaceRegex) || !textFollowingTerm.length)) {
             found.push(term);
             foundTerm = true;
           } else {
             delimiters.forEach((character) => {
-              if (removeTermFromCurrentText.includes(character) ||
-                remainingText.endsWith(character) ||
-                remainingText.startsWith(character)) {
+              if (
+                (textPrecedingTerm.endsWith(character) &&
+                  (textFollowingTerm.match(startsWithWhiteSpaceRegex) || !textFollowingTerm.length)) ||
+                (textFollowingTerm.startsWith(character) &&
+                  (textPrecedingTerm.match(endsWithWhiteSpaceRegex) || !textPrecedingTerm.length))) {
                 found.push(term);
                 foundTerm = true;
               }
