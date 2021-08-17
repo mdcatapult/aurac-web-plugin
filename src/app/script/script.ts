@@ -40,6 +40,19 @@
 
   console.log('script loaded');
 
+  let markup: {
+    beg: number,
+    begInNormalizedDoc: number,
+    end: number,
+    endInNormalizedDoc: number,
+    entityGroup: string,
+    entityText: string,
+    possiblyCorrectedText: string,
+    recognisingDict: { htmlColor: string },
+    resolvedEntity: string,
+    sectionType: string,
+  } = undefined
+
   const auracSidebar = document.createElement('span');
   const auracLogo = document.createElement('img');
   auracLogo.id = 'aurac-logo';
@@ -148,9 +161,9 @@
     }
   }
 
-  const sidebarTexts = document.createElement('div');
-  auracSidebar.appendChild(sidebarTexts);
-  const entityToDiv = new EntityMap<HTMLDivElement>();
+  const sidebarCards = document.createElement('div');
+  auracSidebar.appendChild(sidebarCards);
+  const entityToCard = new EntityMap<{ synonyms: string[], div: HTMLDivElement }>();
   const entityToOccurrence = new EntityMap<Element[]>();
   buttonElement.addEventListener('click', () => {
     if (document.body.style.width === sidebarOpenScreenWidth || document.body.style.width === sidebarClosedScreenWidth) {
@@ -180,6 +193,7 @@
         });
       case 'markup_page':
         wrapEntitiesWithHighlight(msg);
+        markup = msg.body;
         break;
       case 'x-ref_result':
         setXRefHTML(msg.body);
@@ -372,14 +386,30 @@
         && element.parentElement.className === 'aurac-highlight') {
         removeEventListener('click', populateAuracSidebar(info, element));
       } else {
-        if (!entityToDiv.has(info.entityText)) {
-          entityToDiv.set(info.entityText, renderSidebarElement(info));
+        const entityId = info.resolvedEntity || info.entityText
+        if (!entityToCard.has(entityId)) {  // entity is a new sidecard
+          const sidebarCard = renderSidebarElement(info, [info.entityText])
+          sidebarCards.appendChild(sidebarCard)
+          entityToCard.set(entityId, {synonyms: [info.entityText], div: sidebarCard});
           // @ts-ignore
           browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity]})
             .catch(e => console.error(e));
+        } else { // entity is a synonym of existing sidecard
+          const synonyms = entityToCard.get(entityId).synonyms
+
+          if (!synonyms.includes(info.entityText)) {
+            synonyms.push(info.entityText)
+
+            let synonymOccurrences: Element[] = []
+            synonyms.forEach(synonym => {
+              synonymOccurrences = synonymOccurrences.concat(entityToOccurrence.get(synonym))
+            })
+            entityToOccurrence.set(entityId, synonymOccurrences)
+            entityToCard.get(entityId).div.replaceWith(renderSidebarElement(info, synonyms))
+          }
         }
       }
-      const div = entityToDiv.get(info.entityText);
+      const div = entityToCard.get(info.entityText)?.div;
       if (div) {
         div.scrollIntoView({behavior: 'smooth'});
         setSidebarColors(div);
@@ -388,41 +418,40 @@
   };
 
   function setSidebarColors(highlightedDiv: HTMLDivElement): void {
-    Array.from(entityToDiv.values()).forEach(div => {
-      div.style.border = div === highlightedDiv ? '2px white solid' : '1px black solid';
+    Array.from(entityToCard.values()).forEach(card => {
+      card.div.style.border = card.div === highlightedDiv ? '2px white solid' : '1px black solid';
     });
   }
 
   // Creates a sidebar element presenting information.
-  function renderSidebarElement(information: Information): HTMLDivElement {
-    const sidebarText: HTMLDivElement = document.createElement('div');
-    renderArrowButtonElements(sidebarText, information);
-    renderOccurrenceCounts(sidebarText, information);
-    renderRemoveEntityFromSidebarButtonElement(sidebarText, information);
+  function renderSidebarElement(information: Information, synonyms: string[]): HTMLDivElement {
+    const sidebarCard: HTMLDivElement = document.createElement('div');
+    renderArrowButtonElements(sidebarCard, information, synonyms);
+    renderOccurrenceCounts(sidebarCard, information, synonyms);
+    renderRemoveEntityFromSidebarButtonElement(sidebarCard, information);
 
-    sidebarText.id = 'sidebar-text';
-    sidebarText.style.border = '1px solid black';
-    sidebarText.style.padding = '2px';
-    sidebarText.style.marginBottom = '5px';
-    sidebarText.style.backgroundColor = information.recognisingDict.htmlColor;
+    sidebarCard.id = 'sidebar-text';
+    sidebarCard.style.border = '1px solid black';
+    sidebarCard.style.padding = '2px';
+    sidebarCard.style.marginBottom = '5px';
+    sidebarCard.style.backgroundColor = information.recognisingDict.htmlColor;
 
-    sidebarText.insertAdjacentHTML('beforeend', `<p>Term: ${information.entityText}</p>`);
+    sidebarCard.insertAdjacentHTML('beforeend', `<p>${synonyms.length === 1 ? 'Term' : 'Terms'}: ${synonyms.toString()}</p>`);
     if (information.resolvedEntity) {
-      sidebarText.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${information.resolvedEntity}</p>`);
+      sidebarCard.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${information.resolvedEntity}</p>`);
 
       if (information.entityGroup === 'Gene or Protein') {
         const geneNameLink = createGeneNameLink(information.resolvedEntity);
-        sidebarText.insertAdjacentHTML('beforeend', geneNameLink);
+        sidebarCard.insertAdjacentHTML('beforeend', geneNameLink);
       }
     }
 
-    sidebarText.insertAdjacentHTML('beforeend', `<p>Entity Type: ${information.recognisingDict.entityType}</p>`);
+    sidebarCard.insertAdjacentHTML('beforeend', `<p>Entity Type: ${information.recognisingDict.entityType}</p>`);
 
     const xrefHTML = document.createElement('div');
     xrefHTML.className = information.entityText;
-    sidebarText.appendChild(xrefHTML);
-    sidebarTexts.appendChild(sidebarText);
-    return sidebarText;
+    sidebarCard.appendChild(xrefHTML);
+    return sidebarCard;
   }
 
   function populateEntityToOccurrences(entityText: string, occurrence: Element): void {
@@ -433,18 +462,21 @@
     }
   }
 
-  function renderOccurrenceCounts(sidebarText: HTMLDivElement, information: Information): void {
-    const entityText = information.entityText;
+  function renderOccurrenceCounts(sidebarText: HTMLDivElement, information: Information, synonyms: string[]): void {
+    const entityText = synonyms.length === 1 ? information.entityText : information.resolvedEntity;
     const occurrenceElement = document.createElement('span');
     occurrenceElement.id = `${entityText}-occurrences`;
     occurrenceElement.style.display = 'flex';
     occurrenceElement.style.justifyContent = 'flex-end';
 
-    occurrenceElement.innerText = `${entityToOccurrence.get(entityText).length} matches found`;
+
+    let numOfOccurrences = 0
+    synonyms.forEach(synonym => numOfOccurrences = numOfOccurrences + entityToOccurrence.get(synonym).length)
+    occurrenceElement.innerText = `${numOfOccurrences} matches found`;
     sidebarText.appendChild(occurrenceElement);
   }
 
-  function renderArrowButtonElements(sidebarText: HTMLDivElement, information: Information): void {
+  function renderArrowButtonElements(sidebarText: HTMLDivElement, information: Information, synonyms: string[]): void {
     const arrowFlexProperties: HTMLDivElement = document.createElement('div');
     arrowFlexProperties.className = 'arrow-buttons';
     sidebarText.appendChild(arrowFlexProperties);
@@ -459,8 +491,12 @@
     rightArrowButtonElement.className = 'right-arrow-button';
     arrowFlexProperties.appendChild(rightArrowButtonElement);
 
+    // if multiple synonyms exist, use resolvedEntity for occurrences
+
+    // TODO: can we just always use resolvedEntity, i.e. just populate the occurrences map with it?
+    const nerTerm = synonyms.length > 1 ? information.resolvedEntity : information.entityText
     const arrowProperties: ArrowButtonProperties = {
-      nerTerm: information.entityText, nerColor: information.recognisingDict.htmlColor, positionInArray: 0, isClicked: false
+      nerTerm: nerTerm, nerColor: information.recognisingDict.htmlColor, positionInArray: 0, isClicked: false
     };
 
     leftArrowButtonElement.addEventListener('click', () => {
@@ -473,6 +509,7 @@
   }
 
   function pressArrowButton(arrowProperties: ArrowButtonProperties, direction: 'left' | 'right'): void {
+
     Array.from(entityToOccurrence.values()).forEach(entity => {
       entity.forEach(occurrence => setHtmlColours(occurrence));
     });
@@ -517,7 +554,7 @@
     if (!document.getElementsByClassName(information.entityText).length){
       return;
     }
-    entityToDiv.delete(information.entityText);
+    entityToCard.delete(information.entityText);
     var elementList: HTMLCollectionOf<Element> = document.getElementsByClassName(information.entityText);
     for(let i = 0; i < elementList.length; i++){
       if (elementList.item(i).className === information.entityText){
