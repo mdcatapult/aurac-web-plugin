@@ -1,6 +1,6 @@
-import {Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
+// import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {defaultSettings, DictionaryURLs, Message, Preferences, Settings} from 'src/types';
 import {BrowserService} from '../browser.service';
 import {LogService} from '../popup/log.service';
@@ -18,8 +18,8 @@ export class SettingsComponent implements OnInit {
 
   private fb = new FormBuilder();
   settings?: Settings;
-  dictionaryUrls = defaultSettings.urls;
-  preferences: Preferences = {} as Preferences;
+  // dictionaryUrls = defaultSettings.urls;
+  // preferences: Preferences = {} as Preferences;
 
   constructor(private log: LogService, private browserService: BrowserService) {
   }
@@ -63,7 +63,12 @@ export class SettingsComponent implements OnInit {
         this.settings!.urls = settings.urls;
         this.save();
       } else {
-        this.log.Info('error, dictionary URLs invalid');
+        if (this.settingsForm.get('urls')!.invalid) {
+          this.log.Info('error, dictionary URLs invalid');
+        }
+        if (this.settingsForm.get('preferences')!.invalid) {
+          this.log.Info('error, invalid preferences');
+        }
       }
     });
   }
