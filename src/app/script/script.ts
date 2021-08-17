@@ -40,19 +40,6 @@
 
   console.log('script loaded');
 
-  let markup: {
-    beg: number,
-    begInNormalizedDoc: number,
-    end: number,
-    endInNormalizedDoc: number,
-    entityGroup: string,
-    entityText: string,
-    possiblyCorrectedText: string,
-    recognisingDict: { htmlColor: string },
-    resolvedEntity: string,
-    sectionType: string,
-  } = undefined
-
   const auracSidebar = document.createElement('span');
   const auracLogo = document.createElement('img');
   auracLogo.id = 'aurac-logo';
@@ -193,7 +180,6 @@
         });
       case 'markup_page':
         wrapEntitiesWithHighlight(msg);
-        markup = msg.body;
         break;
       case 'x-ref_result':
         setXRefHTML(msg.body);
@@ -469,7 +455,6 @@
     occurrenceElement.style.display = 'flex';
     occurrenceElement.style.justifyContent = 'flex-end';
 
-
     let numOfOccurrences = 0
     synonyms.forEach(synonym => numOfOccurrences = numOfOccurrences + entityToOccurrence.get(synonym).length)
     occurrenceElement.innerText = `${numOfOccurrences} matches found`;
@@ -492,8 +477,6 @@
     arrowFlexProperties.appendChild(rightArrowButtonElement);
 
     // if multiple synonyms exist, use resolvedEntity for occurrences
-
-    // TODO: can we just always use resolvedEntity, i.e. just populate the occurrences map with it?
     const nerTerm = synonyms.length > 1 ? information.resolvedEntity : information.entityText
     const arrowProperties: ArrowButtonProperties = {
       nerTerm: nerTerm, nerColor: information.recognisingDict.htmlColor, positionInArray: 0, isClicked: false
