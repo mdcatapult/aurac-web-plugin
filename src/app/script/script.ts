@@ -537,7 +537,7 @@
     if (!document.getElementsByClassName(information.entityText).length){
       return;
     }
-    entityToCard.delete(information.entityText);
+    entityToCard.delete(information.resolvedEntity || information.entityText);
     var elementList: HTMLCollectionOf<Element> = document.getElementsByClassName(information.entityText);
     for(let i = 0; i < elementList.length; i++){
       if (elementList.item(i).className === information.entityText){
