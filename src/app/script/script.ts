@@ -384,24 +384,7 @@
           browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity]})
             .catch(e => console.error(e));
         } else { // entity is a synonym of existing sidecard
-          const synonyms = entityToCard.get(entityId).synonyms
-
-          if (!synonyms.includes(info.entityText)) {
-            synonyms.push(info.entityText)
-
-            const synonymOccurrences: Element[] = []
-            // add each synonym to the entityToOccurrence map. Sort the occurrences based on their order of appearance.
-            synonyms.forEach(synonym => {
-              synonymOccurrences.push(...entityToOccurrence.get(synonym))
-              synonymOccurrences.sort((a, b) => a.getBoundingClientRect().y - b.getBoundingClientRect().y)
-            })
-            entityToOccurrence.set(entityId, synonymOccurrences)
-            const sidebarCard = renderSidebarElement(info, synonyms)
-
-            entityToCard.get(entityId).div.replaceWith(sidebarCard)
-            entityToCard.get(entityId).div = sidebarCard
-
-          }
+          renderSynonyms(info, entityId)
         }
       }
 
@@ -412,6 +395,27 @@
       }
     };
   };
+
+  // renderSynonym adds a new synonym an the existing entity card.
+  function renderSynonyms(info: Information, entityId: string): void {
+    const synonyms = entityToCard.get(entityId).synonyms
+
+    if (!synonyms.includes(info.entityText)) {
+      synonyms.push(info.entityText)
+
+      const synonymOccurrences: Element[] = []
+      // add each synonym to the entityToOccurrence map. Sort the occurrences based on their order of appearance.
+      synonyms.forEach(synonym => {
+        synonymOccurrences.push(...entityToOccurrence.get(synonym))
+        synonymOccurrences.sort((a, b) => a.getBoundingClientRect().y - b.getBoundingClientRect().y)
+      })
+      entityToOccurrence.set(entityId, synonymOccurrences)
+      const sidebarCard = renderSidebarElement(info, synonyms)
+
+      entityToCard.get(entityId).div.replaceWith(sidebarCard)
+      entityToCard.get(entityId).div = sidebarCard
+    }
+  }
 
   function setSidebarColors(highlightedDiv: HTMLDivElement): void {
     Array.from(entityToCard.values()).forEach(card => {
