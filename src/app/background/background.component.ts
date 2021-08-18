@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '../../environments/environment';
+import {SettingsService} from '../settings/settings.service'
 
 import {
   ConverterResult,
@@ -17,7 +18,6 @@ import {validDict} from './types';
 import {map, switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {BrowserService} from '../browser.service';
-import MessageSender = browser.runtime.MessageSender;
 
 @Component({
   selector: 'app-background',
@@ -32,11 +32,13 @@ export class BackgroundComponent {
 
   constructor(private client: HttpClient, private browserService: BrowserService) {
 
-    this.browserService.loadSettings().then(settings => {
-      this.settings = settings || defaultSettings;
-    });
+    SettingsService.loadSettings(this.browserService, () => {
+      this.browserService.addListener(this.getBrowserListenerFn())
+    })
+  }
 
-    this.browserService.addListener((msg: Partial<Message>) => {
+  private getBrowserListenerFn(): (msg: Partial<Message>) => void {
+    return (msg: Partial<Message>) => {
       console.log('Received message from popup...', msg);
       switch (msg.type) {
         case 'ner_current_page': {
@@ -63,7 +65,7 @@ export class BackgroundComponent {
           break;
         }
       }
-    });
+    }
   }
 
   private loadXRefs([entityTerm, resolvedEntity]: [string, string]): void {
