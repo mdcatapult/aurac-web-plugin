@@ -368,11 +368,14 @@
         return;
       }
       document.getElementById('aurac-narrative').style.display = 'none';
+
+      const entityId = info.resolvedEntity || info.entityText
+
       if (getAuracHighlightChildren(element).some(child => child.className === 'aurac-highlight')
         && element.parentElement.className === 'aurac-highlight') {
         removeEventListener('click', populateAuracSidebar(info, element));
       } else {
-        const entityId = info.resolvedEntity || info.entityText
+
         if (!entityToCard.has(entityId)) {  // entity is a new sidecard
           const sidebarCard = renderSidebarElement(info, [info.entityText])
           sidebarCards.appendChild(sidebarCard)
@@ -386,19 +389,23 @@
           if (!synonyms.includes(info.entityText)) {
             synonyms.push(info.entityText)
 
-            let synonymOccurrences: Element[] = []
+            const synonymOccurrences: Element[] = []
             // add each synonym to the entityToOccurrence map. Sort the occurrences based on their order of appearance.
             synonyms.forEach(synonym => {
-              synonymOccurrences = synonymOccurrences
-                .concat(entityToOccurrence.get(synonym))
-                .sort((a, b) => a.getBoundingClientRect().y - b.getBoundingClientRect().y)
+              synonymOccurrences.push(...entityToOccurrence.get(synonym))
+              synonymOccurrences.sort((a, b) => a.getBoundingClientRect().y - b.getBoundingClientRect().y)
             })
             entityToOccurrence.set(entityId, synonymOccurrences)
-            entityToCard.get(entityId).div.replaceWith(renderSidebarElement(info, synonyms))
+            const sidebarCard = renderSidebarElement(info, synonyms)
+
+            entityToCard.get(entityId).div.replaceWith(sidebarCard)
+            entityToCard.get(entityId).div = sidebarCard
+
           }
         }
       }
-      const div = entityToCard.get(info.entityText)?.div;
+
+      const div = entityToCard.get(entityId)?.div;
       if (div) {
         div.scrollIntoView({behavior: 'smooth'});
         setSidebarColors(div);
@@ -537,18 +544,20 @@
   }
 
   function pressRemoveEntityFromSidebarButtonElement(information: Information): void {
-    if (!document.getElementsByClassName(information.entityText).length){
+    if (!document.getElementsByClassName(information.entityText).length) {
       return;
     }
     entityToCard.delete(information.resolvedEntity || information.entityText);
     var elementList: HTMLCollectionOf<Element> = document.getElementsByClassName(information.entityText);
-    for(let i = 0; i < elementList.length; i++){
-      if (elementList.item(i).className === information.entityText){
+    for (let i = 0; i < elementList.length; i++) {
+      if (elementList.item(i).className === information.entityText) {
         const elementLocator: Element = elementList.item(i);
         const divToDelete: Element = elementLocator.parentElement;
         divToDelete.remove();
-      };
-    };
+      }
+      ;
+    }
+    ;
   };
 
   function setNerHtmlColours(highlightedNerTerms: Element[]): void {
