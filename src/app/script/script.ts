@@ -387,8 +387,11 @@
             synonyms.push(info.entityText)
 
             let synonymOccurrences: Element[] = []
+            // add each synonym to the entityToOccurrence map. Sort the occurrences based on their order of appearance.
             synonyms.forEach(synonym => {
-              synonymOccurrences = synonymOccurrences.concat(entityToOccurrence.get(synonym))
+              synonymOccurrences = synonymOccurrences
+                .concat(entityToOccurrence.get(synonym))
+                .sort((a, b) => a.getBoundingClientRect().y - b.getBoundingClientRect().y)
             })
             entityToOccurrence.set(entityId, synonymOccurrences)
             entityToCard.get(entityId).div.replaceWith(renderSidebarElement(info, synonyms))
