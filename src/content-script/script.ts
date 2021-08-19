@@ -1,6 +1,4 @@
-import {auracSidebar} from './secondScript';
-
-var browser = browser || chrome;
+import {auracSidebar} from './otherScript';
 
 type Information = {
   entityText: string,
@@ -32,11 +30,25 @@ class EntityMap<T> {
   values(): IterableIterator<T> {
     return this.m.values();
   }
+
+  delete(entityText: string): void {
+    this.m.delete(entityText.toLowerCase());
+    if (this.m.size === 0) {
+      document.getElementById('aurac-narrative').style.display = 'block';
+    }
+  }
 }
 
 console.log('script loaded');
-
-
+const auracLogo = document.createElement('img');
+auracLogo.id = 'aurac-logo';
+// @ts-ignore
+auracLogo.src = browser.runtime.getURL('assets/head-brains.png')
+auracSidebar.appendChild(auracLogo);
+const narrative = document.createElement('h4');
+narrative.innerText = 'Click on a highlighted entity to display further information and links below...'
+narrative.id = 'aurac-narrative';
+auracSidebar.appendChild(narrative);
 const buttonElement = document.createElement('button');
 
 const sidebarOpenScreenWidth = '80vw';
@@ -47,6 +59,7 @@ const collapseArrow = '&#60;';
 const expandArrow = '&#62;';
 const rightArrow = '&#8594';
 const leftArrow = '&#8592';
+const crossButton = '&#215;'
 const auracHighlightElements: Array<AuracHighlightHtmlColours> = [];
 
 auracSidebar.appendChild(buttonElement);
@@ -149,7 +162,6 @@ buttonElement.addEventListener('click', () => {
 // @ts-ignore
 
 browser.runtime.onMessage.addListener((msg) => {
-  console.log('Inside the message listener');
   if (!isAppOpen && msg.type !== 'sidebar_rendered') {
     document.body.style.width = '80vw';
     document.body.style.marginLeft = '20vw';
@@ -160,39 +172,32 @@ browser.runtime.onMessage.addListener((msg) => {
   }
   switch (msg.type) {
     case 'get_page_contents':
-      console.log('Get contents');
       return new Promise(resolve => {
         const textNodes: Array<string> = [];
         allTextNodes(document.body, textNodes);
         resolve({type: 'leadmine', body: textNodes.join('\n')});
       });
     case 'markup_page':
-      console.log('markup page');
       wrapEntitiesWithHighlight(msg);
       break;
     case 'x-ref_result':
-      console.log('xref result');
       setXRefHTML(msg.body);
       break;
     case 'toggle_sidebar':
-      console.log('toggle sidebar');
       if (document.body.style.width === sidebarOpenScreenWidth || document.body.style.width === sidebarClosedScreenWidth) {
         animateElements(elementProperties);
         buttonElement.innerHTML = isExpanded ? collapseArrow : expandArrow;
       }
       break;
     case 'sidebar_rendered':
-      console.log('sidebar rendered');
       return new Promise((resolve) => {
         const result = String(hasNERLookupOccurred);
         resolve({type: 'resolved', body: result});
       });
     case 'ner_lookup_performed':
-      console.log('ner lookup');
       hasNERLookupOccurred = true;
       break;
     default:
-      console.log('boom');
       throw new Error('Received unexpected message from plugin');
   }
 });
@@ -238,7 +243,8 @@ function addHighlightAndEventListeners(selector: Element[], entity: Information)
     try {
       // For each term, we want to replace it's original HTML with a highlight colour
       const replacementNode = document.createElement('span');
-      // replacementNode.innerHTML = element.nodeValue.replaceAll(entity.entityText, highlightTerm(entity.entityText, entity));
+      // @ts-ignore
+      replacementNode.innerHTML = element.nodeValue.replaceAll(entity.entityText, highlightTerm(entity.entityText, entity));
 
       // This new highlighted term will will replace the current child (same term but with no highlight) of this parent element.
       element.parentNode.insertBefore(replacementNode, element);
@@ -301,7 +307,28 @@ const newAuracStyleElement = () => {
      display: flex;
      justify-content: flex-end;
      flex-direction: row;
-     }`;
+     }
+     #aurac-logo {
+     width: 5vw;
+     height: 5vw;
+     display: block;
+     margin-left: auto;
+     margin-right: auto;
+     margin-top: 0.3vw;
+     margin-bottom: 0.3vw;
+     }
+     #aurac-narrative {
+     text-align: center;
+     }
+     .cross-button {
+      position: relative;
+      top: -45px;
+      left: 1px;
+      color: red;
+      background-color: rgb(192, 192, 192);
+      padding: 5px;
+      }
+     `;
   return styleElement;
 };
 
@@ -340,6 +367,7 @@ const populateAuracSidebar = (info: Information, element: Element) => {
     if (event.type !== 'click') {
       return;
     }
+    document.getElementById('aurac-narrative').style.display = 'none';
     if (getAuracHighlightChildren(element).some(child => child.className === 'aurac-highlight')
       && element.parentElement.className === 'aurac-highlight') {
       removeEventListener('click', populateAuracSidebar(info, element));
@@ -370,6 +398,7 @@ function renderSidebarElement(information: Information): HTMLDivElement {
   const sidebarText: HTMLDivElement = document.createElement('div');
   renderArrowButtonElements(sidebarText, information);
   renderOccurrenceCounts(sidebarText, information);
+  renderRemoveEntityFromSidebarButtonElement(sidebarText, information);
 
   sidebarText.id = 'sidebar-text';
   sidebarText.style.border = '1px solid black';
@@ -469,6 +498,34 @@ function pressArrowButton(arrowProperties: ArrowButtonProperties, direction: 'le
   const occurrencesElement = document.getElementById(`${arrowProperties.nerTerm}-occurrences`);
   occurrencesElement.innerText = `${arrowProperties.positionInArray + 1} / ${entityToOccurrence.get(arrowProperties.nerTerm).length}`;
   arrowProperties.isClicked = true;
+}
+
+function renderRemoveEntityFromSidebarButtonElement(sidebarText: HTMLDivElement, information: Information): void {
+
+  const removeEntityFromSidebarButtonElement = document.createElement('button');
+  removeEntityFromSidebarButtonElement.innerHTML = crossButton;
+  removeEntityFromSidebarButtonElement.className = 'cross-button';
+  sidebarText.appendChild(removeEntityFromSidebarButtonElement);
+
+  removeEntityFromSidebarButtonElement.addEventListener('click', () => {
+    pressRemoveEntityFromSidebarButtonElement(information);
+  });
+
+}
+
+function pressRemoveEntityFromSidebarButtonElement(information: Information): void {
+  if (!document.getElementsByClassName(information.entityText).length) {
+    return;
+  }
+  entityToDiv.delete(information.entityText);
+  const elementList: HTMLCollectionOf<Element> = document.getElementsByClassName(information.entityText);
+  for (let i = 0; i < elementList.length; i++) {
+    if (elementList.item(i).className === information.entityText) {
+      const elementLocator: Element = elementList.item(i);
+      const divToDelete: Element = elementLocator.parentElement;
+      divToDelete.remove();
+    }
+  }
 }
 
 function setNerHtmlColours(highlightedNerTerms: Element[]): void {
