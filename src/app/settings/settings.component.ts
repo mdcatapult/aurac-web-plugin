@@ -1,6 +1,7 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {defaultSettings, DictionaryURLs, Message, Preferences, Settings} from 'src/types';
+import {DictionaryURLs, Settings} from 'src/types';
+import {defaultSettings} from 'src/consts';
 import {BrowserService} from '../browser.service';
 import {LogService} from '../popup/log.service';
 import {UrlsService} from '../urls/urls.service';
@@ -63,6 +64,7 @@ export class SettingsComponent implements OnInit {
           if (this.settingsForm.get('urls')!.invalid) {
             this.log.Info('error, dictionary URLs invalid');
           }
+
           if (this.settingsForm.get('preferences')!.invalid) {
             this.log.Info('error, invalid preferences');
           }

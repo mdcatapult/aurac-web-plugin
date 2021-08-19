@@ -5,15 +5,14 @@ import {SettingsService} from '../settings/settings.service'
 
 import {
   ConverterResult,
-  defaultSettings,
-  DictionaryURLs,
   LeadminerEntity,
   LeadminerResult,
-  Message, Preferences,
+  Message,
   Settings,
   StringMessage,
   XRef
 } from 'src/types';
+import {defaultSettings} from 'src/consts';
 import {validDict} from './types';
 import {map, switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';

@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {defaultSettings, Settings} from 'src/types';
+import {Settings} from 'src/types';
+import {defaultSettings} from 'src/consts';
 import {BrowserService} from '../browser.service';
-import {LogService} from '../popup/log.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +11,12 @@ export class SettingsService {
   constructor() {
   }
 
+  /**
+   * loadSettings calls browserService to load settings, then ensures that the retrieved object has all the correct
+   * keys based on defaultSettings.
+   * @param browserService
+   * @param onResolve
+   */
   static loadSettings(browserService: BrowserService, onResolve: (settings: Settings) => void): Promise<Settings> {
     return browserService.loadSettings().then(settings => {
       Object.keys(defaultSettings).forEach(defaultSetting => {

@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
-import {DictionaryURLKeys, DictionaryURLs} from '../../types';
+import {DictionaryURLs} from '../../types';
+import {DictionaryURLKeys} from '../../consts';
 import {AbstractControl} from '@angular/forms';
 
 @Injectable({

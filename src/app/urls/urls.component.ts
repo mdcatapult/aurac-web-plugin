@@ -1,6 +1,7 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {defaultSettings, DictionaryURLKeys, DictionaryURLs, Message} from '../../types';
+import {DictionaryURLs, Message} from '../../types';
+import {defaultSettings, DictionaryURLKeys} from '../../consts';
 import {LogService} from '../popup/log.service';
 import {BrowserService} from '../browser.service';
 
