@@ -14,8 +14,8 @@ export class SettingsService {
   /**
    * loadSettings calls browserService to load settings, then ensures that the retrieved object has all the correct
    * keys based on defaultSettings.
-   * @param browserService
-   * @param onResolve
+   * @param browserService browserService implementation
+   * @param onResolve callback for when settings have been retrived from browser strorage
    */
   static loadSettings(browserService: BrowserService, onResolve: (settings: Settings) => void): Promise<Settings> {
     return browserService.loadSettings().then(settings => {
