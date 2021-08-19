@@ -147,9 +147,7 @@ export class BackgroundComponent {
 
     leadmineResponse.entities
       .filter(entity => this.settings.preferences.hideUnresolved ? entity.resolvedEntity : entity)
-      .filter(entity => {
-        return entity.entityText.length >= this.settings.preferences.minEntityLength;
-      })
+      .filter(entity => entity.entityText.length >= this.settings.preferences.minEntityLength)
       .forEach((entity: LeadminerEntity) => {
         if (uniqueEntities.every(uniqueEntity => uniqueEntity.entityText !== entity.entityText)) {
           uniqueEntities.push(entity);

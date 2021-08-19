@@ -665,7 +665,7 @@
 
   const allowedTagType = (element: HTMLElement): boolean => !forbiddenTags.some(tag => element instanceof tag);
 
-  const delimiters: string[] = ['(', ')', '\\n', '\'', '\"', ',', ';', '.'];
+  const delimiters: string[] = ['(', ')', '\\n', '\"', '\'', '\\', ',', ';', '.'];
 
   // Returns true if a string contains at least one instance of a particular term between word boundaries, i.e. not immediately
   // followed or preceded by either a non white-space character or one of the special characters in the delimiters array.
@@ -700,11 +700,19 @@
             foundTerm = true;
           } else {
             delimiters.forEach((character) => {
-              if (
-                (textPrecedingTerm.endsWith(character) &&
-                  (textFollowingTerm.match(startsWithWhiteSpaceRegex) || !textFollowingTerm.length)) ||
+              if ((textPrecedingTerm.endsWith(character) &&
+                  (textFollowingTerm.match(startsWithWhiteSpaceRegex) ||
+                    !textFollowingTerm.length ||
+                    textFollowingTerm.startsWith(character) ||
+                    // catch a case where we have a different delimiter at the end of the term, e.g. a term between parentheses
+                    delimiters.includes(textFollowingTerm.charAt(0))))
+                ||
                 (textFollowingTerm.startsWith(character) &&
-                  (textPrecedingTerm.match(endsWithWhiteSpaceRegex) || !textPrecedingTerm.length))) {
+                  (textPrecedingTerm.match(endsWithWhiteSpaceRegex) ||
+                    !textPrecedingTerm.length ||
+                    textPrecedingTerm.endsWith(character) ||
+                    // catch a case where we have a different delimiter at the end of the term, e.g. a term between parentheses
+                    delimiters.includes(textPrecedingTerm.charAt(textPrecedingTerm.length - 1))))) {
                 found.push(term);
                 foundTerm = true;
               }
