@@ -691,14 +691,14 @@
           const textFollowingTerm: string = text.slice(currentText.length);
 
           // We found the string but is it in the middle of something else like abcdMyString1234? ie is it a word boundary or not
-          // or is it at the start or end of the string. If it's within a word boundary we don't want to highlight it. If however, it is
-          // encapsulated by a special character delimiter then we do.
+          // or is it at the start or end of the string. If it's within a word boundary we don't want to highlight it.
           if (
             (textPrecedingTerm.match(endsWithWhiteSpaceRegex) || !textPrecedingTerm.length) &&
             (textFollowingTerm.match(startsWithWhiteSpaceRegex) || !textFollowingTerm.length)) {
             found.push(term);
             foundTerm = true;
           } else {
+            // If however the term is encapsulated by a special character delimiter then we do.
             delimiters.forEach((character) => {
               if ((textPrecedingTerm.endsWith(character) &&
                   (textFollowingTerm.match(startsWithWhiteSpaceRegex) ||
