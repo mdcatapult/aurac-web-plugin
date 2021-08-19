@@ -558,10 +558,8 @@
         const elementLocator: Element = elementList.item(i);
         const divToDelete: Element = elementLocator.parentElement;
         divToDelete.remove();
-      }
-      ;
-    }
-    ;
+      };
+    };
   };
 
   function setNerHtmlColours(highlightedNerTerms: Element[]): void {
