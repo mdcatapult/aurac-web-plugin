@@ -1,9 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {DictionaryURLs, Message, StringMessage} from 'src/types';
+import {Message, StringMessage} from 'src/types';
 import {LogService} from './log.service';
 import {validDict} from '../background/types';
 import {BrowserService} from '../browser.service';
-import {logger} from 'codelyzer/util/logger';
 
 @Component({
   selector: 'app-popup',

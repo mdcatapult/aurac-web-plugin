@@ -5,10 +5,9 @@ import {environment} from '../../environments/environment';
 import {
   ConverterResult,
   defaultSettings,
-  DictionaryURLs,
   LeadminerEntity,
   LeadminerResult,
-  Message, Preferences,
+  Message,
   Settings,
   StringMessage,
   XRef
@@ -17,7 +16,6 @@ import {validDict} from './types';
 import {map, switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {BrowserService} from '../browser.service';
-import MessageSender = browser.runtime.MessageSender;
 
 @Component({
   selector: 'app-background',
@@ -49,9 +47,9 @@ export class BackgroundComponent {
           break;
         }
         case 'settings-changed': {
-          const minEntityLengthChanged = this.settings.preferences.minEntityLength !== (msg.body as Settings).preferences.minEntityLength;
+          const preferencesChanged = this.settings.preferences !== (msg.body as Settings).preferences;
           this.settings = msg.body;
-          if (minEntityLengthChanged) {
+          if (preferencesChanged) {
             this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
               .catch(e => console.error(e))
               .then(() => {
@@ -146,15 +144,17 @@ export class BackgroundComponent {
 
   getUniqueEntities(leadmineResponse: LeadminerResult): void {
     const uniqueEntities = new Array<LeadminerEntity>();
-    leadmineResponse.entities.filter(entity => {
-      return entity.resolvedEntity && entity.entityText.length >= this.settings.preferences.minEntityLength;
-    })
+
+    leadmineResponse.entities
+      .filter(entity => this.settings.preferences.hideUnresolved ? entity.resolvedEntity : entity)
+      .filter(entity => {
+        return entity.entityText.length >= this.settings.preferences.minEntityLength;
+      })
       .forEach((entity: LeadminerEntity) => {
         if (uniqueEntities.every(uniqueEntity => uniqueEntity.entityText !== entity.entityText)) {
           uniqueEntities.push(entity);
         }
       });
-    // return uniqueEntities;
     this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
       .catch(e => console.error(e));
   }
