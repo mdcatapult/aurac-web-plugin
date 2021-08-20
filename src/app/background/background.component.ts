@@ -148,8 +148,8 @@ export class BackgroundComponent {
   getUniqueEntities(leadmineResponse: LeadminerResult): Array<LeadminerEntity> {
     const uniqueEntities = new Array<LeadminerEntity>();
     leadmineResponse.entities
-      .filter(entity => this.settings.preferences.hideUnresolved ? entity.resolvedEntity : entity)
-      .filter(entity => entity.entityText.length >= this.settings.preferences.minEntityLength)
+      .filter(entity => this.settings.preferences.hideUnresolved ? entity.resolvedEntity : entity &&
+        entity.entityText.length >= this.settings.preferences.minEntityLength)
       .forEach((entity: LeadminerEntity) => {
         if (uniqueEntities.every(uniqueEntity => uniqueEntity.entityText !== entity.entityText)) {
           uniqueEntities.push(entity);
