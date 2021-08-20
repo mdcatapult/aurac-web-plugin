@@ -702,7 +702,10 @@
                   (!!textFollowingTerm.match(startsWithWhiteSpaceRegex) ||
                     !textFollowingTerm.length ||
                     textFollowingTerm.startsWith(character) ||
-                    textFollowingTerm.startsWith(term) ||
+                    // this condition makes highlighting 'work' in the test html but means we get results like
+                    // 'en' and 'co' being highlighted in the term 'encoding'
+                    // we probably don't want to be highlighting terms that are back to back with other terms
+                    // textFollowingTerm.startsWith(term) ||
                     // catch a case where we have a different delimiter at the end of the term, e.g. a term between parentheses
                     delimiters.includes(textFollowingTerm.charAt(0))))
                 ||
@@ -710,7 +713,10 @@
                   (!!textPrecedingTerm.match(endsWithWhiteSpaceRegex) ||
                     !textPrecedingTerm.length ||
                     textPrecedingTerm.endsWith(character) ||
-                    textPrecedingTerm.endsWith(term) ||
+                    // this condition makes highlighting 'work' in the test html but means we get results like
+                    // 'en' and 'co' being highlighted in the term 'encoding'
+                    // we probably don't want to be highlighting terms that are back to back with other terms
+                    // textPrecedingTerm.endsWith(term) ||
                     // catch a case where we have a different delimiter at the end of the term, e.g. a term between parentheses
                     delimiters.includes(textPrecedingTerm.charAt(textPrecedingTerm.length - 1))))) {
                 found.push(term);

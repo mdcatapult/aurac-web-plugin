@@ -145,13 +145,21 @@ export class BackgroundComponent {
       });
   }
 
+  shouldDisplayEntity(entity: LeadminerEntity): boolean {
+    // Entity must be greater than min entity length in all cases.
+    if (entity && entity.entityText.length < this.settings.preferences.minEntityLength) {
+      return false;
+    }
+    // If hide unresolved is true, the resolved entity string must be non-empty.
+    return this.settings.preferences.hideUnresolved && !!entity.resolvedEntity;
+  }
+
+
   getUniqueEntities(leadmineResponse: LeadminerResult): Array<LeadminerEntity> {
     const uniqueEntities = new Array<LeadminerEntity>();
     leadmineResponse.entities
-      .filter(entity => this.settings.preferences.hideUnresolved ? entity.resolvedEntity : entity &&
-        entity.entityText.length >= this.settings.preferences.minEntityLength)
       .forEach((entity: LeadminerEntity) => {
-        if (uniqueEntities.every(uniqueEntity => uniqueEntity.entityText !== entity.entityText)) {
+        if (this.shouldDisplayEntity(entity)) {
           uniqueEntities.push(entity);
         }
       });
