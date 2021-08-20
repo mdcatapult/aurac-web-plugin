@@ -54,7 +54,9 @@ export class BackgroundComponent {
               .catch(e => console.error(e))
               .then(() => {
                 if (this.leadmineResult) {
-                  this.getUniqueEntities(this.leadmineResult);
+                  const uniqueEntities = this.getUniqueEntities(this.leadmineResult);
+                  this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
+                    .catch(e => console.error(e));
                 }
               });
           }
@@ -136,15 +138,15 @@ export class BackgroundComponent {
               return;
             }
             this.leadmineResult = response.body;
-            this.getUniqueEntities(this.leadmineResult!);
-
+            const uniqueEntities = this.getUniqueEntities(this.leadmineResult!);
+            this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
+              .catch(e => console.error(e));
           });
       });
   }
 
-  getUniqueEntities(leadmineResponse: LeadminerResult): void {
+  getUniqueEntities(leadmineResponse: LeadminerResult): Array<LeadminerEntity> {
     const uniqueEntities = new Array<LeadminerEntity>();
-
     leadmineResponse.entities
       .filter(entity => this.settings.preferences.hideUnresolved ? entity.resolvedEntity : entity)
       .filter(entity => entity.entityText.length >= this.settings.preferences.minEntityLength)
@@ -153,8 +155,7 @@ export class BackgroundComponent {
           uniqueEntities.push(entity);
         }
       });
-    this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
-      .catch(e => console.error(e));
+    return uniqueEntities;
   }
 
   private getTrueKeys(v: { [_: string]: boolean }): string[] {

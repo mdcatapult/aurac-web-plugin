@@ -245,7 +245,7 @@
     selector.map(element => {
       // Try/catch for edge cases.
       try {
-        // For each term, we want to replace it's original HTML with a highlight colour
+        // For each term, we want to replace its original HTML with a highlight colour
         const replacementNode = document.createElement('span');
         replacementNode.innerHTML = element.nodeValue.replaceAll(entity.entityText, highlightTerm(entity.entityText, entity));
 
@@ -265,10 +265,10 @@
     });
   }
 
-  // highlights a term by wrapping it an HTML span
+// highlights a term by wrapping it an HTML span
   const highlightTerm = (term, entity) => `<span class="aurac-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative; cursor: pointer">${term}</span>`;
 
-  // creates an HTML style element with basic styling for Aurac sidebar
+// creates an HTML style element with basic styling for Aurac sidebar
   const newAuracStyleElement = () => {
     const styleElement = document.createElement('style');
     styleElement.innerHTML = `.aurac-sidebar {
@@ -335,7 +335,7 @@
     return styleElement;
   };
 
-  // This function will animate the sidebar opening and closing
+// This function will animate the sidebar opening and closing
   function animateElements(element: ElementPropertiesType): void {
     element.forEach(elementProperty => {
       let id = null;
@@ -364,7 +364,7 @@
     isExpanded = !isExpanded;
   }
 
-  // returns an event listener which creates a new element with passed info and appends it to the passed element
+// returns an event listener which creates a new element with passed info and appends it to the passed element
   const populateAuracSidebar = (info: Information, element: Element) => {
     return (event) => {
       if (event.type !== 'click') {
@@ -396,7 +396,7 @@
     });
   }
 
-  // Creates a sidebar element presenting information.
+// Creates a sidebar element presenting information.
   function renderSidebarElement(information: Information): HTMLDivElement {
     const sidebarText: HTMLDivElement = document.createElement('div');
     renderArrowButtonElements(sidebarText, information);
@@ -549,7 +549,7 @@
     });
   }
 
-  // if the entity group is 'Gene or Protein' add a genenames url link to the sidebarText element
+// if the entity group is 'Gene or Protein' add a genenames url link to the sidebarText element
   function createGeneNameLink(resolvedEntity: string): string {
     const id = resolvedEntity.split(':').pop();
     const geneNameUrl = `https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/${id}`;
@@ -574,7 +574,7 @@
     return allElements;
   };
 
-  // Recursively find all text nodes which match entity
+// Recursively find all text nodes which match entity
   function allDescendants(node: HTMLElement, elements: Array<Element>, entity: string) {
     if ((node && node.classList.contains('aurac-sidebar')) || !allowedTagType(node)) {
       return;
@@ -600,9 +600,9 @@
     }
   }
 
-  // chemical formulae use <sub> tags, the content of which needs to be extracted and concatenated to form a complete formula which can
-  // be sent to be NER'd.  This type enables the mapping of a chemical formula to its parent node so that the entire formula
-  // (which is split across several nodes in the DOM) can be highlighted
+// chemical formulae use <sub> tags, the content of which needs to be extracted and concatenated to form a complete formula which can
+// be sent to be NER'd.  This type enables the mapping of a chemical formula to its parent node so that the entire formula
+// (which is split across several nodes in the DOM) can be highlighted
   type chemicalFormula = {
     formulaNode: Element;
     formulaText: string;
@@ -610,7 +610,7 @@
 
   const chemicalFormulae: chemicalFormula[] = [];
 
-  // Recursively find all text nodes which match regex
+// Recursively find all text nodes which match regex
   function allTextNodes(node: HTMLElement, textNodes: Array<string>) {
     if (!allowedTagType(node) || node.classList.contains('aurac-sidebar')) {
       return;
@@ -649,7 +649,7 @@
     }
   }
 
-  // Only allow nodes that we can traverse or add children to
+// Only allow nodes that we can traverse or add children to
   const allowedNodeType = (element: HTMLElement): boolean => {
     return element.nodeType !== Node.COMMENT_NODE && element.nodeType !== Node.CDATA_SECTION_NODE
       && element.nodeType !== Node.PROCESSING_INSTRUCTION_NODE && element.nodeType !== Node.DOCUMENT_TYPE_NODE;
@@ -667,9 +667,9 @@
 
   const delimiters: string[] = ['(', ')', '\\n', '\"', '\'', '\\', ',', ';', '.', '!'];
 
-  // Returns true if a string contains at least one instance of a particular term between word boundaries, i.e. not immediately
-  // followed or preceded by either a non white-space character or one of the special characters in the delimiters array.
-  // Can handle non latin unicode terms which at the moment JS Regex can't.
+// Returns true if a string contains at least one instance of a particular term between word boundaries, i.e. not immediately
+// followed or preceded by either a non white-space character or one of the special characters in the delimiters array.
+// Can handle non latin unicode terms which at the moment JS Regex can't.
   function textContainsTerm(text: string, term: string): boolean {
     const startsWithWhiteSpaceRegex = /^\s+.*/;
     const endsWithWhiteSpaceRegex = /.*\s+$/;
