@@ -689,10 +689,6 @@
           // Find the remaining bit of text but also remove any line breaks from it
           const textFollowingTerm: string = text.slice(currentText.length);
 
-          // TODO: What if the text following the term includes another instance of the same term?
-          // TODO: e.g. 'et netus et' - the first instance of 'et' will be matched and this method will return true
-          // TODO: all three instances of 'et' in that string will now be highlighted regardless of the logic below
-
           // We found the string but is it in the middle of something else like abcdMyString1234? i.e. is it a word boundary or not
           // or is it at the start or end of the string. If it's within a word boundary we don't want to highlight it.
           if ((!!textPrecedingTerm.match(endsWithWhiteSpaceRegex) || !textPrecedingTerm.length) &&
