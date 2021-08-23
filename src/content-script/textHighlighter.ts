@@ -1,5 +1,4 @@
 import {Entity} from './types';
-import {SidebarAnimations} from './sidebarAnimations';
 import {Sidebar} from './sidebar';
 import {Card} from './card';
 

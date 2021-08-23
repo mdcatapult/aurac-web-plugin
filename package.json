@@ -5,7 +5,7 @@
   "scripts": {
     "ng": "ng",
     "start": "web-ext run --verbose --source-dir=dist/browser-plugin",
-    "build": "ng build --configuration production --source-map true && webpack",
+    "build": "ng build --configuration production --source-map false && webpack",
     "build:dev": "ng build --configuration production --source-map true && webpack --mode=development",
     "package": "cd dist/browser-plugin && web-ext build",
     "test": "ng test",

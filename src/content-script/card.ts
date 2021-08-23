@@ -1,4 +1,4 @@
-import {Entity} from "./types"
+import {Entity} from './types'
 import {EntityMap} from './entityMap'
 import * as Constants from './constants'
 
@@ -6,7 +6,11 @@ export module Card {
 
   export const entityToCard = new EntityMap<HTMLDivElement>();
   const entityToOccurrence = new EntityMap<Element[]>();
-
+  export const collapseArrow = '&#60;';
+  export const expandArrow = '&#62;';
+  const rightArrow = '&#8594';
+  const leftArrow = '&#8592';
+  const crossButton = '&#215;';
   const highlightElements: Array<AuracHighlightHtmlColours> = [];
 
   // This class stores the HTML of all aurac-highlight elements before and after we change them. That way when they are no longer
@@ -72,12 +76,12 @@ export module Card {
     card.appendChild(arrowFlexProperties);
 
     const leftArrowButtonElement = document.createElement('button');
-    leftArrowButtonElement.innerHTML = Constants.leftArrow;
+    leftArrowButtonElement.innerHTML = leftArrow;
     leftArrowButtonElement.className = 'left-arrow-button';
     arrowFlexProperties.appendChild(leftArrowButtonElement);
 
     const rightArrowButtonElement = document.createElement('button');
-    rightArrowButtonElement.innerHTML = Constants.rightArrow;
+    rightArrowButtonElement.innerHTML = rightArrow;
     rightArrowButtonElement.className = 'right-arrow-button';
     arrowFlexProperties.appendChild(rightArrowButtonElement);
 
@@ -158,7 +162,7 @@ export module Card {
   function renderRemoveEntityFromSidebarButtonElement(sidebarText: HTMLDivElement, information: Entity): void {
 
     const removeEntityFromSidebarButtonElement = document.createElement('button');
-    removeEntityFromSidebarButtonElement.innerHTML = Constants.crossButton;
+    removeEntityFromSidebarButtonElement.innerHTML = crossButton;
     removeEntityFromSidebarButtonElement.className = 'cross-button';
     sidebarText.appendChild(removeEntityFromSidebarButtonElement);
 

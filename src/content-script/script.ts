@@ -27,11 +27,7 @@ todo ideas
 
 */
 
-import {EntityMap} from './entityMap';
-import {Entity} from './types';
-import * as Constants from './constants';
 import {Browser} from './browser';
-import {Card} from './card';
 import {Sidebar} from './sidebar';
 
 console.log('script loaded');
