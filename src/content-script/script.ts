@@ -384,13 +384,13 @@ function populateEntityToOccurrences(entityText: string, occurrence: Element): v
 //   return `<p id=${geneNameUrl}>Genenames link: <a href=${geneNameUrl} target="_blank">${geneNameUrl}</a></p>`;
 // }
 
-function setXRefHTML(xrefs: { databaseName: string, url: string, compoundName: string }[]): void {
-  Array.from(document.getElementsByClassName(xrefs[0] ? xrefs[0].compoundName : '')).forEach(element => element.innerHTML = '');
-  xrefs.forEach(xref => {
-    const xrefElement = document.getElementsByClassName(xref.compoundName).item(0);
-    xrefElement.innerHTML += `<p> ${xref.databaseName}: <a href=${xref.url} target="_blank">${xref.url}</a></p>`;
-  });
-}
+// function setXRefHTML(xrefs: { databaseName: string, url: string, compoundName: string }[]): void {
+//   Array.from(document.getElementsByClassName(xrefs[0] ? xrefs[0].compoundName : '')).forEach(element => element.innerHTML = '');
+//   xrefs.forEach(xref => {
+//     const xrefElement = document.getElementsByClassName(xref.compoundName).item(0);
+//     xrefElement.innerHTML += `<p> ${xref.databaseName}: <a href=${xref.url} target="_blank">${xref.url}</a></p>`;
+//   });
+// }
 
 function getAuracHighlightChildren(element: Element) {
   return Array.from(element.children).filter(child => child.className === 'aurac-highlight');

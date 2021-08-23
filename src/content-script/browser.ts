@@ -3,6 +3,7 @@ import {SidebarAnimations} from './sidebarAnimations'
 import {Sidebar} from './sidebar'
 import {TextHighlighter} from './textHighlighter'
 import * as Constants from './constants'
+import { Card } from './card'
 export module Browser {
 
   // add listener function to browser
@@ -28,7 +29,7 @@ export module Browser {
           TextHighlighter.wrapEntitiesWithHighlight(msg);
           break;
         case 'x-ref_result':
-          setXRefHTML(msg.body);
+          Card.setXRefHTML(msg.body);
           break;
         case 'toggle_sidebar':
           Sidebar.toggle(sidebar)
