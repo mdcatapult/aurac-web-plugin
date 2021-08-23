@@ -4,7 +4,7 @@ import * as Constants from './constants'
 
 export module Card {
 
-  const entityToCard = new EntityMap<HTMLDivElement>();
+  export const entityToCard = new EntityMap<HTMLDivElement>();
   const entityToOccurrence = new EntityMap<Element[]>();
 
   const highlightElements: Array<AuracHighlightHtmlColours> = [];
@@ -190,5 +190,12 @@ export module Card {
     });
   }
 
+  export function populateEntityToOccurrences(entityText: string, occurrence: Element): void {
+    if (!entityToOccurrence.has(entityText)) {
+      entityToOccurrence.set(entityText, [occurrence]);
+    } else {
+      entityToOccurrence.get(entityText).push(occurrence);
+    }
+  }
 
 }
