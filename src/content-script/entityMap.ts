@@ -18,7 +18,7 @@ export class EntityMap<T> {
     return this.m.values();
   }
 
-  delete(entityText: string): void {
+  delete(entityText: string, document: Document): void {
     this.m.delete(entityText.toLowerCase());
     if (this.m.size === 0) {
       document.getElementById('aurac-narrative').style.display = 'block';

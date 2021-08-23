@@ -27,56 +27,32 @@ todo ideas
 
 */
 
-import {auracSidebar} from './otherScript';
 import {EntityMap} from './entityMap';
 import {Entity} from './types';
 import * as Constants from './constants';
 
+import {Sidebar} from './sidebar';
+
+// useless comment, init sidebar
+Sidebar.init()
+
+
+
 console.log('script loaded');
 
 
-// sidebar?
-
-const auracLogo = document.createElement('img');
-auracLogo.id = 'aurac-logo';
-// @ts-ignore
-auracLogo.src = browser.runtime.getURL('assets/head-brains.png')
 
 
-// entity => process data, do ui stuff ?
 
-// sidebar.addCard(?)
-// sidebar.getElement(?)
-// sidebar.init
-
-
-auracSidebar.appendChild(auracLogo);
-const narrative = document.createElement('h4');
-narrative.innerText = 'Click on a highlighted entity to display further information and links below...'
-narrative.id = 'aurac-narrative';
-auracSidebar.appendChild(narrative);
-const buttonElement = document.createElement('button');
-
-const sidebarOpenScreenWidth = '80vw';
-const sidebarClosedScreenWidth = '100vw';
 let hasNERLookupOccurred = false;
-
 
 const auracHighlightElements: Array<AuracHighlightHtmlColours> = [];
 
-auracSidebar.appendChild(buttonElement);
 const delimiters: string[] = ['(', ')', '\\n', '\'', '\"', ',', ';', '.', '-'];
 const noSpace = '';
 const space = ' ';
 
-auracSidebar.appendChild(buttonElement);
-buttonElement.innerHTML = Constants.collapseArrow;
-buttonElement.className = 'sidebar-button';
-buttonElement.id = 'button-id';
-auracSidebar.id = 'aurac-sidebar-id';
-document.body.id = 'body';
 
-let isExpanded = true;
 let isAppOpen = false;
 
 type ElementPropertiesType = {
@@ -89,43 +65,7 @@ type ElementPropertiesType = {
   isReversed?: boolean
 }[];
 
-// TODO move CSS stuff to it's own class/file
-const elementProperties: ElementPropertiesType =
-  [
-    {
-      element: buttonElement,
-      property: 'left',
-      position: {
-        expanding: 20,
-        collapsing: 0
-      },
-    },
-    {
-      element: auracSidebar,
-      property: 'left',
-      position: {
-        expanding: 0,
-        collapsing: -21
-      },
-    },
-    {
-      element: document.body,
-      property: 'width',
-      position: {
-        expanding: 80,
-        collapsing: 100
-      },
-      isReversed: true,
-    },
-    {
-      element: document.body,
-      property: 'marginLeft',
-      position: {
-        expanding: 20,
-        collapsing: 0
-      },
-    },
-  ];
+
 
 type ArrowButtonProperties = {
   nerTerm: string,
@@ -134,6 +74,8 @@ type ArrowButtonProperties = {
   isClicked: boolean,
 };
 
+
+// TODO make a type/interface for this?
 // This class stores the HTML of all aurac-highlight elements before and after we change them. That way when they are no longer
 // highlighted by our search they can return to their original HTML state
 class AuracHighlightHtmlColours {
@@ -154,14 +96,6 @@ const sidebarTexts = document.createElement('div');
 auracSidebar.appendChild(sidebarTexts);
 const entityToDiv = new EntityMap<HTMLDivElement>();
 const entityToOccurrence = new EntityMap<Element[]>();
-
-buttonElement.addEventListener('click', () => {
-  if (document.body.style.width === sidebarOpenScreenWidth || document.body.style.width === sidebarClosedScreenWidth) {
-    animateElements(elementProperties);
-  }
-  buttonElement.innerHTML = isExpanded ? Constants.collapseArrow : Constants.expandArrow;
-  document.head.appendChild(newAuracStyleElement());
-});
 
 // @ts-ignore
 
@@ -339,36 +273,7 @@ const newAuracStyleElement = () => {
   return styleElement;
 };
 
-// TODO move this to a style/animations class/file ?
-// TODO take in state/return state?
-// This function will animate the sidebar opening and closing
-function animateElements(element: ElementPropertiesType): void {
-  element.forEach(elementProperty => {
-    let id = null;
-    // If the sidebar is currently open, then it will keep moving until it has reached its target position, otherwise
-    // It will keep closing until it has reached its closed position
-    let pos = isExpanded ? elementProperty.position.expanding : elementProperty.position.collapsing;
-    const target = isExpanded ? elementProperty.position.collapsing : elementProperty.position.expanding;
-    const elementDistanceSpeed = 0.5;
-    id = setInterval(frame, 1);
-    // The frame function is used to animate the sidebar moving in and out. setInterval will call this function every seconds/ms
-    // depending on what number you pass to it
-    function frame() {
-      if (pos === target) { // If the position is equal to its target then it has reached its new position and should stop moving
-        clearInterval(id); // We reset the timer of the element back to nothing when its reached its target
-      } else {
-        if (!elementProperty.isReversed) { // The 'isReversed' boolean relates to the document body width, as the sidebar expands
-          // on the screen, the width of the document body needs to contract and vice versa
-          pos = isExpanded ? pos + elementDistanceSpeed : pos - elementDistanceSpeed;
-        } else { // The elementDistanceSpeed is how much the element will move by within this timeframe
-          pos = isExpanded ? pos - elementDistanceSpeed : pos + elementDistanceSpeed;
-        }
-        elementProperty.element.style[elementProperty.property] = pos + 'vw'; // Moves the respective element by a directional property
-      }
-    }
-  });
-  isExpanded = !isExpanded;
-}
+
 
 // TODO can this function return something ?
 // returns an event listener which creates a new element with passed info and appends it to the passed element
@@ -532,7 +437,7 @@ function pressRemoveEntityFromSidebarButtonElement(information: Entity): void {
   if (!document.getElementsByClassName(information.entityText).length) {
     return;
   }
-  entityToDiv.delete(information.entityText);
+  entityToDiv.delete(information.entityText, document);
   const elementList: HTMLCollectionOf<Element> = document.getElementsByClassName(information.entityText);
   for (let i = 0; i < elementList.length; i++) {
     if (elementList.item(i).className === information.entityText) {
