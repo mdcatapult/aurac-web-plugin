@@ -1,49 +1,55 @@
+/* TOODO
+
+content - vanilla TS
+popup - angular
+background - angular
+  - should webservice calls be abstracted out in to SDK-esque thing
+  - concept of JS lib to call web services (swap out libraries)
+ 		- node TS lib (then test that independently)
+		- lib goes in to nexus and is versioned
+
+ - all talk to each other
+
+
+todo ideas
+
+ - split up code in to components/classes
+	- unit tests
+ - integration tests
+ 		- test html pages?
+
+ - inline css moves out?
+ - make sure things are namespaced (packages/folders) for ts/css
+ - functions have to return values
+ - global state
+ - no global variables
+ - can we use options?
+
+*/
+
 import {auracSidebar} from './otherScript';
-
-type Information = {
-  entityText: string,
-  resolvedEntity: string,
-  entityGroup: string,
-  recognisingDict: {
-    htmlColor: string,
-    entityType: string,
-    source: string,
-  },
-};
-
-// provides a wrapper around Map<string, T>() to ensure key formatting
-class EntityMap<T> {
-  private m = new Map<string, T>();
-
-  set(entityText: string, value: T) {
-    this.m.set(entityText.toLowerCase(), value);
-  }
-
-  has(text: string): boolean {
-    return this.m.has(text.toLowerCase());
-  }
-
-  get(text: string): T {
-    return this.m.get(text.toLowerCase());
-  }
-
-  values(): IterableIterator<T> {
-    return this.m.values();
-  }
-
-  delete(entityText: string): void {
-    this.m.delete(entityText.toLowerCase());
-    if (this.m.size === 0) {
-      document.getElementById('aurac-narrative').style.display = 'block';
-    }
-  }
-}
+import {EntityMap} from './entityMap';
+import {Entity} from './types';
+import * as Constants from './constants';
 
 console.log('script loaded');
+
+
+// sidebar?
+
 const auracLogo = document.createElement('img');
 auracLogo.id = 'aurac-logo';
 // @ts-ignore
 auracLogo.src = browser.runtime.getURL('assets/head-brains.png')
+
+
+// entity => process data, do ui stuff ?
+
+// sidebar.addCard(?)
+// sidebar.getElement(?)
+// sidebar.init
+
+
 auracSidebar.appendChild(auracLogo);
 const narrative = document.createElement('h4');
 narrative.innerText = 'Click on a highlighted entity to display further information and links below...'
@@ -55,11 +61,7 @@ const sidebarOpenScreenWidth = '80vw';
 const sidebarClosedScreenWidth = '100vw';
 let hasNERLookupOccurred = false;
 
-const collapseArrow = '&#60;';
-const expandArrow = '&#62;';
-const rightArrow = '&#8594';
-const leftArrow = '&#8592';
-const crossButton = '&#215;'
+
 const auracHighlightElements: Array<AuracHighlightHtmlColours> = [];
 
 auracSidebar.appendChild(buttonElement);
@@ -68,7 +70,7 @@ const noSpace = '';
 const space = ' ';
 
 auracSidebar.appendChild(buttonElement);
-buttonElement.innerHTML = collapseArrow;
+buttonElement.innerHTML = Constants.collapseArrow;
 buttonElement.className = 'sidebar-button';
 buttonElement.id = 'button-id';
 auracSidebar.id = 'aurac-sidebar-id';
@@ -87,6 +89,7 @@ type ElementPropertiesType = {
   isReversed?: boolean
 }[];
 
+// TODO move CSS stuff to it's own class/file
 const elementProperties: ElementPropertiesType =
   [
     {
@@ -151,11 +154,12 @@ const sidebarTexts = document.createElement('div');
 auracSidebar.appendChild(sidebarTexts);
 const entityToDiv = new EntityMap<HTMLDivElement>();
 const entityToOccurrence = new EntityMap<Element[]>();
+
 buttonElement.addEventListener('click', () => {
   if (document.body.style.width === sidebarOpenScreenWidth || document.body.style.width === sidebarClosedScreenWidth) {
     animateElements(elementProperties);
   }
-  buttonElement.innerHTML = isExpanded ? collapseArrow : expandArrow;
+  buttonElement.innerHTML = isExpanded ? Constants.collapseArrow : Constants.expandArrow;
   document.head.appendChild(newAuracStyleElement());
 });
 
@@ -186,7 +190,7 @@ browser.runtime.onMessage.addListener((msg) => {
     case 'toggle_sidebar':
       if (document.body.style.width === sidebarOpenScreenWidth || document.body.style.width === sidebarClosedScreenWidth) {
         animateElements(elementProperties);
-        buttonElement.innerHTML = isExpanded ? collapseArrow : expandArrow;
+        buttonElement.innerHTML = isExpanded ? Constants.collapseArrow : Constants.expandArrow;
       }
       break;
     case 'sidebar_rendered':
@@ -214,6 +218,7 @@ function wrapEntitiesWithHighlight(msg: any) {
     });
 }
 
+// TODO chemical class for stuff like this?
 function wrapChemicalFormulaeWithHighlight(entity) {
   for (const formula of chemicalFormulae) {
     const formulaNode = formula.formulaNode;
@@ -237,7 +242,7 @@ function wrapChemicalFormulaeWithHighlight(entity) {
   }
 }
 
-function addHighlightAndEventListeners(selector: Element[], entity: Information) {
+function addHighlightAndEventListeners(selector: Element[], entity: Entity) {
   selector.map(element => {
     // Try/catch for edge cases.
     try {
@@ -265,6 +270,8 @@ function addHighlightAndEventListeners(selector: Element[], entity: Information)
 // highlights a term by wrapping it an HTML span
 const highlightTerm = (term, entity) => `<span class="aurac-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative; cursor: pointer">${term}</span>`;
 
+
+// TODO move the style out
 // creates an HTML style element with basic styling for Aurac sidebar
 const newAuracStyleElement = () => {
   const styleElement = document.createElement('style');
@@ -332,6 +339,8 @@ const newAuracStyleElement = () => {
   return styleElement;
 };
 
+// TODO move this to a style/animations class/file ?
+// TODO take in state/return state?
 // This function will animate the sidebar opening and closing
 function animateElements(element: ElementPropertiesType): void {
   element.forEach(elementProperty => {
@@ -361,8 +370,9 @@ function animateElements(element: ElementPropertiesType): void {
   isExpanded = !isExpanded;
 }
 
+// TODO can this function return something ?
 // returns an event listener which creates a new element with passed info and appends it to the passed element
-const populateAuracSidebar = (info: Information, element: Element) => {
+const populateAuracSidebar = (info: Entity, element: Element) => {
   return (event) => {
     if (event.type !== 'click') {
       return;
@@ -387,6 +397,8 @@ const populateAuracSidebar = (info: Information, element: Element) => {
   };
 };
 
+
+// TODO move style
 function setSidebarColors(highlightedDiv: HTMLDivElement): void {
   Array.from(entityToDiv.values()).forEach(div => {
     div.style.border = div === highlightedDiv ? '2px white solid' : '1px black solid';
@@ -394,12 +406,13 @@ function setSidebarColors(highlightedDiv: HTMLDivElement): void {
 }
 
 // Creates a sidebar element presenting information.
-function renderSidebarElement(information: Information): HTMLDivElement {
+function renderSidebarElement(information: Entity): HTMLDivElement {
   const sidebarText: HTMLDivElement = document.createElement('div');
   renderArrowButtonElements(sidebarText, information);
   renderOccurrenceCounts(sidebarText, information);
   renderRemoveEntityFromSidebarButtonElement(sidebarText, information);
 
+  // TODO move style
   sidebarText.id = 'sidebar-text';
   sidebarText.style.border = '1px solid black';
   sidebarText.style.padding = '2px';
@@ -418,7 +431,8 @@ function renderSidebarElement(information: Information): HTMLDivElement {
 
   sidebarText.insertAdjacentHTML('beforeend', `<p>Entity Type: ${information.recognisingDict.entityType}</p>`);
 
-  const xrefHTML = document.createElement('div');
+  const xrefHTML: HTMLDivElement = document.createElement('div')
+
   xrefHTML.className = information.entityText;
   sidebarText.appendChild(xrefHTML);
   sidebarTexts.appendChild(sidebarText);
@@ -433,7 +447,7 @@ function populateEntityToOccurrences(entityText: string, occurrence: Element): v
   }
 }
 
-function renderOccurrenceCounts(sidebarText: HTMLDivElement, information: Information): void {
+function renderOccurrenceCounts(sidebarText: HTMLDivElement, information: Entity): void {
   const entityText = information.entityText;
   const occurrenceElement = document.createElement('span');
   occurrenceElement.id = `${entityText}-occurrences`;
@@ -444,18 +458,18 @@ function renderOccurrenceCounts(sidebarText: HTMLDivElement, information: Inform
   sidebarText.appendChild(occurrenceElement);
 }
 
-function renderArrowButtonElements(sidebarText: HTMLDivElement, information: Information): void {
+function renderArrowButtonElements(sidebarText: HTMLDivElement, information: Entity): void {
   const arrowFlexProperties: HTMLDivElement = document.createElement('div');
   arrowFlexProperties.className = 'arrow-buttons';
   sidebarText.appendChild(arrowFlexProperties);
 
   const leftArrowButtonElement = document.createElement('button');
-  leftArrowButtonElement.innerHTML = leftArrow;
+  leftArrowButtonElement.innerHTML = Constants.leftArrow;
   leftArrowButtonElement.className = 'left-arrow-button';
   arrowFlexProperties.appendChild(leftArrowButtonElement);
 
   const rightArrowButtonElement = document.createElement('button');
-  rightArrowButtonElement.innerHTML = rightArrow;
+  rightArrowButtonElement.innerHTML = Constants.rightArrow;
   rightArrowButtonElement.className = 'right-arrow-button';
   arrowFlexProperties.appendChild(rightArrowButtonElement);
 
@@ -477,6 +491,7 @@ function pressArrowButton(arrowProperties: ArrowButtonProperties, direction: 'le
     entity.forEach(occurrence => setHtmlColours(occurrence));
   });
 
+  // TODO can we use a modulo here?
   if (direction === 'right') {
     if (arrowProperties.positionInArray >= entityToOccurrence.get(arrowProperties.nerTerm).length - 1) {
       // gone off the end of the array - reset
@@ -500,10 +515,10 @@ function pressArrowButton(arrowProperties: ArrowButtonProperties, direction: 'le
   arrowProperties.isClicked = true;
 }
 
-function renderRemoveEntityFromSidebarButtonElement(sidebarText: HTMLDivElement, information: Information): void {
+function renderRemoveEntityFromSidebarButtonElement(sidebarText: HTMLDivElement, information: Entity): void {
 
   const removeEntityFromSidebarButtonElement = document.createElement('button');
-  removeEntityFromSidebarButtonElement.innerHTML = crossButton;
+  removeEntityFromSidebarButtonElement.innerHTML = Constants.crossButton;
   removeEntityFromSidebarButtonElement.className = 'cross-button';
   sidebarText.appendChild(removeEntityFromSidebarButtonElement);
 
@@ -513,7 +528,7 @@ function renderRemoveEntityFromSidebarButtonElement(sidebarText: HTMLDivElement,
 
 }
 
-function pressRemoveEntityFromSidebarButtonElement(information: Information): void {
+function pressRemoveEntityFromSidebarButtonElement(information: Entity): void {
   if (!document.getElementsByClassName(information.entityText).length) {
     return;
   }
@@ -571,6 +586,7 @@ const getSelectors = (entity) => {
   return allElements;
 };
 
+// TODO maybe remove this when we can select via data attribute?
 // Recursively find all text nodes which match entity
 function allDescendants(node: HTMLElement, elements: Array<Element>, entity: string) {
   if ((node && node.classList.contains('aurac-sidebar')) || !allowedTagType(node)) {
@@ -597,6 +613,8 @@ function allDescendants(node: HTMLElement, elements: Array<Element>, entity: str
   }
 }
 
+
+// TODO move to types/chemicals?
 // chemical formulae use <sub> tags, the content of which needs to be extracted and concatenated to form a complete formula which can
 // be sent to be NER'd.  This type enables the mapping of a chemical formula to its parent node so that the entire formula
 // (which is split across several nodes in the DOM) can be highlighted
@@ -605,6 +623,7 @@ type chemicalFormula = {
   formulaText: string;
 };
 
+// TODO can this be genericised in some way, can this not be a global?
 const chemicalFormulae: chemicalFormula[] = [];
 
 // Recursively find all text nodes which match regex
@@ -652,6 +671,7 @@ const allowedNodeType = (element: HTMLElement): boolean => {
     && element.nodeType !== Node.PROCESSING_INSTRUCTION_NODE && element.nodeType !== Node.DOCUMENT_TYPE_NODE;
 };
 
+// TODO move to constants?
 const forbiddenTags = [HTMLScriptElement,
   HTMLStyleElement,
   SVGElement,
