@@ -30,12 +30,12 @@ todo ideas
 import {EntityMap} from './entityMap';
 import {Entity} from './types';
 import * as Constants from './constants';
+import {Browser} from './browser';
 
 import {Sidebar} from './sidebar';
 
-// useless comment, init sidebar
-Sidebar.init()
-
+const sidebar = Sidebar.init(document.createElement('span'))
+Browser.addListener(sidebar)
 
 
 console.log('script loaded');
@@ -53,7 +53,7 @@ const noSpace = '';
 const space = ' ';
 
 
-let isAppOpen = false;
+// let isAppOpen = false;
 
 
 type ArrowButtonProperties = {
@@ -81,53 +81,53 @@ class AuracHighlightHtmlColours {
   }
 }
 
-const sidebarTexts = document.createElement('div');
-auracSidebar.appendChild(sidebarTexts);
 const entityToDiv = new EntityMap<HTMLDivElement>();
 const entityToOccurrence = new EntityMap<Element[]>();
 
 // @ts-ignore
 
-browser.runtime.onMessage.addListener((msg) => {
-  if (!isAppOpen && msg.type !== 'sidebar_rendered') {
-    document.body.style.width = '80vw';
-    document.body.style.marginLeft = '20vw';
-    auracSidebar.className = 'aurac-sidebar';
-    document.body.appendChild(auracSidebar);
-    isAppOpen = true;
-    document.head.appendChild(newAuracStyleElement());
-  }
-  switch (msg.type) {
-    case 'get_page_contents':
-      return new Promise(resolve => {
-        const textNodes: Array<string> = [];
-        allTextNodes(document.body, textNodes);
-        resolve({type: 'leadmine', body: textNodes.join('\n')});
-      });
-    case 'markup_page':
-      wrapEntitiesWithHighlight(msg);
-      break;
-    case 'x-ref_result':
-      setXRefHTML(msg.body);
-      break;
-    case 'toggle_sidebar':
-      if (document.body.style.width === sidebarOpenScreenWidth || document.body.style.width === sidebarClosedScreenWidth) {
-        animateElements(elementProperties);
-        buttonElement.innerHTML = isExpanded ? Constants.collapseArrow : Constants.expandArrow;
-      }
-      break;
-    case 'sidebar_rendered':
-      return new Promise((resolve) => {
-        const result = String(hasNERLookupOccurred);
-        resolve({type: 'resolved', body: result});
-      });
-    case 'ner_lookup_performed':
-      hasNERLookupOccurred = true;
-      break;
-    default:
-      throw new Error('Received unexpected message from plugin');
-  }
-});
+
+
+// browser.runtime.onMessage.addListener((msg) => {
+//   if (!isAppOpen && msg.type !== 'sidebar_rendered') {
+//     document.body.style.width = '80vw';
+//     document.body.style.marginLeft = '20vw';
+//     auracSidebar.className = 'aurac-sidebar';
+//     document.body.appendChild(auracSidebar);
+//     isAppOpen = true;
+//     document.head.appendChild(newAuracStyleElement());
+//   }
+//   switch (msg.type) {
+//     case 'get_page_contents':
+//       return new Promise(resolve => {
+//         const textNodes: Array<string> = [];
+//         allTextNodes(document.body, textNodes);
+//         resolve({type: 'leadmine', body: textNodes.join('\n')});
+//       });
+//     case 'markup_page':
+//       wrapEntitiesWithHighlight(msg);
+//       break;
+//     case 'x-ref_result':
+//       setXRefHTML(msg.body);
+//       break;
+//     case 'toggle_sidebar':
+//       if (document.body.style.width === sidebarOpenScreenWidth || document.body.style.width === sidebarClosedScreenWidth) {
+//         animateElements(elementProperties);
+//         buttonElement.innerHTML = isExpanded ? Constants.collapseArrow : Constants.expandArrow;
+//       }
+//       break;
+//     case 'sidebar_rendered':
+//       return new Promise((resolve) => {
+//         const result = String(hasNERLookupOccurred);
+//         resolve({type: 'resolved', body: result});
+//       });
+//     case 'ner_lookup_performed':
+//       hasNERLookupOccurred = true;
+//       break;
+//     default:
+//       throw new Error('Received unexpected message from plugin');
+//   }
+// });
 
 function wrapEntitiesWithHighlight(msg: any) {
   document.head.appendChild(newAuracStyleElement());

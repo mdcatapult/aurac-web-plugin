@@ -38,6 +38,8 @@ export module SidebarAnimations {
 
 
   // creates an HTML style element with basic styling for Aurac sidebar
+
+  // why is styling done in Animations.ts ?
   export const newAuracStyleElement =
     (elementPropertyArray: ElementProperties[],
      auracSidebar: HTMLSpanElement,
