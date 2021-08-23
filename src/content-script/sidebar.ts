@@ -1,6 +1,7 @@
 import {browser as Browser} from 'webextension-polyfill';
 import * as Constants from './constants';
 import {ElementProperties} from './types';
+import {Card} from './card';
 import {SidebarAnimations} from './sidebarAnimations';
 
 export module Sidebar {
@@ -25,27 +26,27 @@ export module Sidebar {
   // }
 
 
-  export function init(auracSidebar: HTMLSpanElement): HTMLSpanElement {
+  export function init(sidebar: HTMLSpanElement): HTMLSpanElement {
 
     const imageElement = document.createElement('img');
     const headerElement = document.createElement('h4');
 
     const [logo, logoText] = createLogo(imageElement, headerElement);
 
-    auracSidebar.appendChild(logo);
-    auracSidebar.appendChild(logoText);
+    sidebar.appendChild(logo);
+    sidebar.appendChild(logoText);
 
     const sidebarToggleButton: HTMLButtonElement =
       initToggleButton(
         toggleButtonElement,
-        auracSidebar,
+        sidebar,
         document.body
       );
 
-    auracSidebar.appendChild(sidebarToggleButton);
+    sidebar.appendChild(sidebarToggleButton);
 
-    auracSidebar.appendChild(sidebarTexts);
-    return auracSidebar;
+    sidebar.appendChild(sidebarTexts);
+    return sidebar;
   }
 
   export function open(sidebarElement: HTMLSpanElement): void {
@@ -63,10 +64,15 @@ export module Sidebar {
   }
 
   export function toggle(sidebarElement: HTMLSpanElement): void {
+    // just do toggleButtonElement.click(); ?
     if (document.body.style.width === Constants.sidebarOpenScreenWidth || document.body.style.width === sidebarClosedScreenWidth) {
       SidebarAnimations.animateElements(SidebarAnimations.getElementPropertyArray(toggleButtonElement, sidebarElement, document.body), isExpanded);
       toggleButtonElement.innerHTML = isExpanded ? Constants.collapseArrow : Constants.expandArrow;
     }
+  }
+
+  export function addCard(card: HTMLDivElement): void {
+    sidebarTexts.appendChild(card)
   }
 
   // initialise the toggle sidebar button

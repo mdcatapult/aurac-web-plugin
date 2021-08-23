@@ -31,6 +31,7 @@ import {EntityMap} from './entityMap';
 import {Entity} from './types';
 import * as Constants from './constants';
 import {Browser} from './browser';
+import {Card} from './card';
 
 import {Sidebar} from './sidebar';
 
@@ -81,7 +82,7 @@ class AuracHighlightHtmlColours {
   }
 }
 
-const entityToDiv = new EntityMap<HTMLDivElement>();
+const entityToCard = new EntityMap<HTMLDivElement>();
 const entityToOccurrence = new EntityMap<Element[]>();
 
 // @ts-ignore
@@ -129,17 +130,17 @@ const entityToOccurrence = new EntityMap<Element[]>();
 //   }
 // });
 
-function wrapEntitiesWithHighlight(msg: any) {
-  document.head.appendChild(newAuracStyleElement());
-  // sort entities by length of entityText (descending) - this will ensure that we can capture e.g. VPS26A, which would not be
-  // highlighted if VPS26 has already been highlighted, because the text VPS26A is now spread across more than one node
-  msg.body.sort((a, b) => b.entityText.length - a.entityText.length)
-    .map((entity) => {
-      const selectors = getSelectors(entity.entityText);
-      wrapChemicalFormulaeWithHighlight(entity);
-      addHighlightAndEventListeners(selectors, entity);
-    });
-}
+// function wrapEntitiesWithHighlight(msg: any) {
+//   document.head.appendChild(newAuracStyleElement());
+//   // sort entities by length of entityText (descending) - this will ensure that we can capture e.g. VPS26A, which would not be
+//   // highlighted if VPS26 has already been highlighted, because the text VPS26A is now spread across more than one node
+//   msg.body.sort((a, b) => b.entityText.length - a.entityText.length)
+//     .map((entity) => {
+//       const selectors = getSelectors(entity.entityText);
+//       wrapChemicalFormulaeWithHighlight(entity);
+//       addHighlightAndEventListeners(selectors, entity);
+//     });
+// }
 
 // TODO chemical class for stuff like this?
 function wrapChemicalFormulaeWithHighlight(entity) {
@@ -206,14 +207,16 @@ const populateAuracSidebar = (info: Entity, element: Element) => {
       && element.parentElement.className === 'aurac-highlight') {
       removeEventListener('click', populateAuracSidebar(info, element));
     } else {
-      if (!entityToDiv.has(info.entityText)) {
-        entityToDiv.set(info.entityText, renderSidebarElement(info));
+      if (!entityToCard.has(info.entityText)) {
+        const card = Card.create(info)
+        entityToCard.set(info.entityText, card);
+        Sidebar.addCard(card);
         // @ts-ignore
         browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity]})
           .catch(e => console.error(e));
       }
     }
-    const div = entityToDiv.get(info.entityText);
+    const div = entityToCard.get(info.entityText);
     if (div) {
       div.scrollIntoView({behavior: 'smooth'});
       setSidebarColors(div);
@@ -224,44 +227,44 @@ const populateAuracSidebar = (info: Entity, element: Element) => {
 
 // TODO move style
 function setSidebarColors(highlightedDiv: HTMLDivElement): void {
-  Array.from(entityToDiv.values()).forEach(div => {
+  Array.from(entityToCard.values()).forEach(div => {
     div.style.border = div === highlightedDiv ? '2px white solid' : '1px black solid';
   });
 }
-
-// Creates a sidebar element presenting information.
-function renderSidebarElement(information: Entity): HTMLDivElement {
-  const sidebarText: HTMLDivElement = document.createElement('div');
-  renderArrowButtonElements(sidebarText, information);
-  renderOccurrenceCounts(sidebarText, information);
-  renderRemoveEntityFromSidebarButtonElement(sidebarText, information);
-
-  // TODO move style
-  sidebarText.id = 'sidebar-text';
-  sidebarText.style.border = '1px solid black';
-  sidebarText.style.padding = '2px';
-  sidebarText.style.marginBottom = '5px';
-  sidebarText.style.backgroundColor = information.recognisingDict.htmlColor;
-
-  sidebarText.insertAdjacentHTML('beforeend', `<p>Term: ${information.entityText}</p>`);
-  if (information.resolvedEntity) {
-    sidebarText.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${information.resolvedEntity}</p>`);
-
-    if (information.entityGroup === 'Gene or Protein') {
-      const geneNameLink = createGeneNameLink(information.resolvedEntity);
-      sidebarText.insertAdjacentHTML('beforeend', geneNameLink);
-    }
-  }
-
-  sidebarText.insertAdjacentHTML('beforeend', `<p>Entity Type: ${information.recognisingDict.entityType}</p>`);
-
-  const xrefHTML: HTMLDivElement = document.createElement('div')
-
-  xrefHTML.className = information.entityText;
-  sidebarText.appendChild(xrefHTML);
-  sidebarTexts.appendChild(sidebarText);
-  return sidebarText;
-}
+//
+// // Creates a sidebar element presenting information.
+// function renderSidebarElement(information: Entity): HTMLDivElement {
+//   const sidebarText: HTMLDivElement = document.createElement('div');
+//   renderArrowButtonElements(sidebarText, information);
+//   renderOccurrenceCounts(sidebarText, information);
+//   renderRemoveEntityFromSidebarButtonElement(sidebarText, information);
+//
+//   // TODO move style
+//   sidebarText.id = 'sidebar-text';
+//   sidebarText.style.border = '1px solid black';
+//   sidebarText.style.padding = '2px';
+//   sidebarText.style.marginBottom = '5px';
+//   sidebarText.style.backgroundColor = information.recognisingDict.htmlColor;
+//
+//   sidebarText.insertAdjacentHTML('beforeend', `<p>Term: ${information.entityText}</p>`);
+//   if (information.resolvedEntity) {
+//     sidebarText.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${information.resolvedEntity}</p>`);
+//
+//     if (information.entityGroup === 'Gene or Protein') {
+//       const geneNameLink = createGeneNameLink(information.resolvedEntity);
+//       sidebarText.insertAdjacentHTML('beforeend', geneNameLink);
+//     }
+//   }
+//
+//   sidebarText.insertAdjacentHTML('beforeend', `<p>Entity Type: ${information.recognisingDict.entityType}</p>`);
+//
+//   const xrefHTML: HTMLDivElement = document.createElement('div')
+//
+//   xrefHTML.className = information.entityText;
+//   sidebarText.appendChild(xrefHTML);
+//   sidebarTexts.appendChild(sidebarText);
+//   return sidebarText;
+// }
 
 function populateEntityToOccurrences(entityText: string, occurrence: Element): void {
   if (!entityToOccurrence.has(entityText)) {
@@ -356,7 +359,7 @@ function pressRemoveEntityFromSidebarButtonElement(information: Entity): void {
   if (!document.getElementsByClassName(information.entityText).length) {
     return;
   }
-  entityToDiv.delete(information.entityText, document);
+  entityToCard.delete(information.entityText, document);
   const elementList: HTMLCollectionOf<Element> = document.getElementsByClassName(information.entityText);
   for (let i = 0; i < elementList.length; i++) {
     if (elementList.item(i).className === information.entityText) {
@@ -385,12 +388,12 @@ function setHtmlColours(nerElement: Element): void {
   });
 }
 
-// if the entity group is 'Gene or Protein' add a genenames url link to the sidebarText element
-function createGeneNameLink(resolvedEntity: string): string {
-  const id = resolvedEntity.split(':').pop();
-  const geneNameUrl = `https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/${id}`;
-  return `<p id=${geneNameUrl}>Genenames link: <a href=${geneNameUrl} target="_blank">${geneNameUrl}</a></p>`;
-}
+// // if the entity group is 'Gene or Protein' add a genenames url link to the sidebarText element
+// function createGeneNameLink(resolvedEntity: string): string {
+//   const id = resolvedEntity.split(':').pop();
+//   const geneNameUrl = `https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/${id}`;
+//   return `<p id=${geneNameUrl}>Genenames link: <a href=${geneNameUrl} target="_blank">${geneNameUrl}</a></p>`;
+// }
 
 function setXRefHTML(xrefs: { databaseName: string, url: string, compoundName: string }[]): void {
   Array.from(document.getElementsByClassName(xrefs[0] ? xrefs[0].compoundName : '')).forEach(element => element.innerHTML = '');
@@ -404,11 +407,11 @@ function getAuracHighlightChildren(element: Element) {
   return Array.from(element.children).filter(child => child.className === 'aurac-highlight');
 }
 
-const getSelectors = (entity) => {
-  const allElements: Array<Element> = [];
-  allDescendants(document.body, allElements, entity);
-  return allElements;
-};
+// const getSelectors = (entity) => {
+//   const allElements: Array<Element> = [];
+//   allDescendants(document.body, allElements, entity);
+//   return allElements;
+// };
 
 // TODO maybe remove this when we can select via data attribute?
 // Recursively find all text nodes which match entity
@@ -442,69 +445,69 @@ function allDescendants(node: HTMLElement, elements: Array<Element>, entity: str
 // chemical formulae use <sub> tags, the content of which needs to be extracted and concatenated to form a complete formula which can
 // be sent to be NER'd.  This type enables the mapping of a chemical formula to its parent node so that the entire formula
 // (which is split across several nodes in the DOM) can be highlighted
-type chemicalFormula = {
-  formulaNode: Element;
-  formulaText: string;
-};
+// type chemicalFormula = {
+//   formulaNode: Element;
+//   formulaText: string;
+// };
 
 // TODO can this be genericised in some way, can this not be a global?
-const chemicalFormulae: chemicalFormula[] = [];
+// const chemicalFormulae: chemicalFormula[] = [];
 
-// Recursively find all text nodes which match regex
-function allTextNodes(node: HTMLElement, textNodes: Array<string>) {
-  if (!allowedTagType(node) || node.classList.contains('aurac-sidebar')) {
-    return;
-  }
+// // Recursively find all text nodes which match regex
+// function allTextNodes(node: HTMLElement, textNodes: Array<string>) {
+//   if (!allowedTagType(node) || node.classList.contains('aurac-sidebar')) {
+//     return;
+//   }
+//
+//   // if the node contains any <sub> children concatenate the text content of its child nodes
+//   if (Array.from(node.childNodes).some(childNode => childNode.nodeName === 'SUB')) {
+//     let text = '';
+//     node.childNodes.forEach(childNode => text += childNode.textContent);
+//     // join text by stripping out any whitespace or return characters
+//     const formattedText = text.replace(/[\r\n\s]+/gm, '');
+//     // push chemical formula to textNodes to be NER'd
+//     textNodes.push(formattedText + '\n');
+//     chemicalFormulae.push({formulaNode: node, formulaText: formattedText});
+//     return;
+//   }
+//
+//   try {
+//     node.childNodes.forEach(child => {
+//       const element = child as HTMLElement;
+//       if (allowedNodeType(element)) {
+//         if (element.nodeType === Node.TEXT_NODE) {
+//           textNodes.push(element.textContent + '\n');
+//         } else if (!element.classList.contains('tooltipped') &&
+//           !element.classList.contains('tooltipped-click') &&
+//           !element.classList.contains('aurac-sidebar') &&
+//           element.style.display !== 'none') {
+//           allTextNodes(element, textNodes);
+//         }
+//       }
+//     });
+//   } catch (e) {
+//     // There are so many things that could go wrong.
+//     // The DOM is a wild west
+//     console.error(e);
+//   }
+// }
 
-  // if the node contains any <sub> children concatenate the text content of its child nodes
-  if (Array.from(node.childNodes).some(childNode => childNode.nodeName === 'SUB')) {
-    let text = '';
-    node.childNodes.forEach(childNode => text += childNode.textContent);
-    // join text by stripping out any whitespace or return characters
-    const formattedText = text.replace(/[\r\n\s]+/gm, '');
-    // push chemical formula to textNodes to be NER'd
-    textNodes.push(formattedText + '\n');
-    chemicalFormulae.push({formulaNode: node, formulaText: formattedText});
-    return;
-  }
-
-  try {
-    node.childNodes.forEach(child => {
-      const element = child as HTMLElement;
-      if (allowedNodeType(element)) {
-        if (element.nodeType === Node.TEXT_NODE) {
-          textNodes.push(element.textContent + '\n');
-        } else if (!element.classList.contains('tooltipped') &&
-          !element.classList.contains('tooltipped-click') &&
-          !element.classList.contains('aurac-sidebar') &&
-          element.style.display !== 'none') {
-          allTextNodes(element, textNodes);
-        }
-      }
-    });
-  } catch (e) {
-    // There are so many things that could go wrong.
-    // The DOM is a wild west
-    console.error(e);
-  }
-}
-
-// Only allow nodes that we can traverse or add children to
-const allowedNodeType = (element: HTMLElement): boolean => {
-  return element.nodeType !== Node.COMMENT_NODE && element.nodeType !== Node.CDATA_SECTION_NODE
-    && element.nodeType !== Node.PROCESSING_INSTRUCTION_NODE && element.nodeType !== Node.DOCUMENT_TYPE_NODE;
-};
+// // Only allow nodes that we can traverse or add children to
+// const allowedNodeType = (element: HTMLElement): boolean => {
+//   return element.nodeType !== Node.COMMENT_NODE && element.nodeType !== Node.CDATA_SECTION_NODE
+//     && element.nodeType !== Node.PROCESSING_INSTRUCTION_NODE && element.nodeType !== Node.DOCUMENT_TYPE_NODE;
+// };
 
 // TODO move to constants?
-const forbiddenTags = [HTMLScriptElement,
-  HTMLStyleElement,
-  SVGElement,
-  HTMLInputElement,
-  HTMLButtonElement,
-  HTMLAnchorElement,
-];
+// const forbiddenTags = [HTMLScriptElement,
+//   HTMLStyleElement,
+//   SVGElement,
+//   HTMLInputElement,
+//   HTMLButtonElement,
+//   HTMLAnchorElement,
+// ];
 
-const allowedTagType = (element: HTMLElement): boolean => !forbiddenTags.some(tag => element instanceof tag);
+// const allowedTagType = (element: HTMLElement): boolean => !forbiddenTags.some(tag => element instanceof tag);
 
 // If a string contains at least one instance of a particular term between word boundaries then return true
 // Can handle non latin unicode terms which at the moment JS Regex can't.

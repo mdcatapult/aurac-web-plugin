@@ -1,6 +1,7 @@
 import browser from 'webextension-polyfill'
 import {SidebarAnimations} from './sidebarAnimations'
 import {Sidebar} from './sidebar'
+import {TextHighlighter} from './textHighlighter'
 import * as Constants from './constants'
 export module Browser {
 
@@ -20,11 +21,11 @@ export module Browser {
         case 'get_page_contents':
           return new Promise(resolve => {
             const textNodes: Array<string> = [];
-            allTextNodes(document.body, textNodes);
+            TextHighlighter.allTextNodes(document.body, textNodes);
             resolve({type: 'leadmine', body: textNodes.join('\n')});
           });
         case 'markup_page':
-          wrapEntitiesWithHighlight(msg);
+          TextHighlighter.wrapEntitiesWithHighlight(msg);
           break;
         case 'x-ref_result':
           setXRefHTML(msg.body);
