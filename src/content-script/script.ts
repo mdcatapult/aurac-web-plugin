@@ -55,17 +55,6 @@ const space = ' ';
 
 let isAppOpen = false;
 
-type ElementPropertiesType = {
-  element: HTMLElement,
-  position: {
-    expanding: number,
-    collapsing: number
-  },
-  property: 'left' | 'marginLeft' | 'width',
-  isReversed?: boolean
-}[];
-
-
 
 type ArrowButtonProperties = {
   nerTerm: string,
@@ -203,76 +192,6 @@ function addHighlightAndEventListeners(selector: Element[], entity: Entity) {
 
 // highlights a term by wrapping it an HTML span
 const highlightTerm = (term, entity) => `<span class="aurac-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative; cursor: pointer">${term}</span>`;
-
-
-// TODO move the style out
-// creates an HTML style element with basic styling for Aurac sidebar
-const newAuracStyleElement = () => {
-  const styleElement = document.createElement('style');
-  styleElement.innerHTML = `.aurac-sidebar {
-        color: black;
-        font-family: Arial, sans-serif;
-        font-size: 14px;
-        background: rgb(192,192,192);
-        position: fixed;
-        z-index: 2147483647;
-        height: 100vh;
-        left: ${elementProperties.find(v => v.element === auracSidebar).position.expanding}vw;
-        top: 0;
-        width: 20vw;
-        border-right: 2px solid black;
-        padding: 5px;
-        overflow-wrap: break-word;
-        overflow-y: scroll;
-    }
-    .sidebar-button {
-      color: black;
-      background-color: rgb(192, 192, 192);
-      position: fixed;
-      left: ${elementProperties.find(v => v.element === buttonElement).position.expanding}vw;
-      top: 50%;
-     }
-     .left-arrow-button {
-      color: black;
-      background-color: rgb(192, 192, 192);
-      order: 1;
-      padding: 5px;
-     }
-     .right-arrow-button {
-      color: black;
-      background-color: rgb(192, 192, 192);
-      order: 2;
-      padding: 5px;
-     }
-     .arrow-buttons {
-     display: flex;
-     justify-content: flex-end;
-     flex-direction: row;
-     }
-     #aurac-logo {
-     width: 5vw;
-     height: 5vw;
-     display: block;
-     margin-left: auto;
-     margin-right: auto;
-     margin-top: 0.3vw;
-     margin-bottom: 0.3vw;
-     }
-     #aurac-narrative {
-     text-align: center;
-     }
-     .cross-button {
-      position: relative;
-      top: -45px;
-      left: 1px;
-      color: red;
-      background-color: rgb(192, 192, 192);
-      padding: 5px;
-      }
-     `;
-  return styleElement;
-};
-
 
 
 // TODO can this function return something ?
