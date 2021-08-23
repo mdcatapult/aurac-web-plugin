@@ -18,6 +18,9 @@
       "js": [
         "browser-polyfill.min.js",
         "assets/script.js"
+      ],
+      "css": [
+        "assets/styles.css"
       ]
     }
   ],
