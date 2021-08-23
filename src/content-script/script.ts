@@ -47,7 +47,6 @@ console.log('script loaded');
 
 let hasNERLookupOccurred = false;
 
-const auracHighlightElements: Array<AuracHighlightHtmlColours> = [];
 
 const delimiters: string[] = ['(', ')', '\\n', '\'', '\"', ',', ';', '.', '-'];
 const noSpace = '';
@@ -56,34 +55,24 @@ const space = ' ';
 
 // let isAppOpen = false;
 
+//
+// type ArrowButtonProperties = {
+//   nerTerm: string,
+//   nerColor: string,
+//   positionInArray: number,
+//   isClicked: boolean,
+// };
+//
 
-type ArrowButtonProperties = {
-  nerTerm: string,
-  nerColor: string,
-  positionInArray: number,
-  isClicked: boolean,
-};
+// // This class stores the HTML of all aurac-highlight elements before and after we change them. That way when they are no longer
+// // highlighted by our search they can return to their original HTML state
+// type AuracHighlightHtmlColours = {
+//   index: number;
+//   elementName: Element;
+//   colourBefore: string;
+//   colourAfter: string;
+// }
 
-
-// TODO make a type/interface for this?
-// This class stores the HTML of all aurac-highlight elements before and after we change them. That way when they are no longer
-// highlighted by our search they can return to their original HTML state
-class AuracHighlightHtmlColours {
-  index: number;
-  elementName: Element;
-  colourBefore: string;
-  colourAfter: string;
-
-  constructor(index: number, elementName: Element, colourBefore: string, colourAfter: string) {
-    this.index = index;
-    this.elementName = elementName;
-    this.colourBefore = colourBefore;
-    this.colourAfter = colourAfter;
-  }
-}
-
-const entityToCard = new EntityMap<HTMLDivElement>();
-const entityToOccurrence = new EntityMap<Element[]>();
 
 // @ts-ignore
 
@@ -274,119 +263,119 @@ function populateEntityToOccurrences(entityText: string, occurrence: Element): v
   }
 }
 
-function renderOccurrenceCounts(sidebarText: HTMLDivElement, information: Entity): void {
-  const entityText = information.entityText;
-  const occurrenceElement = document.createElement('span');
-  occurrenceElement.id = `${entityText}-occurrences`;
-  occurrenceElement.style.display = 'flex';
-  occurrenceElement.style.justifyContent = 'flex-end';
+// function renderOccurrenceCounts(sidebarText: HTMLDivElement, information: Entity): void {
+//   const entityText = information.entityText;
+//   const occurrenceElement = document.createElement('span');
+//   occurrenceElement.id = `${entityText}-occurrences`;
+//   occurrenceElement.style.display = 'flex';
+//   occurrenceElement.style.justifyContent = 'flex-end';
+//
+//   occurrenceElement.innerText = `${entityToOccurrence.get(entityText).length} matches found`;
+//   sidebarText.appendChild(occurrenceElement);
+// }
 
-  occurrenceElement.innerText = `${entityToOccurrence.get(entityText).length} matches found`;
-  sidebarText.appendChild(occurrenceElement);
-}
+// function renderArrowButtonElements(card: HTMLDivElement, information: Entity): void {
+//   const arrowFlexProperties: HTMLDivElement = document.createElement('div');
+//   arrowFlexProperties.className = 'arrow-buttons';
+//   card.appendChild(arrowFlexProperties);
+//
+//   const leftArrowButtonElement = document.createElement('button');
+//   leftArrowButtonElement.innerHTML = Constants.leftArrow;
+//   leftArrowButtonElement.className = 'left-arrow-button';
+//   arrowFlexProperties.appendChild(leftArrowButtonElement);
+//
+//   const rightArrowButtonElement = document.createElement('button');
+//   rightArrowButtonElement.innerHTML = Constants.rightArrow;
+//   rightArrowButtonElement.className = 'right-arrow-button';
+//   arrowFlexProperties.appendChild(rightArrowButtonElement);
+//
+//   const arrowProperties: ArrowButtonProperties = {
+//     nerTerm: information.entityText, nerColor: information.recognisingDict.htmlColor, positionInArray: 0, isClicked: false
+//   };
+//
+//   leftArrowButtonElement.addEventListener('click', () => {
+//     pressArrowButton(arrowProperties, 'left');
+//   });
+//
+//   rightArrowButtonElement.addEventListener('click', () => {
+//     pressArrowButton(arrowProperties, 'right');
+//   });
+// }
 
-function renderArrowButtonElements(sidebarText: HTMLDivElement, information: Entity): void {
-  const arrowFlexProperties: HTMLDivElement = document.createElement('div');
-  arrowFlexProperties.className = 'arrow-buttons';
-  sidebarText.appendChild(arrowFlexProperties);
+// function pressArrowButton(arrowProperties: ArrowButtonProperties, direction: 'left' | 'right'): void {
+//   Array.from(entityToOccurrence.values()).forEach(entity => {
+//     entity.forEach(occurrence => setHtmlColours(occurrence));
+//   });
+//
+//   // TODO can we use a modulo here?
+//   if (direction === 'right') {
+//     if (arrowProperties.positionInArray >= entityToOccurrence.get(arrowProperties.nerTerm).length - 1) {
+//       // gone off the end of the array - reset
+//       arrowProperties.positionInArray = 0;
+//     } else if (arrowProperties.isClicked) {
+//       arrowProperties.positionInArray++;
+//     }
+//   } else if (arrowProperties.positionInArray > 0) { // direction is 'left'
+//     arrowProperties.positionInArray--;
+//   }
+//
+//   setNerHtmlColours(entityToOccurrence.get(arrowProperties.nerTerm));
+//
+//   const targetElement = entityToOccurrence.get(arrowProperties.nerTerm)[arrowProperties.positionInArray];
+//   targetElement.scrollIntoView({block: 'center'});
+//
+//   setHtmlColours(targetElement);
+//
+//   const occurrencesElement = document.getElementById(`${arrowProperties.nerTerm}-occurrences`);
+//   occurrencesElement.innerText = `${arrowProperties.positionInArray + 1} / ${entityToOccurrence.get(arrowProperties.nerTerm).length}`;
+//   arrowProperties.isClicked = true;
+// }
 
-  const leftArrowButtonElement = document.createElement('button');
-  leftArrowButtonElement.innerHTML = Constants.leftArrow;
-  leftArrowButtonElement.className = 'left-arrow-button';
-  arrowFlexProperties.appendChild(leftArrowButtonElement);
+// function renderRemoveEntityFromSidebarButtonElement(sidebarText: HTMLDivElement, information: Entity): void {
+//
+//   const removeEntityFromSidebarButtonElement = document.createElement('button');
+//   removeEntityFromSidebarButtonElement.innerHTML = Constants.crossButton;
+//   removeEntityFromSidebarButtonElement.className = 'cross-button';
+//   sidebarText.appendChild(removeEntityFromSidebarButtonElement);
+//
+//   removeEntityFromSidebarButtonElement.addEventListener('click', () => {
+//     pressRemoveEntityFromSidebarButtonElement(information);
+//   });
+//
+// }
 
-  const rightArrowButtonElement = document.createElement('button');
-  rightArrowButtonElement.innerHTML = Constants.rightArrow;
-  rightArrowButtonElement.className = 'right-arrow-button';
-  arrowFlexProperties.appendChild(rightArrowButtonElement);
+// function pressRemoveEntityFromSidebarButtonElement(information: Entity): void {
+//   if (!document.getElementsByClassName(information.entityText).length) {
+//     return;
+//   }
+//   entityToCard.delete(information.entityText, document);
+//   const elementList: HTMLCollectionOf<Element> = document.getElementsByClassName(information.entityText);
+//   for (let i = 0; i < elementList.length; i++) {
+//     if (elementList.item(i).className === information.entityText) {
+//       const elementLocator: Element = elementList.item(i);
+//       const divToDelete: Element = elementLocator.parentElement;
+//       divToDelete.remove();
+//     }
+//   }
+// }
 
-  const arrowProperties: ArrowButtonProperties = {
-    nerTerm: information.entityText, nerColor: information.recognisingDict.htmlColor, positionInArray: 0, isClicked: false
-  };
+// function setNerHtmlColours(highlightedNerTerms: Element[]): void {
+//   highlightedNerTerms.forEach(element => {
+//     const index = highlightedNerTerms.indexOf(element);
+//     const elementName = element;
+//     const colourBefore = element.innerHTML;
+//     const colourAfter = element.textContent.fontcolor('blue');
+//     const nerHtmlColour = new AuracHighlightHtmlColours(index, elementName, colourBefore, colourAfter);
+//     auracHighlightElements.push(nerHtmlColour);
+//   });
+// }
 
-  leftArrowButtonElement.addEventListener('click', () => {
-    pressArrowButton(arrowProperties, 'left');
-  });
-
-  rightArrowButtonElement.addEventListener('click', () => {
-    pressArrowButton(arrowProperties, 'right');
-  });
-}
-
-function pressArrowButton(arrowProperties: ArrowButtonProperties, direction: 'left' | 'right'): void {
-  Array.from(entityToOccurrence.values()).forEach(entity => {
-    entity.forEach(occurrence => setHtmlColours(occurrence));
-  });
-
-  // TODO can we use a modulo here?
-  if (direction === 'right') {
-    if (arrowProperties.positionInArray >= entityToOccurrence.get(arrowProperties.nerTerm).length - 1) {
-      // gone off the end of the array - reset
-      arrowProperties.positionInArray = 0;
-    } else if (arrowProperties.isClicked) {
-      arrowProperties.positionInArray++;
-    }
-  } else if (arrowProperties.positionInArray > 0) { // direction is 'left'
-    arrowProperties.positionInArray--;
-  }
-
-  setNerHtmlColours(entityToOccurrence.get(arrowProperties.nerTerm));
-
-  const targetElement = entityToOccurrence.get(arrowProperties.nerTerm)[arrowProperties.positionInArray];
-  targetElement.scrollIntoView({block: 'center'});
-
-  setHtmlColours(targetElement);
-
-  const occurrencesElement = document.getElementById(`${arrowProperties.nerTerm}-occurrences`);
-  occurrencesElement.innerText = `${arrowProperties.positionInArray + 1} / ${entityToOccurrence.get(arrowProperties.nerTerm).length}`;
-  arrowProperties.isClicked = true;
-}
-
-function renderRemoveEntityFromSidebarButtonElement(sidebarText: HTMLDivElement, information: Entity): void {
-
-  const removeEntityFromSidebarButtonElement = document.createElement('button');
-  removeEntityFromSidebarButtonElement.innerHTML = Constants.crossButton;
-  removeEntityFromSidebarButtonElement.className = 'cross-button';
-  sidebarText.appendChild(removeEntityFromSidebarButtonElement);
-
-  removeEntityFromSidebarButtonElement.addEventListener('click', () => {
-    pressRemoveEntityFromSidebarButtonElement(information);
-  });
-
-}
-
-function pressRemoveEntityFromSidebarButtonElement(information: Entity): void {
-  if (!document.getElementsByClassName(information.entityText).length) {
-    return;
-  }
-  entityToCard.delete(information.entityText, document);
-  const elementList: HTMLCollectionOf<Element> = document.getElementsByClassName(information.entityText);
-  for (let i = 0; i < elementList.length; i++) {
-    if (elementList.item(i).className === information.entityText) {
-      const elementLocator: Element = elementList.item(i);
-      const divToDelete: Element = elementLocator.parentElement;
-      divToDelete.remove();
-    }
-  }
-}
-
-function setNerHtmlColours(highlightedNerTerms: Element[]): void {
-  highlightedNerTerms.forEach(element => {
-    const index = highlightedNerTerms.indexOf(element);
-    const elementName = element;
-    const colourBefore = element.innerHTML;
-    const colourAfter = element.textContent.fontcolor('blue');
-    const nerHtmlColour = new AuracHighlightHtmlColours(index, elementName, colourBefore, colourAfter);
-    auracHighlightElements.push(nerHtmlColour);
-  });
-}
-
-function setHtmlColours(nerElement: Element): void {
-  const auracHighlightArray = Array.from(auracHighlightElements);
-  auracHighlightArray.forEach(element => {
-    element.elementName.innerHTML = element.elementName === nerElement ? element.colourAfter : element.colourBefore;
-  });
-}
+// function setHtmlColours(nerElement: Element): void {
+//   const auracHighlightArray = Array.from(auracHighlightElements);
+//   auracHighlightArray.forEach(element => {
+//     element.elementName.innerHTML = element.elementName === nerElement ? element.colourAfter : element.colourBefore;
+//   });
+// }
 
 // // if the entity group is 'Gene or Protein' add a genenames url link to the sidebarText element
 // function createGeneNameLink(resolvedEntity: string): string {
