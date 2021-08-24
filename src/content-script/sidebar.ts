@@ -11,12 +11,12 @@ export module Sidebar {
   const sidebarClosedScreenWidth = '100vw';
 
   // rename to 'cardsElement'?
-  const sidebarTexts = document.createElement('div')
+  const cardContainer = document.createElement('div')
   const toggleButtonElement = document.createElement('button')
   const imageElement = document.createElement('img');
   const headerElement = document.createElement('h4');
   let isExpanded = true;
-  let hasNERLookupOccurred = false;
+  let hasNERLookupOccurred = false; // TODO ?
 
   // TODO maybe we need this boyo
   // export function getSidebar(): HTMLSpanElement {
@@ -40,7 +40,7 @@ export module Sidebar {
 
     sidebar.appendChild(sidebarToggleButton);
 
-    sidebar.appendChild(sidebarTexts);
+    sidebar.appendChild(cardContainer);
     return sidebar;
   }
 
@@ -49,6 +49,7 @@ export module Sidebar {
     document.body.style.marginLeft = '20vw';
     sidebarElement.className = 'aurac-sidebar';
     document.body.appendChild(sidebarElement);
+
     //TODO: fix this mess. Why is SidebarAnimations the source of styles? Why do we need to pass things many times?
     document.head.appendChild(
       SidebarAnimations.newAuracStyleElement(
@@ -68,7 +69,7 @@ export module Sidebar {
   }
 
   export function addCard(card: HTMLDivElement): void {
-    sidebarTexts.appendChild(card)
+    cardContainer.appendChild(card)
   }
 
   // initialise the toggle sidebar button
@@ -134,20 +135,22 @@ export module Sidebar {
         return;
       }
 
+      // hides the logo / narrative
       document.getElementById('aurac-narrative').style.display = 'none';
+
+      // TODO this?
+      // documentClass.getNarrative.hide();
 
       if (getAuracHighlightChildren(element).some(child => child.className === 'aurac-highlight')
         && element.parentElement.className === 'aurac-highlight') {
         removeEventListener('click', populateAuracSidebar(info, element));
-      } else {
-        if (!Card.entityToCard.has(info.entityText)) {
+      } else if (!Card.entityToCard.has(info.entityText)) {
           const card = Card.create(info)
           Card.entityToCard.set(info.entityText, card);
           Sidebar.addCard(card);
           // @ts-ignore
           browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity]})
             .catch(e => console.error(e));
-        }
       }
 
       const div = Card.entityToCard.get(info.entityText);
