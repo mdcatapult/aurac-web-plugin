@@ -150,8 +150,13 @@ export class BackgroundComponent {
     if (entity && entity.entityText.length < this.settings.preferences.minEntityLength) {
       return false;
     }
-    // If hide unresolved is true, the resolved entity string must be non-empty.
-    return this.settings.preferences.hideUnresolved && !!entity.resolvedEntity;
+
+    if (!this.settings.preferences.hideUnresolved) {
+      return true;
+    } else {
+      // If hide unresolved is true, the resolved entity string must be non-empty.
+      return !!entity.resolvedEntity;
+    }
   }
 
 
