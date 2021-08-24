@@ -37,12 +37,16 @@
       }
     }
   }
-
+  
   console.log('script loaded');
-
+  
   const auracSidebar = document.createElement('span');
+  auracSidebar.id = 'aurac-sidebar-id';
+  auracSidebar.className = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed';
+  
   const auracLogo = document.createElement('img');
   auracLogo.id = 'aurac-logo';
+  
   // @ts-ignore
   auracLogo.src = browser.runtime.getURL('assets/head-brains.png')
   auracSidebar.appendChild(auracLogo);
@@ -70,60 +74,12 @@
 
   auracSidebar.appendChild(buttonElement);
   buttonElement.innerHTML = collapseArrow;
-  buttonElement.className = 'sidebar-button';
+  buttonElement.className = 'aurac-transform aurac-sidebar-button aurac-sidebar-button--collapsed';
   buttonElement.id = 'button-id';
-  auracSidebar.id = 'aurac-sidebar-id';
-  document.body.id = 'body';
-
-  let isExpanded = true;
-  let isAppOpen = false;
-
-  type ElementPropertiesType = {
-    element: HTMLElement,
-    position: {
-      expanding: number,
-      collapsing: number
-    },
-    property: 'left' | 'marginLeft' | 'width',
-    isReversed?: boolean
-  }[];
-
-  const elementProperties: ElementPropertiesType =
-    [
-      {
-        element: buttonElement,
-        property: 'left',
-        position: {
-          expanding: 20,
-          collapsing: 0
-        },
-      },
-      {
-        element: auracSidebar,
-        property: 'left',
-        position: {
-          expanding: 0,
-          collapsing: -21
-        },
-      },
-      {
-        element: document.body,
-        property: 'width',
-        position: {
-          expanding: 80,
-          collapsing: 100
-        },
-        isReversed: true,
-      },
-      {
-        element: document.body,
-        property: 'marginLeft',
-        position: {
-          expanding: 20,
-          collapsing: 0
-        },
-      },
-    ];
+  let isExpanded = false;
+  
+  document.body.appendChild(auracSidebar);
+  document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed');
 
   type ArrowButtonProperties = {
     nerTerm: string,
@@ -153,24 +109,12 @@
   const entityToCard = new EntityMap<{ synonyms: string[], div: HTMLDivElement }>();
   const entityToOccurrence = new EntityMap<Element[]>();
   buttonElement.addEventListener('click', () => {
-    if (document.body.style.width === sidebarOpenScreenWidth || document.body.style.width === sidebarClosedScreenWidth) {
-      animateElements(elementProperties);
-    }
-    buttonElement.innerHTML = isExpanded ? collapseArrow : expandArrow;
-    document.head.appendChild(newAuracStyleElement());
+    toggleSidebar();
   });
 
   // @ts-ignore
 
   browser.runtime.onMessage.addListener((msg) => {
-    if (!isAppOpen && msg.type !== 'sidebar_rendered') {
-      document.body.style.width = '80vw';
-      document.body.style.marginLeft = '20vw';
-      auracSidebar.className = 'aurac-sidebar';
-      document.body.appendChild(auracSidebar);
-      isAppOpen = true;
-      document.head.appendChild(newAuracStyleElement());
-    }
     switch (msg.type) {
       case 'get_page_contents':
         return new Promise(resolve => {
@@ -180,23 +124,13 @@
         });
       case 'markup_page':
         wrapEntitiesWithHighlight(msg);
+        isExpanded || toggleSidebar()
         break;
       case 'x-ref_result':
         setXRefHTML(msg.body);
         break;
       case 'toggle_sidebar':
-        if (document.body.style.width === sidebarOpenScreenWidth || document.body.style.width === sidebarClosedScreenWidth) {
-          animateElements(elementProperties);
-          buttonElement.innerHTML = isExpanded ? collapseArrow : expandArrow;
-        }
-        break;
-      case 'sidebar_rendered':
-        return new Promise((resolve) => {
-          const result = String(hasNERLookupOccurred);
-          resolve({type: 'resolved', body: result});
-        });
-      case 'ner_lookup_performed':
-        hasNERLookupOccurred = true;
+        toggleSidebar();
         break;
       default:
         throw new Error('Received unexpected message from plugin');
@@ -204,7 +138,7 @@
   });
 
   function wrapEntitiesWithHighlight(msg: any) {
-    document.head.appendChild(newAuracStyleElement());
+    // document.head.appendChild(newAuracStyleElement());
     // sort entities by length of entityText (descending) - this will ensure that we can capture e.g. VPS26A, which would not be
     // highlighted if VPS26 has already been highlighted, because the text VPS26A is now spread across more than one node
     msg.body.sort((a, b) => b.entityText.length - a.entityText.length)
@@ -265,100 +199,15 @@
   // highlights a term by wrapping it an HTML span
   const highlightTerm = (term, entity) => `<span class="aurac-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative; cursor: pointer">${term}</span>`;
 
-  // creates an HTML style element with basic styling for Aurac sidebar
-  const newAuracStyleElement = () => {
-    const styleElement = document.createElement('style');
-    styleElement.innerHTML = `.aurac-sidebar {
-        color: black;
-        font-family: Arial, sans-serif;
-        font-size: 14px;
-        background: rgb(192,192,192);
-        position: fixed;
-        z-index: 2147483647;
-        height: 100vh;
-        left: ${elementProperties.find(v => v.element === auracSidebar).position.expanding}vw;
-        top: 0;
-        width: 20vw;
-        border-right: 2px solid black;
-        padding: 5px;
-        overflow-wrap: break-word;
-        overflow-y: scroll;
-    }
-    .sidebar-button {
-      color: black;
-      background-color: rgb(192, 192, 192);
-      position: fixed;
-      left: ${elementProperties.find(v => v.element === buttonElement).position.expanding}vw;
-      top: 50%;
-     }
-     .left-arrow-button {
-      color: black;
-      background-color: rgb(192, 192, 192);
-      order: 1;
-      padding: 5px;
-     }
-     .right-arrow-button {
-      color: black;
-      background-color: rgb(192, 192, 192);
-      order: 2;
-      padding: 5px;
-     }
-     .arrow-buttons {
-     display: flex;
-     justify-content: flex-end;
-     flex-direction: row;
-     }
-     #aurac-logo {
-     width: 5vw;
-     height: 5vw;
-     display: block;
-     margin-left: auto;
-     margin-right: auto;
-     margin-top: 0.3vw;
-     margin-bottom: 0.3vw;
-     }
-     #aurac-narrative {
-     text-align: center;
-     }
-     .cross-button {
-      position: relative;
-      top: -45px;
-      left: 1px;
-      color: red;
-      background-color: rgb(192, 192, 192);
-      padding: 5px;
-      }
-     `;
-    return styleElement;
-  };
-
   // This function will animate the sidebar opening and closing
-  function animateElements(element: ElementPropertiesType): void {
-    element.forEach(elementProperty => {
-      let id = null;
-      // If the sidebar is currently open, then it will keep moving until it has reached its target position, otherwise
-      // It will keep closing until it has reached its closed position
-      let pos = isExpanded ? elementProperty.position.expanding : elementProperty.position.collapsing;
-      const target = isExpanded ? elementProperty.position.collapsing : elementProperty.position.expanding;
-      const elementDistanceSpeed = 0.5;
-      id = setInterval(frame, 1);
-      // The frame function is used to animate the sidebar moving in and out. setInterval will call this function every seconds/ms
-      // depending on what number you pass to it
-      function frame() {
-        if (pos === target) { // If the position is equal to its target then it has reached its new position and should stop moving
-          clearInterval(id); // We reset the timer of the element back to nothing when its reached its target
-        } else {
-          if (!elementProperty.isReversed) { // The 'isReversed' boolean relates to the document body width, as the sidebar expands
-            // on the screen, the width of the document body needs to contract and vice versa
-            pos = isExpanded ? pos + elementDistanceSpeed : pos - elementDistanceSpeed;
-          } else { // The elementDistanceSpeed is how much the element will move by within this timeframe
-            pos = isExpanded ? pos - elementDistanceSpeed : pos + elementDistanceSpeed;
-          }
-          elementProperty.element.style[elementProperty.property] = pos + 'vw'; // Moves the respective element by a directional property
-        }
-      }
-    });
-    isExpanded = !isExpanded;
+  function toggleSidebar(): void {
+    Array.from(document.getElementsByClassName("aurac-transform")).forEach(e => {
+      e.className = e.className.replace(/(expanded|collapsed)/, (g) => {
+        return g === 'expanded' ? 'collapsed' : 'expanded'
+      })
+    })
+    isExpanded = !isExpanded
+    buttonElement.innerHTML = isExpanded ? collapseArrow : expandArrow;
   }
 
   // returns an event listener which creates a new element with passed info and appends it to the passed element
@@ -477,17 +326,17 @@
 
   function renderArrowButtonElements(sidebarText: HTMLDivElement, information: Information, synonyms: string[]): void {
     const arrowFlexProperties: HTMLDivElement = document.createElement('div');
-    arrowFlexProperties.className = 'arrow-buttons';
+    arrowFlexProperties.className = 'aurac-arrow-buttons';
     sidebarText.appendChild(arrowFlexProperties);
 
     const leftArrowButtonElement = document.createElement('button');
     leftArrowButtonElement.innerHTML = leftArrow;
-    leftArrowButtonElement.className = 'left-arrow-button';
+    leftArrowButtonElement.className = 'aurac-left-arrow-button';
     arrowFlexProperties.appendChild(leftArrowButtonElement);
 
     const rightArrowButtonElement = document.createElement('button');
     rightArrowButtonElement.innerHTML = rightArrow;
-    rightArrowButtonElement.className = 'right-arrow-button';
+    rightArrowButtonElement.className = 'aurac-right-arrow-button';
     arrowFlexProperties.appendChild(rightArrowButtonElement);
 
     // if multiple synonyms exist, use resolvedEntity for occurrences

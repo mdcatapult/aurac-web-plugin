@@ -27,6 +27,14 @@ Clicking one of these four buttons will run Leadmine (by making an API call to t
 
 ### Development
 
+**tl;dr**
+```bash
+set -a; source .env; set +a
+npm run dev
+```
+
+**in depth:**
+
 Cross-browser plugin written in Angular. This plugin combines the [web extension api](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions), the [web extension polyfill](https://github.com/mozilla/webextension-polyfill), and the [web extension types](https://github.com/kelseasy/web-ext-types) with angular.
 
 Because Angular works as a single page app, different pages have to be loaded via query parameters. The angular router doesn't seem to pick the up query parameters but the `ActivatedRoute` service does, so routing is implemented a bit strangely.
