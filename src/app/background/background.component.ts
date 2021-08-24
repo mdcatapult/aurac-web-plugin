@@ -57,7 +57,9 @@ export class BackgroundComponent {
               .catch(e => console.error(e))
               .then(() => {
                 if (this.leadmineResult) {
-                  this.getUniqueEntities(this.leadmineResult);
+                  const uniqueEntities = this.getUniqueEntities(this.leadmineResult);
+                  this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
+                    .catch(e => console.error(e));
                 }
               });
           }
@@ -139,25 +141,32 @@ export class BackgroundComponent {
               return;
             }
             this.leadmineResult = response.body;
-            this.getUniqueEntities(this.leadmineResult!);
-
+            const uniqueEntities = this.getUniqueEntities(this.leadmineResult!);
+            this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
+              .catch(e => console.error(e));
           });
       });
   }
 
-  getUniqueEntities(leadmineResponse: LeadminerResult): void {
+  shouldDisplayEntity(entity: LeadminerEntity): boolean {
+    // Entity must be greater than min entity length in all cases.
+    if (entity && entity.entityText.length < this.settings.preferences.minEntityLength) {
+      return false;
+    }
+    // If hide unresolved is true, the resolved entity string must be non-empty.
+    return this.settings.preferences.hideUnresolved && !!entity.resolvedEntity;
+  }
+
+
+  getUniqueEntities(leadmineResponse: LeadminerResult): Array<LeadminerEntity> {
     const uniqueEntities = new Array<LeadminerEntity>();
-    leadmineResponse.entities.filter(entity => {
-      return entity.resolvedEntity && entity.entityText.length >= this.settings.preferences.minEntityLength;
-    })
+    leadmineResponse.entities
       .forEach((entity: LeadminerEntity) => {
-        if (uniqueEntities.every(uniqueEntity => uniqueEntity.entityText !== entity.entityText)) {
+        if (this.shouldDisplayEntity(entity)) {
           uniqueEntities.push(entity);
         }
       });
-    // return uniqueEntities;
-    this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
-      .catch(e => console.error(e));
+    return uniqueEntities;
   }
 
   private getTrueKeys(v: { [_: string]: boolean }): string[] {

@@ -143,9 +143,9 @@
     }
   }
 
-  const sidebarTexts = document.createElement('div');
-  auracSidebar.appendChild(sidebarTexts);
-  const entityToDiv = new EntityMap<HTMLDivElement>();
+  const sidebarCards = document.createElement('div');
+  auracSidebar.appendChild(sidebarCards);
+  const entityToCard = new EntityMap<{ synonyms: string[], div: HTMLDivElement }>();
   const entityToOccurrence = new EntityMap<Element[]>();
   buttonElement.addEventListener('click', () => {
     if (document.body.style.width === sidebarOpenScreenWidth || document.body.style.width === sidebarClosedScreenWidth) {
@@ -245,7 +245,7 @@
     selector.map(element => {
       // Try/catch for edge cases.
       try {
-        // For each term, we want to replace it's original HTML with a highlight colour
+        // For each term, we want to replace its original HTML with a highlight colour
         const replacementNode = document.createElement('span');
         replacementNode.innerHTML = element.nodeValue.replaceAll(entity.entityText, highlightTerm(entity.entityText, entity));
 
@@ -265,10 +265,10 @@
     });
   }
 
-  // highlights a term by wrapping it an HTML span
+// highlights a term by wrapping it an HTML span
   const highlightTerm = (term, entity) => `<span class="aurac-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative; cursor: pointer">${term}</span>`;
 
-  // creates an HTML style element with basic styling for Aurac sidebar
+// creates an HTML style element with basic styling for Aurac sidebar
   const newAuracStyleElement = () => {
     const styleElement = document.createElement('style');
     styleElement.innerHTML = `.aurac-sidebar {
@@ -335,7 +335,7 @@
     return styleElement;
   };
 
-  // This function will animate the sidebar opening and closing
+// This function will animate the sidebar opening and closing
   function animateElements(element: ElementPropertiesType): void {
     element.forEach(elementProperty => {
       let id = null;
@@ -364,25 +364,34 @@
     isExpanded = !isExpanded;
   }
 
-  // returns an event listener which creates a new element with passed info and appends it to the passed element
+// returns an event listener which creates a new element with passed info and appends it to the passed element
   const populateAuracSidebar = (info: Information, element: Element) => {
     return (event) => {
       if (event.type !== 'click') {
         return;
       }
       document.getElementById('aurac-narrative').style.display = 'none';
+
+      const entityId = info.resolvedEntity || info.entityText;
+
       if (getAuracHighlightChildren(element).some(child => child.className === 'aurac-highlight')
         && element.parentElement.className === 'aurac-highlight') {
         removeEventListener('click', populateAuracSidebar(info, element));
       } else {
-        if (!entityToDiv.has(info.entityText)) {
-          entityToDiv.set(info.entityText, renderSidebarElement(info));
+
+        if (!entityToCard.has(entityId)) {  // entity is a new sidecard
+          const sidebarCard = renderSidebarElement(info, [info.entityText]);
+          sidebarCards.appendChild(sidebarCard);
+          entityToCard.set(entityId, {synonyms: [info.entityText], div: sidebarCard});
           // @ts-ignore
           browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity]})
             .catch(e => console.error(e));
+        } else { // entity is a synonym of existing sidecard
+          renderSynonyms(info, entityId);
         }
       }
-      const div = entityToDiv.get(info.entityText);
+
+      const div = entityToCard.get(entityId)?.div;
       if (div) {
         div.scrollIntoView({behavior: 'smooth'});
         setSidebarColors(div);
@@ -390,42 +399,62 @@
     };
   };
 
+  // renderSynonym adds a new synonym an the existing entity card.
+  function renderSynonyms(info: Information, entityId: string): void {
+    const synonyms = entityToCard.get(entityId).synonyms;
+
+    if (!synonyms.includes(info.entityText)) {
+      synonyms.push(info.entityText);
+
+      const synonymOccurrences: Element[] = [];
+      // add each synonym to the entityToOccurrence map. Sort the occurrences based on their order of appearance.
+      synonyms.forEach(synonym => {
+        synonymOccurrences.push(...entityToOccurrence.get(synonym));
+        synonymOccurrences.sort((a, b) => a.getBoundingClientRect().y - b.getBoundingClientRect().y);
+      });
+      entityToOccurrence.set(entityId, synonymOccurrences);
+      const sidebarCard = renderSidebarElement(info, synonyms);
+
+      entityToCard.get(entityId).div.replaceWith(sidebarCard);
+      entityToCard.get(entityId).div = sidebarCard;
+    }
+  }
+
   function setSidebarColors(highlightedDiv: HTMLDivElement): void {
-    Array.from(entityToDiv.values()).forEach(div => {
-      div.style.border = div === highlightedDiv ? '2px white solid' : '1px black solid';
+    Array.from(entityToCard.values()).forEach(card => {
+      card.div.style.border = card.div === highlightedDiv ? '2px white solid' : '1px black solid';
     });
   }
 
   // Creates a sidebar element presenting information.
-  function renderSidebarElement(information: Information): HTMLDivElement {
-    const sidebarText: HTMLDivElement = document.createElement('div');
-    renderArrowButtonElements(sidebarText, information);
-    renderOccurrenceCounts(sidebarText, information);
-    renderRemoveEntityFromSidebarButtonElement(sidebarText, information);
+  function renderSidebarElement(information: Information, synonyms: string[]): HTMLDivElement {
+    const sidebarCard: HTMLDivElement = document.createElement('div');
+    renderArrowButtonElements(sidebarCard, information, synonyms);
+    renderOccurrenceCounts(sidebarCard, information, synonyms);
+    renderRemoveEntityFromSidebarButtonElement(sidebarCard, information);
 
-    sidebarText.id = 'sidebar-text';
-    sidebarText.style.border = '1px solid black';
-    sidebarText.style.padding = '2px';
-    sidebarText.style.marginBottom = '5px';
-    sidebarText.style.backgroundColor = information.recognisingDict.htmlColor;
+    sidebarCard.id = 'sidebar-text';
+    sidebarCard.style.border = '1px solid black';
+    sidebarCard.style.padding = '2px';
+    sidebarCard.style.marginBottom = '5px';
+    sidebarCard.style.backgroundColor = information.recognisingDict.htmlColor;
 
-    sidebarText.insertAdjacentHTML('beforeend', `<p>Term: ${information.entityText}</p>`);
+    sidebarCard.insertAdjacentHTML('beforeend', `<p>${synonyms.length === 1 ? 'Term' : 'Terms'}: ${synonyms.toString()}</p>`);
     if (information.resolvedEntity) {
-      sidebarText.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${information.resolvedEntity}</p>`);
+      sidebarCard.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${information.resolvedEntity}</p>`);
 
       if (information.entityGroup === 'Gene or Protein') {
         const geneNameLink = createGeneNameLink(information.resolvedEntity);
-        sidebarText.insertAdjacentHTML('beforeend', geneNameLink);
+        sidebarCard.insertAdjacentHTML('beforeend', geneNameLink);
       }
     }
 
-    sidebarText.insertAdjacentHTML('beforeend', `<p>Entity Type: ${information.recognisingDict.entityType}</p>`);
+    sidebarCard.insertAdjacentHTML('beforeend', `<p>Entity Type: ${information.recognisingDict.entityType}</p>`);
 
     const xrefHTML = document.createElement('div');
     xrefHTML.className = information.entityText;
-    sidebarText.appendChild(xrefHTML);
-    sidebarTexts.appendChild(sidebarText);
-    return sidebarText;
+    sidebarCard.appendChild(xrefHTML);
+    return sidebarCard;
   }
 
   function populateEntityToOccurrences(entityText: string, occurrence: Element): void {
@@ -436,18 +465,20 @@
     }
   }
 
-  function renderOccurrenceCounts(sidebarText: HTMLDivElement, information: Information): void {
-    const entityText = information.entityText;
+  function renderOccurrenceCounts(sidebarText: HTMLDivElement, information: Information, synonyms: string[]): void {
+    const entityText = synonyms.length === 1 ? information.entityText : information.resolvedEntity;
     const occurrenceElement = document.createElement('span');
     occurrenceElement.id = `${entityText}-occurrences`;
     occurrenceElement.style.display = 'flex';
     occurrenceElement.style.justifyContent = 'flex-end';
 
-    occurrenceElement.innerText = `${entityToOccurrence.get(entityText).length} matches found`;
+    let numOfOccurrences = 0;
+    synonyms.forEach(synonym => numOfOccurrences = numOfOccurrences + entityToOccurrence.get(synonym).length);
+    occurrenceElement.innerText = `${numOfOccurrences} matches found`;
     sidebarText.appendChild(occurrenceElement);
   }
 
-  function renderArrowButtonElements(sidebarText: HTMLDivElement, information: Information): void {
+  function renderArrowButtonElements(sidebarText: HTMLDivElement, information: Information, synonyms: string[]): void {
     const arrowFlexProperties: HTMLDivElement = document.createElement('div');
     arrowFlexProperties.className = 'arrow-buttons';
     sidebarText.appendChild(arrowFlexProperties);
@@ -462,8 +493,13 @@
     rightArrowButtonElement.className = 'right-arrow-button';
     arrowFlexProperties.appendChild(rightArrowButtonElement);
 
+    // if multiple synonyms exist, use resolvedEntity for occurrences
+    const nerTerm = synonyms.length > 1 ? information.resolvedEntity : information.entityText;
     const arrowProperties: ArrowButtonProperties = {
-      nerTerm: information.entityText, nerColor: information.recognisingDict.htmlColor, positionInArray: 0, isClicked: false
+      nerTerm,
+      nerColor: information.recognisingDict.htmlColor,
+      positionInArray: 0,
+      isClicked: false
     };
 
     leftArrowButtonElement.addEventListener('click', () => {
@@ -476,6 +512,7 @@
   }
 
   function pressArrowButton(arrowProperties: ArrowButtonProperties, direction: 'left' | 'right'): void {
+
     Array.from(entityToOccurrence.values()).forEach(entity => {
       entity.forEach(occurrence => setHtmlColours(occurrence));
     });
@@ -520,7 +557,7 @@
     if (!document.getElementsByClassName(information.entityText).length) {
       return;
     }
-    entityToDiv.delete(information.entityText);
+    entityToCard.delete(information.resolvedEntity || information.entityText);
     const elementList: HTMLCollectionOf<Element> = document.getElementsByClassName(information.entityText);
     for (let i = 0; i < elementList.length; i++) {
       if (elementList.item(i).className === information.entityText) {
@@ -549,7 +586,7 @@
     });
   }
 
-  // if the entity group is 'Gene or Protein' add a genenames url link to the sidebarText element
+// if the entity group is 'Gene or Protein' add a genenames url link to the sidebarText element
   function createGeneNameLink(resolvedEntity: string): string {
     const id = resolvedEntity.split(':').pop();
     const geneNameUrl = `https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/${id}`;
@@ -574,7 +611,7 @@
     return allElements;
   };
 
-  // Recursively find all text nodes which match entity
+// Recursively find all text nodes which match entity
   function allDescendants(node: HTMLElement, elements: Array<Element>, entity: string) {
     if ((node && node.classList.contains('aurac-sidebar')) || !allowedTagType(node)) {
       return;
@@ -600,9 +637,9 @@
     }
   }
 
-  // chemical formulae use <sub> tags, the content of which needs to be extracted and concatenated to form a complete formula which can
-  // be sent to be NER'd.  This type enables the mapping of a chemical formula to its parent node so that the entire formula
-  // (which is split across several nodes in the DOM) can be highlighted
+// chemical formulae use <sub> tags, the content of which needs to be extracted and concatenated to form a complete formula which can
+// be sent to be NER'd.  This type enables the mapping of a chemical formula to its parent node so that the entire formula
+// (which is split across several nodes in the DOM) can be highlighted
   type chemicalFormula = {
     formulaNode: Element;
     formulaText: string;
@@ -610,7 +647,7 @@
 
   const chemicalFormulae: chemicalFormula[] = [];
 
-  // Recursively find all text nodes which match regex
+// Recursively find all text nodes which match regex
   function allTextNodes(node: HTMLElement, textNodes: Array<string>) {
     if (!allowedTagType(node) || node.classList.contains('aurac-sidebar')) {
       return;
@@ -649,7 +686,7 @@
     }
   }
 
-  // Only allow nodes that we can traverse or add children to
+// Only allow nodes that we can traverse or add children to
   const allowedNodeType = (element: HTMLElement): boolean => {
     return element.nodeType !== Node.COMMENT_NODE && element.nodeType !== Node.CDATA_SECTION_NODE
       && element.nodeType !== Node.PROCESSING_INSTRUCTION_NODE && element.nodeType !== Node.DOCUMENT_TYPE_NODE;
@@ -665,11 +702,11 @@
 
   const allowedTagType = (element: HTMLElement): boolean => !forbiddenTags.some(tag => element instanceof tag);
 
-  const delimiters: string[] = ['(', ')', '\\n', '\'', '\"', ',', ';', '.'];
+  const delimiters: string[] = ['(', ')', '\\n', '\"', '\'', '\\', ',', ';', '.', '!'];
 
-  // Returns true if a string contains at least one instance of a particular term between word boundaries, i.e. not immediately
-  // followed or preceded by either a non white-space character or one of the special characters in the delimiters array.
-  // Can handle non latin unicode terms which at the moment JS Regex can't.
+// Returns true if a string contains at least one instance of a particular term between word boundaries, i.e. not immediately
+// followed or preceded by either a non white-space character or one of the special characters in the delimiters array.
+// Can handle non latin unicode terms which at the moment JS Regex can't.
   function textContainsTerm(text: string, term: string): boolean {
     const startsWithWhiteSpaceRegex = /^\s+.*/;
     const endsWithWhiteSpaceRegex = /.*\s+$/;
@@ -677,34 +714,48 @@
     const found: string[] = [];
     let foundTerm = false;
 
-    // First check if the term is found within the entire string
+    // First check if the term is found within the entire string.
     // If it does then step through the string 1 letter at a time until it matches the term.
     // Then check if the matched part is inside a word boundary.
     if (text.includes(term)) {
       text.split('').forEach((letter) => {
         currentText += letter;
-
         if (currentText.includes(term) && !foundTerm) {
           const textPrecedingTerm: string = currentText.replace(term, '');
 
           // Find the remaining bit of text but also remove any line breaks from it
           const textFollowingTerm: string = text.slice(currentText.length);
 
-          // We found the string but is it in the middle of something else like abcdMyString1234? ie is it a word boundary or not
-          // or is it at the start or end of the string. If it's within a word boundary we don't want to highlight it. If however, it is
-          // encapsulated by a special character delimiter then we do.
-          if (
-            (textPrecedingTerm.match(endsWithWhiteSpaceRegex) || !textPrecedingTerm.length) &&
-            (textFollowingTerm.match(startsWithWhiteSpaceRegex) || !textFollowingTerm.length)) {
+          // We found the string but is it in the middle of something else like abcdMyString1234? i.e. is it a word boundary or not
+          // or is it at the start or end of the string. If it's within a word boundary we don't want to highlight it.
+          if ((!!textPrecedingTerm.match(endsWithWhiteSpaceRegex) || !textPrecedingTerm.length) &&
+            (!!textFollowingTerm.match(startsWithWhiteSpaceRegex) || !textFollowingTerm.length)) {
             found.push(term);
             foundTerm = true;
           } else {
+            // If however the term is encapsulated by a special character delimiter then we do want to highlight it.
             delimiters.forEach((character) => {
-              if (
-                (textPrecedingTerm.endsWith(character) &&
-                  (textFollowingTerm.match(startsWithWhiteSpaceRegex) || !textFollowingTerm.length)) ||
+              if ((textPrecedingTerm.endsWith(character) &&
+                  (!!textFollowingTerm.match(startsWithWhiteSpaceRegex) ||
+                    !textFollowingTerm.length ||
+                    textFollowingTerm.startsWith(character) ||
+                    // this condition makes highlighting 'work' in the test html but means we get results like
+                    // 'en' and 'co' being highlighted in the term 'encoding'
+                    // we probably don't want to be highlighting terms that are back to back with other terms
+                    // textFollowingTerm.startsWith(term) ||
+                    // catch a case where we have a different delimiter at the end of the term, e.g. a term between parentheses
+                    delimiters.includes(textFollowingTerm.charAt(0))))
+                ||
                 (textFollowingTerm.startsWith(character) &&
-                  (textPrecedingTerm.match(endsWithWhiteSpaceRegex) || !textPrecedingTerm.length))) {
+                  (!!textPrecedingTerm.match(endsWithWhiteSpaceRegex) ||
+                    !textPrecedingTerm.length ||
+                    textPrecedingTerm.endsWith(character) ||
+                    // this condition makes highlighting 'work' in the test html but means we get results like
+                    // 'en' and 'co' being highlighted in the term 'encoding'
+                    // we probably don't want to be highlighting terms that are back to back with other terms
+                    // textPrecedingTerm.endsWith(term) ||
+                    // catch a case where we have a different delimiter at the end of the term, e.g. a term between parentheses
+                    delimiters.includes(textPrecedingTerm.charAt(textPrecedingTerm.length - 1))))) {
                 found.push(term);
                 foundTerm = true;
               }
