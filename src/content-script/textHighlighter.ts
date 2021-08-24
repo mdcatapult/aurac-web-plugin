@@ -86,6 +86,7 @@ export module TextHighlighter {
   // Recursively find all text nodes which match entity
   function allDescendants(node: HTMLElement, elements: Array<Element>, entity: string) {
     if ((node && node.classList && node.classList.contains('aurac-sidebar')) || !allowedTagType(node)) {
+    if ((node && node.classList && node.classList.contains('aurac-sidebar')) || !allowedTagType(node)) {
       return;
     }
     try {

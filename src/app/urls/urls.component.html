@@ -1,81 +1,79 @@
-<!--<div class="bg-gray-50 flex-col">
+<div class="bg-gray-50 flex-col">
   <div class="rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden">
-    <div class="relative grid gap-6 bg-white px-3 py-3 sm:gap-8 sm:p-8">-->
+    <div class="relative grid gap-6 bg-white px-3 py-3 sm:gap-8 sm:p-8">
 
-<form [formGroup]="urlsForm">
-  <!--    Leadmine-->
-  <mat-form-field appearance="legacy">
-    <mat-label>Legacy form field</mat-label>
-    <input matInput placeholder="Placeholder">
-    <mat-hint>Hint</mat-hint>
-  </mat-form-field>
+      <form [formGroup]="urlsForm">
 
-  <!--  <div class="shadow sm:rounded-md sm:overflow-hidden">
-      <div class="px-4 py-5 bg-gray-50 space-y-6 sm:p-6">
-        <div class="grid grid-cols-3 gap-6">
-          <div class="col-span-3 sm:col-span-2">
-            <label for="{{urlKeys.leadmineURL}}" class="block text-sm font-medium text-gray-700">
-              Leadmine URL
-            </label>
-            <div class="mt-1 flex rounded-md shadow-sm bg-white">
-              <input
-                type="text"
-                [ngStyle]="getBorderColor(urlKeys.leadmineURL)"
-                name="{{urlKeys.leadmineURL}}"
-                formControlName="{{urlKeys.leadmineURL}}"
-                id="{{urlKeys.leadmineURL}}"
-                class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-l-md rounded-r-md sm:text-sm border-gray-300"
-              >
+        <!--    Leadmine-->
+        <div class="shadow sm:rounded-md sm:overflow-hidden">
+          <div class="px-4 py-5 bg-gray-50 space-y-6 sm:p-6">
+            <div class="grid grid-cols-3 gap-6">
+              <div class="col-span-3 sm:col-span-2">
+                <label for="{{urlKeys.leadmineURL}}" class="block text-sm font-medium text-gray-700">
+                  Leadmine URL
+                </label>
+                <div class="mt-1 flex rounded-md shadow-sm bg-white">
+                  <input
+                    type="text"
+                    [ngStyle]="getBorderColor(urlKeys.leadmineURL)"
+                    name="{{urlKeys.leadmineURL}}"
+                    formControlName="{{urlKeys.leadmineURL}}"
+                    id="{{urlKeys.leadmineURL}}"
+                    class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-l-md rounded-r-md sm:text-sm border-gray-300"
+                  >
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>-->
 
-  <!--    Compound converter -->
-  <!-- <div class="shadow sm:rounded-md sm:overflow-hidden">
-     <div class="px-4 py-5 bg-gray-50 space-y-6 sm:p-6">
-       <div class="grid grid-cols-3 gap-6">
-         <div class="col-span-3 sm:col-span-2">
-           <label for="{{urlKeys.compoundConverterURL}}" class="block text-sm font-medium text-gray-700">
-             Compound Converter URL
-           </label>
-           <div class="mt-1 flex rounded-md shadow-sm bg-white">
-             <input
-               type="text"
-               [ngStyle]="getBorderColor(urlKeys.compoundConverterURL)"
-               name="{{urlKeys.compoundConverterURL}}"
-               formControlName="{{urlKeys.compoundConverterURL}}"
-               id="{{urlKeys.compoundConverterURL}}"
-               class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-l-md rounded-r-md sm:text-sm border-gray-300"
-             >
-           </div>
-         </div>
-       </div>
-     </div>
-   </div>-->
-
-  <!--    Unichem-->
-  <!--  <div class="shadow sm:rounded-md sm:overflow-hidden">
-      <div class="px-4 py-5 bg-gray-50 space-y-6 sm:p-6">
-        <div class="grid grid-cols-3 gap-6">
-          <div class="col-span-3 sm:col-span-2">
-            <label for="{{urlKeys.unichemURL}}" class="block text-sm font-medium text-gray-700">
-              Unichem URL
-            </label>
-            <div class="mt-1 flex rounded-md shadow-sm bg-white">
-              <input
-                type="text"
-                [ngStyle]="getBorderColor(urlKeys.unichemURL)"
-                name="{{urlKeys.unichemURL}}"
-                formControlName="{{urlKeys.unichemURL}}"
-                id="{{urlKeys.unichemURL}}"
-                class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-l-md rounded-r-md sm:text-sm border-gray-300"
-              >
+        <!--    Compound converter -->
+        <div class="shadow sm:rounded-md sm:overflow-hidden">
+          <div class="px-4 py-5 bg-gray-50 space-y-6 sm:p-6">
+            <div class="grid grid-cols-3 gap-6">
+              <div class="col-span-3 sm:col-span-2">
+                <label for="{{urlKeys.compoundConverterURL}}" class="block text-sm font-medium text-gray-700">
+                  Compound Converter URL
+                </label>
+                <div class="mt-1 flex rounded-md shadow-sm bg-white">
+                  <input
+                    type="text"
+                    [ngStyle]="getBorderColor(urlKeys.compoundConverterURL)"
+                    name="{{urlKeys.compoundConverterURL}}"
+                    formControlName="{{urlKeys.compoundConverterURL}}"
+                    id="{{urlKeys.compoundConverterURL}}"
+                    class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-l-md rounded-r-md sm:text-sm border-gray-300"
+                  >
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>-->
-</form>
 
+        <!--    Unichem-->
+        <div class="shadow sm:rounded-md sm:overflow-hidden">
+          <div class="px-4 py-5 bg-gray-50 space-y-6 sm:p-6">
+            <div class="grid grid-cols-3 gap-6">
+              <div class="col-span-3 sm:col-span-2">
+                <label for="{{urlKeys.unichemURL}}" class="block text-sm font-medium text-gray-700">
+                  Unichem URL
+                </label>
+                <div class="mt-1 flex rounded-md shadow-sm bg-white">
+                  <input
+                    type="text"
+                    [ngStyle]="getBorderColor(urlKeys.unichemURL)"
+                    name="{{urlKeys.unichemURL}}"
+                    formControlName="{{urlKeys.unichemURL}}"
+                    id="{{urlKeys.unichemURL}}"
+                    class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-l-md rounded-r-md sm:text-sm border-gray-300"
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+
+
+
+</div>

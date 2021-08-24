@@ -16,7 +16,7 @@ export module Sidebar {
 
     sidebar.appendChild(logo);
     sidebar.appendChild(logoText);
-    sidebar.className = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed';
+    sidebar.className = `aurac-transform aurac-sidebar aurac-sidebar--${isExpanded ? 'expanded' : 'collapsed'}`;
 
     const sidebarToggleButton: HTMLButtonElement =
       initToggleButton(
@@ -55,10 +55,9 @@ export module Sidebar {
                             sidebar: HTMLSpanElement,
                             documentBody: HTMLElement): HTMLButtonElement {
 
-    toggleButton.innerHTML = Card.expandArrow;
+    toggleButton.innerHTML = Card.collapseArrow;
     toggleButton.className = 'sidebar-button';
-    toggleButton.className = 'aurac-transform aurac-sidebar-button aurac-sidebar-button--collapsed'
-
+    toggleButton.className = `aurac-transform aurac-sidebar-button aurac-sidebar-button--${isExpanded ? 'expanded' : 'collapsed'}`
 
     // document.body.id = 'body'; // TODO what on earth?!
 
