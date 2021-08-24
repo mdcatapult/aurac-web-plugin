@@ -4,23 +4,11 @@ import {Card} from './card';
 
 export module Sidebar {
 
-
-  const sidebarOpenScreenWidth = '80vw';
-  const sidebarClosedScreenWidth = '100vw';
-
-  // rename to 'cardsElement'?
   const cardContainer = document.createElement('div')
   const toggleButtonElement = document.createElement('button')
   const imageElement = document.createElement('img');
   const headerElement = document.createElement('h4');
   let isExpanded = true;
-  let hasNERLookupOccurred = false; // TODO ?
-
-  // TODO maybe we need this boyo
-  // export function getSidebar(): HTMLSpanElement {
-  //   return sidebarElement;
-  // }
-
 
   export function init(sidebar: HTMLSpanElement): void {
 
@@ -28,7 +16,6 @@ export module Sidebar {
 
     sidebar.appendChild(logo);
     sidebar.appendChild(logoText);
-    // sidebar.id = 'aurac-sidebar-id'
     sidebar.className = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed';
 
     const sidebarToggleButton: HTMLButtonElement =
@@ -39,7 +26,6 @@ export module Sidebar {
       );
 
     sidebar.appendChild(sidebarToggleButton);
-
     sidebar.appendChild(cardContainer);
     document.body.appendChild(sidebar);
   }
@@ -59,8 +45,8 @@ export module Sidebar {
     toggleButtonElement.innerHTML = isExpanded ? Card.collapseArrow : Card.expandArrow;
   }
 
-
   export function addCard(card: HTMLDivElement): void {
+    console.log('adding card: ', card)
     cardContainer.appendChild(card)
   }
 
@@ -69,7 +55,7 @@ export module Sidebar {
                             sidebar: HTMLSpanElement,
                             documentBody: HTMLElement): HTMLButtonElement {
 
-    toggleButton.innerHTML = Card.collapseArrow;
+    toggleButton.innerHTML = Card.expandArrow;
     toggleButton.className = 'sidebar-button';
     toggleButton.className = 'aurac-transform aurac-sidebar-button aurac-sidebar-button--collapsed'
 
@@ -88,7 +74,7 @@ export module Sidebar {
     auracLogo.src = browser.runtime.getURL('assets/head-brains.png')
 
     logoText.innerText = 'Click on a highlighted entity to display further information and links below...';
-    logoText.className = 'aurac-narrative';
+    logoText.id = 'aurac-narrative';
 
     return [auracLogo, logoText];
   }
@@ -112,11 +98,8 @@ export module Sidebar {
         return;
       }
 
-      // hides the logo / narrative
+      // hides the narrative
       document.getElementById('aurac-narrative').style.display = 'none';
-
-      // TODO this?
-      // documentClass.getNarrative.hide();
 
       if (getAuracHighlightChildren(element).some(child => child.className === 'aurac-highlight')
         && element.parentElement.className === 'aurac-highlight') {
@@ -137,5 +120,9 @@ export module Sidebar {
       }
     };
   };
+
+  // function getAuracElement(elementName: ElementName): HTMLElement {
+  //   return document.getElementById(elementName);
+  // }
 
 }

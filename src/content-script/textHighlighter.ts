@@ -29,7 +29,7 @@ export module TextHighlighter {
 
   // Recursively find all text nodes which match regex
   export function allTextNodes(node: HTMLElement, textNodes: Array<string>) {
-    if (!allowedTagType(node) || node.classList.contains('aurac-sidebar')) {
+    if (!allowedTagType(node) || node.classList && node.classList.contains('aurac-sidebar')) {
       return;
     }
 
@@ -85,7 +85,7 @@ export module TextHighlighter {
   // TODO maybe remove this when we can select via data attribute?
   // Recursively find all text nodes which match entity
   function allDescendants(node: HTMLElement, elements: Array<Element>, entity: string) {
-    if ((node && node.classList.contains('aurac-sidebar')) || !allowedTagType(node)) {
+    if ((node && node.classList && node.classList.contains('aurac-sidebar')) || !allowedTagType(node)) {
       return;
     }
     try {
@@ -96,7 +96,7 @@ export module TextHighlighter {
               elements.push(element);
             }
             // tslint:disable-next-line:max-line-length
-          } else if (!element.classList.contains('tooltipped')
+          } else if (element.classList && !element.classList.contains('tooltipped')
             && !element.classList.contains('tooltipped-click')
             && element.style.display !== 'none') {
             allDescendants(element, elements, entity);
