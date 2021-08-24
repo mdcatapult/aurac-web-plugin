@@ -17,10 +17,10 @@
       ],
       "js": [
         "browser-polyfill.min.js",
-        "assets/script.js"
+        "content.js"
       ],
       "css": [
-        "browser-plugin/assets/styles.css"
+        "assets/styles.css"
       ]
     }
   ],

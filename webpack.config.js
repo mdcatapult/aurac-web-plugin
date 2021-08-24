@@ -61,7 +61,7 @@ const config = {
   },
   plugins: [
     new CopyPlugin({
-      patterns: [{ from: "public", to: "." }, {from: "./node_modules/webextension-polyfill/dist/", to: "." }],
+      patterns: [{from: "./node_modules/webextension-polyfill/dist/", to: "." }],
     })
   ]
 };
