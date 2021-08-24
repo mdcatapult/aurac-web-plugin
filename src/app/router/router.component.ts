@@ -12,7 +12,6 @@ export class RouterComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe((m) => {
-      console.log("In the router")
       const page = m.get('page');
       this.isBackground = page === 'background';
       this.isPopup = page === 'popup';
