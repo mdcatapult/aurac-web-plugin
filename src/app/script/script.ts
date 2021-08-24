@@ -372,7 +372,7 @@
       }
       document.getElementById('aurac-narrative').style.display = 'none';
 
-      const entityId = info.resolvedEntity || info.entityText
+      const entityId = info.resolvedEntity || info.entityText;
 
       if (getAuracHighlightChildren(element).some(child => child.className === 'aurac-highlight')
         && element.parentElement.className === 'aurac-highlight') {
@@ -380,14 +380,14 @@
       } else {
 
         if (!entityToCard.has(entityId)) {  // entity is a new sidecard
-          const sidebarCard = renderSidebarElement(info, [info.entityText])
-          sidebarCards.appendChild(sidebarCard)
+          const sidebarCard = renderSidebarElement(info, [info.entityText]);
+          sidebarCards.appendChild(sidebarCard);
           entityToCard.set(entityId, {synonyms: [info.entityText], div: sidebarCard});
           // @ts-ignore
           browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity]})
             .catch(e => console.error(e));
         } else { // entity is a synonym of existing sidecard
-          renderSynonyms(info, entityId)
+          renderSynonyms(info, entityId);
         }
       }
 
@@ -401,22 +401,22 @@
 
   // renderSynonym adds a new synonym an the existing entity card.
   function renderSynonyms(info: Information, entityId: string): void {
-    const synonyms = entityToCard.get(entityId).synonyms
+    const synonyms = entityToCard.get(entityId).synonyms;
 
     if (!synonyms.includes(info.entityText)) {
-      synonyms.push(info.entityText)
+      synonyms.push(info.entityText);
 
-      const synonymOccurrences: Element[] = []
+      const synonymOccurrences: Element[] = [];
       // add each synonym to the entityToOccurrence map. Sort the occurrences based on their order of appearance.
       synonyms.forEach(synonym => {
-        synonymOccurrences.push(...entityToOccurrence.get(synonym))
-        synonymOccurrences.sort((a, b) => a.getBoundingClientRect().y - b.getBoundingClientRect().y)
-      })
-      entityToOccurrence.set(entityId, synonymOccurrences)
-      const sidebarCard = renderSidebarElement(info, synonyms)
+        synonymOccurrences.push(...entityToOccurrence.get(synonym));
+        synonymOccurrences.sort((a, b) => a.getBoundingClientRect().y - b.getBoundingClientRect().y);
+      });
+      entityToOccurrence.set(entityId, synonymOccurrences);
+      const sidebarCard = renderSidebarElement(info, synonyms);
 
-      entityToCard.get(entityId).div.replaceWith(sidebarCard)
-      entityToCard.get(entityId).div = sidebarCard
+      entityToCard.get(entityId).div.replaceWith(sidebarCard);
+      entityToCard.get(entityId).div = sidebarCard;
     }
   }
 
@@ -472,8 +472,8 @@
     occurrenceElement.style.display = 'flex';
     occurrenceElement.style.justifyContent = 'flex-end';
 
-    let numOfOccurrences = 0
-    synonyms.forEach(synonym => numOfOccurrences = numOfOccurrences + entityToOccurrence.get(synonym).length)
+    let numOfOccurrences = 0;
+    synonyms.forEach(synonym => numOfOccurrences = numOfOccurrences + entityToOccurrence.get(synonym).length);
     occurrenceElement.innerText = `${numOfOccurrences} matches found`;
     sidebarText.appendChild(occurrenceElement);
   }
@@ -494,9 +494,12 @@
     arrowFlexProperties.appendChild(rightArrowButtonElement);
 
     // if multiple synonyms exist, use resolvedEntity for occurrences
-    const nerTerm = synonyms.length > 1 ? information.resolvedEntity : information.entityText
+    const nerTerm = synonyms.length > 1 ? information.resolvedEntity : information.entityText;
     const arrowProperties: ArrowButtonProperties = {
-      nerTerm: nerTerm, nerColor: information.recognisingDict.htmlColor, positionInArray: 0, isClicked: false
+      nerTerm,
+      nerColor: information.recognisingDict.htmlColor,
+      positionInArray: 0,
+      isClicked: false
     };
 
     leftArrowButtonElement.addEventListener('click', () => {
