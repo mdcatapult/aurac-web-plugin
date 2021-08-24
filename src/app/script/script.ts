@@ -41,13 +41,17 @@
   console.log('script loaded');
 
   const auracSidebar = document.createElement('span');
+  auracSidebar.id = 'aurac-sidebar-id';
+  auracSidebar.className = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed';
+
   const auracLogo = document.createElement('img');
   auracLogo.id = 'aurac-logo';
+
   // @ts-ignore
-  auracLogo.src = browser.runtime.getURL('assets/head-brains.png');
+  auracLogo.src = browser.runtime.getURL('assets/head-brains.png')
   auracSidebar.appendChild(auracLogo);
   const narrative = document.createElement('h4');
-  narrative.innerText = 'Click on a highlighted entity to display further information and links below...';
+  narrative.innerText = 'Click on a highlighted entity to display further information and links below...'
   narrative.id = 'aurac-narrative';
   auracSidebar.appendChild(narrative);
   const buttonElement = document.createElement('button');
@@ -60,65 +64,17 @@
   const expandArrow = '&#62;';
   const rightArrow = '&#8594';
   const leftArrow = '&#8592';
-  const crossButton = '&#215;';
+  const crossButton = '&#215;'
   const auracHighlightElements: Array<AuracHighlightHtmlColours> = [];
 
   auracSidebar.appendChild(buttonElement);
   buttonElement.innerHTML = collapseArrow;
-  buttonElement.className = 'sidebar-button';
+  buttonElement.className = 'aurac-transform aurac-sidebar-button aurac-sidebar-button--collapsed';
   buttonElement.id = 'button-id';
-  auracSidebar.id = 'aurac-sidebar-id';
-  document.body.id = 'body';
+  let isExpanded = false;
 
-  let isExpanded = true;
-  let isAppOpen = false;
-
-  type ElementPropertiesType = {
-    element: HTMLElement,
-    position: {
-      expanding: number,
-      collapsing: number
-    },
-    property: 'left' | 'marginLeft' | 'width',
-    isReversed?: boolean
-  }[];
-
-  const elementProperties: ElementPropertiesType =
-    [
-      {
-        element: buttonElement,
-        property: 'left',
-        position: {
-          expanding: 20,
-          collapsing: 0
-        },
-      },
-      {
-        element: auracSidebar,
-        property: 'left',
-        position: {
-          expanding: 0,
-          collapsing: -21
-        },
-      },
-      {
-        element: document.body,
-        property: 'width',
-        position: {
-          expanding: 80,
-          collapsing: 100
-        },
-        isReversed: true,
-      },
-      {
-        element: document.body,
-        property: 'marginLeft',
-        position: {
-          expanding: 20,
-          collapsing: 0
-        },
-      },
-    ];
+  document.body.appendChild(auracSidebar);
+  document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed');
 
   type ArrowButtonProperties = {
     nerTerm: string,
@@ -148,24 +104,12 @@
   const entityToCard = new EntityMap<{ synonyms: string[], div: HTMLDivElement }>();
   const entityToOccurrence = new EntityMap<Element[]>();
   buttonElement.addEventListener('click', () => {
-    if (document.body.style.width === sidebarOpenScreenWidth || document.body.style.width === sidebarClosedScreenWidth) {
-      animateElements(elementProperties);
-    }
-    buttonElement.innerHTML = isExpanded ? collapseArrow : expandArrow;
-    document.head.appendChild(newAuracStyleElement());
+    toggleSidebar();
   });
 
   // @ts-ignore
 
   browser.runtime.onMessage.addListener((msg) => {
-    if (!isAppOpen && msg.type !== 'sidebar_rendered') {
-      document.body.style.width = '80vw';
-      document.body.style.marginLeft = '20vw';
-      auracSidebar.className = 'aurac-sidebar';
-      document.body.appendChild(auracSidebar);
-      isAppOpen = true;
-      document.head.appendChild(newAuracStyleElement());
-    }
     switch (msg.type) {
       case 'get_page_contents':
         return new Promise(resolve => {
@@ -175,15 +119,13 @@
         });
       case 'markup_page':
         wrapEntitiesWithHighlight(msg);
+        isExpanded || toggleSidebar()
         break;
       case 'x-ref_result':
         setXRefHTML(msg.body);
         break;
       case 'toggle_sidebar':
-        if (document.body.style.width === sidebarOpenScreenWidth || document.body.style.width === sidebarClosedScreenWidth) {
-          animateElements(elementProperties);
-          buttonElement.innerHTML = isExpanded ? collapseArrow : expandArrow;
-        }
+        toggleSidebar()
         break;
       case 'sidebar_rendered':
         return new Promise((resolve) => {
@@ -202,7 +144,6 @@
   });
 
   function wrapEntitiesWithHighlight(msg: any) {
-    document.head.appendChild(newAuracStyleElement());
     // sort entities by length of entityText (descending) - this will ensure that we can capture e.g. VPS26A, which would not be
     // highlighted if VPS26 has already been highlighted, because the text VPS26A is now spread across more than one node
     msg.body.sort((a, b) => b.entityText.length - a.entityText.length)
@@ -265,106 +206,21 @@
     });
   }
 
-// highlights a term by wrapping it an HTML span
+  // highlights a term by wrapping it an HTML span
   const highlightTerm = (term, entity) => `<span class="aurac-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative; cursor: pointer">${term}</span>`;
 
-// creates an HTML style element with basic styling for Aurac sidebar
-  const newAuracStyleElement = () => {
-    const styleElement = document.createElement('style');
-    styleElement.innerHTML = `.aurac-sidebar {
-        color: black;
-        font-family: Arial, sans-serif;
-        font-size: 14px;
-        background: rgb(192,192,192);
-        position: fixed;
-        z-index: 2147483647;
-        height: 100vh;
-        left: ${elementProperties.find(v => v.element === auracSidebar).position.expanding}vw;
-        top: 0;
-        width: 20vw;
-        border-right: 2px solid black;
-        padding: 5px;
-        overflow-wrap: break-word;
-        overflow-y: scroll;
-    }
-    .sidebar-button {
-      color: black;
-      background-color: rgb(192, 192, 192);
-      position: fixed;
-      left: ${elementProperties.find(v => v.element === buttonElement).position.expanding}vw;
-      top: 50%;
-     }
-     .left-arrow-button {
-      color: black;
-      background-color: rgb(192, 192, 192);
-      order: 1;
-      padding: 5px;
-     }
-     .right-arrow-button {
-      color: black;
-      background-color: rgb(192, 192, 192);
-      order: 2;
-      padding: 5px;
-     }
-     .arrow-buttons {
-     display: flex;
-     justify-content: flex-end;
-     flex-direction: row;
-     }
-     #aurac-logo {
-     width: 5vw;
-     height: 5vw;
-     display: block;
-     margin-left: auto;
-     margin-right: auto;
-     margin-top: 0.3vw;
-     margin-bottom: 0.3vw;
-     }
-     #aurac-narrative {
-     text-align: center;
-     }
-     .cross-button {
-      position: relative;
-      top: -45px;
-      left: 1px;
-      color: red;
-      background-color: rgb(192, 192, 192);
-      padding: 5px;
-      }
-     `;
-    return styleElement;
-  };
-
-// This function will animate the sidebar opening and closing
-  function animateElements(element: ElementPropertiesType): void {
-    element.forEach(elementProperty => {
-      let id = null;
-      // If the sidebar is currently open, then it will keep moving until it has reached its target position, otherwise
-      // It will keep closing until it has reached its closed position
-      let pos = isExpanded ? elementProperty.position.expanding : elementProperty.position.collapsing;
-      const target = isExpanded ? elementProperty.position.collapsing : elementProperty.position.expanding;
-      const elementDistanceSpeed = 0.5;
-      id = setInterval(frame, 1);
-      // The frame function is used to animate the sidebar moving in and out. setInterval will call this function every seconds/ms
-      // depending on what number you pass to it
-      function frame() {
-        if (pos === target) { // If the position is equal to its target then it has reached its new position and should stop moving
-          clearInterval(id); // We reset the timer of the element back to nothing when its reached its target
-        } else {
-          if (!elementProperty.isReversed) { // The 'isReversed' boolean relates to the document body width, as the sidebar expands
-            // on the screen, the width of the document body needs to contract and vice versa
-            pos = isExpanded ? pos + elementDistanceSpeed : pos - elementDistanceSpeed;
-          } else { // The elementDistanceSpeed is how much the element will move by within this timeframe
-            pos = isExpanded ? pos - elementDistanceSpeed : pos + elementDistanceSpeed;
-          }
-          elementProperty.element.style[elementProperty.property] = pos + 'vw'; // Moves the respective element by a directional property
-        }
-      }
-    });
-    isExpanded = !isExpanded;
+  // This function will animate the sidebar opening and closing
+  function toggleSidebar(): void {
+    Array.from(document.getElementsByClassName('aurac-transform')).forEach(e => {
+      e.className = e.className.replace(/(expanded|collapsed)/, (g) => {
+        return g === 'expanded' ? 'collapsed' : 'expanded'
+      })
+    })
+    isExpanded = !isExpanded
+    buttonElement.innerHTML = isExpanded ? collapseArrow : expandArrow;
   }
 
-// returns an event listener which creates a new element with passed info and appends it to the passed element
+  // returns an event listener which creates a new element with passed info and appends it to the passed element
   const populateAuracSidebar = (info: Information, element: Element) => {
     return (event) => {
       if (event.type !== 'click') {
@@ -372,7 +228,7 @@
       }
       document.getElementById('aurac-narrative').style.display = 'none';
 
-      const entityId = info.resolvedEntity || info.entityText;
+      const entityId = info.resolvedEntity || info.entityText
 
       if (getAuracHighlightChildren(element).some(child => child.className === 'aurac-highlight')
         && element.parentElement.className === 'aurac-highlight') {
@@ -380,14 +236,14 @@
       } else {
 
         if (!entityToCard.has(entityId)) {  // entity is a new sidecard
-          const sidebarCard = renderSidebarElement(info, [info.entityText]);
-          sidebarCards.appendChild(sidebarCard);
+          const sidebarCard = renderSidebarElement(info, [info.entityText])
+          sidebarCards.appendChild(sidebarCard)
           entityToCard.set(entityId, {synonyms: [info.entityText], div: sidebarCard});
           // @ts-ignore
           browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity]})
             .catch(e => console.error(e));
         } else { // entity is a synonym of existing sidecard
-          renderSynonyms(info, entityId);
+          renderSynonyms(info, entityId)
         }
       }
 
@@ -401,22 +257,22 @@
 
   // renderSynonym adds a new synonym an the existing entity card.
   function renderSynonyms(info: Information, entityId: string): void {
-    const synonyms = entityToCard.get(entityId).synonyms;
+    const synonyms = entityToCard.get(entityId).synonyms
 
     if (!synonyms.includes(info.entityText)) {
-      synonyms.push(info.entityText);
+      synonyms.push(info.entityText)
 
-      const synonymOccurrences: Element[] = [];
+      const synonymOccurrences: Element[] = []
       // add each synonym to the entityToOccurrence map. Sort the occurrences based on their order of appearance.
       synonyms.forEach(synonym => {
-        synonymOccurrences.push(...entityToOccurrence.get(synonym));
-        synonymOccurrences.sort((a, b) => a.getBoundingClientRect().y - b.getBoundingClientRect().y);
-      });
-      entityToOccurrence.set(entityId, synonymOccurrences);
-      const sidebarCard = renderSidebarElement(info, synonyms);
+        synonymOccurrences.push(...entityToOccurrence.get(synonym))
+        synonymOccurrences.sort((a, b) => a.getBoundingClientRect().y - b.getBoundingClientRect().y)
+      })
+      entityToOccurrence.set(entityId, synonymOccurrences)
+      const sidebarCard = renderSidebarElement(info, synonyms)
 
-      entityToCard.get(entityId).div.replaceWith(sidebarCard);
-      entityToCard.get(entityId).div = sidebarCard;
+      entityToCard.get(entityId).div.replaceWith(sidebarCard)
+      entityToCard.get(entityId).div = sidebarCard
     }
   }
 
@@ -472,34 +328,31 @@
     occurrenceElement.style.display = 'flex';
     occurrenceElement.style.justifyContent = 'flex-end';
 
-    let numOfOccurrences = 0;
-    synonyms.forEach(synonym => numOfOccurrences = numOfOccurrences + entityToOccurrence.get(synonym).length);
+    let numOfOccurrences = 0
+    synonyms.forEach(synonym => numOfOccurrences = numOfOccurrences + entityToOccurrence.get(synonym).length)
     occurrenceElement.innerText = `${numOfOccurrences} matches found`;
     sidebarText.appendChild(occurrenceElement);
   }
 
   function renderArrowButtonElements(sidebarText: HTMLDivElement, information: Information, synonyms: string[]): void {
     const arrowFlexProperties: HTMLDivElement = document.createElement('div');
-    arrowFlexProperties.className = 'arrow-buttons';
+    arrowFlexProperties.className = 'aurac-arrow-buttons';
     sidebarText.appendChild(arrowFlexProperties);
 
     const leftArrowButtonElement = document.createElement('button');
     leftArrowButtonElement.innerHTML = leftArrow;
-    leftArrowButtonElement.className = 'left-arrow-button';
+    leftArrowButtonElement.className = 'aurac-left-arrow-button';
     arrowFlexProperties.appendChild(leftArrowButtonElement);
 
     const rightArrowButtonElement = document.createElement('button');
     rightArrowButtonElement.innerHTML = rightArrow;
-    rightArrowButtonElement.className = 'right-arrow-button';
+    rightArrowButtonElement.className = 'aurac-right-arrow-button';
     arrowFlexProperties.appendChild(rightArrowButtonElement);
 
     // if multiple synonyms exist, use resolvedEntity for occurrences
-    const nerTerm = synonyms.length > 1 ? information.resolvedEntity : information.entityText;
+    const nerTerm = synonyms.length > 1 ? information.resolvedEntity : information.entityText
     const arrowProperties: ArrowButtonProperties = {
-      nerTerm,
-      nerColor: information.recognisingDict.htmlColor,
-      positionInArray: 0,
-      isClicked: false
+      nerTerm, nerColor: information.recognisingDict.htmlColor, positionInArray: 0, isClicked: false
     };
 
     leftArrowButtonElement.addEventListener('click', () => {
@@ -564,9 +417,9 @@
         const elementLocator: Element = elementList.item(i);
         const divToDelete: Element = elementLocator.parentElement;
         divToDelete.remove();
-      }
-    }
-  }
+      };
+    };
+  };
 
   function setNerHtmlColours(highlightedNerTerms: Element[]): void {
     highlightedNerTerms.forEach(element => {
@@ -586,7 +439,7 @@
     });
   }
 
-// if the entity group is 'Gene or Protein' add a genenames url link to the sidebarText element
+  // if the entity group is 'Gene or Protein' add a genenames url link to the sidebarText element
   function createGeneNameLink(resolvedEntity: string): string {
     const id = resolvedEntity.split(':').pop();
     const geneNameUrl = `https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/${id}`;
@@ -611,7 +464,7 @@
     return allElements;
   };
 
-// Recursively find all text nodes which match entity
+  // Recursively find all text nodes which match entity
   function allDescendants(node: HTMLElement, elements: Array<Element>, entity: string) {
     if ((node && node.classList.contains('aurac-sidebar')) || !allowedTagType(node)) {
       return;
@@ -637,9 +490,9 @@
     }
   }
 
-// chemical formulae use <sub> tags, the content of which needs to be extracted and concatenated to form a complete formula which can
-// be sent to be NER'd.  This type enables the mapping of a chemical formula to its parent node so that the entire formula
-// (which is split across several nodes in the DOM) can be highlighted
+  // chemical formulae use <sub> tags, the content of which needs to be extracted and concatenated to form a complete formula which can
+  // be sent to be NER'd.  This type enables the mapping of a chemical formula to its parent node so that the entire formula
+  // (which is split across several nodes in the DOM) can be highlighted
   type chemicalFormula = {
     formulaNode: Element;
     formulaText: string;
@@ -647,7 +500,7 @@
 
   const chemicalFormulae: chemicalFormula[] = [];
 
-// Recursively find all text nodes which match regex
+  // Recursively find all text nodes which match regex
   function allTextNodes(node: HTMLElement, textNodes: Array<string>) {
     if (!allowedTagType(node) || node.classList.contains('aurac-sidebar')) {
       return;
@@ -686,7 +539,7 @@
     }
   }
 
-// Only allow nodes that we can traverse or add children to
+  // Only allow nodes that we can traverse or add children to
   const allowedNodeType = (element: HTMLElement): boolean => {
     return element.nodeType !== Node.COMMENT_NODE && element.nodeType !== Node.CDATA_SECTION_NODE
       && element.nodeType !== Node.PROCESSING_INSTRUCTION_NODE && element.nodeType !== Node.DOCUMENT_TYPE_NODE;
@@ -704,9 +557,9 @@
 
   const delimiters: string[] = ['(', ')', '\\n', '\"', '\'', '\\', ',', ';', '.', '!'];
 
-// Returns true if a string contains at least one instance of a particular term between word boundaries, i.e. not immediately
-// followed or preceded by either a non white-space character or one of the special characters in the delimiters array.
-// Can handle non latin unicode terms which at the moment JS Regex can't.
+  // Returns true if a string contains at least one instance of a particular term between word boundaries, i.e. not immediately
+  // followed or preceded by either a non white-space character or one of the special characters in the delimiters array.
+  // Can handle non latin unicode terms which at the moment JS Regex can't.
   function textContainsTerm(text: string, term: string): boolean {
     const startsWithWhiteSpaceRegex = /^\s+.*/;
     const endsWithWhiteSpaceRegex = /.*\s+$/;
