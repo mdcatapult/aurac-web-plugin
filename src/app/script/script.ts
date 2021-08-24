@@ -555,7 +555,7 @@
       return;
     }
     entityToCard.delete(information.resolvedEntity || information.entityText);
-    var elementList: HTMLCollectionOf<Element> = document.getElementsByClassName(information.entityText);
+    const elementList: HTMLCollectionOf<Element> = document.getElementsByClassName(information.entityText);
     for (let i = 0; i < elementList.length; i++) {
       if (elementList.item(i).className === information.entityText) {
         const elementLocator: Element = elementList.item(i);
