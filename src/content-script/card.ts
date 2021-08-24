@@ -137,7 +137,7 @@ export module Card {
     });
   }
 
-  function renderOccurrenceCounts(sidebarText: HTMLDivElement, information: Entity): void {
+  function renderOccurrenceCounts(card: HTMLDivElement, information: Entity): void {
     const entityText = information.entityText;
     const occurrenceElement = document.createElement('span');
     occurrenceElement.id = `${entityText}-occurrences`;
@@ -145,7 +145,7 @@ export module Card {
     occurrenceElement.style.justifyContent = 'flex-end';
 
     occurrenceElement.innerText = `${entityToOccurrence.get(entityText).length} matches found`;
-    sidebarText.appendChild(occurrenceElement);
+    card.appendChild(occurrenceElement);
   }
 
   function setNerHtmlColours(highlightedNerTerms: Element[]): void {
@@ -159,12 +159,12 @@ export module Card {
     });
   }
 
-  function renderRemoveEntityFromSidebarButtonElement(sidebarText: HTMLDivElement, information: Entity): void {
+  function renderRemoveEntityFromSidebarButtonElement(card: HTMLDivElement, information: Entity): void {
 
     const removeEntityFromSidebarButtonElement = document.createElement('button');
     removeEntityFromSidebarButtonElement.innerHTML = crossButton;
     removeEntityFromSidebarButtonElement.className = 'cross-button';
-    sidebarText.appendChild(removeEntityFromSidebarButtonElement);
+    card.appendChild(removeEntityFromSidebarButtonElement);
 
     removeEntityFromSidebarButtonElement.addEventListener('click', () => {
       pressRemoveEntityFromSidebarButtonElement(information);
