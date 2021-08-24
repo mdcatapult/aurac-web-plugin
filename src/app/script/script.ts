@@ -46,7 +46,6 @@
 
   const auracLogo = document.createElement('img');
   auracLogo.id = 'aurac-logo';
-
   // @ts-ignore
   auracLogo.src = browser.runtime.getURL('assets/head-brains.png')
   auracSidebar.appendChild(auracLogo);
@@ -56,8 +55,6 @@
   auracSidebar.appendChild(narrative);
   const buttonElement = document.createElement('button');
 
-  const sidebarOpenScreenWidth = '80vw';
-  const sidebarClosedScreenWidth = '100vw';
   let hasNERLookupOccurred = false;
 
   const collapseArrow = '&#60;';
@@ -417,9 +414,9 @@
         const elementLocator: Element = elementList.item(i);
         const divToDelete: Element = elementLocator.parentElement;
         divToDelete.remove();
-      };
-    };
-  };
+      }
+    }
+  }
 
   function setNerHtmlColours(highlightedNerTerms: Element[]): void {
     highlightedNerTerms.forEach(element => {

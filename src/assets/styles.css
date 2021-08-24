@@ -1,0 +1,100 @@
+.aurac-sidebar {
+  color: black;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  background: rgb(192,192,192);
+  position: fixed;
+  z-index: 2147483647;
+  height: 100vh;
+  top: 0vw;
+  width: 20vw;
+  border-right: 2px solid black;
+  padding: 5px;
+  overflow-wrap: break-word;
+  overflow-y: scroll;
+
+}
+
+.aurac-sidebar--collapsed {
+  left: -21vw;
+}
+
+.aurac-sidebar--expanded {
+  left: 0vw;
+}
+
+.aurac-sidebar-button {
+  color: black;
+  background-color: rgb(192, 192, 192);
+  position: fixed;
+  top: 50%;
+}
+
+.aurac-sidebar-button--collapsed {
+  left: 0vw;
+}
+
+.aurac-sidebar-button--expanded {
+  left: 20vw;
+}
+
+.aurac-left-arrow-button {
+  color: black;
+  background-color: rgb(192, 192, 192);
+  order: 1;
+  padding: 5px;
+ }
+
+ .aurac-right-arrow-button {
+  color: black;
+  background-color: rgb(192, 192, 192);
+  order: 2;
+  padding: 5px;
+ }
+
+ .aurac-arrow-buttons {
+ display: flex;
+ justify-content: flex-end;
+ flex-direction: row;
+ }
+
+ #aurac-logo {
+ width: 5vw;
+ height: 5vw;
+ display: block;
+ margin-left: auto;
+ margin-right: auto;
+ margin-top: 0.3vw;
+ margin-bottom: 0.3vw;
+ }
+
+ #aurac-narrative {
+ text-align: center;
+ }
+
+ .aurac-cross-button {
+  position: relative;
+  top: -45px;
+  left: 1px;
+  color: red;
+  background-color: rgb(192, 192, 192);
+  padding: 5px;
+}
+
+.aurac-transform {
+  -webkit-transition: all 1s ease;  
+  -moz-transition: all 1s ease;  
+  -o-transition: all 1s ease;  
+  -ms-transition: all 1s ease;  
+  transition: all 1s ease; 
+}
+
+.aurac-body--sidebar-collapsed {
+  width: 100vw;
+  margin-left: 0vw;
+}
+
+.aurac-body--sidebar-expanded {
+    width: 80vw;
+    margin-left: 20vw;
+}
