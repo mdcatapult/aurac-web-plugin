@@ -1,10 +1,10 @@
 import {Component} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '../../environments/environment';
+import {SettingsService} from '../settings/settings.service'
 
 import {
   ConverterResult,
-  defaultSettings,
   LeadminerEntity,
   LeadminerResult,
   Message,
@@ -12,6 +12,7 @@ import {
   StringMessage,
   XRef
 } from 'src/types';
+import {defaultSettings} from 'src/consts';
 import {validDict} from './types';
 import {map, switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
@@ -30,11 +31,13 @@ export class BackgroundComponent {
 
   constructor(private client: HttpClient, private browserService: BrowserService) {
 
-    this.browserService.loadSettings().then(settings => {
-      this.settings = settings || defaultSettings;
-    });
+    SettingsService.loadSettings(this.browserService, () => {
+      this.browserService.addListener(this.getBrowserListenerFn())
+    })
+  }
 
-    this.browserService.addListener((msg: Partial<Message>) => {
+  private getBrowserListenerFn(): (msg: Partial<Message>) => void {
+    return (msg: Partial<Message>) => {
       console.log('Received message from popup...', msg);
       switch (msg.type) {
         case 'ner_current_page': {
@@ -47,9 +50,9 @@ export class BackgroundComponent {
           break;
         }
         case 'settings-changed': {
-          const preferencesChanged = this.settings.preferences !== (msg.body as Settings).preferences;
+          const minEntityLengthChanged = this.settings.preferences.minEntityLength !== (msg.body as Settings).preferences.minEntityLength;
           this.settings = msg.body;
-          if (preferencesChanged) {
+          if (minEntityLengthChanged) {
             this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
               .catch(e => console.error(e))
               .then(() => {
@@ -63,7 +66,7 @@ export class BackgroundComponent {
           break;
         }
       }
-    });
+    }
   }
 
   private loadXRefs([entityTerm, resolvedEntity]: [string, string]): void {
