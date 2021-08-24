@@ -15,11 +15,6 @@ const config = {
         exclude: /node_modules/
       },
       {
-        test: /\.css$/,
-        use: ["style-loader", "css-loader"],
-        exclude: /\.module\.css$/
-      },
-      {
         test: /\.ts(x)?$/,
         loader: "ts-loader",
         exclude: /node_modules/
@@ -36,7 +31,7 @@ const config = {
             },
           },
         ],
-        include: /\.module\.css$/
+        exclude: /\.module\.css$/
       },
       {
         test: /\.svg$/,

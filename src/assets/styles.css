@@ -57,7 +57,7 @@
   flex-direction: row;
 }
 
-#aurac-logo {
+.aurac-logo {
   width: 5vw;
   height: 5vw;
   display: block;
@@ -67,7 +67,7 @@
   margin-bottom: 0.3vw;
 }
 
-#aurac-narrative {
+.aurac-narrative {
   text-align: center;
 }
 

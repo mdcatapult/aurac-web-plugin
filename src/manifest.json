@@ -20,7 +20,7 @@
         "assets/script.js"
       ],
       "css": [
-        "assets/styles.css"
+        "browser-plugin/assets/styles.css"
       ]
     }
   ],
