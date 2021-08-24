@@ -1,5 +1,4 @@
 import browser from 'webextension-polyfill'
-import {SidebarAnimations} from './sidebarAnimations'
 import {Sidebar} from './sidebar'
 import {TextHighlighter} from './textHighlighter'
 import * as Constants from './constants'
@@ -7,14 +6,14 @@ import { Card } from './card'
 export module Browser {
 
   // add listener function to browser
-  export function addListener(sidebar: HTMLSpanElement) {
+  export function addListener() {
 
     // rename to "isFirstMessage"?
     let isAppOpen = false;
     let hasNERLookupOccurred = false;
     browser.runtime.onMessage.addListener((msg) => {
       if (!isAppOpen && msg.type !== 'sidebar_rendered') {
-        Sidebar.open(sidebar);
+        Sidebar.open();
         isAppOpen = true;
         return;
       }
@@ -27,20 +26,13 @@ export module Browser {
           });
         case 'markup_page':
           TextHighlighter.wrapEntitiesWithHighlight(msg);
+          Sidebar.open()
           break;
         case 'x-ref_result':
           Card.setXRefHTML(msg.body);
           break;
         case 'toggle_sidebar':
-          Sidebar.toggle(sidebar)
-          break;
-        case 'sidebar_rendered':
-          return new Promise((resolve) => {
-            const result = String(hasNERLookupOccurred);
-            resolve({type: 'resolved', body: result});
-          });
-        case 'ner_lookup_performed':
-          hasNERLookupOccurred = true;
+          Sidebar.toggle()
           break;
         default:
           throw new Error('Received unexpected message from plugin');

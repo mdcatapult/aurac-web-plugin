@@ -72,17 +72,17 @@ export module Card {
 
   function renderArrowButtonElements(card: HTMLDivElement, information: Entity): void {
     const arrowFlexProperties: HTMLDivElement = document.createElement('div');
-    arrowFlexProperties.className = 'arrow-buttons';
+    arrowFlexProperties.className = 'aurac-arrow-buttons';
     card.appendChild(arrowFlexProperties);
 
     const leftArrowButtonElement = document.createElement('button');
     leftArrowButtonElement.innerHTML = leftArrow;
-    leftArrowButtonElement.className = 'left-arrow-button';
+    leftArrowButtonElement.className = 'aurac-left-arrow-button';
     arrowFlexProperties.appendChild(leftArrowButtonElement);
 
     const rightArrowButtonElement = document.createElement('button');
     rightArrowButtonElement.innerHTML = rightArrow;
-    rightArrowButtonElement.className = 'right-arrow-button';
+    rightArrowButtonElement.className = 'aurac-right-arrow-button';
     arrowFlexProperties.appendChild(rightArrowButtonElement);
 
     const arrowProperties: ArrowButtonProperties = {

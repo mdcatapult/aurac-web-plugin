@@ -1,8 +1,6 @@
-// import {browser as Browser} from 'webextension-polyfill';
 import * as Constants from './constants';
 import {ElementProperties, Entity} from './types';
 import {Card} from './card';
-import {SidebarAnimations} from './sidebarAnimations';
 
 export module Sidebar {
 
@@ -24,12 +22,14 @@ export module Sidebar {
   // }
 
 
-  export function init(sidebar: HTMLSpanElement): HTMLSpanElement {
+  export function init(sidebar: HTMLSpanElement): void {
 
     const [logo, logoText] = createLogo(imageElement, headerElement);
 
     sidebar.appendChild(logo);
     sidebar.appendChild(logoText);
+    // sidebar.id = 'aurac-sidebar-id'
+    sidebar.className = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed';
 
     const sidebarToggleButton: HTMLButtonElement =
       initToggleButton(
@@ -41,31 +41,24 @@ export module Sidebar {
     sidebar.appendChild(sidebarToggleButton);
 
     sidebar.appendChild(sidebarTexts);
-    return sidebar;
+    document.body.appendChild(sidebar);
   }
 
-  export function open(sidebarElement: HTMLSpanElement): void {
-    document.body.style.width = '80vw';
-    document.body.style.marginLeft = '20vw';
-    sidebarElement.className = 'aurac-sidebar';
-    document.body.appendChild(sidebarElement);
-    //TODO: fix this mess. Why is SidebarAnimations the source of styles? Why do we need to pass things many times?
-    document.head.appendChild(
-      SidebarAnimations.newAuracStyleElement(
-        SidebarAnimations.getElementPropertyArray(toggleButtonElement, sidebarElement, document.body),
-        sidebarElement, toggleButtonElement
-      )
-    );
+  export function open(): void {
+    isExpanded || Sidebar.toggle()
   }
 
-  export function toggle(sidebarElement: HTMLSpanElement): void {
-    // just do toggleButtonElement.click(); ?
-    if (document.body.style.width === sidebarOpenScreenWidth || document.body.style.width === sidebarClosedScreenWidth) {
-      SidebarAnimations.animateElements(SidebarAnimations.
-      getElementPropertyArray(toggleButtonElement, sidebarElement, document.body), isExpanded);
-      toggleButtonElement.innerHTML = isExpanded ? Card.collapseArrow : Card.expandArrow;
-    }
+  export function toggle(): void {
+
+    Array.from(document.getElementsByClassName("aurac-transform")).forEach(e => {
+      e.className = e.className.replace(/(expanded|collapsed)/, (g) => {
+        return g === 'expanded' ? 'collapsed' : 'expanded'
+      })
+    })
+    isExpanded = !isExpanded
+    toggleButtonElement.innerHTML = isExpanded ? Card.collapseArrow : Card.expandArrow;
   }
+
 
   export function addCard(card: HTMLDivElement): void {
     sidebarTexts.appendChild(card)
@@ -73,32 +66,17 @@ export module Sidebar {
 
   // initialise the toggle sidebar button
   function initToggleButton(toggleButton: HTMLButtonElement,
-                            auracSidebar: HTMLSpanElement,
+                            sidebar: HTMLSpanElement,
                             documentBody: HTMLElement): HTMLButtonElement {
 
     toggleButton.innerHTML = Card.collapseArrow;
     toggleButton.className = 'sidebar-button';
-    toggleButton.className = 'button-id';
-    auracSidebar.className = 'aurac-sidebar-id';
+    toggleButton.className = 'aurac-transform aurac-sidebar-button aurac-sidebar-button--collapsed'
+
 
     // document.body.id = 'body'; // TODO what on earth?!
 
-    const elementProperties =
-      SidebarAnimations.getElementPropertyArray(
-        toggleButton,
-        auracSidebar,
-        documentBody
-      );
-
-    toggleButton.addEventListener('click', () => {
-      if (document.body.style.width === sidebarOpenScreenWidth ||
-        document.body.style.width === sidebarClosedScreenWidth) {
-        isExpanded = SidebarAnimations.animateElements(elementProperties, isExpanded);
-      }
-
-      toggleButton.innerHTML = isExpanded ? Card.collapseArrow : Card.expandArrow;
-      document.head.appendChild(SidebarAnimations.newAuracStyleElement(elementProperties, auracSidebar, toggleButton));
-    });
+    toggleButton.addEventListener('click', () => Sidebar.toggle());
 
     return toggleButton;
   }

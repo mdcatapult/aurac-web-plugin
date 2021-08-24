@@ -32,8 +32,8 @@ import {Sidebar} from './sidebar';
 
 console.log('script loaded');
 
-const sidebar = Sidebar.init(document.createElement('span'))
-Browser.addListener(sidebar)
+Sidebar.init(document.createElement('span'))
+Browser.addListener()
 
 
 
