@@ -1,9 +1,10 @@
 import {Entity} from './types'
 import {EntityMap} from './entityMap'
-import * as Constants from './constants'
+import {ExternalLinks} from './externalLinks';
 
 export module Card {
 
+  import geneNames = ExternalLinks.geneNames;
   export const entityToCard = new EntityMap<HTMLDivElement>();
   const entityToOccurrence = new EntityMap<Element[]>();
   export const collapseArrow = '&#60;';
@@ -37,11 +38,7 @@ export module Card {
     renderOccurrenceCounts(card, information);
     renderRemoveEntityFromSidebarButtonElement(card, information);
 
-    // TODO move style
-    card.id = 'sidebar-text';
-    card.style.border = '1px solid black';
-    card.style.padding = '2px';
-    card.style.marginBottom = '5px';
+    card.className = 'sidebar-text';
     card.style.backgroundColor = information.recognisingDict.htmlColor;
 
     card.insertAdjacentHTML('beforeend', `<p>Term: ${information.entityText}</p>`);
@@ -49,7 +46,7 @@ export module Card {
       card.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${information.resolvedEntity}</p>`);
 
       if (information.entityGroup === 'Gene or Protein') {
-        const geneNameLink = createGeneNameLink(information.resolvedEntity);
+        const geneNameLink = geneNames.createUrl(information.resolvedEntity);
         card.insertAdjacentHTML('beforeend', geneNameLink);
       }
     }
@@ -61,13 +58,6 @@ export module Card {
     xrefHTML.className = information.entityText;
     card.appendChild(xrefHTML);
     return card;
-  }
-
-  // if the entity group is 'Gene or Protein' add a genenames url link to the sidebarText element
-  function createGeneNameLink(resolvedEntity: string): string {
-    const id = resolvedEntity.split(':').pop();
-    const geneNameUrl = `https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/${id}`;
-    return `<p id=${geneNameUrl}>Genenames link: <a href=${geneNameUrl} target="_blank">${geneNameUrl}</a></p>`;
   }
 
   function renderArrowButtonElements(card: HTMLDivElement, information: Entity): void {
@@ -126,7 +116,7 @@ export module Card {
     toggleHighlightColor(targetElement);
 
     const occurrencesElement = document.getElementById(`${arrowProperties.nerTerm}-occurrences`);
-    occurrencesElement.innerText = `${arrowProperties.positionInArray + 1} / ${entityToOccurrence.get(arrowProperties.nerTerm).length}`;
+    occurrencesElement!.innerText = `${arrowProperties.positionInArray + 1} / ${entityToOccurrence.get(arrowProperties.nerTerm).length}`;
     arrowProperties.isClicked = true;
   }
 
@@ -153,7 +143,7 @@ export module Card {
       const index = highlightedNerTerms.indexOf(element);
       const elementName = element;
       const colourBefore = element.innerHTML;
-      const colourAfter = element.textContent.fontcolor('blue');
+      const colourAfter = element.textContent!.fontcolor('blue');
       const nerHtmlColour = {index, elementName, colourBefore, colourAfter};
       highlightElements.push(nerHtmlColour);
     });
@@ -178,9 +168,9 @@ export module Card {
     entityToCard.delete(information.entityText, document);
     const elementList: HTMLCollectionOf<Element> = document.getElementsByClassName(information.entityText);
     for (let i = 0; i < elementList.length; i++) {
-      if (elementList.item(i).className === information.entityText) {
-        const elementLocator: Element = elementList.item(i);
-        const divToDelete: Element = elementLocator.parentElement;
+      if (elementList.item(i)!.className === information.entityText) {
+        const elementLocator: Element = elementList.item(i)!;
+        const divToDelete: Element = elementLocator.parentElement!;
         divToDelete.remove();
       }
     }
@@ -190,7 +180,7 @@ export module Card {
     Array.from(document.getElementsByClassName(xrefs[0] ? xrefs[0].compoundName : '')).forEach(element => element.innerHTML = '');
     xrefs.forEach(xref => {
       const xrefElement = document.getElementsByClassName(xref.compoundName).item(0);
-      xrefElement.innerHTML += `<p> ${xref.databaseName}: <a href=${xref.url} target="_blank">${xref.url}</a></p>`;
+      xrefElement!.innerHTML += `<p> ${xref.databaseName}: <a href=${xref.url} target="_blank">${xref.url}</a></p>`;
     });
   }
 

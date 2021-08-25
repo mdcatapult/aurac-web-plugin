@@ -95,10 +95,10 @@ export module Sidebar {
       }
 
       // hides the narrative
-      document.getElementById('aurac-narrative').style.display = 'none';
+      document.getElementById('aurac-narrative')!.style.display = 'none';
 
       if (getAuracHighlightChildren(element).some(child => child.className === 'aurac-highlight')
-        && element.parentElement.className === 'aurac-highlight') {
+        && element.parentElement!.className === 'aurac-highlight') {
         removeEventListener('click', populateAuracSidebar(info, element));
       } else if (!Card.entityToCard.has(info.entityText)) {
           const card = Card.create(info)

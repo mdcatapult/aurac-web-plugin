@@ -70,7 +70,7 @@ export module TextHighlighter {
   function isNodeAllowed(element: HTMLElement): boolean {
     return element.nodeType !== Node.COMMENT_NODE && element.nodeType !== Node.CDATA_SECTION_NODE
       && element.nodeType !== Node.PROCESSING_INSTRUCTION_NODE && element.nodeType !== Node.DOCUMENT_TYPE_NODE;
-  };
+  }
 
   function allowedTagType(element: HTMLElement): boolean {
     return ![HTMLScriptElement,
@@ -92,7 +92,7 @@ export module TextHighlighter {
         node.childNodes.forEach(child => {
           const element = child as HTMLElement;
           if (isNodeAllowed(element) && element.nodeType === Node.TEXT_NODE) {
-            if (textContainsTerm(element.nodeValue, entity)) {
+            if (textContainsTerm(element.nodeValue!, entity)) {
               elements.push(element);
             }
             // tslint:disable-next-line:max-line-length
@@ -159,8 +159,8 @@ export module TextHighlighter {
           // Retrieves the specific highlight colour to use for this NER term
           replacementNode.innerHTML = highlightTerm(formulaNode.innerHTML, entity);
           // This new highlighted term will replace the current child (same term but with no highlight) of this parent element
-          formulaNode.parentNode.insertBefore(replacementNode, formulaNode);
-          formulaNode.parentNode.removeChild(formulaNode);
+          formulaNode.parentNode!.insertBefore(replacementNode, formulaNode);
+          formulaNode.parentNode!.removeChild(formulaNode);
           const childValues = Sidebar.getAuracHighlightChildren(replacementNode);
           childValues.forEach(childValue => { // For each highlighted element, we will add an event listener to add it to our sidebar
             Card.populateEntityToOccurrences(entity.entityText, childValue);
@@ -174,7 +174,7 @@ export module TextHighlighter {
   }
 
   // highlights a term by wrapping it an HTML span
-  const highlightTerm = (term, entity) => `<span class="aurac-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative; cursor: pointer">${term}</span>`;
+  const highlightTerm = (term: string, entity) => `<span class="aurac-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative; cursor: pointer">${term}</span>`;
 
   function addHighlightAndEventListeners(selector: Element[], entity: Entity) {
     selector.map(element => {
@@ -186,8 +186,8 @@ export module TextHighlighter {
         replacementNode.innerHTML = element.nodeValue.replaceAll(entity.entityText, highlightTerm(entity.entityText, entity));
 
         // This new highlighted term will will replace the current child (same term but with no highlight) of this parent element.
-        element.parentNode.insertBefore(replacementNode, element);
-        element.parentNode.removeChild(element);
+        element.parentNode!.insertBefore(replacementNode, element);
+        element.parentNode!.removeChild(element);
 
         // For each value we find that is a highlighted term, we want to add it to our sidebar and find its occurrences within the page
         const childValues = getAuracHighlightChildren(replacementNode);
@@ -201,7 +201,7 @@ export module TextHighlighter {
     });
   }
 
-  const getSelectors = (entity) => {
+  function getSelectors(entity: string): Array<Element> {
     const allElements: Array<Element> = [];
     allDescendants(document.body, allElements, entity);
     return allElements;
