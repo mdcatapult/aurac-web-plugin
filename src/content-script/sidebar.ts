@@ -45,7 +45,6 @@ export module Sidebar {
   }
 
   export function addCard(card: HTMLDivElement): void {
-    console.log('adding card: ', card)
     cardContainer.appendChild(card)
   }
 
@@ -87,7 +86,7 @@ export module Sidebar {
   }
 
   // TODO can this function return something ?
-// returns an event listener which creates a new element with passed info and appends it to the passed element
+  // returns an event listener which creates a new element with passed info and appends it to the passed element
   export const populateAuracSidebar = (info: Entity, element: Element) => {
     return (event) => {
       if (event.type !== 'click') {
@@ -117,8 +116,8 @@ export module Sidebar {
     };
   };
 
+  //TODO: should we use this for all non null assertions?
   // function getAuracElement(elementName: ElementName): HTMLElement {
   //   return document.getElementById(elementName);
   // }
-
 }
