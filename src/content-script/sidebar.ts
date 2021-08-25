@@ -7,6 +7,7 @@ export module Sidebar {
   const toggleButtonElement = document.createElement('button')
   const imageElement = document.createElement('img');
   const headerElement = document.createElement('h4');
+  headerElement.style.color = '#b9772e'
   let isExpanded = false;
 
   export function init(sidebar: HTMLSpanElement): void {
