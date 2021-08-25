@@ -85,7 +85,6 @@ export module TextHighlighter {
   // TODO maybe remove this when we can select via data attribute?
   // Recursively find all text nodes which match entity
   function allDescendants(node: HTMLElement, elements: Array<Element>, entity: string) {
-    if ((node && node.classList && node.classList.contains('aurac-sidebar')) || !allowedTagType(node)) {
       if ((node && node.classList && node.classList.contains('aurac-sidebar')) || !allowedTagType(node)) {
         return;
       }
@@ -109,7 +108,6 @@ export module TextHighlighter {
         console.error(e);
       }
     }
-  }
 
   // If a string contains at least one instance of a particular term between word boundaries then return true
 // Can handle non latin unicode terms which at the moment JS Regex can't.

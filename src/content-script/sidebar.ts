@@ -1,5 +1,4 @@
-import * as Constants from './constants';
-import {ElementProperties, Entity} from './types';
+import {Entity} from './types';
 import {Card} from './card';
 
 export module Sidebar {
@@ -8,7 +7,7 @@ export module Sidebar {
   const toggleButtonElement = document.createElement('button')
   const imageElement = document.createElement('img');
   const headerElement = document.createElement('h4');
-  let isExpanded = true;
+  let isExpanded = false;
 
   export function init(sidebar: HTMLSpanElement): void {
 
@@ -16,13 +15,11 @@ export module Sidebar {
 
     sidebar.appendChild(logo);
     sidebar.appendChild(logoText);
-    sidebar.className = `aurac-transform aurac-sidebar aurac-sidebar--${isExpanded ? 'expanded' : 'collapsed'}`;
+    sidebar.className = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed';
 
     const sidebarToggleButton: HTMLButtonElement =
       initToggleButton(
-        toggleButtonElement,
-        sidebar,
-        document.body
+        toggleButtonElement
       );
 
     sidebar.appendChild(sidebarToggleButton);
@@ -36,7 +33,7 @@ export module Sidebar {
 
   export function toggle(): void {
 
-    Array.from(document.getElementsByClassName("aurac-transform")).forEach(e => {
+    Array.from(document.getElementsByClassName('aurac-transform')).forEach(e => {
       e.className = e.className.replace(/(expanded|collapsed)/, (g) => {
         return g === 'expanded' ? 'collapsed' : 'expanded'
       })
@@ -51,13 +48,11 @@ export module Sidebar {
   }
 
   // initialise the toggle sidebar button
-  function initToggleButton(toggleButton: HTMLButtonElement,
-                            sidebar: HTMLSpanElement,
-                            documentBody: HTMLElement): HTMLButtonElement {
+  function initToggleButton(toggleButton: HTMLButtonElement): HTMLButtonElement {
 
-    toggleButton.innerHTML = Card.collapseArrow;
+    toggleButton.innerHTML = Card.expandArrow;
     toggleButton.className = 'sidebar-button';
-    toggleButton.className = `aurac-transform aurac-sidebar-button aurac-sidebar-button--${isExpanded ? 'expanded' : 'collapsed'}`
+    toggleButton.className = 'aurac-transform aurac-sidebar-button aurac-sidebar-button--collapsed'
 
     // document.body.id = 'body'; // TODO what on earth?!
 
