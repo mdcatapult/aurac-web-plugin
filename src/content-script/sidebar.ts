@@ -24,6 +24,8 @@ export module Sidebar {
 
     sidebar.appendChild(sidebarToggleButton);
     sidebar.appendChild(cardContainer);
+
+    document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
     document.body.appendChild(sidebar);
   }
 
