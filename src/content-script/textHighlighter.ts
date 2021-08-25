@@ -86,13 +86,13 @@ export module TextHighlighter {
   // Recursively find all text nodes which match entity
   function allDescendants(node: HTMLElement, elements: Array<Element>, entity: string) {
     if ((node && node.classList && node.classList.contains('aurac-sidebar')) || !allowedTagType(node)) {
-    if ((node && node.classList && node.classList.contains('aurac-sidebar')) || !allowedTagType(node)) {
-      return;
-    }
-    try {
-      node.childNodes.forEach(child => {
-        const element = child as HTMLElement;
-        if (isNodeAllowed(element) && element.nodeType === Node.TEXT_NODE) {
+      if ((node && node.classList && node.classList.contains('aurac-sidebar')) || !allowedTagType(node)) {
+        return;
+      }
+      try {
+        node.childNodes.forEach(child => {
+          const element = child as HTMLElement;
+          if (isNodeAllowed(element) && element.nodeType === Node.TEXT_NODE) {
             if (textContainsTerm(element.nodeValue, entity)) {
               elements.push(element);
             }
@@ -102,11 +102,12 @@ export module TextHighlighter {
             && element.style.display !== 'none') {
             allDescendants(element, elements, entity);
           }
-      });
-    } catch (e) {
-      // There are so many things that could go wrong.
-      // The DOM is a wild west
-      console.error(e);
+        });
+      } catch (e) {
+        // There are so many things that could go wrong.
+        // The DOM is a wild west
+        console.error(e);
+      }
     }
   }
 
