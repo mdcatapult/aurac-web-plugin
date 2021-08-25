@@ -10,7 +10,9 @@ export module Sidebar {
   headerElement.style.color = '#b9772e'
   let isExpanded = false;
 
-  export function init(sidebar: HTMLSpanElement): void {
+  export function init(): void {
+
+    const sidebar = document.createElement('span')
 
     const [logo, logoText] = createLogo(imageElement, headerElement);
 
