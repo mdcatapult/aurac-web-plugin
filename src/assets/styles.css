@@ -30,7 +30,7 @@
 }
 
 .aurac-sidebar-button--collapsed {
-  left: 0vw;
+  left: 0;
 }
 
 .aurac-sidebar-button--expanded {
@@ -90,7 +90,7 @@
 
 .aurac-body--sidebar-collapsed {
   width: 100vw;
-  margin-left: 0vw;
+  margin-left: 0;
 }
 
 .aurac-body--sidebar-expanded {
