@@ -1,6 +1,6 @@
 /* To learn more about this file see: https://angular.io/config/tsconfig. */
 {
-  "extends": "./tsconfig.base.json",
+  "extends": "./tsconfig.json",
   "compilerOptions": {
     "strict": false,
     "outDir": "./out-tsc/app",
@@ -8,7 +8,7 @@
       "node_modules/@types",
       "node_modules/web-ext-types"
     ],
-    "types": ["node"]
+    "types": []
   },
   "files": [
     "src/main.ts",
@@ -16,6 +16,6 @@
   ],
   "include": [
     "src/**/*.d.ts",
-    "./src/content-script/*"
+    "src/content-script/script.ts"
   ]
 }
