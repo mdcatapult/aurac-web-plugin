@@ -1,12 +1,11 @@
 {
-  "name": "chrome-extension-angular-typescript-boilerplate",
-  "version": "1.0.0",
-  "description": "",
+  "name": "browser-plugin",
+  "version": "0.10.1",
   "scripts": {
     "ng": "ng",
     "start": "web-ext run --verbose --source-dir=dist/browser-plugin",
     "build": "ng build --configuration production --source-map false && webpack",
-    "build:dev": "ng build --configuration production --source-map true && webpack --mode=development",
+    "dev": "tsc -p src/app/script && ng build && web-ext run --verbose --source-dir=dist/browser-plugin",
     "package": "cd dist/browser-plugin && web-ext build",
     "test": "ng test",
     "test:ci": "ng test --browsers GitlabCI --watch false",
@@ -14,14 +13,29 @@
     "e2e": "ng e2e",
     "build:prod": "cross-env NODE_ENV=production ng build --configuration production",
     "weblint": "cd dist/browser-plugin && web-ext lint",
-    "version": "VERSION=$(jq -r '.version' package.json) && jq --arg v $VERSION '.version = $v' src/manifest.json > tmp.json && mv tmp.json src/manifest.json && git add src/manifest.json",
-    "start-webpack": "webpack --watch"
+    "version": "VERSION=$(jq -r '.version' package.json) && jq --arg v $VERSION '.version = $v' src/manifest.json > tmp.json && mv tmp.json src/manifest.json && git add src/manifest.json"
   },
-  "keywords": [],
-  "license": "ISC",
+  "private": true,
+  "dependencies": {
+    "@angular-devkit/architect": "^0.1202.2",
+    "@angular/animations": "~12.0.2",
+    "@angular/cdk": "^11.0.4",
+    "@angular/common": "~12.0.2",
+    "@angular/compiler": "~12.0.2",
+    "@angular/core": "~12.0.2",
+    "@angular/forms": "~12.0.2",
+    "@angular/material": "^11.0.4",
+    "@angular/platform-browser": "~12.0.2",
+    "@angular/platform-browser-dynamic": "~12.0.2",
+    "@angular/router": "~12.0.2",
+    "@material/typography": "^11.0.0",
+    "rxjs": "~6.5.4",
+    "tslib": "^2.0.0",
+    "zone.js": "~0.11.4"
+  },
   "devDependencies": {
-    "@angular-devkit/build-angular": "~12.1.4",
-    "@angular/cli": "~12.0.5",
+    "@angular-devkit/build-angular": "^0.1100.7",
+    "@angular/cli": "~12.0.2",
     "@angular/compiler-cli": "~12.0.2",
     "@angular/language-service": "~12.0.2",
     "@babel/core": "^7.12.3",
@@ -65,25 +79,6 @@
     "web-ext": "^5.4.0",
     "web-ext-types": "^3.2.1",
     "webextension-polyfill": "^0.7.0",
-    "webpack": "^4.43.0",
-    "webpack-cli": "^4.0.0",
-    "webpack-dev-server": "^3.11.0"
-  },
-  "dependencies": {
-    "@angular-builders/custom-webpack": "^12.1.1",
-    "@angular/animations": "~12.0.2",
-    "@angular/cdk": "^11.0.4",
-    "@angular/common": "~12.0.2",
-    "@angular/compiler": "~12.0.2",
-    "@angular/core": "~12.0.2",
-    "@angular/forms": "~12.0.2",
-    "@angular/material": "^11.0.4",
-    "@angular/platform-browser": "~12.0.2",
-    "@angular/platform-browser-dynamic": "~12.0.2",
-    "@angular/router": "~12.0.2",
-    "@material/typography": "^11.0.0",
-    "rxjs": "~6.5.5",
-    "tslib": "^2.0.0",
-    "zone.js": "~0.11.4"
+    "webpack-cli": "^4.8.0"
   }
 }

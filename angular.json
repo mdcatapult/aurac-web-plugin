@@ -7,7 +7,7 @@
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
-          "style": "css"
+          "style": "scss"
         }
       },
       "root": "",
@@ -15,8 +15,9 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-builders/custom-webpack:browser",
+          "builder": "ngx-build-plus:browser",
           "options": {
+            "extraWebpackConfig": "webpack.config.js",
             "outputPath": "dist/browser-plugin",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -25,7 +26,6 @@
             "aot": true,
             "assets": [
               "src/manifest.json",
-              "src/favicon.ico",
               "src/assets",
               {
                 "glob": "**/*",
@@ -34,7 +34,7 @@
               }
             ],
             "styles": [
-              "node_modules/tailwindcss/tailwind.css"
+              "src/styles.scss"
             ],
             "scripts": []
           },
@@ -71,6 +71,7 @@
         "serve": {
           "builder": "ngx-build-plus:dev-server",
           "options": {
+            "extraWebpackConfig": "webpack.config.js",
             "browserTarget": "browser-plugin:build"
           },
           "configurations": {
@@ -98,7 +99,7 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.scss"
             ],
             "scripts": []
           }
