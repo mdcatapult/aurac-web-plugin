@@ -7,7 +7,8 @@
     "typeRoots": [
       "node_modules/@types",
       "node_modules/web-ext-types"
-    ]
+    ],
+    "types": ["node"]
   },
   "files": [
     "src/main.ts",
