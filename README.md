@@ -1,16 +1,5 @@
 # Browser Plugin
 
-# Re-architecture work in progress
-
-* Content script is moved into `src/app/content-script/script.js` and now demonstrates how to use a module import to split up the code.
-* Have to use `npm ci --legacy-peer-deps` for reasons which I really don't understand.
-* Uses webpack to shift files from public into the build folder.
-* There are lots of targets in`package.json` and they probably need pruned.
-* No tailwind css is working. I removed it from the webpack build for the moment.
-* `ng test` fails because it is looking for `styles.css` and it is now `styles.scss` (TBH there might be no need for it to be `.scss`)
-* In Firefox it appears to fetch data from active tab and NER it but the markup isn't working correctly.
-* In chromium the content script and backend are communicating but data from active tab is empty (or at least that's what the logger says).
-
 ## Running NER on a web page
 
 The plugin runs Leadmine over a web page in a Chrome or Firefox browser, logging the result.  

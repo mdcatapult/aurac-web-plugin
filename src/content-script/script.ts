@@ -1,16 +1,4 @@
-/* TOODO
-
-content - vanilla TS
-popup - angular
-background - angular
-  - should webservice calls be abstracted out in to SDK-esque thing
-  - concept of JS lib to call web services (swap out libraries)
- 		- node TS lib (then test that independently)
-		- lib goes in to nexus and is versioned
-
- - all talk to each other
-
-
+/*
 todo ideas
 
  - split up code in to components/classes
