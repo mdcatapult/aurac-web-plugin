@@ -1,21 +1,19 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
+import {NgModule} from '@angular/core';
 import {MatTabsModule} from '@angular/material/tabs';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
-import { AppComponent } from './app.component';
-import { BackgroundComponent } from './background/background.component';
-import { LoggerComponent } from './background/logger/logger.component';
-import { PopupComponent } from './popup/popup.component';
-import { RouterComponent } from './router/router.component';
-import { Routes, RouterModule } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http';
+import {AppComponent} from './app.component';
+import {BackgroundComponent} from './background/background.component';
+import {LoggerComponent} from './background/logger/logger.component';
+import {PopupComponent} from './popup/popup.component';
+import {RouterComponent} from './router/router.component';
+import {Routes, RouterModule} from '@angular/router';
+import {HttpClientModule} from '@angular/common/http';
 import {UrlsComponent} from './urls/urls.component';
 import {ReactiveFormsModule} from '@angular/forms';
-import { XRefSourcesComponent } from './x-ref-sources/x-ref-sources.component';
-import { SettingsComponent } from './settings/settings.component';
-import {MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldModule} from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material/input';
+import {XRefSourcesComponent} from './x-ref-sources/x-ref-sources.component';
+import {SettingsComponent} from './settings/settings.component';
 
 const routes: Routes = [
   {path: '**', component: RouterComponent}
@@ -38,11 +36,10 @@ const routes: Routes = [
     HttpClientModule,
     ReactiveFormsModule,
     MatTabsModule,
-    BrowserAnimationsModule,
-    MatInputModule,
-    MatFormFieldModule
+    BrowserAnimationsModule
   ],
-  providers: [{provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'fill'}}],
+  providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}

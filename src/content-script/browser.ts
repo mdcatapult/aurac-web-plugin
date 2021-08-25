@@ -1,11 +1,10 @@
-import browser from 'webextension-polyfill'
 import {Sidebar} from './sidebar'
 import {TextHighlighter} from './textHighlighter'
 import { Card } from './card'
 export module Browser {
   // add listener function to browser
   export function addListener() {
-    browser.runtime.onMessage.addListener((msg) => {
+    browser.runtime.onMessage.addListener((msg: any) => {
       switch (msg.type) {
         case 'get_page_contents':
           return new Promise(resolve => {

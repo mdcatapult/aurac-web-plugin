@@ -19,8 +19,8 @@ export module TextHighlighter {
     // document.head.appendChild(SidebarAnimations.newAuracStyleElement());
     // sort entities by length of entityText (descending) - this will ensure that we can capture e.g. VPS26A, which would not be
     // highlighted if VPS26 has already been highlighted, because the text VPS26A is now spread across more than one node
-    msg.body.sort((a, b) => b.entityText.length - a.entityText.length)
-      .map((entity) => {
+    msg.body.sort((a: Entity, b: Entity) => b.entityText.length - a.entityText.length)
+      .map((entity: Entity) => {
         const selectors = getSelectors(entity.entityText);
         wrapChemicalFormulaeWithHighlight(entity);
         addHighlightAndEventListeners(selectors, entity);
@@ -150,7 +150,7 @@ export module TextHighlighter {
   }
 
   // TODO chemical class for stuff like this?
-  function wrapChemicalFormulaeWithHighlight(entity) {
+  function wrapChemicalFormulaeWithHighlight(entity: Entity) {
     for (const formula of chemicalFormulae) {
       const formulaNode = formula.formulaNode;
       if (formula.formulaText === entity.entityText) {
@@ -174,7 +174,7 @@ export module TextHighlighter {
   }
 
   // highlights a term by wrapping it an HTML span
-  const highlightTerm = (term: string, entity) => `<span class="aurac-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative; cursor: pointer">${term}</span>`;
+  const highlightTerm = (term: string, entity: Entity) => `<span class="aurac-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative; cursor: pointer">${term}</span>`;
 
   function addHighlightAndEventListeners(selector: Element[], entity: Entity) {
     selector.map(element => {
@@ -205,5 +205,5 @@ export module TextHighlighter {
     const allElements: Array<Element> = [];
     allDescendants(document.body, allElements, entity);
     return allElements;
-  };
+  }
 }

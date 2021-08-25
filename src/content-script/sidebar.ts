@@ -89,7 +89,7 @@ export module Sidebar {
   // TODO can this function return something ?
   // returns an event listener which creates a new element with passed info and appends it to the passed element
   export const populateAuracSidebar = (info: Entity, element: Element) => {
-    return (event) => {
+    return (event: Event) => {
       if (event.type !== 'click') {
         return;
       }
