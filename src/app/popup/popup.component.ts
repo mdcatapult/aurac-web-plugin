@@ -19,16 +19,6 @@ export class PopupComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const result = this.browserService.sendMessageToActiveTab({type: 'sidebar_rendered'});
-    result.then((a) => {
-      const res = a as StringMessage;
-      this.isNerLoaded = res.body.includes('true');
-      if (this.isNerLoaded) {
-        this.isSidebarRendered = true;
-      }
-    }).catch(e => {
-      this.log.Error(`Unable to retrieve sidebar data from the script': ${JSON.stringify(e)}`);
-    });
   }
 
   settingsClicked() {
@@ -36,10 +26,8 @@ export class PopupComponent implements OnInit {
   }
 
   nerCurrentPage(dictionary: validDict) {
-    this.isSidebarRendered = true;
-    this.isNerLoaded = true;
-    this.sendNERToPage();
     this.log.Log('Sending message to background page...');
+    // @ts-ignore
     browser.runtime.sendMessage<Message>({type: 'ner_current_page', body: dictionary})
       .catch(e => this.log.Error(`Couldn't send message to background page: ${JSON.stringify(e)}`));
   }
@@ -47,10 +35,5 @@ export class PopupComponent implements OnInit {
   toggleSidebar() {
     this.browserService.sendMessageToActiveTab({type: 'toggle_sidebar'})
       .catch(e => this.log.Error(`Couldn't send message of type 'toggle_sidebar' : ${JSON.stringify(e)}`));
-  }
-
-  sendNERToPage() {
-    this.browserService.sendMessageToActiveTab({type: 'ner_lookup_performed'})
-      .catch(e => this.log.Error(`Couldn't send message that NER has been performed: ${JSON.stringify(e)}`));
   }
 }

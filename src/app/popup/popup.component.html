@@ -84,7 +84,7 @@
         </p>
       </div>
     </button>
-    <button [disabled]="!isSidebarRendered" (click)="toggleSidebar()"
+    <button (click)="toggleSidebar()"
             class="-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="#D3D3D3">
         <path fill-rule="evenodd"
@@ -92,7 +92,7 @@
               clip-rule="evenodd"/>
       </svg>
       <div class="ml-2">
-        <p [class]="isNerLoaded ? 'text-base font-medium text-gray-900' : 'text-base font-medium text-gray-400'">
+        <p class="text-base font-medium text-gray-900">
           Toggle Sidebar
         </p>
       </div>

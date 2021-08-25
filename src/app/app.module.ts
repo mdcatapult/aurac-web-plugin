@@ -15,6 +15,8 @@ import {ReactiveFormsModule} from '@angular/forms';
 import { XRefSourcesComponent } from './x-ref-sources/x-ref-sources.component';
 import { SettingsComponent } from './settings/settings.component';
 import { PreferencesComponent } from './preferences/preferences.component';
+import {MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
 
 const routes: Routes = [
   {path: '**', component: RouterComponent}
@@ -39,8 +41,10 @@ const routes: Routes = [
     ReactiveFormsModule,
     MatTabsModule,
     BrowserAnimationsModule,
+    MatInputModule,
+    MatFormFieldModule
   ],
-  providers: [],
+  providers: [{provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'fill'}}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
