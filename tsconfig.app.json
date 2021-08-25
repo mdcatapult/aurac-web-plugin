@@ -2,6 +2,7 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
+    "strict": false,
     "outDir": "./out-tsc/app",
     "typeRoots": [
       "node_modules/@types",
@@ -13,6 +14,7 @@
     "src/polyfills.ts"
   ],
   "include": [
-    "src/**/*.d.ts"
+    "src/**/*.d.ts",
+    "./src/content-script/*"
   ]
 }

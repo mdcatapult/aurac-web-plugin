@@ -36,7 +36,7 @@ export module Sidebar {
 
   export function toggle(): void {
 
-    Array.from(document.getElementsByClassName("aurac-transform")).forEach(e => {
+    Array.from(document.getElementsByClassName('aurac-transform')).forEach(e => {
       e.className = e.className.replace(/(expanded|collapsed)/, (g) => {
         return g === 'expanded' ? 'collapsed' : 'expanded'
       })

@@ -70,7 +70,7 @@ export module TextHighlighter {
   function isNodeAllowed(element: HTMLElement): boolean {
     return element.nodeType !== Node.COMMENT_NODE && element.nodeType !== Node.CDATA_SECTION_NODE
       && element.nodeType !== Node.PROCESSING_INSTRUCTION_NODE && element.nodeType !== Node.DOCUMENT_TYPE_NODE;
-  };
+  }
 
   function allowedTagType(element: HTMLElement): boolean {
     return ![HTMLScriptElement,
@@ -86,13 +86,13 @@ export module TextHighlighter {
   // Recursively find all text nodes which match entity
   function allDescendants(node: HTMLElement, elements: Array<Element>, entity: string) {
     if ((node && node.classList && node.classList.contains('aurac-sidebar')) || !allowedTagType(node)) {
-    if ((node && node.classList && node.classList.contains('aurac-sidebar')) || !allowedTagType(node)) {
-      return;
-    }
-    try {
-      node.childNodes.forEach(child => {
-        const element = child as HTMLElement;
-        if (isNodeAllowed(element) && element.nodeType === Node.TEXT_NODE) {
+      if ((node && node.classList && node.classList.contains('aurac-sidebar')) || !allowedTagType(node)) {
+        return;
+      }
+      try {
+        node.childNodes.forEach(child => {
+          const element = child as HTMLElement;
+          if (isNodeAllowed(element) && element.nodeType === Node.TEXT_NODE) {
             if (textContainsTerm(element.nodeValue, entity)) {
               elements.push(element);
             }
@@ -102,11 +102,12 @@ export module TextHighlighter {
             && element.style.display !== 'none') {
             allDescendants(element, elements, entity);
           }
-      });
-    } catch (e) {
-      // There are so many things that could go wrong.
-      // The DOM is a wild west
-      console.error(e);
+        });
+      } catch (e) {
+        // There are so many things that could go wrong.
+        // The DOM is a wild west
+        console.error(e);
+      }
     }
   }
 
@@ -174,7 +175,7 @@ export module TextHighlighter {
     }
   }
 
-  // highlights a term by wrapping it an HTML span
+    // highlights a term by wrapping it an HTML span
   const highlightTerm = (term, entity) => `<span class="aurac-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative; cursor: pointer">${term}</span>`;
 
   function addHighlightAndEventListeners(selector: Element[], entity: Entity) {
