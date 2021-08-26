@@ -42,7 +42,6 @@ export class LogReceiverService {
   }
 
   private initialise() {
-    // @ts-ignore
     browser.runtime.onMessage.addListener((msg: Partial<Message> & {msg?: Message}) => {
       if (msg.type !== 'log') { return; }
       switch (msg.level) {
