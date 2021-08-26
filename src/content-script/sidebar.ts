@@ -5,16 +5,13 @@ export module Sidebar {
 
   const cardContainer = document.createElement('div')
   const toggleButtonElement = document.createElement('button')
-  const imageElement = document.createElement('img');
-  const headerElement = document.createElement('h4');
-  headerElement.style.color = '#b9772e'
   let isExpanded = false;
 
   export function init(): void {
 
     const sidebar = document.createElement('span')
 
-    const [logo, logoText] = createLogo(imageElement, headerElement);
+    const [logo, logoText] = createLogo();
 
     sidebar.appendChild(logo);
     sidebar.appendChild(logoText);
@@ -65,8 +62,10 @@ export module Sidebar {
     return toggleButton;
   }
 
-  function createLogo(auracLogo: HTMLImageElement,
-                      logoText: HTMLHeadingElement): [HTMLImageElement, HTMLHeadingElement] {
+  function createLogo(): [HTMLImageElement, HTMLHeadingElement] {
+    const auracLogo = document.createElement('img');
+    const logoText = document.createElement('h4');
+    logoText.style.color = '#b9772e'
     auracLogo.className = 'aurac-logo';
     // @ts-ignore
     auracLogo.src = browser.runtime.getURL('assets/head-brains.png')
