@@ -3,8 +3,6 @@ import {Card} from './card';
 
 export module Sidebar {
 
-  const cardContainer = document.createElement('div')
-  const toggleButtonElement = document.createElement('button')
   let isExpanded = false;
 
   export function init(): void {
@@ -17,12 +15,14 @@ export module Sidebar {
     sidebar.appendChild(logoText);
     sidebar.className = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed';
 
-    const sidebarToggleButton: HTMLButtonElement =
-      initToggleButton(
-        toggleButtonElement
-      );
-
+    const sidebarToggleButton = document.createElement('button')
+    sidebarToggleButton.innerHTML = Card.expandArrow;
+    sidebarToggleButton.className = 'aurac-transform aurac-sidebar-button aurac-sidebar-button--collapsed'
+    sidebarToggleButton.addEventListener('click', () => Sidebar.toggle());
     sidebar.appendChild(sidebarToggleButton);
+
+    const cardContainer = document.createElement('div');
+    cardContainer.id = 'card-container';
     sidebar.appendChild(cardContainer);
 
     document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
@@ -41,25 +41,13 @@ export module Sidebar {
       })
     })
     isExpanded = !isExpanded
-    toggleButtonElement.innerHTML = isExpanded ? Card.collapseArrow : Card.expandArrow;
+    const toggleButtonElements = document.getElementsByClassName('aurac-sidebar-button');
+    toggleButtonElements[0].innerHTML = isExpanded ? Card.collapseArrow : Card.expandArrow;
   }
 
   export function addCard(card: HTMLDivElement): void {
-    cardContainer.appendChild(card)
-  }
-
-  // initialise the toggle sidebar button
-  function initToggleButton(toggleButton: HTMLButtonElement): HTMLButtonElement {
-
-    toggleButton.innerHTML = Card.expandArrow;
-    toggleButton.className = 'sidebar-button';
-    toggleButton.className = 'aurac-transform aurac-sidebar-button aurac-sidebar-button--collapsed'
-
-    // document.body.id = 'body'; // TODO what on earth?!
-
-    toggleButton.addEventListener('click', () => Sidebar.toggle());
-
-    return toggleButton;
+    const cardContainer = document.getElementById('card-container');
+    cardContainer!.appendChild(card)
   }
 
   function createLogo(): [HTMLImageElement, HTMLHeadingElement] {
