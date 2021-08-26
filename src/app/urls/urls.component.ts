@@ -14,15 +14,12 @@ export class UrlsComponent {
 
   readonly urlKeys = DictionaryURLKeys;
 
-  // constructor() {}
-
   getBorderColor(formName: string): object {
-    let colour = 'gray';
+    let colour = 'blue';
     if (!this.urlsForm!.get(formName)!.valid) {
       colour = 'red';
     }
     return {'border-color': colour};
   }
-
 
 }
