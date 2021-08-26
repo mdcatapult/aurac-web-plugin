@@ -3,26 +3,22 @@ import {Card} from './card';
 
 export module Sidebar {
 
+  const cardContainer = document.createElement('div')
+  let toggleButtonElement: HTMLButtonElement;
   let isExpanded = false;
 
-  export function init(): void {
-
-    const sidebar = document.createElement('span')
+  export function create(): void {
 
     const [logo, logoText] = createLogo();
 
+    const sidebar = document.createElement('span')
     sidebar.appendChild(logo);
     sidebar.appendChild(logoText);
     sidebar.className = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed';
 
-    const sidebarToggleButton = document.createElement('button')
-    sidebarToggleButton.innerHTML = Card.expandArrow;
-    sidebarToggleButton.className = 'aurac-transform aurac-sidebar-button aurac-sidebar-button--collapsed'
-    sidebarToggleButton.addEventListener('click', () => Sidebar.toggle());
-    sidebar.appendChild(sidebarToggleButton);
+    toggleButtonElement = createToggleButton();
 
-    const cardContainer = document.createElement('div');
-    cardContainer.id = 'card-container';
+    sidebar.appendChild(toggleButtonElement);
     sidebar.appendChild(cardContainer);
 
     document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
@@ -41,13 +37,25 @@ export module Sidebar {
       })
     })
     isExpanded = !isExpanded
-    const toggleButtonElements = document.getElementsByClassName('aurac-sidebar-button');
-    toggleButtonElements[0].innerHTML = isExpanded ? Card.collapseArrow : Card.expandArrow;
+    toggleButtonElement.innerHTML = isExpanded ? Card.collapseArrow : Card.expandArrow;
   }
 
   export function addCard(card: HTMLDivElement): void {
-    const cardContainer = document.getElementById('card-container');
-    cardContainer!.appendChild(card)
+    cardContainer.appendChild(card)
+  }
+
+  // initialise the toggle sidebar button
+  function createToggleButton(): HTMLButtonElement {
+    const toggleButton = document.createElement('button')
+    toggleButton.innerHTML = Card.expandArrow;
+    toggleButton.className = 'sidebar-button';
+    toggleButton.className = 'aurac-transform aurac-sidebar-button aurac-sidebar-button--collapsed'
+
+    // document.body.id = 'body'; // TODO what on earth?!
+
+    toggleButton.addEventListener('click', () => Sidebar.toggle());
+
+    return toggleButton;
   }
 
   function createLogo(): [HTMLImageElement, HTMLHeadingElement] {
