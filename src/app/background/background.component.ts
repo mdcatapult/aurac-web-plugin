@@ -21,8 +21,8 @@ export class BackgroundComponent {
   constructor(private client: HttpClient, private browserService: BrowserService) {
 
     this.browserService.loadSettings().then(settings => {
-      this.settings = settings || defaultSettings
-    })
+      this.settings = settings || defaultSettings;
+    });
 
     this.browserService.addListener((msg: Partial<Message>) => {
       console.log('Received message from popup...', msg);
@@ -84,7 +84,7 @@ export class BackgroundComponent {
       xref.compoundName = entityTerm;
     }
     return xref;
-  }))
+  }));
 
 
   private nerCurrentPage(dictionary: validDict): void {
@@ -112,7 +112,7 @@ export class BackgroundComponent {
           {observe: 'response', params: queryParams})
           .subscribe((response) => {
             console.log('Received results from leadmine...');
-            if (!response.body) {
+            if (!response.body || !response.body.entities) {
               return;
             }
             const uniqueEntities = this.getUniqueEntities(response.body!);
@@ -132,7 +132,7 @@ export class BackgroundComponent {
     return uniqueEntities;
   }
 
-  private getTrueKeys(v: {[_: string]: boolean}): string[] {
+  private getTrueKeys(v: { [_: string]: boolean }): string[] {
     return Object.keys(v).filter(k => v[k] === true);
   }
 }

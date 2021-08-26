@@ -6,4 +6,11 @@
   background-color: #a6a3a2;
 }
 
+.form-container {
+  display: flex;
+  flex-direction: column;
+}
 
+.mat-form-field{
+  display: block;
+}
