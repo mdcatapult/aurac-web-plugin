@@ -98,7 +98,7 @@ export module Card {
 
     // TODO can we use a modulo here?
     if (direction === 'right') {
-      if (arrowProperties.positionInArray >= entityToOccurrence.get(arrowProperties.nerTerm).length - 1) {
+      if (arrowProperties.positionInArray >= entityToOccurrence.get(arrowProperties.nerTerm)!.length - 1) {
         // gone off the end of the array - reset
         arrowProperties.positionInArray = 0;
       } else if (arrowProperties.isClicked) {
@@ -108,15 +108,15 @@ export module Card {
       arrowProperties.positionInArray--;
     }
 
-    setNerHtmlColours(entityToOccurrence.get(arrowProperties.nerTerm));
+    setNerHtmlColours(entityToOccurrence.get(arrowProperties.nerTerm)!);
 
-    const targetElement = entityToOccurrence.get(arrowProperties.nerTerm)[arrowProperties.positionInArray];
+    const targetElement = entityToOccurrence.get(arrowProperties.nerTerm)![arrowProperties.positionInArray];
     targetElement.scrollIntoView({block: 'center'});
 
     toggleHighlightColor(targetElement);
 
     const occurrencesElement = document.getElementById(`${arrowProperties.nerTerm}-occurrences`);
-    occurrencesElement!.innerText = `${arrowProperties.positionInArray + 1} / ${entityToOccurrence.get(arrowProperties.nerTerm).length}`;
+    occurrencesElement!.innerText = `${arrowProperties.positionInArray + 1} / ${entityToOccurrence.get(arrowProperties.nerTerm)!.length}`;
     arrowProperties.isClicked = true;
   }
 
@@ -134,7 +134,7 @@ export module Card {
     occurrenceElement.style.display = 'flex';
     occurrenceElement.style.justifyContent = 'flex-end';
 
-    occurrenceElement.innerText = `${entityToOccurrence.get(entityText).length} matches found`;
+    occurrenceElement.innerText = `${entityToOccurrence.get(entityText)!.length} matches found`;
     card.appendChild(occurrenceElement);
   }
 
@@ -188,7 +188,7 @@ export module Card {
     if (!entityToOccurrence.has(entityText)) {
       entityToOccurrence.set(entityText, [occurrence]);
     } else {
-      entityToOccurrence.get(entityText).push(occurrence);
+      entityToOccurrence.get(entityText)!.push(occurrence);
     }
   }
 

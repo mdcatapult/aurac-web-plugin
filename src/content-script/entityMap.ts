@@ -10,7 +10,7 @@ export class EntityMap<T> {
     return this.m.has(text.toLowerCase());
   }
 
-  get(text: string): T {
+  get(text: string): T | undefined {
     return this.m.get(text.toLowerCase());
   }
 
@@ -21,7 +21,7 @@ export class EntityMap<T> {
   delete(entityText: string, document: Document): void {
     this.m.delete(entityText.toLowerCase());
     if (this.m.size === 0) {
-      document.getElementById('aurac-narrative').style.display = 'block';
+      document.getElementById('aurac-narrative')!.style.display = 'block';
     }
   }
 }

@@ -2,7 +2,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "strict": false,
+    "strict": true,
     "outDir": "./out-tsc/app",
     "typeRoots": [
       "node_modules/@types",
@@ -16,6 +16,6 @@
   ],
   "include": [
     "src/**/*.d.ts",
-    "src/content-script/script.ts"
+    "src/content-script/*.ts"
   ]
 }
