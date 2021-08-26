@@ -83,9 +83,8 @@ export module Sidebar {
     });
   }
 
-  // TODO can this function return something ?
   // returns an event listener which creates a new element with passed info and appends it to the passed element
-  export const populateAuracSidebar = (info: Entity, element: Element) => {
+  export function entityClickHandler(info: Entity, element: Element): (event: Event) => void {
     return (event: Event) => {
       if (event.type !== 'click') {
         return;
@@ -96,7 +95,7 @@ export module Sidebar {
 
       if (getAuracHighlightChildren(element).some(child => child.className === 'aurac-highlight')
         && element.parentElement!.className === 'aurac-highlight') {
-        removeEventListener('click', populateAuracSidebar(info, element));
+        removeEventListener('click', entityClickHandler(info, element));
       } else if (!Card.entityToCard.has(info.entityText)) {
           const card = Card.create(info)
           Card.entityToCard.set(info.entityText, card);
@@ -112,7 +111,7 @@ export module Sidebar {
         setSidebarColors(div);
       }
     };
-  };
+  }
 
   //TODO: should we use this for all non null assertions?
   // function getAuracElement(elementName: ElementName): HTMLElement {

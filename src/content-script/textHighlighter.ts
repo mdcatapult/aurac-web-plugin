@@ -147,6 +147,7 @@ export module TextHighlighter {
       });
       return !!found.length;
     }
+    return false;
   }
 
   // TODO chemical class for stuff like this?
@@ -164,7 +165,7 @@ export module TextHighlighter {
           const childValues = Sidebar.getAuracHighlightChildren(replacementNode);
           childValues.forEach(childValue => { // For each highlighted element, we will add an event listener to add it to our sidebar
             Card.populateEntityToOccurrences(entity.entityText, childValue);
-            childValue.addEventListener('click', Sidebar.populateAuracSidebar(entity, replacementNode));
+            childValue.addEventListener('click', Sidebar.entityClickHandler(entity, replacementNode));
           });
         } catch (e) {
           console.error(e);
@@ -193,7 +194,7 @@ export module TextHighlighter {
         const childValues = getAuracHighlightChildren(replacementNode);
         childValues.forEach(childValue => {
           Card.populateEntityToOccurrences(entity.entityText, childValue);
-          childValue.addEventListener('click', Sidebar.populateAuracSidebar(entity, replacementNode));
+          childValue.addEventListener('click', Sidebar.entityClickHandler(entity, replacementNode));
         });
       } catch (e) {
         console.error(e);
