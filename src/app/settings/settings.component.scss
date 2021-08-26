@@ -1,0 +1,22 @@
+.settings {
+  width: 400px;
+  background-color: rgba(249,250,251,1);
+  flex-direction: column;
+}
+
+.close-button {
+  align-content: flex-start;
+  padding: 0.25rem;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 1 auto;
+}
+
+.aurac-logo {
+  background-color: rgba(249,250,251,1);
+  padding-bottom: 1rem;
+}

@@ -11,15 +11,6 @@ import {DictionaryURLKeys} from '../../types';
 export class UrlsComponent {
 
   @Input() urlsForm?: FormGroup
-
   readonly urlKeys = DictionaryURLKeys;
-
-  getBorderColor(formName: string): object {
-    let colour = 'blue';
-    if (!this.urlsForm!.get(formName)!.valid) {
-      colour = 'red';
-    }
-    return {'border-color': colour};
-  }
 
 }
