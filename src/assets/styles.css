@@ -6,13 +6,12 @@
   position: fixed;
   z-index: 2147483647;
   height: 100vh;
-  top: 0vw;
+  top: 0;
   width: 20vw;
   border-right: 2px solid black;
   padding: 5px;
   overflow-wrap: break-word;
   overflow-y: scroll;
-
 }
 
 .aurac-sidebar--collapsed {
@@ -20,7 +19,7 @@
 }
 
 .aurac-sidebar--expanded {
-  left: 0vw;
+  left: 0;
 }
 
 .aurac-sidebar-button {
@@ -31,7 +30,7 @@
 }
 
 .aurac-sidebar-button--collapsed {
-  left: 0vw;
+  left: 0;
 }
 
 .aurac-sidebar-button--expanded {
@@ -43,36 +42,39 @@
   background-color: rgb(192, 192, 192);
   order: 1;
   padding: 5px;
- }
+}
 
- .aurac-right-arrow-button {
+.aurac-right-arrow-button {
   color: black;
   background-color: rgb(192, 192, 192);
   order: 2;
   padding: 5px;
- }
+}
 
- .aurac-arrow-buttons {
- display: flex;
- justify-content: flex-end;
- flex-direction: row;
- }
+.aurac-arrow-buttons {
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: row;
+}
 
- #aurac-logo {
- width: 5vw;
- height: 5vw;
- display: block;
- margin-left: auto;
- margin-right: auto;
- margin-top: 0.3vw;
- margin-bottom: 0.3vw;
- }
+.aurac-logo {
+  width: 5vw;
+  height: 5vw;
+  display: block;
+  margin: 0.3vw auto 0.3vw auto;
+}
 
- #aurac-narrative {
- text-align: center;
- }
+#aurac-narrative {
+  text-align: center;
+}
 
- .aurac-cross-button {
+.sidebar-text {
+  border: 1px solid black;
+  padding: 2px;
+  margin-bottom: 5px;
+}
+
+.aurac-cross-button {
   position: relative;
   top: -45px;
   left: 1px;
@@ -82,19 +84,19 @@
 }
 
 .aurac-transform {
-  -webkit-transition: all 1s ease;  
-  -moz-transition: all 1s ease;  
-  -o-transition: all 1s ease;  
-  -ms-transition: all 1s ease;  
-  transition: all 1s ease; 
+  -webkit-transition: all 1s ease;
+  -moz-transition: all 1s ease;
+  -o-transition: all 1s ease;
+  -ms-transition: all 1s ease;
+  transition: all 1s ease;
 }
 
 .aurac-body--sidebar-collapsed {
   width: 100vw;
-  margin-left: 0vw;
+  margin-left: 0;
 }
 
 .aurac-body--sidebar-expanded {
-    width: 80vw;
-    margin-left: 20vw;
+  width: 80vw;
+  margin-left: 20vw;
 }

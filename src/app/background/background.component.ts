@@ -2,22 +2,11 @@ import {Component} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 
-import {
-  ConverterResult,
-  defaultSettings,
-  DictionaryURLs,
-  LeadminerEntity,
-  LeadminerResult,
-  Message,
-  Settings,
-  StringMessage,
-  XRef
-} from 'src/types';
+import {ConverterResult, defaultSettings, LeadminerEntity, LeadminerResult, Message, Settings, StringMessage, XRef} from 'src/types';
 import {validDict} from './types';
 import {map, switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {BrowserService} from '../browser.service';
-import MessageSender = browser.runtime.MessageSender;
 
 @Component({
   selector: 'app-background',
@@ -123,10 +112,10 @@ export class BackgroundComponent {
           {observe: 'response', params: queryParams})
           .subscribe((response) => {
             console.log('Received results from leadmine...');
-            if (!response.body) {
+            if (!response.body || !response.body.entities) {
               return;
             }
-            const uniqueEntities = this.getUniqueEntities(response.body!);
+            const uniqueEntities = this.getUniqueEntities(response.body);
             this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
               .catch(e => console.error(e));
           });
