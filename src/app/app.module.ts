@@ -19,7 +19,7 @@ import {ReactiveFormsModule} from '@angular/forms';
 import { XRefSourcesComponent } from './x-ref-sources/x-ref-sources.component';
 import { SettingsComponent } from './settings/settings.component';
 import {MatButtonModule} from '@angular/material/button';
-import { MatIconModule } from "@angular/material/icon";
+import { MatIconModule } from '@angular/material/icon';
 
 const routes: Routes = [
   {path: '**', component: RouterComponent}
