@@ -10,7 +10,12 @@
   padding: 10px 0 10px 75px;
 }
 
-.ner-icon, .icon {
+.ner-icon {
+  color: rgb(185, 119, 46);
+}
+
+
+.icon {
   color: rgba(79,70,229,1);
 }
 
@@ -33,13 +38,8 @@
 }
 
 .ner-button-container {
-  position: relative;
-  display: grid;
-  gap: 1.5rem;
   background-color: rgba(255, 255, 255,1);
-  padding: 1.5rem 1.25rem 0.375rem 1.25rem;
   border-radius: 0.5rem;
-  overflow: hidden;
 }
 
 .other-button-container {
@@ -69,3 +69,11 @@
   width: 1.25rem;
 }
 
+button.mat-button .mat-icon,
+a.mat-button .mat-icon,
+a.mat-raised-button .mat-icon,
+a.mat-flat-button .mat-icon,
+a.mat-stroked-button .mat-icon {
+  vertical-align: top;
+  font-size: 1.25em;
+}

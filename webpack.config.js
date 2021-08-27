@@ -30,57 +30,10 @@ const config = {
         loader: "ts-loader",
         exclude: /node_modules/
       },
-      {
-        test: /\.scss$/,
-        loader: 'postcss-loader',
-        options: {
-          postcssOptions: {
-            ident: 'postcss',
-            syntax: 'postcss-scss',
-            plugins: [
-              require('postcss-import'),
-              // require('tailwindcss'),
-              require('autoprefixer'),
-            ],
-          },
-        },
-      },
-      {
-        test: /\.css$/,
-        use: [
-          "style-loader",
-          {
-            loader: "css-loader",
-            options: {
-              importLoaders: 1,
-              modules: true
-            },
-          },
-        ],
-        exclude: /\.module\.css$/
-      },
-      {
-        test: /\.svg$/,
-        use: "file-loader"
-      },
-      {
-        test: /\.png$/,
-        use: [
-          {
-            loader: "url-loader",
-            options: {
-              mimetype: "image/png"
-            }
-          },
-        ],
-      },
     ],
   },
   resolve: {
-    extensions: [".js", ".jsx", ".tsx", ".ts"],
-    alias: {
-      "react-dom": "@hot-loader/react-dom"
-    }
+    extensions: [".js", ".ts"],
   },
   devServer: {
     contentBase: "./dist"

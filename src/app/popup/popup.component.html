@@ -4,39 +4,28 @@
   <img src="./assets/head-brains.icon.128.png" alt="logo" class="aurac-logo">
 
     <div class="ner-button-container">
-      <button (click)="nerCurrentPage('proteins')" class="popup-button">
-        <mat-icon class="ner-icon">favorite</mat-icon>
-        <div class="left-margin">
-          <p class="button-text">Genes/Proteins</p>
-        </div>
+      <button mat-raised-button (click)="nerCurrentPage('proteins')">
+        <mat-icon inline="true" class="ner-icon">favorite</mat-icon>
+        Genes/Proteins
       </button>
-      <button (click)="nerCurrentPage('chemical-entities')" class="popup-button">
-        <mat-icon class="ner-icon">science</mat-icon>
-        <div class="left-margin">
-          <p class="button-text">Chemicals(SMILES)</p>
-        </div>
+      <button mat-raised-button (click)="nerCurrentPage('chemical-entities')">
+        <mat-icon inline="true" class="ner-icon">science</mat-icon>
+        Chemicals(SMILES)
       </button>
-      <button (click)="nerCurrentPage('chemical-inchi')" class="popup-button">
-        <mat-icon class="ner-icon">vpn_key</mat-icon>
-        <div class="left-margin">
-          <p class="button-text">Chemicals(InchiKey)</p>
-        </div>
+      <button mat-raised-button (click)="nerCurrentPage('chemical-inchi')">
+        <mat-icon inline="true" class="ner-icon">vpn_key</mat-icon>
+        Chemicals(InchiKey)
       </button>
-
-      <button (click)="nerCurrentPage('general')" class="popup-button">
-        <mat-icon class="ner-icon">manage_search</mat-icon>
-        <div class="left-margin">
-          <p class="button-text">General</p>
-        </div>
+      <button mat-raised-button (click)="nerCurrentPage('diseases')">
+        <mat-icon inline="true" class="ner-icon">coronavirus</mat-icon>
+        Diseases
       </button>
-
-      <button (click)="nerCurrentPage('diseases')" class="popup-button">
-        <mat-icon class="ner-icon">coronavirus</mat-icon>
-        <div class="left-margin">
-          <p class="button-text">Diseases</p>
-        </div>
+      <button mat-raised-button (click)="nerCurrentPage('general')">
+        <mat-icon inline="true" class="ner-icon">manage_search</mat-icon>
+        General
       </button>
     </div>
+
 
   <div class="other-button-container">
     <button (click)="settingsClicked()" class="popup-button">
@@ -45,6 +34,7 @@
         <p class="button-text">Settings</p>
       </div>
     </button>
+
     <button (click)="toggleSidebar()" class="popup-button">
       <mat-icon>auto_stories</mat-icon>
       <div class="left-margin">

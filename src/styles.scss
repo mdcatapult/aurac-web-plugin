@@ -8,3 +8,10 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons");
+
+// removes border around Angular components
+body {
+  border: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
