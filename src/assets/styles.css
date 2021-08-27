@@ -61,14 +61,17 @@
   width: 5vw;
   height: 5vw;
   display: block;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 0.3vw;
-  margin-bottom: 0.3vw;
+  margin: 0.3vw auto 0.3vw auto;
 }
 
 #aurac-narrative {
   text-align: center;
+}
+
+.sidebar-text {
+  border: 1px solid black;
+  padding: 2px;
+  margin-bottom: 5px;
 }
 
 .aurac-cross-button {

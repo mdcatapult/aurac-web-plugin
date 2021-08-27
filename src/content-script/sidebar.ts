@@ -4,26 +4,21 @@ import {Card} from './card';
 export module Sidebar {
 
   const cardContainer = document.createElement('div')
-  const toggleButtonElement = document.createElement('button')
-  const imageElement = document.createElement('img');
-  const headerElement = document.createElement('h4');
-  headerElement.style.color = '#b9772e'
+  let toggleButtonElement: HTMLButtonElement;
   let isExpanded = false;
 
-  export function init(sidebar: HTMLSpanElement): void {
+  export function create(): void {
 
-    const [logo, logoText] = createLogo(imageElement, headerElement);
+    const [logo, logoText] = createLogo();
 
+    const sidebar = document.createElement('span')
     sidebar.appendChild(logo);
     sidebar.appendChild(logoText);
     sidebar.className = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed';
 
-    const sidebarToggleButton: HTMLButtonElement =
-      initToggleButton(
-        toggleButtonElement
-      );
+    toggleButtonElement = createToggleButton();
 
-    sidebar.appendChild(sidebarToggleButton);
+    sidebar.appendChild(toggleButtonElement);
     sidebar.appendChild(cardContainer);
 
     document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
@@ -50,8 +45,8 @@ export module Sidebar {
   }
 
   // initialise the toggle sidebar button
-  function initToggleButton(toggleButton: HTMLButtonElement): HTMLButtonElement {
-
+  function createToggleButton(): HTMLButtonElement {
+    const toggleButton = document.createElement('button')
     toggleButton.innerHTML = Card.expandArrow;
     toggleButton.className = 'sidebar-button';
     toggleButton.className = 'aurac-transform aurac-sidebar-button aurac-sidebar-button--collapsed'
@@ -63,8 +58,10 @@ export module Sidebar {
     return toggleButton;
   }
 
-  function createLogo(auracLogo: HTMLImageElement,
-                      logoText: HTMLHeadingElement): [HTMLImageElement, HTMLHeadingElement] {
+  function createLogo(): [HTMLImageElement, HTMLHeadingElement] {
+    const auracLogo = document.createElement('img');
+    const logoText = document.createElement('h4');
+    logoText.style.color = '#b9772e'
     auracLogo.className = 'aurac-logo';
     // @ts-ignore
     auracLogo.src = browser.runtime.getURL('assets/head-brains.png')
@@ -86,20 +83,19 @@ export module Sidebar {
     });
   }
 
-  // TODO can this function return something ?
   // returns an event listener which creates a new element with passed info and appends it to the passed element
-  export const populateAuracSidebar = (info: Entity, element: Element) => {
-    return (event) => {
+  export function entityClickHandler(info: Entity, element: Element): (event: Event) => void {
+    return (event: Event) => {
       if (event.type !== 'click') {
         return;
       }
 
       // hides the narrative
-      document.getElementById('aurac-narrative').style.display = 'none';
+      document.getElementById('aurac-narrative')!.style.display = 'none';
 
       if (getAuracHighlightChildren(element).some(child => child.className === 'aurac-highlight')
-        && element.parentElement.className === 'aurac-highlight') {
-        removeEventListener('click', populateAuracSidebar(info, element));
+        && element.parentElement!.className === 'aurac-highlight') {
+        removeEventListener('click', entityClickHandler(info, element));
       } else if (!Card.entityToCard.has(info.entityText)) {
           const card = Card.create(info)
           Card.entityToCard.set(info.entityText, card);
@@ -115,7 +111,7 @@ export module Sidebar {
         setSidebarColors(div);
       }
     };
-  };
+  }
 
   //TODO: should we use this for all non null assertions?
   // function getAuracElement(elementName: ElementName): HTMLElement {

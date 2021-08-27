@@ -16,8 +16,8 @@ export module TextHighlighter {
     // document.head.appendChild(SidebarAnimations.newAuracStyleElement());
     // sort entities by length of entityText (descending) - this will ensure that we can capture e.g. VPS26A, which would not be
     // highlighted if VPS26 has already been highlighted, because the text VPS26A is now spread across more than one node
-    msg.body.sort((a, b) => b.entityText.length - a.entityText.length)
-      .map((entity) => {
+    msg.body.sort((a: Entity, b: Entity) => b.entityText.length - a.entityText.length)
+      .map((entity: Entity) => {
         const selectors = getSelectors(entity.entityText);
         wrapChemicalFormulaeWithHighlight(entity);
         addHighlightAndEventListeners(selectors, entity);
@@ -89,7 +89,7 @@ export module TextHighlighter {
         node.childNodes.forEach(child => {
           const element = child as HTMLElement;
           if (isNodeAllowed(element) && element.nodeType === Node.TEXT_NODE) {
-            if (textContainsTerm(element.nodeValue, entity)) {
+            if (textContainsTerm(element.nodeValue!, entity)) {
               elements.push(element);
             }
             // tslint:disable-next-line:max-line-length
@@ -170,10 +170,11 @@ export module TextHighlighter {
       });
       return !!found.length;
     }
+    return false;
   }
 
   // TODO chemical class for stuff like this?
-  function wrapChemicalFormulaeWithHighlight(entity) {
+  function wrapChemicalFormulaeWithHighlight(entity: Entity) {
     for (const formula of chemicalFormulae) {
       const formulaNode = formula.formulaNode;
       if (formula.formulaText === entity.entityText) {
@@ -182,12 +183,12 @@ export module TextHighlighter {
           // Retrieves the specific highlight colour to use for this NER term
           replacementNode.innerHTML = highlightTerm(formulaNode.innerHTML, entity);
           // This new highlighted term will replace the current child (same term but with no highlight) of this parent element
-          formulaNode.parentNode.insertBefore(replacementNode, formulaNode);
-          formulaNode.parentNode.removeChild(formulaNode);
+          formulaNode.parentNode!.insertBefore(replacementNode, formulaNode);
+          formulaNode.parentNode!.removeChild(formulaNode);
           const childValues = Sidebar.getAuracHighlightChildren(replacementNode);
           childValues.forEach(childValue => { // For each highlighted element, we will add an event listener to add it to our sidebar
             Card.populateEntityToOccurrences(entity.entityText, childValue);
-            childValue.addEventListener('click', Sidebar.populateAuracSidebar(entity, replacementNode));
+            childValue.addEventListener('click', Sidebar.entityClickHandler(entity, replacementNode));
           });
         } catch (e) {
           console.error(e);
@@ -197,7 +198,7 @@ export module TextHighlighter {
   }
 
   // highlights a term by wrapping it an HTML span
-  const highlightTerm = (term, entity) => `<span class="aurac-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative; cursor: pointer">${term}</span>`;
+  const highlightTerm = (term: string, entity: Entity) => `<span class="aurac-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative; cursor: pointer">${term}</span>`;
 
   function addHighlightAndEventListeners(selector: Element[], entity: Entity) {
     selector.map(element => {
@@ -205,18 +206,19 @@ export module TextHighlighter {
       try {
         // For each term, we want to replace its original HTML with a highlight colour
         const replacementNode = document.createElement('span');
-        // @ts-ignore
-        replacementNode.innerHTML = element.nodeValue.replaceAll(entity.entityText, highlightTerm(entity.entityText, entity));
+        replacementNode.innerHTML = element.nodeValue!.replace(
+          new RegExp(entity.entityText, 'g'),
+          highlightTerm(entity.entityText, entity));
 
         // This new highlighted term will will replace the current child (same term but with no highlight) of this parent element.
-        element.parentNode.insertBefore(replacementNode, element);
-        element.parentNode.removeChild(element);
+        element.parentNode!.insertBefore(replacementNode, element);
+        element.parentNode!.removeChild(element);
 
         // For each value we find that is a highlighted term, we want to add it to our sidebar and find its occurrences within the page
         const childValues = getAuracHighlightChildren(replacementNode);
         childValues.forEach(childValue => {
           Card.populateEntityToOccurrences(entity.entityText, childValue);
-          childValue.addEventListener('click', Sidebar.populateAuracSidebar(entity, replacementNode));
+          childValue.addEventListener('click', Sidebar.entityClickHandler(entity, replacementNode));
         });
       } catch (e) {
         console.error(e);
@@ -224,11 +226,11 @@ export module TextHighlighter {
     });
   }
 
-  const getSelectors = (entity) => {
+  function getSelectors(entity: string): Array<Element> {
     const allElements: Array<Element> = [];
     allDescendants(document.body, allElements, entity);
     return allElements;
-  };
+  }
 
   export function removeHighlights() {
     return Array.from(document.getElementsByClassName('aurac-highlight'))

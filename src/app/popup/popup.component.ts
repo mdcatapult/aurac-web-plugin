@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {Message, StringMessage} from 'src/types';
+import {Component} from '@angular/core';
+import {Message} from 'src/types';
 import {LogService} from './log.service';
 import {validDict} from '../background/types';
 import {BrowserService} from '../browser.service';
@@ -9,16 +9,11 @@ import {BrowserService} from '../browser.service';
   templateUrl: './popup.component.html',
   styleUrls: ['./popup.component.scss']
 })
-export class PopupComponent implements OnInit {
+export class PopupComponent {
 
   isSettings = false;
-  isSidebarRendered = false;
-  isNerLoaded = false;
 
   constructor(private log: LogService, private browserService: BrowserService) {
-  }
-
-  ngOnInit(): void {
   }
 
   settingsClicked() {
@@ -27,7 +22,6 @@ export class PopupComponent implements OnInit {
 
   nerCurrentPage(dictionary: validDict) {
     this.log.Log('Sending message to background page...');
-    // @ts-ignore
     browser.runtime.sendMessage<Message>({type: 'ner_current_page', body: dictionary})
       .catch(e => this.log.Error(`Couldn't send message to background page: ${JSON.stringify(e)}`));
   }
