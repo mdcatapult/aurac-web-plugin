@@ -4,7 +4,11 @@ import {ExternalLinks} from './externalLinks';
 
 export module Card {
 
-  import geneNames = ExternalLinks.geneNames;
+  import ncbi = ExternalLinks.ncbi;
+  import antibodies = ExternalLinks.antibodies;
+  import pubmed = ExternalLinks.pubmed;
+  import addGene = ExternalLinks.addGene;
+  import patents = ExternalLinks.patents;
   export const entityToCard = new EntityMap<HTMLDivElement>();
   const entityToOccurrence = new EntityMap<Element[]>();
   export const collapseArrow = '&#60;';
@@ -41,17 +45,27 @@ export module Card {
     card.className = 'sidebar-text';
     card.style.backgroundColor = information.recognisingDict.htmlColor;
 
-    card.insertAdjacentHTML('beforeend', `<p>Term: ${information.entityText}</p>`);
+    card.insertAdjacentHTML('beforeend', `<p>${information.recognisingDict.entityType}: ${information.entityText}</p>`);
     if (information.resolvedEntity) {
-      card.insertAdjacentHTML('beforeend', `<p>Resolved entity: ${information.resolvedEntity}</p>`);
-
       if (information.entityGroup === 'Gene or Protein') {
-        const geneNameLink = geneNames.createUrl(information.resolvedEntity);
-        card.insertAdjacentHTML('beforeend', geneNameLink);
+        const geneName = information.entityText.toLowerCase()
+        const ncbiLink = ncbi.createUrl(geneName);
+        const antibodiesLink = antibodies.createUrl(geneName);
+        const pubmedLink = pubmed.createUrl(geneName);
+        const addGeneLink = addGene.createUrl(geneName);
+        const patentsLink = patents.createUrl(geneName);
+        card.insertAdjacentHTML('beforeend', 
+        `
+        <ul>
+          <li><a href=${ncbiLink} target="_blank"> Gene Information </a></li>
+          <li><a href=${antibodiesLink} target="_blank"> Antibodies </a></li>
+          <li><a href=${pubmedLink} target="_blank"> Articles </a></li>
+          <li><a href=${addGeneLink} target="_blank"> Plasmids </a></li>
+          <li><a href=${patentsLink} target="_blank"> Patents </a></li>
+        </ul>
+        `);
       }
     }
-
-    card.insertAdjacentHTML('beforeend', `<p>Entity Type: ${information.recognisingDict.entityType}</p>`);
 
     const xrefHTML: HTMLDivElement = document.createElement('div')
 

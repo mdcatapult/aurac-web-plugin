@@ -5,10 +5,10 @@ type Link = {
 
 export module ExternalLinks {
 
-  export const geneNames: Link = {
-    name: 'Genenames',
+  export const ncbi: Link = {
+    name: 'NCBI',
     createUrl: (identifier: string) =>
-      `https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/${identifier}`
+      `https://www.ncbi.nlm.nih.gov/search/all/?term=${identifier}`
   }
 
   export const antibodies: Link = {
