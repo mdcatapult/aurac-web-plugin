@@ -54,12 +54,12 @@ export class BackgroundComponent {
           this.settings = msg.body;
           if (minEntityLengthChanged) {
             this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
-              .catch(e => console.error(e))
+              .catch(console.error)
               .then(() => {
                 if (this.leadmineResult) {
                   const uniqueEntities = this.getUniqueEntities(this.leadmineResult);
                   this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
-                    .catch(e => console.error(e));
+                    .catch(console.error);
                 }
               });
           }
@@ -98,7 +98,7 @@ export class BackgroundComponent {
 
       xRefObservable.subscribe((xrefs: XRef[]) => {
         this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
-          .catch(e => console.error(e));
+          .catch(console.error);
       });
     }
   }
@@ -115,7 +115,7 @@ export class BackgroundComponent {
   private nerCurrentPage(dictionary: validDict): void {
     console.log('Getting content of active tab...');
     this.browserService.sendMessageToActiveTab({type: 'get_page_contents'})
-      .catch(e => console.error(e))
+      .catch(console.error)
       .then(result => {
         if (!result || !result.body) {
           console.log('No content');
@@ -142,7 +142,7 @@ export class BackgroundComponent {
             }
             const uniqueEntities = this.getUniqueEntities(response.body);
             this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
-              .catch(e => console.error(e));
+              .catch(console.error);
           });
       });
   }
