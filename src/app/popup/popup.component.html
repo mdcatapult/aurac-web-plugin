@@ -3,43 +3,38 @@
 
   <img src="./assets/head-brains.icon.128.png" alt="logo" class="aurac-logo">
 
-    <div class="ner-button-container">
-      <button mat-raised-button (click)="nerCurrentPage('proteins')">
-        <mat-icon inline="true" class="ner-icon">favorite</mat-icon>
-        Genes/Proteins
-      </button>
-      <button mat-raised-button (click)="nerCurrentPage('chemical-entities')">
-        <mat-icon inline="true" class="ner-icon">science</mat-icon>
-        Chemicals(SMILES)
-      </button>
-      <button mat-raised-button (click)="nerCurrentPage('chemical-inchi')">
-        <mat-icon inline="true" class="ner-icon">vpn_key</mat-icon>
-        Chemicals(InchiKey)
-      </button>
-      <button mat-raised-button (click)="nerCurrentPage('diseases')">
-        <mat-icon inline="true" class="ner-icon">coronavirus</mat-icon>
-        Diseases
-      </button>
-      <button mat-raised-button (click)="nerCurrentPage('general')">
-        <mat-icon inline="true" class="ner-icon">manage_search</mat-icon>
-        General
-      </button>
-    </div>
+  <div class="ner-button-container">
+    <button mat-raised-button (click)="nerCurrentPage('proteins')">
+      <mat-icon inline="true" class="ner-icon">favorite</mat-icon>
+      Genes/Proteins
+    </button>
+    <button mat-raised-button (click)="nerCurrentPage('chemical-entities')">
+      <mat-icon inline="true" class="ner-icon">science</mat-icon>
+      Chemicals(SMILES)
+    </button>
+    <button mat-raised-button (click)="nerCurrentPage('chemical-inchi')">
+      <mat-icon inline="true" class="ner-icon">vpn_key</mat-icon>
+      Chemicals(InchiKey)
+    </button>
+    <button mat-raised-button (click)="nerCurrentPage('diseases')">
+      <mat-icon inline="true" class="ner-icon">coronavirus</mat-icon>
+      Diseases
+    </button>
+    <button mat-raised-button (click)="nerCurrentPage('general')">
+      <mat-icon inline="true" class="ner-icon">manage_search</mat-icon>
+      General
+    </button>
+  </div>
 
 
   <div class="other-button-container">
-    <button (click)="settingsClicked()" class="popup-button">
-     <mat-icon>settings_suggest</mat-icon>
-      <div class="left-margin">
-        <p class="button-text">Settings</p>
-      </div>
+    <button mat-button (click)="settingsClicked()">
+      <mat-icon inline="true">settings_suggest</mat-icon>
+      Settings
     </button>
-
-    <button (click)="toggleSidebar()" class="popup-button">
-      <mat-icon>auto_stories</mat-icon>
-      <div class="left-margin">
-        <p class="button-text">Toggle Sidebar</p>
-      </div>
+    <button mat-button (click)="toggleSidebar()">
+      <mat-icon inline="true">auto_stories</mat-icon>
+      Toggle Sidebar
     </button>
   </div>
 
