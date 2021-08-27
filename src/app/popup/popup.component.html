@@ -1,43 +1,42 @@
 <!DOCTYPE html>
 <div *ngIf="!isSettings" class="popup-div">
-  <img src="./assets/head-brains.icon.128.png" alt="logo" class="aurac-logo"">
+
+  <img src="./assets/head-brains.icon.128.png" alt="logo" class="aurac-logo">
 
     <div class="ner-button-container">
       <button (click)="nerCurrentPage('proteins')" class="popup-button">
-        <mat-icon>favorite</mat-icon>
+        <mat-icon class="ner-icon">favorite</mat-icon>
         <div class="left-margin">
           <p class="button-text">Genes/Proteins</p>
         </div>
       </button>
       <button (click)="nerCurrentPage('chemical-entities')" class="popup-button">
-        <mat-icon>science</mat-icon>
+        <mat-icon class="ner-icon">science</mat-icon>
         <div class="left-margin">
           <p class="button-text">Chemicals(SMILES)</p>
         </div>
       </button>
       <button (click)="nerCurrentPage('chemical-inchi')" class="popup-button">
-        <mat-icon>vpn_key</mat-icon>
+        <mat-icon class="ner-icon">vpn_key</mat-icon>
         <div class="left-margin">
           <p class="button-text">Chemicals(InchiKey)</p>
         </div>
       </button>
 
       <button (click)="nerCurrentPage('general')" class="popup-button">
-        <mat-icon>manage_search</mat-icon>
+        <mat-icon class="ner-icon">manage_search</mat-icon>
         <div class="left-margin">
           <p class="button-text">General</p>
         </div>
       </button>
 
       <button (click)="nerCurrentPage('diseases')" class="popup-button">
-        <mat-icon>coronavirus</mat-icon>
+        <mat-icon class="ner-icon">coronavirus</mat-icon>
         <div class="left-margin">
           <p class="button-text">Diseases</p>
         </div>
       </button>
     </div>
-
-  </div>
 
   <div class="other-button-container">
     <button (click)="settingsClicked()" class="popup-button">
@@ -53,6 +52,8 @@
       </div>
     </button>
   </div>
+
+</div>
 
 <div class="settings" [hidden]="!isSettings">
   <app-settings (closed)="isSettings=false"></app-settings>
