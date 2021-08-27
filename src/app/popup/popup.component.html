@@ -1,67 +1,67 @@
 <!DOCTYPE html>
-<div *ngIf="!isSettings" class="bg-gray-50">
-  <img src="./assets/head-brains.icon.128.png" alt="logo" class="bg-gray-50" style="padding:15px 0px 15px 45px;">
+<div *ngIf="!isSettings" class="popup-div">
+  <img src="./assets/head-brains.icon.128.png" alt="logo" class="aurac-logo" style="padding-left:75px;">
   <div class="rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden">
-    <div class="relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8">
-      <button (click)="nerCurrentPage('proteins')" class="-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50">
+    <div class="button-container">
+      <button (click)="nerCurrentPage('proteins')" class="popup-button">
         <!-- Heroicon name: variable -->
-        <svg class="flex-shrink-0 h-6 w-6 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none"
              viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M4.871 4A17.926 17.926 0 003 12c0 2.874.673 5.59 1.871 8m14.13 0a17.926 17.926 0 001.87-8c0-2.874-.673-5.59-1.87-8M9 9h1.246a1 1 0 01.961.725l1.586 5.55a1 1 0 00.961.725H15m1-7h-.08a2 2 0 00-1.519.698L9.6 15.302A2 2 0 018.08 16H8"/>
         </svg>
-        <div class="ml-2">
-          <p class="text-base font-medium text-gray-900">
+        <div class="left-margin">
+          <p class="button-text">
             Genes/Proteins
           </p>
         </div>
       </button>
       <button (click)="nerCurrentPage('chemical-entities')"
-              class="-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50">
+              class="popup-button">
         <!-- Heroicon name: beaker -->
-        <svg class="flex-shrink-0 h-6 w-6 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none"
              viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
         </svg>
-        <div class="ml-2">
-          <p class="text-base font-medium text-gray-900">
+        <div class="left-margin">
+          <p class="button-text">
             Chemicals(SMILES)
           </p>
         </div>
       </button>
-      <button (click)="nerCurrentPage('chemical-inchi')" class="-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50">
-        <svg class="flex-shrink-0 h-6 w-6 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+      <button (click)="nerCurrentPage('chemical-inchi')" class="popup-button">
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none"
              viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
         </svg>
-        <div class="ml-2">
-          <p class="text-base font-medium text-gray-900">
+        <div class="left-margin">
+          <p class="button-text">
             Chemicals(InchiKey)
           </p>
         </div>
       </button>
-      <button (click)="nerCurrentPage('general')" class="-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50">
-        <svg class="flex-shrink-0 h-6 w-6 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+      <button (click)="nerCurrentPage('general')" class="popup-button">
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none"
              viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M10 21h7a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v11m0 5l4.879-4.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242z"/>
         </svg>
-        <div class="ml-2">
-          <p class="text-base font-medium text-gray-900">
+        <div class="left-margin">
+          <p class="button-text">
             General
           </p>
         </div>
       </button>
-      <button (click)="nerCurrentPage('diseases')" class="-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50">
-        <svg xmlns="http://www.w3.org/2000/svg" class="flex-shrink-0 h-6 w-6 text-indigo-600" fill="none"
+      <button (click)="nerCurrentPage('diseases')" class="popup-button">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none"
              viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
         </svg>
-        <div class="ml-2">
-          <p class="text-base font-medium text-gray-900">
+        <div class="left-margin">
+          <p class="button-text">
             Diseases
           </p>
         </div>
@@ -71,28 +71,28 @@
   <div class="px-5 py-5 bg-gray-50 space-y-6 sm:flex sm:space-y-0 sm:space-x-10 sm:px-8">
 
     <button (click)="settingsClicked()"
-            class="-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50">
-      <svg class="flex-shrink-1 h-6 w-6 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+            class="popup-button">
+      <svg class="settings-button-svg" xmlns="http://www.w3.org/2000/svg" fill="none"
            viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
       </svg>
-      <div class="ml-2">
-        <p class="text-base font-medium text-gray-900">
+      <div class="left-margin">
+        <p class="button-text">
           Settings
         </p>
       </div>
     </button>
     <button (click)="toggleSidebar()"
-            class="-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="#D3D3D3">
+            class="popup-button">
+      <svg xmlns="http://www.w3.org/2000/svg" class="toggle-button-svg" viewBox="0 0 20 20" fill="#D3D3D3">
         <path fill-rule="evenodd"
               d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z"
               clip-rule="evenodd"/>
       </svg>
-      <div class="ml-2">
-        <p class="text-base font-medium text-gray-900">
+      <div class="left-margin">
+        <p class="button-text">
           Toggle Sidebar
         </p>
       </div>
