@@ -112,10 +112,10 @@ export class BackgroundComponent {
           {observe: 'response', params: queryParams})
           .subscribe((response) => {
             console.log('Received results from leadmine...');
-            if (!response.body) {
+            if (!response.body || !response.body.entities) {
               return;
             }
-            const uniqueEntities = this.getUniqueEntities(response.body!);
+            const uniqueEntities = this.getUniqueEntities(response.body);
             this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
               .catch(e => console.error(e));
           });
