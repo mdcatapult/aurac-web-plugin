@@ -2,7 +2,7 @@
   width: 400px;
 }
 
-.popup-div, .popup-button:hover, .aurac-logo {
+.popup-div, .popup-button:hover, .aurac-logo, .other-button-container {
   background-color: rgba(249,250,251,1);
 }
 
@@ -29,12 +29,21 @@
   border-radius: 0.5rem;
 }
 
-.button-container {
+.ner-button-container {
   position: relative;
   display: grid;
   gap: 1.5rem;
   background-color: rgba(255, 255, 255,1);
   padding: 1.5rem 1.25rem 1.5rem 1.25rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.other-button-container {
+  padding: 1.25rem;
+  margin: 1.5rem 0 1.5rem 0;
+  display: flex;
+  justify-content: space-between;
 }
 
 .button-text {
