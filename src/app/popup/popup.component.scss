@@ -25,13 +25,11 @@
   flex-wrap: wrap;
 }
 
-.other-button-container {
-  padding: 1.25rem;
+.settings-button-container {
+  padding: 0.3rem;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  flex-direction: column;
-  background-color: rgba(249,250,251,1);
+  flex-wrap: wrap;
+  background-color: grey;
 }
 
 button {
