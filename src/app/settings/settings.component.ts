@@ -52,13 +52,13 @@ export class SettingsComponent implements OnInit {
 
   ngOnInit(): void {
     SettingsService.loadSettings(this.browserService, (settings) => {
-      this.settings = settings
+      this.settings = settings || defaultSettings
       this.settingsForm.reset(this.settings);
     }).then(() => {
       this.settingsForm.valueChanges.subscribe(settings => {
 
         if (this.settingsForm.valid) {
-          this.settings!.urls = settings.urls;
+          this.settings.urls = settings.urls;
           this.save();
         } else {
           if (this.settingsForm.get('urls')!.invalid) {
