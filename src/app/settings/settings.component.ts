@@ -1,7 +1,6 @@
-import {Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import {defaultSettings, DictionaryURLs, Message, Settings} from 'src/types';
+import {defaultSettings, DictionaryURLs, Settings} from 'src/types';
 import {BrowserService} from '../browser.service';
 import {LogService} from '../popup/log.service';
 import {UrlsService} from '../urls/urls.service';
@@ -36,6 +35,10 @@ export class SettingsComponent implements OnInit {
       unichemURL: new FormControl(
         defaultSettings.urls.unichemURL,
         Validators.compose([Validators.required, UrlsService.validator])
+      ),
+      pdfConverterURL: new FormControl(
+        defaultSettings.urls.pdfConverterURL,
+        Validators.compose([Validators.required, UrlsService.validator])
       )
     }),
     xRefConfig: new FormGroup({}),
@@ -48,7 +51,6 @@ export class SettingsComponent implements OnInit {
     })
 
     this.settingsForm.valueChanges.subscribe(settings => {
-
       if (this.settingsForm.valid) {
         this.settings!.urls = settings.urls
         this.save()

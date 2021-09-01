@@ -7,7 +7,6 @@ import {BrowserService} from '../browser.service';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {UrlsService} from './urls.service';
 
-
 @Component({
   selector: 'app-urls',
   templateUrl: './urls.component.html',

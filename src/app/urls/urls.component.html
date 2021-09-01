@@ -72,6 +72,30 @@
             </div>
           </div>
         </div>
+
+        <!-- PDF Converter-->
+        <div class="shadow sm:rounded-md sm:overflow-hidden">
+          <div class="px-4 py-5 bg-gray-50 space-y-6 sm:p-6">
+            <div class="grid grid-cols-3 gap-6">
+              <div class="col-span-3 sm:col-span-2">
+                <label for="{{urlKeys.pdfConverterURL}}" class="block text-sm font-medium text-gray-700">
+                  PDF Converter URL
+                </label>
+                <div class="mt-1 flex rounded-md shadow-sm bg-white">
+                  <input
+                    type="text"
+                    [ngStyle]="getBorderColor(urlKeys.pdfConverterURL)"
+                    name="{{urlKeys.pdfConverterURL}}"
+                    formControlName="{{urlKeys.pdfConverterURL}}"
+                    id="{{urlKeys.pdfConverterURL}}"
+                    class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-l-md rounded-r-md sm:text-sm border-gray-300"
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </form>
 
 
