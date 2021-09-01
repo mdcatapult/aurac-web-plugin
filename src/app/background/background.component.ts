@@ -84,7 +84,7 @@ export class BackgroundComponent {
       xref.compoundName = entityTerm;
     }
     return xref;
-  }));
+  }))
 
 
   private nerCurrentPage(dictionary: validDict): void {
@@ -132,7 +132,7 @@ export class BackgroundComponent {
     return uniqueEntities;
   }
 
-  private getTrueKeys(v: { [_: string]: boolean }): string[] {
+  private getTrueKeys(v: {[_: string]: boolean}): string[] {
     return Object.keys(v).filter(k => v[k] === true);
   }
 }
