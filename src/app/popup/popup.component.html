@@ -2,10 +2,9 @@
 <div *ngIf="!isSettings" class="popup-div">
 
   <img src="./assets/head-brains.icon.128.png" alt="logo" class="aurac-logo">
-
   <div class="ner-button-container">
     <button mat-raised-button (click)="nerCurrentPage('proteins')">
-      <mat-icon inline="true" class="ner-icon">favorite</mat-icon>
+      <mat-icon inline="true" svgIcon="dna_icon" class="ner-icon"></mat-icon> <!-- Icon source: https://freeicons.io/profile/2257-->
       Genes/Proteins
     </button>
     <button mat-raised-button (click)="nerCurrentPage('chemical-entities')">
