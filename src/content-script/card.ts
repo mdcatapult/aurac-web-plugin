@@ -1,6 +1,6 @@
 import {Entity} from './types'
 import {EntityMap} from './entityMap'
-import {ExternalLinks} from './externalLinks';
+import { ExternalLinks, Link} from './externalLinks';
 
 export module Card {
 
@@ -9,6 +9,12 @@ export module Card {
   import pubmed = ExternalLinks.pubmed;
   import addGene = ExternalLinks.addGene;
   import patents = ExternalLinks.patents;
+  import dimensions = ExternalLinks.dimensions;
+
+  import drugBank = ExternalLinks.drugBank;
+
+  import pubchem = ExternalLinks.pubchem;
+
   export const entityToCard = new EntityMap<HTMLDivElement>();
   const entityToOccurrence = new EntityMap<Element[]>();
   export const collapseArrow = '&#60;';
@@ -35,6 +41,17 @@ export module Card {
     isClicked: boolean,
   };
 
+  function createListOfLinks(categoryName:string, hrefList:Array<Link>, card:HTMLDivElement) {
+    card.insertAdjacentHTML('beforeend', `<h4> Links </h4>`)
+    const htmnlListOfLinks: HTMLUListElement = document.createElement("ul")
+    htmnlListOfLinks.classList.add("href-list-style")
+    hrefList.forEach(element => {
+      const link: string = element.createUrl(categoryName)
+      htmnlListOfLinks.insertAdjacentHTML('beforeend', `<li><a href=${link} target="_blank"> ${element.name} </a></li>`) 
+    });
+    card.appendChild(htmnlListOfLinks)
+  }
+
 // Creates a card for `information`
   export function create(information: Entity): HTMLDivElement {
     const card: HTMLDivElement = document.createElement('div');
@@ -45,28 +62,27 @@ export module Card {
     card.className = 'sidebar-text';
     card.style.backgroundColor = information.recognisingDict.htmlColor;
 
-    card.insertAdjacentHTML('beforeend', `<p>${information.recognisingDict.entityType}: ${information.entityText}</p>`);
-    if (information.resolvedEntity) {
-      if (information.entityGroup === 'Gene or Protein') {
-        const geneName = information.entityText.toLowerCase()
-        const ncbiLink = ncbi.createUrl(geneName);
-        const antibodiesLink = antibodies.createUrl(geneName);
-        const pubmedLink = pubmed.createUrl(geneName);
-        const addGeneLink = addGene.createUrl(geneName);
-        const patentsLink = patents.createUrl(geneName);
-        card.insertAdjacentHTML('beforeend', 
-        `
-        <ul>
-          <li><a href=${ncbiLink} target="_blank"> Gene Information </a></li>
-          <li><a href=${antibodiesLink} target="_blank"> Antibodies </a></li>
-          <li><a href=${pubmedLink} target="_blank"> Articles </a></li>
-          <li><a href=${addGeneLink} target="_blank"> Plasmids </a></li>
-          <li><a href=${patentsLink} target="_blank"> Patents </a></li>
-        </ul>
-        `);
-      }
+    card.insertAdjacentHTML('beforeend', `<p>Term: ${information.entityText}</p>`);
+    if (information.entityGroup === 'Gene or Protein') {
+      const geneName: string = information.entityText.toLowerCase().replace(/\s/g, "%20")
+      const geneOrProteinLinks: Array<Link> = [ncbi, antibodies, pubmed, dimensions, addGene, patents]
+      createListOfLinks(geneName, geneOrProteinLinks, card)
+      
+    }
+    if (information.recognisingDict.entityType === 'Disease') {
+      const diseaseName: string = information.entityText.toLowerCase().replace(/\s/g, "%20")
+      const diseaseLinks: Array<Link> = [drugBank, pubmed, dimensions, patents]
+      createListOfLinks(diseaseName, diseaseLinks, card)
+      
+    }
+    if (information.entityGroup === 'Chemical') {
+      const chemicalName: string = information.entityText.toLowerCase().replace(/\s/g, "%20")
+      const chemicalLinks: Array<Link> = [pubchem, drugBank, pubmed, dimensions, patents]
+      createListOfLinks(chemicalName, chemicalLinks, card)
     }
 
+    card.insertAdjacentHTML('beforeend', `<p>Entity Type: ${information.recognisingDict.entityType}</p>`);
+    
     const xrefHTML: HTMLDivElement = document.createElement('div')
 
     xrefHTML.className = information.entityText;

@@ -1,9 +1,10 @@
-type Link = {
+export type Link = {
   name: string,
   createUrl: (id: string) => string
 }
 
 export module ExternalLinks {
+  // genes and proteins
 
   export const ncbi: Link = {
     name: 'NCBI',
@@ -16,19 +17,41 @@ export module ExternalLinks {
     createUrl: (identifier: string) => `https://www.antibodies.com/products/search=${identifier}`
   }
 
-  export const pubmed: Link = {
-    name: 'Pubmed',
-    createUrl: (identifier: string) => `https://pubmed.ncbi.nlm.nih.gov/?term=${identifier}&sort=date`,
-  }
-
   export const addGene: Link = {
-    name: 'AddGene',
+    name: 'Addgene',
     createUrl: (identifier: string) => `https://www.addgene.org/search/catalog/plasmids/?q=${identifier}`,
   }
 
+  // chemistry
+
+  export const pubchem: Link = {
+    name: 'Pubchem',
+    createUrl: (identifier: string) => `https://pubchem.ncbi.nlm.nih.gov/#query=${identifier}`,
+  }
+
+  // general
+
+  export const pubmed: Link = {
+    name: 'Articles',
+    createUrl: (identifier: string) => `https://pubmed.ncbi.nlm.nih.gov/?term=${identifier}&sort=date`,
+  }
+
+  export const dimensions: Link = {
+    name: 'Top Cited Articles',
+    createUrl: (identifier: string) => `https://app.dimensions.ai/discover/publication?search_mode=content&search_text=${identifier}&search_type=kws&search_field=text_search&order=times_cited`,
+  }
+
   export const patents: Link = {
-    name: 'Google patent',
+    name: 'Patents',
     createUrl: (identifier: string) => `https://patents.google.com/?q=${identifier}`
   }
+
+  // disease
+
+  export const drugBank: Link = {
+    name: 'Drug Bank',
+    createUrl: (identifier: string) => `https://go.drugbank.com/unearth/q?utf8=%E2%9C%93&searcher=drugs&query=${identifier}`
+  }
+
 
 }
