@@ -183,7 +183,7 @@ export module TextHighlighter {
       try {
         // For each term, we want to replace it's original HTML with a highlight colour
         const replacementNode = document.createElement('span');
-        replacementNode.innerHTML = element.nodeValue.replace(
+        replacementNode.innerHTML = element.nodeValue!.replace(
           new RegExp(entity.entityText, 'g'),
           highlightTerm(entity.entityText, entity));
 
