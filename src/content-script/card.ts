@@ -41,10 +41,10 @@ export module Card {
     isClicked: boolean,
   };
 
-  function createListOfLinks(categoryName:string, hrefList:Array<Link>, card:HTMLDivElement) {
+  function createListOfLinks(categoryName: string, hrefList: Array<Link>, card: HTMLDivElement) {
     card.insertAdjacentHTML('beforeend', `<h4> Links </h4>`)
-    const htmnlListOfLinks: HTMLUListElement = document.createElement("ul")
-    htmnlListOfLinks.classList.add("href-list-style")
+    const htmnlListOfLinks: HTMLUListElement = document.createElement('ul')
+    htmnlListOfLinks.classList.add('href-list-style')
     hrefList.forEach(element => {
       const link: string = element.createUrl(categoryName)
       htmnlListOfLinks.insertAdjacentHTML('beforeend', `<li><a href=${link} target="_blank"> ${element.name} </a></li>`) 
@@ -64,19 +64,19 @@ export module Card {
 
     card.insertAdjacentHTML('beforeend', `<p>Term: ${information.entityText}</p>`);
     if (information.entityGroup === 'Gene or Protein') {
-      const geneName: string = information.entityText.toLowerCase().replace(/\s/g, "%20")
+      const geneName: string = information.entityText.toLowerCase().replace(/\s/g, '%20')
       const geneOrProteinLinks: Array<Link> = [ncbi, antibodies, pubmed, dimensions, addGene, patents]
       createListOfLinks(geneName, geneOrProteinLinks, card)
       
     }
     if (information.recognisingDict.entityType === 'Disease') {
-      const diseaseName: string = information.entityText.toLowerCase().replace(/\s/g, "%20")
+      const diseaseName: string = information.entityText.toLowerCase().replace(/\s/g, '%20')
       const diseaseLinks: Array<Link> = [drugBank, pubmed, dimensions, patents]
       createListOfLinks(diseaseName, diseaseLinks, card)
       
     }
     if (information.entityGroup === 'Chemical') {
-      const chemicalName: string = information.entityText.toLowerCase().replace(/\s/g, "%20")
+      const chemicalName: string = information.entityText.toLowerCase().replace(/\s/g, '%20')
       const chemicalLinks: Array<Link> = [pubchem, drugBank, pubmed, dimensions, patents]
       createListOfLinks(chemicalName, chemicalLinks, card)
     }
