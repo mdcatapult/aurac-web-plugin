@@ -22,9 +22,9 @@ export module Card {
   const leftArrow = '&#8592';
   const crossButton = '&#215;';
   const highlightElements: Array<AuracHighlightHtmlColours> = [];
-  const geneAndProtein: string = 'Gene or Protein'
-  const disease: string = 'Biological'
-  const chemical: string = 'Chemical'
+  const geneAndProtein = 'Gene or Protein'
+  const disease = 'Biological'
+  const chemical = 'Chemical'
 
   // This class stores the HTML of all aurac-highlight elements before and after we change them. That way when they are no longer
 // highlighted by our search they can return to their original HTML state
@@ -43,15 +43,14 @@ export module Card {
     isClicked: boolean,
   };
 
-  function createListOfLinks(categoryName: string, hrefList: Array<Link>, card: HTMLDivElement) {
-    card.insertAdjacentHTML('beforeend', `<p>Links:</p>`)
+  function createListOfLinks(categoryName: string, hrefList: Array<Link>): HTMLUListElement {
     const htmlListOfLinks: HTMLUListElement = document.createElement('ul')
     htmlListOfLinks.classList.add('aurac-mdc-href-list-style')
     hrefList.forEach(element => {
       const link: string = element.createUrl(categoryName)
       htmlListOfLinks.insertAdjacentHTML('beforeend', `<li><a href=${link} target="_blank"> ${element.name}</a></li>`) 
     });
-    card.appendChild(htmlListOfLinks)
+    return htmlListOfLinks
   }
 
   // Creates a card for `information`
@@ -67,7 +66,7 @@ export module Card {
     card.insertAdjacentHTML('beforeend', `<p>${information.entityText}</p>`);
     const entity: string = information.entityText.toLowerCase().replace(/\s/g, '%20');
     let entityLinks: Array<Link> = [];
-    switch(information.entityGroup || information.recognisingDict.entityType) {
+    switch (information.entityGroup || information.recognisingDict.entityType) {
       case geneAndProtein: {
         entityLinks = [ncbi, geneNames, antibodies, pubmed, dimensions, addGene, patents];
         break;
@@ -81,9 +80,11 @@ export module Card {
         break;
       }
     }
-    createListOfLinks(entity, entityLinks, card);
-
+    card.insertAdjacentHTML('beforeend', `<p>Links:</p>`)
+    const links = createListOfLinks(entity, entityLinks);
+    card.appendChild(links)
     card.insertAdjacentHTML('beforeend', `<p class='aurac-mdc-entity-type'>Entity Type: ${information.recognisingDict.entityType}</p>`);
+
     const xrefHTML: HTMLDivElement = document.createElement('div');
 
     xrefHTML.className = information.entityText;
