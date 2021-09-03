@@ -52,10 +52,22 @@ export module ExternalLinks {
     createUrl: (identifier: string) => `https://patents.google.com/?q=${identifier}`
   }
 
+  export const geneProteinChemicalClinicalTrial: Link = {
+    name: 'Clinical Trial',
+    createUrl: (identifier: string) => `https://clinicaltrials.gov/ct2/results?cond=&term=${identifier}&cntry=&state=&city=&dist=`
+  }
+
   // disease
 
   export const drugBank: Link = {
     name: 'Drug Bank',
     createUrl: (identifier: string) => `https://go.drugbank.com/unearth/q?utf8=%E2%9C%93&searcher=drugs&query=${identifier}`
   }
+
+  export const diseaseClinicalTrial: Link = {
+    name: 'Clinical Trial',
+    createUrl: (identifier: string) => `https://clinicaltrials.gov/ct2/results?cond=${identifier}&term=&cntry=&state=&city=&dist=`
+  }
+
+
 }
