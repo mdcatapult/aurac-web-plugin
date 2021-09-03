@@ -6,6 +6,12 @@ export type Link = {
 export module ExternalLinks {
   // genes and proteins
 
+  export const geneNames: Link = {
+    name: 'HGNC',
+    createUrl: (identifier: string) =>
+      `https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/${identifier}`
+  }
+
   export const ncbi: Link = {
     name: 'NCBI',
     createUrl: (identifier: string) =>
@@ -52,6 +58,4 @@ export module ExternalLinks {
     name: 'Drug Bank',
     createUrl: (identifier: string) => `https://go.drugbank.com/unearth/q?utf8=%E2%9C%93&searcher=drugs&query=${identifier}`
   }
-
-
 }
