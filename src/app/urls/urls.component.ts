@@ -11,6 +11,7 @@ import {DictionaryURLKeys} from '../../types';
 export class UrlsComponent {
 
   @Input() urlsForm?: FormGroup
+
   readonly urlKeys = DictionaryURLKeys;
 
 }

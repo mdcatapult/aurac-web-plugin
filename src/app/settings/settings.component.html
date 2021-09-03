@@ -1,5 +1,4 @@
-<div class="settings">
-
+<div class="settings" [ngStyle]="{'height': urlPressed ? '600px' : '330px'}">
   <button mat-button class="close-button" (click)="closeSettings()">
     <mat-icon inline="true" style="font-size: x-large">highlight_off</mat-icon>
   </button>
@@ -9,12 +8,18 @@
   </div>
 
   <mat-tab-group>
-    <mat-tab label="URLs">
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <span (click)=urlsClicked()>URLs</span>
+      </ng-template>
       <app-urls
         [urlsForm]="settingsForm.get('urls')"
       ></app-urls>
     </mat-tab>
-    <mat-tab label="Sources">
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <span (click)="urlsNotClicked()">Sources</span>
+      </ng-template>
       <app-x-ref-sources
         [sourcesForm]="settingsForm.get('xRefConfig')"
         [settings]="settings ? settings.xRefConfig : {}"
