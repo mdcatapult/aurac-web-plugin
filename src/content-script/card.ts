@@ -50,7 +50,7 @@ export module Card {
     htmlListOfLinks.classList.add('aurac-mdc-href-list-style')
     hrefList.forEach(element => {
       const link: string = element.createUrl(categoryName)
-      htmlListOfLinks.insertAdjacentHTML('beforeend', `<li><a href=${link} target="_blank"> ${element.name}</a></li>`) 
+      htmlListOfLinks.insertAdjacentHTML('beforeend', `<li><a href=${link} target="_blank"> ${element.name}</a></li>`)
     });
     return htmlListOfLinks
   }
@@ -65,7 +65,14 @@ export module Card {
     card.className = 'sidebar-text';
     card.style.backgroundColor = information.recognisingDict.htmlColor;
 
-    card.insertAdjacentHTML('beforeend', `<p>${information.entityText}</p>`);
+    // If possible link directly to the gene/protein using the resolvedEntity from the entityText
+    // We could move this to the externalLinks class (or elsewhere) and make them for each type of entity.
+    if (information.entityGroup === 'Gene or Protein' && information.resolvedEntity) {
+      const geneNameLink = geneNames.createUrl(information.resolvedEntity);
+      card.insertAdjacentHTML('beforeend', `<p><a target="_blank" href="${geneNameLink}" title="Link to HGNC for this gene/protein">${information.entityText}</a></p>`);
+    } else {
+      card.insertAdjacentHTML('beforeend', `<p>${information.entityText}</p>`);
+    }
     const entity: string = information.entityText.toLowerCase().replace(/\s/g, '%20');
     let entityLinks: Array<Link> = [];
     switch (information.entityGroup || information.recognisingDict.entityType) {
