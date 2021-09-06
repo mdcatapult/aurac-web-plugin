@@ -1,3 +1,50 @@
+@import "src/app/utilities/stylingVariables";
+
 .settings {
   width: 400px;
+}
+
+.mat-raised-button:hover {
+  background-color: lightgrey;
+}
+
+.popup-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: $popup_default_background;
+  width: 180px;
+  overflow: hidden;
+}
+
+.aurac-logo {
+  padding: 10px;
+  background-color: $popup_default_background;
+}
+
+.ner-icon {
+  color: $ner_icon;
+  height: 15px !important;
+  width: 15px !important;
+  display: inline-table;
+}
+
+.ner-button-container {
+  background-color: $ner_button;
+  border-radius: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.settings-button-container {
+  padding: 0.3rem;
+  display: flex;
+  flex-wrap: wrap;
+  background-color: grey;
+}
+
+button {
+  display: flex;
+  width: 100%;
+  margin-bottom: 3px;
 }

@@ -1,7 +1,6 @@
-import {Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import {defaultSettings, DictionaryURLs, Message, Settings} from 'src/types';
+import {defaultSettings, DictionaryURLs, Settings} from 'src/types';
 import {BrowserService} from '../browser.service';
 import {LogService} from '../popup/log.service';
 import {UrlsService} from '../urls/urls.service';
@@ -18,7 +17,9 @@ export class SettingsComponent implements OnInit {
 
   private fb = new FormBuilder()
   settings?: Settings
-  dictionaryUrls = defaultSettings.urls;
+  @Input() urlPressed = false;
+  @Input() urlsForm?: FormGroup
+
 
   constructor(private log: LogService, private browserService: BrowserService) {
   }
@@ -75,5 +76,13 @@ export class SettingsComponent implements OnInit {
       this.settingsForm.get('urls')!.reset(defaultSettings.urls)
     }
     this.closed.emit(true);
+  }
+
+  urlsClicked(): void {
+    this.urlPressed = true;
+  }
+
+  urlsNotClicked(): void {
+    this.urlPressed = false;
   }
 }

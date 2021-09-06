@@ -21,8 +21,8 @@ export class BackgroundComponent {
   constructor(private client: HttpClient, private browserService: BrowserService) {
 
     this.browserService.loadSettings().then(settings => {
-      this.settings = settings || defaultSettings
-    })
+      this.settings = settings || defaultSettings;
+    });
 
     this.browserService.addListener((msg: Partial<Message>) => {
       console.log('Received message from popup...', msg);

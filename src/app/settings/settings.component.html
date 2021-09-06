@@ -1,9 +1,11 @@
-<div class="settings bg-gray-50 flex-col">
+<div class="settings">
 
-  <button class="content-start p-1" (click)="closeSettings()">&#10060;</button>
+  <button mat-button class="close-button" (click)="closeSettings()">
+    <mat-icon inline="true" style="font-size: x-large">highlight_off</mat-icon>
+  </button>
 
-  <div class="flex items-center justify-center flex-initial">
-    <img src="./assets/head-brains.icon.128.png" alt="logo" class="bg-gray-50 pb-2">
+  <div class="logo-container">
+    <img src="./assets/head-brains.icon.128.png" alt="logo" class="aurac-logo">
   </div>
 
   <mat-tab-group>
@@ -21,11 +23,9 @@
     </mat-tab>
   </mat-tab-group>
 
-  <div class="relative grid gap-6 bg-white px-3 py-3 sm:gap-8 sm:p-8">
-    <button
-      (click)="reset()"
-      class="file-upload button-element child load inline-flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white
-    bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+  <div class="restore-defaults-button-container">
+  <button mat-raised-button color="primary"
+      (click)="reset()">
       Restore defaults
     </button>
   </div>
