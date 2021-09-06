@@ -92,12 +92,22 @@ export module Card {
     card.insertAdjacentHTML('beforeend', `<p>Links:</p>`)
     const links = createListOfLinks(entity, entityLinks);
     card.appendChild(links)
-    card.insertAdjacentHTML('beforeend', `<p class='aurac-mdc-entity-type'>Entity Type: ${information.recognisingDict.entityType}</p>`);
 
     const xrefHTML: HTMLDivElement = document.createElement('div');
+    
+    xrefHTML!.innerHTML += '<p title="Links direct to pages on external sources for this entity">Cross references:</p>'
 
     xrefHTML.className = information.entityText;
     card.appendChild(xrefHTML);
+
+    const xrefHTMLList: HTMLUListElement = document.createElement('ul');
+    xrefHTMLList.className = 'aurac-mdc-href-list-style';
+    xrefHTMLList.id = information.entityText + '_list';
+    xrefHTML.appendChild(xrefHTMLList);
+    card.appendChild(xrefHTMLList);
+
+    card.insertAdjacentHTML('beforeend', `<p class='aurac-mdc-entity-type'>Entity Type: ${information.recognisingDict.entityType}</p>`);
+
     return card;
   }
 
@@ -220,8 +230,9 @@ export module Card {
   export function setXRefHTML(xrefs: { databaseName: string, url: string, compoundName: string }[]): void {
     Array.from(document.getElementsByClassName(xrefs[0] ? xrefs[0].compoundName : '')).forEach(element => element.innerHTML = '');
     xrefs.forEach(xref => {
-      const xrefElement = document.getElementsByClassName(xref.compoundName).item(0);
-      xrefElement!.innerHTML += `<p> ${xref.databaseName}: <a href=${xref.url} target="_blank">${xref.url}</a></p>`;
+      // const xrefElement = document.getElementsByClassName(xref.compoundName).item(0);
+      const xrefElementList = document.getElementById(xref.compoundName + '_list');
+      xrefElementList!.innerHTML += `<li><a href=${xref.url} target="_blank" title="Link to ${xref.databaseName} reference for this entity">${xref.databaseName}</a></li>`;
     });
   }
 
