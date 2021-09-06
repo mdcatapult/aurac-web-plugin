@@ -1,11 +1,11 @@
-@import "src/app/utilities/variables";
+@import "src/app/utilities/stylingVariables";
 
 .settings {
   width: 400px;
 }
 
 .mat-raised-button:hover {
-  background-color: powderblue;
+  background-color: lightgrey;
 }
 
 .popup-div {
