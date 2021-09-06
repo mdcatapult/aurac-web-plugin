@@ -4,6 +4,10 @@
   width: 400px;
 }
 
+.mat-raised-button:hover {
+  background-color: powderblue;
+}
+
 .popup-div {
   display: flex;
   flex-direction: column;
@@ -44,4 +48,3 @@ button {
   width: 100%;
   margin-bottom: 3px;
 }
-
