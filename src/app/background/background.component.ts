@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {SettingsService} from '../settings/settings.service'
+import {SettingsService} from '../settings/settings.service';
 
 import {
   ConverterResult,
@@ -32,8 +32,8 @@ export class BackgroundComponent {
   constructor(private client: HttpClient, private browserService: BrowserService) {
 
     SettingsService.loadSettings(this.browserService, () => {
-      this.browserService.addListener(this.getBrowserListenerFn())
-    })
+      this.browserService.addListener(this.getBrowserListenerFn());
+    });
   }
 
   private getBrowserListenerFn(): (msg: Partial<Message>) => void {
@@ -52,21 +52,22 @@ export class BackgroundComponent {
         case 'settings-changed': {
           const minEntityLengthChanged = this.settings.preferences.minEntityLength !== (msg.body as Settings).preferences.minEntityLength;
           this.settings = msg.body;
+          if (!this.leadmineResult) {
+            break;
+          }
           if (minEntityLengthChanged) {
             this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
               .catch(console.error)
               .then(() => {
-                if (this.leadmineResult) {
-                  const uniqueEntities = this.getUniqueEntities(this.leadmineResult);
-                  this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
-                    .catch(console.error);
-                }
+                const uniqueEntities = this.getUniqueEntities(this.leadmineResult);
+                this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
+                  .catch(console.error);
               });
           }
           break;
         }
       }
-    }
+    };
   }
 
   private loadXRefs([entityTerm, resolvedEntity]: [string, string]): void {
@@ -140,7 +141,8 @@ export class BackgroundComponent {
             if (!response.body || !response.body.entities) {
               return;
             }
-            const uniqueEntities = this.getUniqueEntities(response.body);
+            this.leadmineResult = response.body;
+            const uniqueEntities = this.getUniqueEntities(this.leadmineResult!);
             this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
               .catch(console.error);
           });
