@@ -1,8 +1,9 @@
+@import 'src/app/utilities/variables';
+
 .settings {
   width: 400px;
-  background-color: rgba(249,250,251,1);
+  background-color: $popup_default_background;
   flex-direction: column;
-  overflow: hidden;
 }
 
 .close-button {
@@ -18,13 +19,13 @@
 }
 
 .aurac-logo {
-  background-color: rgba(249,250,251,1);
+  background-color: $popup_default_background;
   padding-bottom: 1rem;
 }
 
 .restore-defaults-button-container {
-  background-color: rgba(255, 255, 255,1);
-  padding: 1.5rem;
+  background-color: $ner_button;
+  padding: 0.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
