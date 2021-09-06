@@ -13,7 +13,6 @@ export module TextHighlighter {
   const chemicalFormulae: chemicalFormula[] = [];
 
   export function wrapEntitiesWithHighlight(msg: any) {
-    // document.head.appendChild(SidebarAnimations.newAuracStyleElement());
     // sort entities by length of entityText (descending) - this will ensure that we can capture e.g. VPS26A, which would not be
     // highlighted if VPS26 has already been highlighted, because the text VPS26A is now spread across more than one node
     msg.body.sort((a: Entity, b: Entity) => b.entityText.length - a.entityText.length)

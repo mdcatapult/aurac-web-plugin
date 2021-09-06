@@ -50,24 +50,28 @@ export class BackgroundComponent {
           break;
         }
         case 'settings-changed': {
-          const minEntityLengthChanged = this.settings.preferences.minEntityLength !== (msg.body as Settings).preferences.minEntityLength;
           this.settings = msg.body;
+          break;
+        }
+        case 'preferences-changed': {
           if (!this.leadmineResult) {
             break;
           }
-          if (minEntityLengthChanged) {
-            this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
-              .catch(console.error)
-              .then(() => {
-                const uniqueEntities = this.getUniqueEntities(this.leadmineResult);
-                this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
-                  .catch(console.error);
-              });
-          }
+          this.refreshHighlights();
           break;
         }
       }
     };
+  }
+
+  private refreshHighlights(): void {
+    this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
+      .catch(console.error)
+      .then(() => {
+        const uniqueEntities = this.getUniqueEntities(this.leadmineResult);
+        this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
+          .catch(console.error);
+      });
   }
 
   private loadXRefs([entityTerm, resolvedEntity]: [string, string]): void {

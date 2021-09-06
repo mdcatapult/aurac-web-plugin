@@ -9,7 +9,8 @@ export type MessageType =
   | 'toggle_sidebar'
   | 'sidebar_rendered'
   | 'ner_lookup_performed'
-  | 'remove_highlights';
+  | 'remove_highlights'
+  | 'preferences-changed';
 
 export interface Message {
   type: MessageType;
