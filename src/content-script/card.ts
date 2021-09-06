@@ -29,14 +29,13 @@ export module Card {
   const chemical = 'Chemical'
 
   // This class stores the HTML of all aurac-highlight elements before and after we change them. That way when they are no longer
-// highlighted by our search they can return to their original HTML state
+  // highlighted by our search they can return to their original HTML state
   type AuracHighlightHtmlColours = {
     index: number;
     elementName: Element;
     colourBefore: string;
     colourAfter: string;
   }
-
 
   type ArrowButtonProperties = {
     nerTerm: string,
@@ -50,7 +49,7 @@ export module Card {
     htmlListOfLinks.classList.add('aurac-mdc-href-list-style')
     hrefList.forEach(element => {
       const link: string = element.createUrl(categoryName)
-      htmlListOfLinks.insertAdjacentHTML('beforeend', `<li><a href=${link} target="_blank"> ${element.name}</a></li>`) 
+      htmlListOfLinks.insertAdjacentHTML('beforeend', `<li><a href=${link} target="_blank"> ${element.name}</a></li>`)
     });
     return htmlListOfLinks
   }
@@ -58,9 +57,9 @@ export module Card {
   // Creates a card for `information`
   export function create(information: Entity): HTMLDivElement {
     const card: HTMLDivElement = document.createElement('div');
-    renderArrowButtonElements(card, information);
+    const arrowButtonProperties = renderArrowButtonElements(card, information);
     renderOccurrenceCounts(card, information);
-    renderRemoveEntityFromSidebarButtonElement(card, information);
+    renderRemoveEntityFromSidebarButtonElement(card, information, arrowButtonProperties);
 
     card.className = 'sidebar-text';
     card.style.backgroundColor = information.recognisingDict.htmlColor;
@@ -94,7 +93,7 @@ export module Card {
     return card;
   }
 
-  function renderArrowButtonElements(card: HTMLDivElement, information: Entity): void {
+  function renderArrowButtonElements(card: HTMLDivElement, information: Entity): HTMLDivElement {
     const arrowFlexProperties: HTMLDivElement = document.createElement('div');
     arrowFlexProperties.className = 'aurac-arrow-buttons';
     card.appendChild(arrowFlexProperties);
@@ -123,6 +122,7 @@ export module Card {
     rightArrowButtonElement.addEventListener('click', () => {
       pressArrowButton(arrowProperties, 'right');
     });
+    return arrowFlexProperties;
   }
 
   function pressArrowButton(arrowProperties: ArrowButtonProperties, direction: 'left' | 'right'): void {
@@ -183,12 +183,11 @@ export module Card {
     });
   }
 
-  function renderRemoveEntityFromSidebarButtonElement(card: HTMLDivElement, information: Entity): void {
-
+  function renderRemoveEntityFromSidebarButtonElement(card: HTMLDivElement, information: Entity, arrowProperties: HTMLDivElement): void {
     const removeEntityFromSidebarButtonElement = document.createElement('button');
     removeEntityFromSidebarButtonElement.innerHTML = crossButton;
-    removeEntityFromSidebarButtonElement.className = 'cross-button';
-    card.appendChild(removeEntityFromSidebarButtonElement);
+    removeEntityFromSidebarButtonElement.className = 'aurac-cross-button';
+    arrowProperties.appendChild(removeEntityFromSidebarButtonElement);
 
     removeEntityFromSidebarButtonElement.addEventListener('click', () => {
       pressRemoveEntityFromSidebarButtonElement(information);
@@ -225,5 +224,4 @@ export module Card {
       entityToOccurrence.get(entityText).push(occurrence);
     }
   }
-
 }

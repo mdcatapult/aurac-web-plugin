@@ -53,8 +53,8 @@
 
 .aurac-arrow-buttons {
   display: flex;
-  justify-content: flex-end;
   flex-direction: row;
+  justify-content: flex-end;
 }
 
 .aurac-logo {
@@ -75,9 +75,7 @@
 }
 
 .aurac-cross-button {
-  position: relative;
-  top: -45px;
-  left: 1px;
+  margin-right: auto;
   color: red;
   background-color: rgb(192, 192, 192);
   padding: 5px;
