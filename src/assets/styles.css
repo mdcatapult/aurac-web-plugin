@@ -114,3 +114,7 @@
 .aurac-mdc-entity-type {
   padding-top: 1vw;
 }
+
+.aurac-mdc-hidden {
+  display: none;
+}

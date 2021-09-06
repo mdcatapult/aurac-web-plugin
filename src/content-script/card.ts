@@ -89,22 +89,25 @@ export module Card {
         break;
       }
     }
-    card.insertAdjacentHTML('beforeend', `<p>Links:</p>`)
+
+    card.insertAdjacentHTML('beforeend', `<p>Links:</p>`);
     const links = createListOfLinks(entity, entityLinks);
     card.appendChild(links)
 
     const xrefHTML: HTMLDivElement = document.createElement('div');
-    
-    xrefHTML!.innerHTML += '<p title="Links direct to pages on external sources for this entity">Cross references:</p>'
+    xrefHTML.classList.add('aurac-mdc-hidden');
+    xrefHTML.title = 'Links direct to pages on external sources for this entity';
+    const htmlParagraphElement: HTMLParagraphElement = document.createElement('p');
+    htmlParagraphElement.innerHTML = 'Cross references:'
 
-    xrefHTML.className = information.entityText;
+    xrefHTML.id = information.entityText;
+    xrefHTML.appendChild(htmlParagraphElement);
     card.appendChild(xrefHTML);
 
     const xrefHTMLList: HTMLUListElement = document.createElement('ul');
     xrefHTMLList.className = 'aurac-mdc-href-list-style';
     xrefHTMLList.id = information.entityText + '_list';
     xrefHTML.appendChild(xrefHTMLList);
-    card.appendChild(xrefHTMLList);
 
     card.insertAdjacentHTML('beforeend', `<p class='aurac-mdc-entity-type'>Entity Type: ${information.recognisingDict.entityType}</p>`);
 
@@ -213,26 +216,28 @@ export module Card {
   }
 
   function pressRemoveEntityFromSidebarButtonElement(information: Entity): void {
-    if (!document.getElementsByClassName(information.entityText).length) {
+    if (!document.getElementById(information.entityText)) {
       return;
     }
     entityToCard.delete(information.entityText, document);
-    const elementList: HTMLCollectionOf<Element> = document.getElementsByClassName(information.entityText);
-    for (let i = 0; i < elementList.length; i++) {
-      if (elementList.item(i)!.className === information.entityText) {
-        const elementLocator: Element = elementList.item(i)!;
-        const divToDelete: Element = elementLocator.parentElement!;
-        divToDelete.remove();
-      }
-    }
+    const element  = document.getElementById(information.entityText);
+    element.parentElement.remove();
   }
 
   export function setXRefHTML(xrefs: { databaseName: string, url: string, compoundName: string }[]): void {
-    Array.from(document.getElementsByClassName(xrefs[0] ? xrefs[0].compoundName : '')).forEach(element => element.innerHTML = '');
+    // Remove existing xrefs
+    const xrefHolder = document.getElementById(xrefs[0].compoundName + '_list');
+    while (xrefHolder.firstChild) {
+      xrefHolder.removeChild(xrefHolder.lastChild);
+    }
+    const xrefParent: Element = document.getElementById(xrefs[0].compoundName);
+    // Show the parent div if there are any xrefs
+    xrefs.length > 0 ? xrefParent.classList.remove('aurac-mdc-hidden') : '';
+    // Then add the xrefs
     xrefs.forEach(xref => {
-      // const xrefElement = document.getElementsByClassName(xref.compoundName).item(0);
-      const xrefElementList = document.getElementById(xref.compoundName + '_list');
-      xrefElementList!.innerHTML += `<li><a href=${xref.url} target="_blank" title="Link to ${xref.databaseName} reference for this entity">${xref.databaseName}</a></li>`;
+      const htmlListElement: HTMLLIElement = document.createElement('li');
+      htmlListElement.innerHTML = `<a href=${xref.url} target="_blank" title="Link to ${xref.databaseName} reference for this entity">${xref.databaseName}</a>`;
+      xrefHolder.appendChild(htmlListElement);
     });
   }
 
