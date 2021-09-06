@@ -53,8 +53,9 @@
 
 .aurac-arrow-buttons {
   display: flex;
-  justify-content: flex-end;
+  flex-wrap: wrap;
   flex-direction: row;
+  justify-content: flex-end;
 }
 
 .aurac-logo {
@@ -75,9 +76,7 @@
 }
 
 .aurac-cross-button {
-  position: relative;
-  top: -45px;
-  left: 1px;
+  margin-right: auto;
   color: red;
   background-color: rgb(192, 192, 192);
   padding: 5px;
@@ -99,4 +98,18 @@
 .aurac-body--sidebar-expanded {
   width: 80vw;
   margin-left: 20vw;
+}
+
+.aurac-mdc-href-list-style {
+  margin: 0;
+  padding: 0;
+}
+
+.aurac-mdc-href-list-style li{
+  display: inline;
+  padding: 0 1em 0 0;
+}
+
+.aurac-mdc-entity-type {
+  padding-top: 1vw;
 }
