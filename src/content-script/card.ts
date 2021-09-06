@@ -59,7 +59,7 @@ export module Card {
     const card: HTMLDivElement = document.createElement('div');
     const arrowButtonProperties = renderArrowButtonElements(card, information);
     renderOccurrenceCounts(card, information);
-    renderRemoveEntityFromSidebarButtonElement(card, information, arrowButtonProperties);
+    renderRemoveEntityFromSidebarButtonElement(information, arrowButtonProperties);
 
     card.className = 'sidebar-text';
     card.style.backgroundColor = information.recognisingDict.htmlColor;
@@ -183,7 +183,7 @@ export module Card {
     });
   }
 
-  function renderRemoveEntityFromSidebarButtonElement(card: HTMLDivElement, information: Entity, arrowProperties: HTMLDivElement): void {
+  function renderRemoveEntityFromSidebarButtonElement(information: Entity, arrowProperties: HTMLDivElement): void {
     const removeEntityFromSidebarButtonElement = document.createElement('button');
     removeEntityFromSidebarButtonElement.innerHTML = crossButton;
     removeEntityFromSidebarButtonElement.className = 'aurac-cross-button';
