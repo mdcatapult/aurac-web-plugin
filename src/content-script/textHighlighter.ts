@@ -142,10 +142,6 @@ export module TextHighlighter {
                   (!!textFollowingTerm.match(startsWithWhiteSpaceRegex) ||
                     !textFollowingTerm.length ||
                     textFollowingTerm.startsWith(character) ||
-                    // this condition makes highlighting 'work' in the test html but means we get results like
-                    // 'en' and 'co' being highlighted in the term 'encoding'
-                    // we probably don't want to be highlighting terms that are back to back with other terms
-                    // textFollowingTerm.startsWith(term) ||
                     // catch a case where we have a different delimiter at the end of the term, e.g. a term between parentheses
                     delimiters.includes(textFollowingTerm.charAt(0))))
                 ||
@@ -153,10 +149,6 @@ export module TextHighlighter {
                   (!!textPrecedingTerm.match(endsWithWhiteSpaceRegex) ||
                     !textPrecedingTerm.length ||
                     textPrecedingTerm.endsWith(character) ||
-                    // this condition makes highlighting 'work' in the test html but means we get results like
-                    // 'en' and 'co' being highlighted in the term 'encoding'
-                    // we probably don't want to be highlighting terms that are back to back with other terms
-                    // textPrecedingTerm.endsWith(term) ||
                     // catch a case where we have a different delimiter at the end of the term, e.g. a term between parentheses
                     delimiters.includes(textPrecedingTerm.charAt(textPrecedingTerm.length - 1))))) {
                 found.push(term);
@@ -179,6 +171,8 @@ export module TextHighlighter {
       if (formula.formulaText === entity.entityText) {
         try {
           const replacementNode = document.createElement('span');
+          // the span needs a class so that it can be deleted by the removeHighlights function
+          replacementNode.className = 'aurac-highlight';
           // Retrieves the specific highlight colour to use for this NER term
           replacementNode.innerHTML = highlightTerm(formulaNode.innerHTML, entity);
           // This new highlighted term will replace the current child (same term but with no highlight) of this parent element
@@ -205,6 +199,8 @@ export module TextHighlighter {
       try {
         // For each term, we want to replace its original HTML with a highlight colour
         const replacementNode = document.createElement('span');
+        // the span needs a class so that it can be deleted by the removeHighlights function
+        replacementNode.className = 'aurac-highlight';
         replacementNode.innerHTML = element.nodeValue!.replace(
           new RegExp(entity.entityText, 'g'),
           highlightTerm(entity.entityText, entity));
@@ -233,6 +229,9 @@ export module TextHighlighter {
 
   export function removeHighlights() {
     return Array.from(document.getElementsByClassName('aurac-highlight'))
-      .forEach(element => element.replaceWith(...Array.from(element.childNodes)));
+      .forEach(element => {
+        const childNodes = Array.from(element.childNodes);
+        element.replaceWith(...childNodes);
+      });
   }
 }
