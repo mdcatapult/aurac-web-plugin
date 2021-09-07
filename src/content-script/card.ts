@@ -145,7 +145,7 @@ export module Card {
     setNerHtmlColours(entityToOccurrence.get(arrowProperties.nerTerm)!);
 
     const targetElement = entityToOccurrence.get(arrowProperties.nerTerm)![arrowProperties.positionInArray];
-    targetElement.scrollIntoView({block: 'center'});
+    targetElement.scrollIntoView({behavior: 'smooth'});
 
     toggleHighlightColor(targetElement);
 
