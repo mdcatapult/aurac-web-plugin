@@ -24,6 +24,31 @@ Clicking this icon will reveal a popup, which currently has 5 NER options (the `
 
 Clicking one of these four buttons will run Leadmine (by making an API call to the Leadmine web service) on the contents of the active tab.
 
+## Settings and Preferences
+
+There are three tabs in the settings page of the popup:
+
+1. URLs:
+    - a field for each separate web service used by Aurac, currently
+        - Leadmine
+        - Compound Converter
+        - Unichem Plus
+    - defaults to the WOPR deployments, which are currently the only available deployments.
+
+
+2. Sources:
+    - checkboxes to determine which links a user sees displayed in a sidebar card.  Current options are
+        - chembl
+        - mcule
+        - molport
+        - pubchem
+        - surechembl
+
+
+3. Preferences: 
+   - options which will determine what is highlighted on a page when NER is run, currently 
+       - minimum entity length - minimum length of terms to higlight, defaults to 2
+       - hide unresolved entities -  only terms which resolve to something, defaults to checked 
 
 ### Development
 
