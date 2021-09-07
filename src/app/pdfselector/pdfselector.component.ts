@@ -30,12 +30,12 @@ export class PDFSelectorComponent implements OnInit {
     }
     this.browser.loadSettings().then(settings => {
       this.loadingHTML = true
+      this.pdfError = ""
       const pdfURL = settings.urls.pdfConverterURL || defaultSettings.urls.pdfConverterURL
       this.http.post<{id: string}>(pdfURL, null, {params: {url: this.link.value}})
         .subscribe(
           (converterResponse: { id: string }) => {
             this.loadingHTML = false
-            this.pdfError = ""
             browser.tabs.create({url: `${pdfURL}/${converterResponse.id}`, active: true});
           },
           err => {
