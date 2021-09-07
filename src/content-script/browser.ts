@@ -1,6 +1,7 @@
 import {Sidebar} from './sidebar'
 import {TextHighlighter} from './textHighlighter'
 import { Card } from './card'
+import {UserExperience} from './userExperience';
 
 export module Browser {
   // add listener function to browser
@@ -24,7 +25,7 @@ export module Browser {
           Sidebar.toggle()
           break;
         case 'awaiting_response':
-          Sidebar.isAuracLoading(msg.body);
+          UserExperience.displayLoadingIcon(msg.body);
           break;
         default:
           throw new Error('Received unexpected message from plugin');

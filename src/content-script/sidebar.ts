@@ -5,14 +5,10 @@ import {waitForAsync} from '@angular/core/testing';
 export module Sidebar {
 
   const cardContainer = document.createElement('div');
-
   let toggleButtonElement: HTMLButtonElement;
   let isExpanded = false;
 
   export function create(): void {
-    const loadingIcon = document.createElement('div');
-    loadingIcon.id = 'aurac-loading-icon'
-    document.body.appendChild(loadingIcon);
 
     const [logo, logoText] = createLogo();
 
@@ -28,11 +24,6 @@ export module Sidebar {
 
     document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
     document.body.appendChild(sidebar);
-  }
-
-  export function isAuracLoading(loadingMsg: any): void {
-    loadingMsg ? document.getElementById('aurac-loading-icon')!.style.display = 'block'
-        : document.getElementById('aurac-loading-icon')!.style.display = 'none'
   }
 
   export function open(): void {
