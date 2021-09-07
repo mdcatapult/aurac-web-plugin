@@ -17,6 +17,7 @@ import { XRefSourcesComponent } from './x-ref-sources/x-ref-sources.component';
 import { SettingsComponent } from './settings/settings.component';
 import {MatButtonModule} from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import {PDFSelectorComponent} from './pdfselector/pdfselector.component'
 
 const routes: Routes = [
   {path: '**', component: RouterComponent}
@@ -31,7 +32,8 @@ const routes: Routes = [
     RouterComponent,
     UrlsComponent,
     XRefSourcesComponent,
-    SettingsComponent
+    SettingsComponent,
+    PDFSelectorComponent,
   ],
   imports: [
     BrowserModule,
@@ -43,7 +45,7 @@ const routes: Routes = [
     MatInputModule,
     MatFormFieldModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

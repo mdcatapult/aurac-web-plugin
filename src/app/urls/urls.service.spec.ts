@@ -20,6 +20,7 @@ describe('SettingsService', () => {
       leadmineURL: 'dhfjdhrks',
       compoundConverterURL: 'asdfsdaf',
       unichemURL: '/dfdsf/asd???=asdf',
+      pdfConverterURL: '/fwepij',
     };
 
     expect(UrlsService.validURLs(invalidUrls)).toBeFalse();
@@ -29,7 +30,8 @@ describe('SettingsService', () => {
     const validURLs: DictionaryURLs = {
       leadmineURL: '',
       compoundConverterURL: 'https://compound-converter.wopr.inf.mdc/convert',
-      unichemURL: 'http://unichem-plus.wopr.inf.mdc/x-ref'
+      unichemURL: 'http://unichem-plus.wopr.inf.mdc/x-ref',
+      pdfConverterURL: 'http://a-legit-url',
     };
 
     expect(UrlsService.validURLs(validURLs)).toBeFalse();
@@ -39,7 +41,8 @@ describe('SettingsService', () => {
     const validURLs: DictionaryURLs = {
       leadmineURL: 'https://leadmine.wopr.inf.mdc',
       compoundConverterURL: 'https://compound-converter.wopr.inf.mdc/convert',
-      unichemURL: 'http://unichem-plus.wopr.inf.mdc/x-ref'
+      unichemURL: 'http://unichem-plus.wopr.inf.mdc/x-ref',
+      pdfConverterURL: 'http://a-legit-url',
     };
 
     expect(UrlsService.validURLs(validURLs)).toBeTruthy();

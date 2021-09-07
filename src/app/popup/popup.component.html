@@ -1,9 +1,10 @@
-<div *ngIf="!isSettings" class="popup-div">
+<div *ngIf="mode === 'menu'" class="popup-div">
 
   <img src="./assets/head-brains.icon.128.png" alt="logo" class="aurac-logo">
   <div class="ner-button-container">
     <button mat-raised-button (click)="nerCurrentPage('proteins')">
-      <mat-icon inline="true" svgIcon="dna_icon" class="ner-icon"></mat-icon> <!-- Icon source: https://freeicons.io/profile/2257-->
+      <mat-icon inline="true" svgIcon="dna_icon" class="ner-icon"></mat-icon>
+      <!-- Icon source: https://freeicons.io/profile/2257-->
       Genes/Proteins
     </button>
     <button mat-raised-button (click)="nerCurrentPage('chemical-entities')">
@@ -29,6 +30,14 @@
       <mat-icon inline="true">settings_suggest</mat-icon>
       Settings
     </button>
+    <button
+      mat-raised-button
+      color="black"
+      (click)="pdfClicked()"
+    >
+      <mat-icon inline="true">picture_as_pdf</mat-icon>
+      PDF conversion
+    </button>
     <button mat-raised-button color="black" (click)="toggleSidebar()">
       <mat-icon inline="true">auto_stories</mat-icon>
       Toggle Sidebar
@@ -36,6 +45,12 @@
   </div>
 </div>
 
-<div class="settings" [hidden]="!isSettings">
-  <app-settings (closed)="isSettings=false"></app-settings>
+<div class="settings" [hidden]="mode !== 'settings'">
+  <app-settings (closed)="mode = 'menu'"></app-settings>
+</div>
+
+<div class="pdf-selector" [hidden]="mode !== 'pdf'">
+  <app-pdfselector
+    (closed)="mode='menu'"
+  ></app-pdfselector>
 </div>

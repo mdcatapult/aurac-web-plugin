@@ -17,7 +17,6 @@ export class SettingsComponent implements OnInit {
 
   private fb = new FormBuilder()
   settings?: Settings
-  @Input() urlPressed = false;
   @Input() urlsForm?: FormGroup
 
 
@@ -36,6 +35,10 @@ export class SettingsComponent implements OnInit {
       ),
       unichemURL: new FormControl(
         defaultSettings.urls.unichemURL,
+        Validators.compose([Validators.required, UrlsService.validator])
+      ),
+      pdfConverterURL: new FormControl(
+        defaultSettings.urls.pdfConverterURL,
         Validators.compose([Validators.required, UrlsService.validator])
       )
     }),
@@ -76,13 +79,5 @@ export class SettingsComponent implements OnInit {
       this.settingsForm.get('urls')!.reset(defaultSettings.urls)
     }
     this.closed.emit(true);
-  }
-
-  urlsClicked(): void {
-    this.urlPressed = true;
-  }
-
-  urlsNotClicked(): void {
-    this.urlPressed = false;
   }
 }
