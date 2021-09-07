@@ -1,12 +1,12 @@
 import {Entity} from './types';
 import {Card} from './card';
+import {waitForAsync} from '@angular/core/testing';
 
 export module Sidebar {
 
   const cardContainer = document.createElement('div')
   const loadingSymbol = document.createElement('div')
   loadingSymbol.id = 'aurac-loader'
-  let myVar;
 
   let toggleButtonElement: HTMLButtonElement;
   let isExpanded = false;
@@ -15,7 +15,7 @@ export module Sidebar {
 
     document.body.appendChild(loadingSymbol);
 
-    myFunction()
+    // myFunction()
     const [logo, logoText] = createLogo();
 
     const sidebar = document.createElement('span')
@@ -30,14 +30,6 @@ export module Sidebar {
 
     document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
     document.body.appendChild(sidebar);
-  }
-
-  function myFunction() {
-    myVar = setTimeout(showPage, 5000);
-  }
-
-  function showPage() {
-    document.getElementById('aurac-loader')!.style.display = 'none';
   }
 
   export function open(): void {

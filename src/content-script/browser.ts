@@ -1,6 +1,7 @@
 import {Sidebar} from './sidebar'
 import {TextHighlighter} from './textHighlighter'
 import { Card } from './card'
+
 export module Browser {
   // add listener function to browser
   export function addListener() {
@@ -13,6 +14,7 @@ export module Browser {
             resolve({type: 'leadmine', body: textNodes.join('\n')});
           });
         case 'markup_page':
+          document.getElementById('aurac-loader')!.style.display = 'none'
           TextHighlighter.wrapEntitiesWithHighlight(msg);
           Sidebar.open()
           break;
@@ -22,10 +24,12 @@ export module Browser {
         case 'toggle_sidebar':
           Sidebar.toggle()
           break;
+        case 'awaiting_response':
+          document.getElementById('aurac-loader')!.style.display = 'block';
+          break;
         default:
           throw new Error('Received unexpected message from plugin');
       }
     });
   }
-
 }

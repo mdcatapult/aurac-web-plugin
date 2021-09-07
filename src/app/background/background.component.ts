@@ -119,6 +119,9 @@ export class BackgroundComponent {
             this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
               .catch(e => console.error(e));
           });
+
+        this.browserService.sendMessageToActiveTab({type: 'awaiting_response'})
+          .catch(e => console.error(e));
       });
   }
 
