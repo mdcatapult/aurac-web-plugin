@@ -1,3 +1,5 @@
+import {environment} from './environments/environment';
+
 export type MessageType =
   'ner_current_page'
   | 'get_page_contents'
@@ -99,3 +101,21 @@ export type DictionaryURLs = {
   unichemURL: string,
 };
 
+export const defaultSettings: Settings = {
+  urls: {
+    leadmineURL: environment.leadmineURL,
+    compoundConverterURL: environment.compoundConverterURL,
+    unichemURL: environment.unichemURL,
+  },
+  xRefConfig: {},
+  preferences: {
+    hideUnresolved: true,
+    minEntityLength: 2,
+  }
+};
+
+export const DictionaryURLKeys = {
+  leadmineURL : 'leadmineURL',
+  compoundConverterURL : 'compoundConverterURL',
+  unichemURL : 'unichemURL'
+};

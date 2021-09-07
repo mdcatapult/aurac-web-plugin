@@ -1,7 +1,6 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {DictionaryURLs, Settings} from 'src/types';
-import {defaultSettings} from 'src/consts';
+import {defaultSettings, DictionaryURLs, Settings} from 'src/types';
 import {BrowserService} from '../browser.service';
 import {LogService} from '../popup/log.service';
 import {UrlsService} from '../urls/urls.service';
@@ -17,8 +16,10 @@ export class SettingsComponent implements OnInit {
   @Output() saved = new EventEmitter<DictionaryURLs>();
   @Output() closed = new EventEmitter<boolean>();
 
-  private fb = new FormBuilder();
-  settings?: Settings;
+  private fb = new FormBuilder()
+  settings?: Settings
+  @Input() urlsForm?: FormGroup
+
 
   constructor(private log: LogService, private browserService: BrowserService) {
   }
@@ -57,7 +58,7 @@ export class SettingsComponent implements OnInit {
     }).then(() => {
       this.settingsForm.valueChanges.subscribe(settings => {
         if (this.valid()) {
-          this.settings.urls = settings.urls;
+          this.settings!.urls = settings.urls;
           this.save();
         }
       });
@@ -74,7 +75,7 @@ export class SettingsComponent implements OnInit {
 
   valid(): boolean {
     Object.keys(this.settingsForm.controls).forEach(key => {
-      if (this.settingsForm.get(key).invalid) {
+      if (this.settingsForm.get(key)!.invalid) {
         this.log.Error(`invalid settings: ${key}`)
       }
     })

@@ -1,12 +1,6 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {DictionaryURLs, Message} from '../../types';
-import {defaultSettings, DictionaryURLKeys} from '../../consts';
-import {LogService} from '../popup/log.service';
-import {BrowserService} from '../browser.service';
-
-import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import {UrlsService} from './urls.service';
+import {Component, Input} from '@angular/core';
+import {FormGroup} from '@angular/forms';
+import {DictionaryURLKeys} from '../../types';
 
 
 @Component({
@@ -18,18 +12,6 @@ export class UrlsComponent {
 
   @Input() urlsForm?: FormGroup
 
-  dictionaryUrls = defaultSettings;
   readonly urlKeys = DictionaryURLKeys;
-
-  constructor(private log: LogService) {}
-
-  getBorderColor(formName: string): object {
-    let colour = 'gray';
-    if (!this.urlsForm!.get(formName)!.valid) {
-      colour = 'red';
-    }
-    return {'border-color': colour};
-  }
-
 
 }

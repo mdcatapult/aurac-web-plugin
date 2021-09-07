@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Settings} from 'src/types';
-import {defaultSettings} from 'src/consts';
+import {Settings, defaultSettings} from 'src/types';
 import {BrowserService} from '../browser.service';
 
 @Injectable({

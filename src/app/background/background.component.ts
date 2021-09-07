@@ -3,16 +3,7 @@ import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {SettingsService} from '../settings/settings.service';
 
-import {
-  ConverterResult,
-  LeadminerEntity,
-  LeadminerResult,
-  Message,
-  Settings,
-  StringMessage,
-  XRef
-} from 'src/types';
-import {defaultSettings} from 'src/consts';
+import {ConverterResult, defaultSettings, LeadminerEntity, LeadminerResult, Message, Settings, StringMessage, XRef} from 'src/types';
 import {validDict} from './types';
 import {map, switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
@@ -31,7 +22,8 @@ export class BackgroundComponent {
 
   constructor(private client: HttpClient, private browserService: BrowserService) {
 
-    SettingsService.loadSettings(this.browserService, () => {
+    SettingsService.loadSettings(this.browserService, (settings) => {
+      this.settings = settings || defaultSettings;
       this.browserService.addListener(this.getBrowserListenerFn());
     });
   }
@@ -61,14 +53,14 @@ export class BackgroundComponent {
           break;
         }
       }
-    };
+    }
   }
 
   private refreshHighlights(): void {
     this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
       .catch(console.error)
       .then(() => {
-        const uniqueEntities = this.getUniqueEntities(this.leadmineResult);
+        const uniqueEntities = this.getUniqueEntities(this.leadmineResult!);
         this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
           .catch(console.error);
       });
@@ -114,7 +106,7 @@ export class BackgroundComponent {
       xref.compoundName = entityTerm;
     }
     return xref;
-  }));
+  }))
 
 
   private nerCurrentPage(dictionary: validDict): void {
@@ -179,7 +171,7 @@ export class BackgroundComponent {
     return uniqueEntities;
   }
 
-  private getTrueKeys(v: { [_: string]: boolean }): string[] {
+  private getTrueKeys(v: {[_: string]: boolean}): string[] {
     return Object.keys(v).filter(k => v[k] === true);
   }
 }
