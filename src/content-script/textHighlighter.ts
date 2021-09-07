@@ -201,9 +201,7 @@ export module TextHighlighter {
         const replacementNode = document.createElement('span');
         // the span needs a class so that it can be deleted by the removeHighlights function
         replacementNode.className = 'aurac-highlight';
-        // @ts-ignore
-        replacementNode.innerHTML = element.nodeValue!.replaceAll(entity.entityText, highlightTerm(entity.entityText, entity));
-
+        replacementNode.innerHTML = element.nodeValue!.split(entity.entityText).join(highlightTerm(entity.entityText, entity));
 
         // This new highlighted term will will replace the current child (same term but with no highlight) of this parent element.
         element.parentNode!.insertBefore(replacementNode, element);
