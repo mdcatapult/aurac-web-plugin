@@ -4,10 +4,15 @@ import {Card} from './card';
 export module Sidebar {
 
   const cardContainer = document.createElement('div')
+  const loadingSymbol = document.createElement('div')
+  loadingSymbol.className = 'aurac-loader'
+
   let toggleButtonElement: HTMLButtonElement;
   let isExpanded = false;
 
   export function create(): void {
+
+    document.body.appendChild(loadingSymbol);
 
     const [logo, logoText] = createLogo();
 
