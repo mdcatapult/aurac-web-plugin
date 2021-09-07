@@ -31,7 +31,7 @@ export class PDFSelectorComponent implements OnInit {
     this.browser.loadSettings().then(settings => {
       this.loadingHTML = true
       const pdfURL = settings.urls.pdfConverterURL || defaultSettings.urls.pdfConverterURL
-      this.http.post(pdfURL, null, {params: {url: this.link.value}})
+      this.http.post<{id: string}>(pdfURL, null, {params: {url: this.link.value}})
         .subscribe(
           (converterResponse: { id: string }) => {
             this.loadingHTML = false

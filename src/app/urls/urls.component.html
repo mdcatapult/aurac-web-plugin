@@ -34,5 +34,16 @@
       <mat-error *ngIf="urlsForm!.get(urlKeys.unichemURL)!.invalid">Please enter a valid URL</mat-error>
     </mat-form-field>
 
+    <mat-form-field appearance="outline">
+      <mat-label>PDF converter URL</mat-label>
+      <input
+        type="text"
+        name="{{urlKeys.pdfConverterURL}}"
+        formControlName="{{urlKeys.pdfConverterURL}}"
+        id="{{urlKeys.pdfConverterURL}}"
+        matInput placeholder="Enter Unichem URL here">
+      <mat-error *ngIf="urlsForm!.get(urlKeys.pdfConverterURL)!.invalid">Please enter a valid URL</mat-error>
+    </mat-form-field>
+
   </form>
 </div>
