@@ -12,7 +12,7 @@ export module UserExperience {
   }
 
   export function displayLoadingIcon(awaitingResponse: boolean): void {
-    let displayIcon = document.getElementById('aurac-loading-icon');
-    awaitingResponse ? displayIcon!.style.display = 'block' : displayIcon!.style.display = 'none';
+    let loadingIcon = document.getElementById('aurac-loading-icon');
+    awaitingResponse ? loadingIcon!.style.display = 'block' : loadingIcon!.style.display = 'none';
   }
 }
