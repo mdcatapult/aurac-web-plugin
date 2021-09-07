@@ -73,12 +73,11 @@ export class SettingsComponent implements OnInit {
   }
 
   valid(): boolean {
-    if (this.settingsForm.get('urls')!.invalid) {
-      this.log.Info('error, dictionary URLs invalid');
-    }
-    if (this.settingsForm.get('preferences')!.invalid) {
-      this.log.Info('error, invalid preferences');
-    }
+    Object.keys(this.settingsForm.controls).forEach(key => {
+      if (this.settingsForm.get(key).invalid) {
+        this.log.Error(`invalid settings: ${key}`)
+      }
+    })
     return this.settingsForm.valid;
   }
 
