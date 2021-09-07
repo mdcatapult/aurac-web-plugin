@@ -114,11 +114,15 @@ export class BackgroundComponent {
               return;
             }
             const uniqueEntities = this.getUniqueEntities(response.body);
+
+            this.browserService.sendMessageToActiveTab({type: 'awaiting_response', body: false})
+              .catch(e => console.error(e));
+
             this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
               .catch(e => console.error(e));
           });
 
-        this.browserService.sendMessageToActiveTab({type: 'awaiting_response'})
+        this.browserService.sendMessageToActiveTab({type: 'awaiting_response', body: true})
           .catch(e => console.error(e));
       });
   }

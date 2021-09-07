@@ -30,8 +30,8 @@ export module Sidebar {
     document.body.appendChild(sidebar);
   }
 
-  export function isAuracLoading(loadingValue: boolean): void {
-      loadingValue ? document.getElementById('aurac-loading-icon')!.style.display = 'block'
+  export function isAuracLoading(loadingMsg: any): void {
+    loadingMsg ? document.getElementById('aurac-loading-icon')!.style.display = 'block'
         : document.getElementById('aurac-loading-icon')!.style.display = 'none'
   }
 

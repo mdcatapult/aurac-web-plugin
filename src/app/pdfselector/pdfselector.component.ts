@@ -33,8 +33,10 @@ export class PDFSelectorComponent implements OnInit {
       this.pdfError = ''
       const pdfURL = settings.urls.pdfConverterURL || defaultSettings.urls.pdfConverterURL
       this.http.post<{id: string}>(pdfURL, null, {params: {url: this.link.value}})
-        .subscribe(
-          (converterResponse: { id: string }) => {
+        .subscribe((converterResponse: { id: string }) => {
+            this.browser.sendMessageToActiveTab({type: 'awaiting_response', body: false})
+              .catch(e => console.error(e));
+
             this.loadingHTML = false
             browser.tabs.create({url: `${pdfURL}/${converterResponse.id}`, active: true});
           },
@@ -44,6 +46,8 @@ export class PDFSelectorComponent implements OnInit {
           }
         )
     })
+    this.browser.sendMessageToActiveTab({type: 'awaiting_response', body: true})
+      .catch(e => console.error(e));
   }
 
   closeSettings(): void {
