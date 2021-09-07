@@ -5,6 +5,7 @@ export module Sidebar {
 
   const cardContainer = document.createElement('div')
   let toggleButtonElement: HTMLButtonElement;
+  let clearButtonElement: HTMLButtonElement;
   let isExpanded = false;
 
   export function create(): void {
@@ -17,8 +18,10 @@ export module Sidebar {
     sidebar.className = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed';
 
     toggleButtonElement = createToggleButton();
+    clearButtonElement = createClearButton();
 
     sidebar.appendChild(toggleButtonElement);
+    sidebar.appendChild(clearButtonElement);
     sidebar.appendChild(cardContainer);
 
     document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
@@ -50,12 +53,24 @@ export module Sidebar {
     toggleButton.innerHTML = Card.expandArrow;
     toggleButton.className = 'sidebar-button';
     toggleButton.className = 'aurac-transform aurac-sidebar-button aurac-sidebar-button--collapsed'
-
-    // document.body.id = 'body'; // TODO what on earth?!
-
     toggleButton.addEventListener('click', () => Sidebar.toggle());
-
     return toggleButton;
+  }
+
+  // initialise clear cards button
+  function createClearButton(): HTMLButtonElement {
+    const clearButton = document.createElement('button')
+    clearButton.style.display = 'none';
+    clearButton.innerHTML = '&#128465'
+    clearButton.addEventListener('click', () => {
+      Card.clear()
+      toggleClearButton(false)
+    })
+    return clearButton
+  }
+
+  function toggleClearButton(on: boolean): void {
+    clearButtonElement.style.display = on ? 'block' : 'none';
   }
 
   function createLogo(): [HTMLImageElement, HTMLHeadingElement] {
@@ -97,12 +112,13 @@ export module Sidebar {
         && element.parentElement!.className === 'aurac-highlight') {
         removeEventListener('click', entityClickHandler(info, element));
       } else if (!Card.entityToCard.has(info.entityText)) {
-          const card = Card.create(info)
-          Card.entityToCard.set(info.entityText, card);
-          Sidebar.addCard(card);
-          // @ts-ignore
-          browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity]})
-            .catch(e => console.error(e));
+        const card = Card.create(info)
+        Card.entityToCard.set(info.entityText, card);
+        Sidebar.addCard(card);
+        toggleClearButton(true);
+        // @ts-ignore
+        browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity]})
+          .catch(e => console.error(e));
       }
 
       const div = Card.entityToCard.get(info.entityText);
@@ -113,8 +129,4 @@ export module Sidebar {
     };
   }
 
-  //TODO: should we use this for all non null assertions?
-  // function getAuracElement(elementName: ElementName): HTMLElement {
-  //   return document.getElementById(elementName);
-  // }
 }
