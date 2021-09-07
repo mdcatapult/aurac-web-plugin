@@ -4,5 +4,12 @@
   <mat-label>Link to PDF:</mat-label>
   <input matInput [formControl]="link">
 </mat-form-field>
-<br>
+
+<div *ngIf="loadingHTML">
+  HTML loading..
+</div>
+<div *ngIf="pdfError" class="error">
+  {{pdfError}}
+</div>
+
 <button class="confirm" mat-raised-button (click)="linkSelected()">Confirm</button>

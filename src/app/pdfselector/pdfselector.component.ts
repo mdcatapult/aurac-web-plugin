@@ -15,6 +15,8 @@ export class PDFSelectorComponent implements OnInit {
 
   @Output() closed = new EventEmitter<boolean>()
   link = new FormControl('', this.linkValidator)
+  loadingHTML = false
+  pdfError = ""
 
   constructor(private log: LogService, private http: HttpClient, private browser: BrowserService) {
   }
@@ -27,13 +29,19 @@ export class PDFSelectorComponent implements OnInit {
       return
     }
     this.browser.loadSettings().then(settings => {
+      this.loadingHTML = true
       const pdfURL = settings.urls.pdfConverterURL || defaultSettings.urls.pdfConverterURL
       this.http.post(pdfURL, null, {params: {url: this.link.value}})
         .subscribe(
           (converterResponse: { id: string }) => {
+            this.loadingHTML = false
+            this.pdfError = ""
             browser.tabs.create({url: `${pdfURL}/${converterResponse.id}`, active: true});
           },
-          (err) => this.log.Error(err)
+          err => {
+            this.loadingHTML = false
+            this.pdfError = err.error.error
+          }
         )
     })
   }
