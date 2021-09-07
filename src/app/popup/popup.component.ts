@@ -11,23 +11,27 @@ import {BrowserService} from '../browser.service';
 })
 export class PopupComponent {
 
-  isSettings = false;
+  mode: 'menu' | 'settings' | 'pdf' = 'menu'
 
   constructor(private log: LogService, private browserService: BrowserService) {
   }
 
   settingsClicked() {
-    this.isSettings = true;
+    this.mode = 'settings'
   }
 
-  nerCurrentPage(dictionary: validDict) {
+  nerCurrentPage(dictionary: validDict): void {
     this.log.Log('Sending message to background page...');
     browser.runtime.sendMessage<Message>({type: 'ner_current_page', body: dictionary})
       .catch(e => this.log.Error(`Couldn't send message to background page: ${JSON.stringify(e)}`));
   }
 
-  toggleSidebar() {
+  toggleSidebar(): void {
     this.browserService.sendMessageToActiveTab({type: 'toggle_sidebar'})
       .catch(e => this.log.Error(`Couldn't send message of type 'toggle_sidebar' : ${JSON.stringify(e)}`));
+  }
+
+  pdfClicked(): void {
+    this.mode = 'pdf'
   }
 }

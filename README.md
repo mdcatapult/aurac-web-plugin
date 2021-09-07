@@ -48,7 +48,7 @@ There are three tabs in the settings page of the popup:
 3. Preferences: 
    - options which will determine what is highlighted on a page when NER is run, currently 
        - minimum entity length - minimum length of terms to higlight, defaults to 2
-       - hide unresolved entities -  only terms which resolve to something, defaults to checked 
+       - hide unresolved entities -  only terms which resolve to something, defaults to unchecked (false) 
 
 ### Development
 

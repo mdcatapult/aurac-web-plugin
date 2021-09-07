@@ -37,6 +37,10 @@ export class SettingsComponent implements OnInit {
       unichemURL: new FormControl(
         defaultSettings.urls.unichemURL,
         Validators.compose([Validators.required, UrlsService.validator])
+      ),
+      pdfConverterURL: new FormControl(
+        defaultSettings.urls.pdfConverterURL,
+        Validators.compose([Validators.required, UrlsService.validator])
       )
     }),
     xRefConfig: new FormGroup({}),

@@ -99,6 +99,7 @@ export type DictionaryURLs = {
   leadmineURL: string,
   compoundConverterURL: string,
   unichemURL: string,
+  pdfConverterURL: string,
 };
 
 export const defaultSettings: Settings = {
@@ -106,6 +107,7 @@ export const defaultSettings: Settings = {
     leadmineURL: environment.leadmineURL,
     compoundConverterURL: environment.compoundConverterURL,
     unichemURL: environment.unichemURL,
+    pdfConverterURL: environment.pdfConverterURL,
   },
   xRefConfig: {},
   preferences: {
@@ -117,5 +119,6 @@ export const defaultSettings: Settings = {
 export const DictionaryURLKeys = {
   leadmineURL : 'leadmineURL',
   compoundConverterURL : 'compoundConverterURL',
-  unichemURL : 'unichemURL'
+  unichemURL : 'unichemURL',
+  pdfConverterURL : 'pdfConverterURL'
 };

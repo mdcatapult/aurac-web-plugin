@@ -17,6 +17,7 @@ import { XRefSourcesComponent } from './x-ref-sources/x-ref-sources.component';
 import { SettingsComponent } from './settings/settings.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { PDFSelectorComponent } from './pdfselector/pdfselector.component'
 import { PreferencesComponent } from './preferences/preferences.component';
 
 
@@ -34,7 +35,8 @@ const routes: Routes = [
     UrlsComponent,
     XRefSourcesComponent,
     SettingsComponent,
-    PreferencesComponent
+    PreferencesComponent,
+    PDFSelectorComponent,
   ],
   imports: [
     BrowserModule,
