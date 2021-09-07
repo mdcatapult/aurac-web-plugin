@@ -14,7 +14,7 @@ export module Browser {
             resolve({type: 'leadmine', body: textNodes.join('\n')});
           });
         case 'markup_page':
-          document.getElementById('aurac-loader')!.style.display = 'none'
+          Sidebar.isAuracLoading(false);
           TextHighlighter.wrapEntitiesWithHighlight(msg);
           Sidebar.open()
           break;
@@ -25,7 +25,7 @@ export module Browser {
           Sidebar.toggle()
           break;
         case 'awaiting_response':
-          document.getElementById('aurac-loader')!.style.display = 'block';
+          Sidebar.isAuracLoading(true);
           break;
         default:
           throw new Error('Received unexpected message from plugin');

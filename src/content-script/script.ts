@@ -5,12 +5,3 @@ console.log('script loaded');
 
 Sidebar.create()
 Browser.addListener()
-
-
-
-
-
-
-
-
-

@@ -78,14 +78,12 @@ export class BackgroundComponent {
     }
   }
 
-
   private addCompoundNameToXRefObject = (entityTerm: string) => map((xrefs: XRef[]) => xrefs.map(xref => {
     if (xref) {
       xref.compoundName = entityTerm;
     }
     return xref;
   }))
-
 
   private nerCurrentPage(dictionary: validDict): void {
     console.log('Getting content of active tab...');
