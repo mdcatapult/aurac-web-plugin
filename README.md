@@ -33,7 +33,7 @@ There are three tabs in the settings page of the popup:
         - Leadmine
         - Compound Converter
         - Unichem Plus
-    - defaults to the WOPR deployments, which are currently the only available deployments.
+    - defaults to the WOPR deployments, which are currently the only available deployments
 
 
 2. Sources:
