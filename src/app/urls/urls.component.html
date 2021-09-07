@@ -1,103 +1,38 @@
-<div class="bg-gray-50 flex-col">
-  <div class="rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden">
-    <div class="relative grid gap-6 bg-white px-3 py-3 sm:gap-8 sm:p-8">
+<div class="form-container">
+  <form [formGroup]="urlsForm">
 
-      <form [formGroup]="urlsForm">
+    <mat-form-field appearance="outline">
+      <mat-label>Leadmine URL</mat-label>
+      <input
+        type="text"
+        name="{{urlKeys.leadmineURL}}"
+        formControlName="{{urlKeys.leadmineURL}}"
+        id="{{urlKeys.leadmineURL}}"
+        matInput placeholder="Enter Leadmine URL here">
+      <mat-error *ngIf="urlsForm!.get(urlKeys.leadmineURL)!.invalid">Please enter a valid URL</mat-error>
+    </mat-form-field>
 
-        <!--    Leadmine-->
-        <div class="shadow sm:rounded-md sm:overflow-hidden">
-          <div class="px-4 py-5 bg-gray-50 space-y-6 sm:p-6">
-            <div class="grid grid-cols-3 gap-6">
-              <div class="col-span-3 sm:col-span-2">
-                <label for="{{urlKeys.leadmineURL}}" class="block text-sm font-medium text-gray-700">
-                  Leadmine URL
-                </label>
-                <div class="mt-1 flex rounded-md shadow-sm bg-white">
-                  <input
-                    type="text"
-                    [ngStyle]="getBorderColor(urlKeys.leadmineURL)"
-                    name="{{urlKeys.leadmineURL}}"
-                    formControlName="{{urlKeys.leadmineURL}}"
-                    id="{{urlKeys.leadmineURL}}"
-                    class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-l-md rounded-r-md sm:text-sm border-gray-300"
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <mat-form-field appearance="outline">
+      <mat-label>Compound Converter URL</mat-label>
+      <input
+        type="text"
+        name="{{urlKeys.compoundConverterURL}}"
+        formControlName="{{urlKeys.compoundConverterURL}}"
+        id="{{urlKeys.compoundConverterURL}}"
+        matInput placeholder="Enter Compound Converter URL here">
+      <mat-error *ngIf="urlsForm!.get(urlKeys.compoundConverterURL)!.invalid">Please enter a valid URL</mat-error>
+    </mat-form-field>
 
-        <!--    Compound converter -->
-        <div class="shadow sm:rounded-md sm:overflow-hidden">
-          <div class="px-4 py-5 bg-gray-50 space-y-6 sm:p-6">
-            <div class="grid grid-cols-3 gap-6">
-              <div class="col-span-3 sm:col-span-2">
-                <label for="{{urlKeys.compoundConverterURL}}" class="block text-sm font-medium text-gray-700">
-                  Compound Converter URL
-                </label>
-                <div class="mt-1 flex rounded-md shadow-sm bg-white">
-                  <input
-                    type="text"
-                    [ngStyle]="getBorderColor(urlKeys.compoundConverterURL)"
-                    name="{{urlKeys.compoundConverterURL}}"
-                    formControlName="{{urlKeys.compoundConverterURL}}"
-                    id="{{urlKeys.compoundConverterURL}}"
-                    class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-l-md rounded-r-md sm:text-sm border-gray-300"
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <mat-form-field appearance="outline">
+      <mat-label>Unichem URL</mat-label>
+      <input
+        type="text"
+        name="{{urlKeys.unichemURL}}"
+        formControlName="{{urlKeys.unichemURL}}"
+        id="{{urlKeys.unichemURL}}"
+        matInput placeholder="Enter Unichem URL here">
+      <mat-error *ngIf="urlsForm!.get(urlKeys.unichemURL)!.invalid">Please enter a valid URL</mat-error>
+    </mat-form-field>
 
-        <!--    Unichem-->
-        <div class="shadow sm:rounded-md sm:overflow-hidden">
-          <div class="px-4 py-5 bg-gray-50 space-y-6 sm:p-6">
-            <div class="grid grid-cols-3 gap-6">
-              <div class="col-span-3 sm:col-span-2">
-                <label for="{{urlKeys.unichemURL}}" class="block text-sm font-medium text-gray-700">
-                  Unichem URL
-                </label>
-                <div class="mt-1 flex rounded-md shadow-sm bg-white">
-                  <input
-                    type="text"
-                    [ngStyle]="getBorderColor(urlKeys.unichemURL)"
-                    name="{{urlKeys.unichemURL}}"
-                    formControlName="{{urlKeys.unichemURL}}"
-                    id="{{urlKeys.unichemURL}}"
-                    class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-l-md rounded-r-md sm:text-sm border-gray-300"
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- PDF Converter-->
-        <div class="shadow sm:rounded-md sm:overflow-hidden">
-          <div class="px-4 py-5 bg-gray-50 space-y-6 sm:p-6">
-            <div class="grid grid-cols-3 gap-6">
-              <div class="col-span-3 sm:col-span-2">
-                <label for="{{urlKeys.pdfConverterURL}}" class="block text-sm font-medium text-gray-700">
-                  PDF Converter URL
-                </label>
-                <div class="mt-1 flex rounded-md shadow-sm bg-white">
-                  <input
-                    type="text"
-                    [ngStyle]="getBorderColor(urlKeys.pdfConverterURL)"
-                    name="{{urlKeys.pdfConverterURL}}"
-                    formControlName="{{urlKeys.pdfConverterURL}}"
-                    id="{{urlKeys.pdfConverterURL}}"
-                    class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-l-md rounded-r-md sm:text-sm border-gray-300"
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </form>
-
-
-
+  </form>
 </div>

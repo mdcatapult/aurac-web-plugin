@@ -1,3 +1,4 @@
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {defaultSettings, DictionaryURLs, Settings} from 'src/types';
@@ -17,7 +18,9 @@ export class SettingsComponent implements OnInit {
 
   private fb = new FormBuilder()
   settings?: Settings
-  dictionaryUrls = defaultSettings.urls;
+  @Input() urlPressed = false;
+  @Input() urlsForm?: FormGroup
+
 
   constructor(private log: LogService, private browserService: BrowserService) {
   }
@@ -51,6 +54,7 @@ export class SettingsComponent implements OnInit {
     })
 
     this.settingsForm.valueChanges.subscribe(settings => {
+
       if (this.settingsForm.valid) {
         this.settings!.urls = settings.urls
         this.save()
@@ -77,5 +81,13 @@ export class SettingsComponent implements OnInit {
       this.settingsForm.get('urls')!.reset(defaultSettings.urls)
     }
     this.closed.emit(true);
+  }
+
+  urlsClicked(): void {
+    this.urlPressed = true;
+  }
+
+  urlsNotClicked(): void {
+    this.urlPressed = false;
   }
 }
