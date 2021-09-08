@@ -40,7 +40,7 @@ export class SettingsComponent implements OnInit {
       ),
       pdfConverterURL: new FormControl(
         defaultSettings.urls.pdfConverterURL,
-        Validators.compose([Validators.required, UrlsService.validator])
+        // Validators.compose([Validators.required, UrlsService.validator])
       )
     }),
     xRefConfig: new FormGroup({}),
@@ -62,7 +62,7 @@ export class SettingsComponent implements OnInit {
     }).then(() => {
       this.settingsForm.valueChanges.subscribe(settings => {
         if (this.valid()) {
-          this.settings.urls = settings.urls;
+          this.settings!.urls = settings.urls;
           this.save();
         }
       });
