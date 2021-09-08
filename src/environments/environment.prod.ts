@@ -3,7 +3,5 @@ export const environment = {
   leadmineURL: 'https://leadmine.wopr.inf.mdc',
   compoundConverterURL: 'https://compound-converter.wopr.inf.mdc/convert',
   unichemURL: 'https://unichem-plus.wopr.inf.mdc',
-
-  //TODO when PDF2HTML service is deployed
-  pdfConverterURL: '',
+  pdfConverterURL: 'https://pdf.wopr.inf.mdc/html',
 };
