@@ -120,7 +120,11 @@ export class BackgroundComponent {
 
             this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
               .catch(e => console.error(e));
-          });
+            },
+            err => {
+              this.browserService.sendMessageToActiveTab({type: 'awaiting_response', body: false})
+                .catch(error => console.error(err));
+            });
 
         this.browserService.sendMessageToActiveTab({type: 'awaiting_response', body: true})
           .catch(e => console.error(e));
