@@ -7,6 +7,7 @@ import {validDict} from './types';
 import {map, switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {BrowserService} from '../browser.service';
+import {saveAs} from 'file-saver';
 
 @Component({
   selector: 'app-background',
@@ -17,6 +18,7 @@ export class BackgroundComponent {
 
   settings: Settings = defaultSettings;
   dictionary?: validDict;
+  currentResults: Array<LeadminerEntity> = []
 
   constructor(private client: HttpClient, private browserService: BrowserService) {
 
@@ -40,8 +42,52 @@ export class BackgroundComponent {
           this.settings = msg.body;
           break;
         }
+        case 'export_csv': {
+          this.exportCSV()
+          break;
+        }
       }
     });
+  }
+
+  private exportCSV(): void {
+    const headings = ['beg',
+    'begInNormalizedDoc',
+    'end',
+    'endInNormalizedDoc',
+    'entityText',
+    'possiblyCorrectedText',
+    'resolvedEntity',
+    'sectionType',
+    'entityGroup',
+    'enforceBracketing',
+    'entityType',
+    'htmlColor',
+    'maxCorrectionDistance',
+    'minimumCorrectedEntityLength',
+    'minimumEntityLength',
+    'source']
+    let text = headings.join(',') + '\n'
+    for (const entity of this.currentResults) {
+      text = text + entity.beg + ','
+              + entity.begInNormalizedDoc + ','
+              + entity.end + ','
+              + entity.endInNormalizedDoc + ','
+              + entity.entityText + ','
+              + entity.possiblyCorrectedText + ','
+              + entity.resolvedEntity + ','
+              + entity.sectionType + ','
+              + entity.entityGroup + ','
+              + entity.recognisingDict.enforceBracketing + ','
+              + entity.recognisingDict.entityType + ','
+              + entity.recognisingDict.htmlColor + ','
+              + entity.recognisingDict.maxCorrectionDistance + ','
+              + entity.recognisingDict.minimumCorrectedEntityLength + ','
+              + entity.recognisingDict.minimumEntityLength + ','
+              + entity.recognisingDict.source + '\n'        
+    }
+    const blob = new Blob([text], {type: 'text/csv;charset=utf-8'})
+    saveAs(blob, 'export.csv')
   }
 
   private loadXRefs([entityTerm, resolvedEntity]: [string, string]): void {
@@ -116,6 +162,7 @@ export class BackgroundComponent {
               return;
             }
             const uniqueEntities = this.getUniqueEntities(response.body);
+            this.currentResults = uniqueEntities
             this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
               .catch(e => console.error(e));
           });
