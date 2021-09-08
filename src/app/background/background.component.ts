@@ -111,6 +111,8 @@ export class BackgroundComponent {
           .subscribe((response) => {
             console.log('Received results from leadmine...');
             if (!response.body || !response.body.entities) {
+              this.browserService.sendMessageToActiveTab({type: 'awaiting_response', body: false})
+                .catch(err => console.log(err));
               return;
             }
             const uniqueEntities = this.getUniqueEntities(response.body);

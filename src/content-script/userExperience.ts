@@ -1,8 +1,6 @@
 
 export module UserExperience {
 
-  let requestTimedOut;
-
   export function create(): void {
     createLoadingIcon()
   }
@@ -17,10 +15,14 @@ export module UserExperience {
     let loadingIcon = document.getElementById('aurac-loading-icon');
     awaitingResponse ? loadingIcon!.style.display = 'block' : loadingIcon!.style.display = 'none';
 
-    setTimeout(disableLoadingIcon, 20000)
+    setTimeout(disableLoadingIcon, 30000)
   }
 
   function disableLoadingIcon() {
     document.getElementById('aurac-loading-icon')!.style.display = 'none';
+  }
+
+  function displayTimeoutMessage() {
+    const loadingIcon = document.createElement('div');
   }
 }
