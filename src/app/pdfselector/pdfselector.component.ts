@@ -36,7 +36,6 @@ export class PDFSelectorComponent implements OnInit {
         .subscribe((converterResponse: { id: string }) => {
             this.browser.sendMessageToActiveTab({type: 'awaiting_response', body: false})
               .catch(e => console.error(e));
-
             this.loadingHTML = false
             browser.tabs.create({url: `${pdfURL}/${converterResponse.id}`, active: true});
           },

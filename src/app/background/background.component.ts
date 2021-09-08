@@ -123,7 +123,7 @@ export class BackgroundComponent {
             },
             err => {
               this.browserService.sendMessageToActiveTab({type: 'awaiting_response', body: false})
-                .catch(error => console.error(err));
+                .catch(err);
             });
 
         this.browserService.sendMessageToActiveTab({type: 'awaiting_response', body: true})
