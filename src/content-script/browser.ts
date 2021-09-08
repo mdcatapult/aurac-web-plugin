@@ -15,6 +15,7 @@ export module Browser {
             resolve({type: 'leadmine', body: textNodes.join('\n')});
           });
         case 'markup_page':
+          UserExperience.displayLoadingIcon(false);
           TextHighlighter.wrapEntitiesWithHighlight(msg);
           Sidebar.open()
           break;
@@ -25,7 +26,7 @@ export module Browser {
           Sidebar.toggle()
           break;
         case 'awaiting_response':
-          UserExperience.displayLoadingIcon(msg.body);
+          UserExperience.displayLoadingIcon(msg.body as boolean);
           break;
         default:
           throw new Error('Received unexpected message from plugin');

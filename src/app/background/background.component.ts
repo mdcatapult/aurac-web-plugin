@@ -115,15 +115,12 @@ export class BackgroundComponent {
             }
             const uniqueEntities = this.getUniqueEntities(response.body);
 
-            this.browserService.sendMessageToActiveTab({type: 'awaiting_response', body: false})
-              .catch(e => console.error(e));
-
             this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
               .catch(e => console.error(e));
             },
-            err => {
+            () => {
               this.browserService.sendMessageToActiveTab({type: 'awaiting_response', body: false})
-                .catch(err);
+                .catch(err => console.log(err));
             });
 
         this.browserService.sendMessageToActiveTab({type: 'awaiting_response', body: true})
