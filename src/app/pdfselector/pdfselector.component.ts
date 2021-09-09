@@ -1,6 +1,6 @@
-import {HttpClient, HttpParams} from '@angular/common/http';
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {AbstractControl, FormControl, ValidationErrors, ValidatorFn} from '@angular/forms';
+import {HttpClient} from '@angular/common/http';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {AbstractControl, FormControl, ValidationErrors} from '@angular/forms';
 import {defaultSettings} from 'src/types';
 import {BrowserService} from '../browser.service';
 import {LogService} from '../popup/log.service';
