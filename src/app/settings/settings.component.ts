@@ -40,7 +40,7 @@ export class SettingsComponent implements OnInit {
       ),
       pdfConverterURL: new FormControl(
         defaultSettings.urls.pdfConverterURL,
-        // Validators.compose([Validators.required, UrlsService.validator])
+        Validators.compose([Validators.required, UrlsService.validator])
       )
     }),
     xRefConfig: new FormGroup({}),
