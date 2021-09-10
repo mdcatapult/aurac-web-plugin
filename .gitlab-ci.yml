@@ -15,7 +15,7 @@ test-lint-build:
       - dist/*
   before_script:
     - apk update && apk --no-cache upgrade && apk add --no-cache chromium
-    - export CHROME_BIN=/usr/bin/chromium-browser
+    - export CHROME_BIN=/usr/bin/chromium
     - npm install
   script:
     - npm run test:ci
