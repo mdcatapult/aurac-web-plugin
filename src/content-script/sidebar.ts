@@ -66,6 +66,7 @@ export module Sidebar {
     clearButton.addEventListener('click', () => {
       Card.clear()
       toggleClearButton(false)
+      toggleNarrative(true)
     })
     return clearButton
   }
@@ -106,8 +107,7 @@ export module Sidebar {
         return;
       }
 
-      // hides the narrative
-      document.getElementById('aurac-narrative')!.style.display = 'none';
+      toggleNarrative(false)
 
       if (getAuracHighlightChildren(element).some(child => child.className === 'aurac-highlight')
         && element.parentElement!.className === 'aurac-highlight') {
@@ -128,6 +128,10 @@ export module Sidebar {
         setSidebarColors(div);
       }
     };
+  }
+
+  function toggleNarrative(on: boolean): void {
+    document.getElementById('aurac-narrative')!.style.display = on ? 'block' : 'none';
   }
 
 }
