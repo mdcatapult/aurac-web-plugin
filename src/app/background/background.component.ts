@@ -51,6 +51,9 @@ export class BackgroundComponent {
   }
 
   private exportCSV(): void {
+    if (this.currentResults.length === 0) {
+      return;
+    }
     const headings = ['beg',
     'begInNormalizedDoc',
     'end',
