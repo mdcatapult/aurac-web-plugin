@@ -14,7 +14,7 @@ test-lint-build:
     paths:
       - dist/*
   before_script:
-    - apk add --no-cache ca-certificates
+    - apk --no-cache upgrade && apk add --no-cache ca-certificates
     - cp ca/* /usr/local/share/ca-certificates/
     - update-ca-certificates
     - apk --no-cache upgrade && apk add --no-cache chromium
