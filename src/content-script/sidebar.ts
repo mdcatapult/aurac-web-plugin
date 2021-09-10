@@ -61,7 +61,7 @@ export module Sidebar {
   function createClearButton(): HTMLButtonElement {
     const clearButton = document.createElement('button')
     clearButton.style.display = 'none';
-    clearButton.innerHTML = '&#128465'
+    clearButton.innerHTML = 'Clear'
     clearButton.className = 'clear-button'
     clearButton.addEventListener('click', () => {
       Card.clear()
