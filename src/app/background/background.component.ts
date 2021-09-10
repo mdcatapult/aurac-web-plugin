@@ -112,7 +112,7 @@ export class BackgroundComponent {
             console.log('Received results from leadmine...');
             if (!response.body || !response.body.entities) {
               this.browserService.sendMessageToActiveTab({type: 'awaiting_response', body: false})
-                .catch(err => console.log(err));
+                .catch(console.error);
               return;
             }
             const uniqueEntities = this.getUniqueEntities(response.body);
@@ -122,11 +122,11 @@ export class BackgroundComponent {
             },
             () => {
               this.browserService.sendMessageToActiveTab({type: 'awaiting_response', body: false})
-                .catch(err => console.log(err));
+                .catch(console.error);
             });
 
         this.browserService.sendMessageToActiveTab({type: 'awaiting_response', body: true})
-          .catch(e => console.error(e));
+          .catch(console.error);
       });
   }
 

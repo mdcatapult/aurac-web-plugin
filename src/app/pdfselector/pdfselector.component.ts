@@ -35,20 +35,20 @@ export class PDFSelectorComponent implements OnInit {
       this.http.post<{id: string}>(pdfURL, null, {params: {url: this.link.value}})
         .subscribe((converterResponse: { id: string }) => {
             this.browser.sendMessageToActiveTab({type: 'awaiting_response', body: false})
-              .catch(e => console.error(e));
+              .catch(console.error);
             this.loadingHTML = false
             browser.tabs.create({url: `${pdfURL}/${converterResponse.id}`, active: true});
           },
           err => {
             this.browser.sendMessageToActiveTab({type: 'awaiting_response', body: false})
-                .catch(e => console.error(e));
+              .catch(console.error)
             this.loadingHTML = false
             this.pdfError = err.error.error
           }
         )
     })
     this.browser.sendMessageToActiveTab({type: 'awaiting_response', body: true})
-      .catch(e => console.error(e));
+      .catch(console.error)
   }
 
   closeSettings(): void {
