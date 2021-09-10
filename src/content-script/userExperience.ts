@@ -11,8 +11,8 @@ export module UserExperience {
     document.body.appendChild(loadingIcon);
   }
 
-  export function displayLoadingIcon(awaitingResponse: boolean): void {
+  export function toggleLoadingIcon(on: boolean): void {
     let loadingIcon = document.getElementById('aurac-loading-icon');
-    awaitingResponse ? loadingIcon!.style.display = 'block' : loadingIcon!.style.display = 'none';
+    loadingIcon!.style.display = on ? 'block' : 'none'
   }
 }
