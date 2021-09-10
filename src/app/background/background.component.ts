@@ -18,7 +18,7 @@ export class BackgroundComponent {
 
   settings: Settings = defaultSettings;
   dictionary?: validDict;
-  currentResults: Array<LeadminerEntity> = []
+  private currentResults: Array<LeadminerEntity> = []
 
   constructor(private client: HttpClient, private browserService: BrowserService) {
 
@@ -68,7 +68,7 @@ export class BackgroundComponent {
     'minimumEntityLength',
     'source']
     let text = headings.join(',') + '\n'
-    for (const entity of this.currentResults) {
+    this.currentResults.forEach(entity => {
       text = text + entity.beg + ','
               + entity.begInNormalizedDoc + ','
               + entity.end + ','
@@ -84,8 +84,8 @@ export class BackgroundComponent {
               + entity.recognisingDict.maxCorrectionDistance + ','
               + entity.recognisingDict.minimumCorrectedEntityLength + ','
               + entity.recognisingDict.minimumEntityLength + ','
-              + entity.recognisingDict.source + '\n'        
-    }
+              + entity.recognisingDict.source + '\n' 
+    })
     const blob = new Blob([text], {type: 'text/csv;charset=utf-8'})
     saveAs(blob, 'export.csv')
   }
