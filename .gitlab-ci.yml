@@ -7,15 +7,16 @@ variables:
 
 test-lint-build:
   stage: test-lint-build
-  image: node:alpine
+  image: registry.mdcatapult.io/informatics/docker-images/ci/node
   tags:
     - wopr
   artifacts:
     paths:
       - dist/*
   before_script:
-    - apk --no-cache upgrade && apk add --no-cache chromium
-    - export CHROME_BIN=/usr/bin/chromium-browser
+    - apt-get update
+    - apt-get install -yqq chromium
+    - export CHROME_BIN=/usr/bin/chromium
     - npm install
   script:
     - npm run test:ci
