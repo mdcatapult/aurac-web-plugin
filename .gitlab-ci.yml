@@ -14,7 +14,6 @@ test-lint-build:
     paths:
       - dist/*
   before_script:
-    - which chromium
     - which chromium-browser
     - apk update && apk --no-cache upgrade && apk add --no-cache chromium
     - export CHROME_BIN=/usr/bin/chromium-browser
