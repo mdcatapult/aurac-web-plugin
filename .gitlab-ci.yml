@@ -14,6 +14,8 @@ test-lint-build:
     paths:
       - dist/*
   before_script:
+    - apk update ca-certificates
+    - cp /etc/ssl/certs/ca-certificates.crt /etc/ssl/cert.pem
     - wget https://dl-cdn.alpinelinux.org/alpine/v3.13/main/x86_64/APKINDEX.tar.gz && apk add --no-cache chromium
     - export CHROME_BIN=/usr/bin/chromium-browser
     - npm install
