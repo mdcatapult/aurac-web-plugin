@@ -56,61 +56,63 @@ export module Card {
     return htmlListOfLinks
   }
 
-  // Creates a card for `information`
+  // Creates a card for a given entity
   export function create(information: Entity): HTMLDivElement {
     const card: HTMLDivElement = document.createElement('div');
-    const arrowButtonProperties = renderArrowButtonElements(card, information);
-    renderOccurrenceCounts(card, information);
-    renderRemoveEntityFromSidebarButtonElement(information, arrowButtonProperties);
-
     card.className = cardClassName;
     card.style.backgroundColor = information.recognisingDict.htmlColor;
 
-    card.insertAdjacentHTML('beforeend', `<p>${information.entityText}</p>`);
     const entity: string = information.entityText.toLowerCase().replace(/\s/g, '%20');
-    let entityLinks: Array<Link> = [];
-    switch (information.entityGroup || information.recognisingDict.entityType) {
-      case geneAndProtein: {
-        entityLinks = [ncbi, geneNames, antibodies, pubmed, dimensions, addGene, patents, geneProteinChemicalClinicalTrial];
-        break;
-      }
-      case disease: {
-        entityLinks = [drugBank, pubmed, dimensions, patents, diseaseClinicalTrial];
-        break;
-      }
-      case chemical: {
-        entityLinks = [pubchem, drugBank, pubmed, dimensions, patents, geneProteinChemicalClinicalTrial];
-        break;
-      }
-    }
-    card.insertAdjacentHTML('beforeend', `<p>Links:</p>`)
+
+    const entityLinks = getEntityLinks(information)
     const links = createListOfLinks(entity, entityLinks);
+    card.appendChild(renderCardControls(card, information, entityLinks))
+
+    card.insertAdjacentHTML('beforeend', `<p>${information.entityText}</p>`);
+
+    card.insertAdjacentHTML('beforeend', `<p>Links:</p>`)
     card.appendChild(links)
     card.insertAdjacentHTML('beforeend', `<p class='aurac-mdc-entity-type'>Entity Type: ${information.recognisingDict.entityType}</p>`);
 
-    renderSaveButton(information, entityLinks, arrowButtonProperties);
-
     const xrefHTML: HTMLDivElement = document.createElement('div');
-
     xrefHTML.className = information.entityText;
     card.appendChild(xrefHTML);
     return card;
   }
 
-  function renderArrowButtonElements(card: HTMLSpanElement, information: Entity): HTMLDivElement {
-    const arrowFlexProperties: HTMLDivElement = document.createElement('div');
-    arrowFlexProperties.className = 'aurac-arrow-buttons';
-    card.appendChild(arrowFlexProperties);
+  function renderCardControls(card: HTMLElement, information: Entity, entityLinks: Link[]): HTMLElement {
+    const controls: HTMLSpanElement = document.createElement('span');
+    controls.className = 'aurac-card-controls'
+    card.appendChild(controls)
+
+    const removeButton = renderRemoveEntityFromSidebarButtonElement(information);
+    controls.appendChild(removeButton)
+
+    const saveButton = renderSaveButton(information, entityLinks);
+    controls.appendChild(saveButton);
+
+    const arrowButtons = renderArrowButtonElements(controls, information);
+    controls.appendChild(arrowButtons)
+
+    const occurrenceCounts = renderOccurrenceCounts(controls, information);
+    controls.appendChild(occurrenceCounts)
+
+    return controls
+  }
+
+  function renderArrowButtonElements(parent: HTMLElement, information: Entity): HTMLElement {
+    const arrowButtons: HTMLDivElement = document.createElement('div');
+    arrowButtons.className = 'aurac-arrow-buttons';
 
     const leftArrowButtonElement = document.createElement('button');
     leftArrowButtonElement.innerHTML = leftArrow;
     leftArrowButtonElement.className = 'aurac-left-arrow-button';
-    arrowFlexProperties.appendChild(leftArrowButtonElement);
+    arrowButtons.appendChild(leftArrowButtonElement);
 
     const rightArrowButtonElement = document.createElement('button');
     rightArrowButtonElement.innerHTML = rightArrow;
     rightArrowButtonElement.className = 'aurac-right-arrow-button';
-    arrowFlexProperties.appendChild(rightArrowButtonElement);
+    arrowButtons.appendChild(rightArrowButtonElement);
 
     const arrowProperties: ArrowButtonProperties = {
       nerTerm: information.entityText,
@@ -126,7 +128,7 @@ export module Card {
     rightArrowButtonElement.addEventListener('click', () => {
       pressArrowButton(arrowProperties, 'right');
     });
-    return arrowFlexProperties;
+    return arrowButtons;
   }
 
   function pressArrowButton(arrowProperties: ArrowButtonProperties, direction: 'left' | 'right'): void {
@@ -165,7 +167,7 @@ export module Card {
     });
   }
 
-  function renderOccurrenceCounts(card: HTMLDivElement, information: Entity): void {
+  function renderOccurrenceCounts(card: HTMLElement, information: Entity): HTMLElement {
     const entityText = information.entityText;
     const occurrenceElement = document.createElement('span');
     occurrenceElement.id = `${entityText}-occurrences`;
@@ -173,10 +175,10 @@ export module Card {
     occurrenceElement.style.justifyContent = 'flex-end';
 
     occurrenceElement.innerText = `${entityToOccurrence.get(entityText)!.length} matches found`;
-    card.appendChild(occurrenceElement);
+    return occurrenceElement
   }
 
-  function renderSaveButton(information: Entity, links: Link[], parent: HTMLDivElement): void {
+  function renderSaveButton(information: Entity, links: Link[]): HTMLElement {
     const saveButton = document.createElement('button')
 
     const storedCardsString = window.localStorage.getItem(cardStorageKey)
@@ -185,7 +187,7 @@ export module Card {
     saveButton.innerHTML = savedCards.some(card => card.entityText === information.entityText) ? 'Saved' : '&#128190;'
     saveButton.className = 'save-button'
     saveButton.addEventListener('click', () => save(information, links, saveButton))
-    parent.appendChild(saveButton)
+    return saveButton
   }
 
   function setNerHtmlColours(highlightedNerTerms: Element[]): void {
@@ -199,15 +201,15 @@ export module Card {
     });
   }
 
-  function renderRemoveEntityFromSidebarButtonElement(information: Entity, arrowProperties: HTMLDivElement): void {
+  function renderRemoveEntityFromSidebarButtonElement(information: Entity): HTMLElement {
     const removeEntityFromSidebarButtonElement = document.createElement('button');
     removeEntityFromSidebarButtonElement.innerHTML = crossButton;
     removeEntityFromSidebarButtonElement.className = 'aurac-cross-button';
-    arrowProperties.appendChild(removeEntityFromSidebarButtonElement);
 
     removeEntityFromSidebarButtonElement.addEventListener('click', () => {
       pressRemoveEntityFromSidebarButtonElement(information);
     });
+    return removeEntityFromSidebarButtonElement
   }
 
   function pressRemoveEntityFromSidebarButtonElement(information: Entity): void {
@@ -266,5 +268,24 @@ export module Card {
     window.localStorage.setItem(cardStorageKey, JSON.stringify(savedCards))
     saveButton.innerHTML = 'Saved'
 
+  }
+
+  export function getEntityLinks(entity: Entity): Link[] {
+    let entityLinks: Array<Link> = [];
+    switch (entity.entityGroup || entity.recognisingDict.entityType) {
+      case geneAndProtein: {
+        entityLinks = [ncbi, geneNames, antibodies, pubmed, dimensions, addGene, patents, geneProteinChemicalClinicalTrial];
+        break;
+      }
+      case disease: {
+        entityLinks = [drugBank, pubmed, dimensions, patents, diseaseClinicalTrial];
+        break;
+      }
+      case chemical: {
+        entityLinks = [pubchem, drugBank, pubmed, dimensions, patents, geneProteinChemicalClinicalTrial];
+        break;
+      }
+    }
+    return entityLinks
   }
 }

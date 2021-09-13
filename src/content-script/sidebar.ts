@@ -134,5 +134,4 @@ export module Sidebar {
   function toggleNarrative(on: boolean): void {
     document.getElementById('aurac-narrative')!.style.display = on ? 'block' : 'none';
   }
-
 }
