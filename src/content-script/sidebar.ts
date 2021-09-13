@@ -1,9 +1,10 @@
 import {Entity} from './types';
 import {Card} from './card';
+import {waitForAsync} from '@angular/core/testing';
 
 export module Sidebar {
 
-  const cardContainer = document.createElement('div')
+  const cardContainer = document.createElement('div');
   let toggleButtonElement: HTMLButtonElement;
   let clearButtonElement: HTMLButtonElement;
   let isExpanded = false;

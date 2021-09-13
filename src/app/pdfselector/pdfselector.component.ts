@@ -1,6 +1,6 @@
-import {HttpClient, HttpParams} from '@angular/common/http';
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {AbstractControl, FormControl, ValidationErrors, ValidatorFn} from '@angular/forms';
+import {HttpClient} from '@angular/common/http';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {AbstractControl, FormControl, ValidationErrors} from '@angular/forms';
 import {defaultSettings} from 'src/types';
 import {BrowserService} from '../browser.service';
 import {LogService} from '../popup/log.service';
@@ -33,17 +33,22 @@ export class PDFSelectorComponent implements OnInit {
       this.pdfError = ''
       const pdfURL = settings.urls.pdfConverterURL || defaultSettings.urls.pdfConverterURL
       this.http.post<{id: string}>(pdfURL, null, {params: {url: this.link.value}})
-        .subscribe(
-          (converterResponse: { id: string }) => {
+        .subscribe((converterResponse: { id: string }) => {
+            this.browser.sendMessageToActiveTab({type: 'awaiting_response', body: false})
+              .catch(console.error);
             this.loadingHTML = false
             browser.tabs.create({url: `${pdfURL}/${converterResponse.id}`, active: true});
           },
           err => {
+            this.browser.sendMessageToActiveTab({type: 'awaiting_response', body: false})
+              .catch(console.error)
             this.loadingHTML = false
             this.pdfError = err.error.error
           }
         )
     })
+    this.browser.sendMessageToActiveTab({type: 'awaiting_response', body: true})
+      .catch(console.error)
   }
 
   closeSettings(): void {
