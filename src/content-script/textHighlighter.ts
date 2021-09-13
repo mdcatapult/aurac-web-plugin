@@ -183,9 +183,8 @@ export module TextHighlighter {
       try {
         // For each term, we want to replace it's original HTML with a highlight colour
         const replacementNode = document.createElement('span');
-        replacementNode.innerHTML = element.nodeValue!.replace(
-          new RegExp(entity.entityText, 'g'),
-          highlightTerm(entity.entityText, entity));
+        replacementNode.className = 'aurac-highlight';
+        replacementNode.innerHTML = element.nodeValue!.split(entity.entityText).join(highlightTerm(entity.entityText, entity));
 
         // This new highlighted term will will replace the current child (same term but with no highlight) of this parent element.
         element.parentNode!.insertBefore(replacementNode, element);
