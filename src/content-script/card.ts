@@ -183,7 +183,7 @@ export module Card {
     const savedCards = storedCardsString === null ? [] : JSON.parse(storedCardsString) as SavedCard[]
 
     saveButton.innerHTML = savedCards.some(card => card.entityText === information.entityText) ? 'Saved' : '&#128190;'
-    saveButton.id = `save-${information.resolvedEntity}`
+    saveButton.className = 'save-button'
     saveButton.addEventListener('click', () => save(information, links, saveButton))
     parent.appendChild(saveButton)
   }
