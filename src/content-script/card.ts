@@ -66,10 +66,10 @@ export module Card {
 
     const entityLinks = getEntityLinks(information)
     const links = createListOfLinks(entity, entityLinks);
+
     card.appendChild(renderCardControls(card, information, entityLinks))
 
     card.insertAdjacentHTML('beforeend', `<p>${information.entityText}</p>`);
-
     card.insertAdjacentHTML('beforeend', `<p>Links:</p>`)
     card.appendChild(links)
     card.insertAdjacentHTML('beforeend', `<p class='aurac-mdc-entity-type'>Entity Type: ${information.recognisingDict.entityType}</p>`);

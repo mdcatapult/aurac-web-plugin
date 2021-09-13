@@ -9,7 +9,7 @@ export module Sidebar {
   let clearButtonElement: HTMLButtonElement;
   let isExpanded = false;
 
-  export function create(): void {
+  export function create(): HTMLElement {
 
     const [logo, logoText] = createLogo();
 
@@ -25,8 +25,8 @@ export module Sidebar {
     sidebar.appendChild(clearButtonElement);
     sidebar.appendChild(cardContainer);
 
-    document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
-    document.body.appendChild(sidebar);
+
+    return sidebar
   }
 
   export function open(): void {
