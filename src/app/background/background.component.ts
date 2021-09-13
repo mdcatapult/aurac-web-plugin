@@ -78,14 +78,12 @@ export class BackgroundComponent {
     }
   }
 
-
   private addCompoundNameToXRefObject = (entityTerm: string) => map((xrefs: XRef[]) => xrefs.map(xref => {
     if (xref) {
       xref.compoundName = entityTerm;
     }
     return xref;
   }))
-
 
   private nerCurrentPage(dictionary: validDict): void {
     console.log('Getting content of active tab...');
@@ -113,12 +111,22 @@ export class BackgroundComponent {
           .subscribe((response) => {
             console.log('Received results from leadmine...');
             if (!response.body || !response.body.entities) {
+              this.browserService.sendMessageToActiveTab({type: 'awaiting_response', body: false})
+                .catch(console.error);
               return;
             }
             const uniqueEntities = this.getUniqueEntities(response.body);
+
             this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
               .catch(e => console.error(e));
-          });
+            },
+            () => {
+              this.browserService.sendMessageToActiveTab({type: 'awaiting_response', body: false})
+                .catch(console.error);
+            });
+
+        this.browserService.sendMessageToActiveTab({type: 'awaiting_response', body: true})
+          .catch(console.error);
       });
   }
 

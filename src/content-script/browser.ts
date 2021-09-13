@@ -1,6 +1,8 @@
 import {Sidebar} from './sidebar'
 import {TextHighlighter} from './textHighlighter'
 import { Card } from './card'
+import {UserExperience} from './userExperience';
+
 export module Browser {
   // add listener function to browser
   export function addListener() {
@@ -13,6 +15,7 @@ export module Browser {
             resolve({type: 'leadmine', body: textNodes.join('\n')});
           });
         case 'markup_page':
+          UserExperience.toggleLoadingIcon(false);
           TextHighlighter.wrapEntitiesWithHighlight(msg);
           Sidebar.open()
           break;
@@ -22,10 +25,12 @@ export module Browser {
         case 'toggle_sidebar':
           Sidebar.toggle()
           break;
+        case 'awaiting_response':
+          UserExperience.toggleLoadingIcon(msg.body as boolean);
+          break;
         default:
           throw new Error('Received unexpected message from plugin');
       }
     });
   }
-
 }

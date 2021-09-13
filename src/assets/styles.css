@@ -2,7 +2,7 @@
   color: black;
   font-family: Arial, sans-serif;
   font-size: 14px;
-  background: rgb(192, 192, 192);
+  background: rgb(192,192,192);
   position: fixed;
   z-index: 2147483647;
   height: 100vh;
@@ -109,7 +109,7 @@
   padding: 0;
 }
 
-.aurac-mdc-href-list-style li {
+.aurac-mdc-href-list-style li{
   display: inline;
   padding: 0 1em 0 0;
 }
@@ -130,3 +130,23 @@
   color: black;
 }
 
+#aurac-loading-icon {
+  display: none;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  width: 60px;
+  height: 60px;
+  margin: -76px 0 0 -76px;
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid rgb(226, 152, 71);
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
