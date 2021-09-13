@@ -12,7 +12,8 @@ export type MessageType =
   | 'sidebar_rendered'
   | 'ner_lookup_performed'
   | 'remove_highlights'
-  | 'preferences-changed';
+  | 'preferences-changed'
+  | 'awaiting_response';
 
 export interface Message {
   type: MessageType;

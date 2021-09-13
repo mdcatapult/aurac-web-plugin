@@ -82,6 +82,10 @@
   padding: 5px;
 }
 
+.save-button {
+  background-color: rgb(192, 192, 192);
+}
+
 .aurac-transform {
   -webkit-transition: all 1s ease;
   -moz-transition: all 1s ease;
@@ -126,3 +130,23 @@
   color: black;
 }
 
+#aurac-loading-icon {
+  display: none;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  width: 60px;
+  height: 60px;
+  margin: -76px 0 0 -76px;
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid rgb(226, 152, 71);
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
