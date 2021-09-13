@@ -28,6 +28,9 @@ export module Browser {
         case 'awaiting_response':
           UserExperience.toggleLoadingIcon(msg.body as boolean);
           break;
+        case 'remove_highlights':
+          TextHighlighter.removeHighlights();
+          break;
         default:
           throw new Error('Received unexpected message from plugin');
       }
