@@ -1,4 +1,4 @@
-import { Link } from "./externalLinks"
+import { Link } from './externalLinks'
 
 export type Entity = {
   entityText: string,

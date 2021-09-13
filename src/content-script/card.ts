@@ -250,7 +250,7 @@ export module Card {
   function save(cardData: Entity, links: Link[], saveButton: HTMLButtonElement): void {
 
     const storedValue = window.localStorage.getItem(cardStorageKey)
-    let savedCards = storedValue === null ? [] : JSON.parse(storedValue) as SavedCard[]
+    const savedCards = storedValue === null ? [] : JSON.parse(storedValue) as SavedCard[]
 
     if (savedCards.some(card => card.entityText === cardData.entityText)) {
       return
