@@ -21,6 +21,38 @@ export module TextHighlighter {
     // highlighted if VPS26 has already been highlighted, because the text VPS26A is now spread across more than one node
     msg.body.sort((a: Entity, b: Entity) => b.entityText.length - a.entityText.length)
       .map((entity: Entity) => {
+        // TODO: if entity.recognisingDict.entityType is 'SMILES' or 'InChI' it is a ChEMBL representation
+        //  which on ChEMBL is an input (i.e. not an allowed tag type when calling allTextNodes ot allDescendants)
+        //  differentiate between InChI and InChIKey based on length
+        //  (InChIKey is always 14, 10 and 1 character, separated by a dash, i.e. 27 characters long
+        //  only do this if we are on ChEMBL
+        if (document.location.href.includes('www.ebi.ac.uk/chembl')) {
+          // the same id is used on 8 different HTML elements!!!!! so cannot getElementById as only the first one is returned
+          // const representationInputFields = document.querySelectorAll('[id="CompReps-canonicalSmiles"]')
+          // console.log(representationInputFields)
+
+          const smilesInput = Array.from(document.getElementsByTagName('input')).filter(input => input.className === ('BCK-CanonicalSmiles'))
+          console.log(smilesInput)
+
+          switch (entity.recognisingDict.entityType) {
+            case 'SMILES':
+              // call addHighlightAndEventListeners with an array of HTMLElements
+              const tableBody = document.getElementsByClassName('BCK-CanonicalSmiles')[0].childNodes[1].childNodes[1].childNodes
+              // console.log(tableBody)
+              break;
+            case 'InChI':
+              // An InChIKey always comprises three blocks (14, 10 and 1 character, respectively) separated by a dash
+              const inchiKeyLength = 27;
+              if (entity.entityText.length === inchiKeyLength) {
+                const inchikeyInput = document.getElementsByClassName('BCK-StandardInchiKey')
+                // console.log(inchikeyInput)
+              } else {
+                const inchiInput = document.getElementsByClassName('BCK-StandardInchi')
+                // console.log(inchiInput)
+              }
+              break;
+          }
+        }
         const selectors = getSelectors(entity.entityText);
         wrapChemicalFormulaeWithHighlight(entity);
         addHighlightAndEventListeners(selectors, entity);
@@ -31,14 +63,13 @@ export module TextHighlighter {
   export function chemblRepresentations(): Array<string> {
 
     function getRepresentationValue(className: string): string | null  {
-      return document.getElementsByClassName(className)?.[0].children[0].attributes[1].textContent;
+      return document.getElementsByClassName(className)[0]?.children[0].attributes[1].textContent;
     }
 
     const representations: Array<string> = ['BCK-CanonicalSmiles', 'BCK-StandardInchi', 'BCK-StandardInchiKey']
     const representationValues: (string | null)[] = representations.map(representation => getRepresentationValue(representation))
     return representationValues.filter(<(val: string | null) => val is string> (val => typeof val === 'string'))
   }
-
 
   // Recursively find all text nodes which match regex
   export function allTextNodes(node: HTMLElement, textNodes: Array<string>) {
