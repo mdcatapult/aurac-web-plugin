@@ -27,6 +27,19 @@ export module TextHighlighter {
       });
   }
 
+  // Find SMILES, InChI and InChIKey in representations section of ChEMBL website
+  export function chemblRepresentations(): Array<string> {
+
+    function getRepresentationValue(className: string): string | null  {
+      return document.getElementsByClassName(className)?.[0].children[0].attributes[1].textContent;
+    }
+
+    const representations: Array<string> = ['BCK-CanonicalSmiles', 'BCK-StandardInchi', 'BCK-StandardInchiKey']
+    const representationValues: (string | null)[] = representations.map(representation => getRepresentationValue(representation))
+    return representationValues.filter(<(val: string | null) => val is string> (val => typeof val === 'string'))
+  }
+
+
   // Recursively find all text nodes which match regex
   export function allTextNodes(node: HTMLElement, textNodes: Array<string>) {
     if (!allowedTagType(node) || node.classList && node.classList.contains('aurac-sidebar')) {

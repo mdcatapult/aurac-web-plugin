@@ -10,7 +10,10 @@ export module Browser {
           return new Promise(resolve => {
             const textNodes: Array<string> = [];
             TextHighlighter.allTextNodes(document.body, textNodes);
-            resolve({type: 'leadmine', body: textNodes.join('\n')});
+            // On ChEMBL, the representations (i.e. SMILES, InChI, InChIKey) are not text nodes
+            // so need to be 'manually' added to the textNodes array
+            const textForNER = textNodes.concat(TextHighlighter.chemblRepresentations());
+            resolve({type: 'leadmine', body: textForNER.join('\n')});
           });
         case 'markup_page':
           TextHighlighter.wrapEntitiesWithHighlight(msg);
