@@ -11,7 +11,8 @@ export type MessageType =
   | 'toggle_sidebar'
   | 'sidebar_rendered'
   | 'ner_lookup_performed'
-  | 'export_csv';
+  | 'export_csv'
+  | 'awaiting_response';
 
 export interface Message {
   type: MessageType;

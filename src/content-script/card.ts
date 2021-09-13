@@ -18,6 +18,7 @@ export module Card {
 
   export const entityToCard = new EntityMap<HTMLDivElement>();
   const entityToOccurrence = new EntityMap<Element[]>();
+  const cardClassName = 'sidebar-text';
   export const collapseArrow = '&#60;';
   export const expandArrow = '&#62;';
   const rightArrow = '&#8594';
@@ -61,7 +62,7 @@ export module Card {
     renderOccurrenceCounts(card, information);
     renderRemoveEntityFromSidebarButtonElement(information, arrowButtonProperties);
 
-    card.className = 'sidebar-text';
+    card.className = cardClassName;
     card.style.backgroundColor = information.recognisingDict.htmlColor;
 
     card.insertAdjacentHTML('beforeend', `<p>${information.entityText}</p>`);
@@ -223,5 +224,10 @@ export module Card {
     } else {
       entityToOccurrence.get(entityText)!.push(occurrence);
     }
+  }
+
+  export function clear(): void {
+    entityToCard.clear()
+    Array.from(document.getElementsByClassName(cardClassName)).forEach(card => card.parentNode!.removeChild(card))
   }
 }
