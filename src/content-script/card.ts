@@ -15,6 +15,8 @@ export module Card {
   import pubchem = ExternalLinks.pubchem;
   import geneProteinChemicalClinicalTrial = ExternalLinks.geneProteinChemicalClinicalTrial;
   import diseaseClinicalTrial = ExternalLinks.diseaseClinicalTrial;
+  import genecards = ExternalLinks.genecards;
+  import ensembl = ExternalLinks.ensembl;
 
   export const entityToCard = new EntityMap<HTMLDivElement>();
   const entityToOccurrence = new EntityMap<Element[]>();
@@ -71,7 +73,8 @@ export module Card {
     let entityLinks: Array<Link> = [];
     switch (information.entityGroup || information.recognisingDict.entityType) {
       case geneAndProtein: {
-        entityLinks = [ncbi, geneNames, antibodies, pubmed, dimensions, addGene, patents, geneProteinChemicalClinicalTrial];
+        entityLinks = [ncbi, geneNames, genecards, ensembl, antibodies, pubmed, dimensions, 
+          addGene, patents, geneProteinChemicalClinicalTrial];
         break;
       }
       case disease: {
