@@ -28,17 +28,23 @@ export module TextHighlighter {
         //  only do this if we are on ChEMBL
         if (document.location.href.includes('www.ebi.ac.uk/chembl')) {
           // the same id is used on 8 different HTML elements!!!!! so cannot getElementById as only the first one is returned
-          // const representationInputFields = document.querySelectorAll('[id="CompReps-canonicalSmiles"]')
-          // console.log(representationInputFields)
+          const representationInputFields = document.querySelectorAll('[id="CompReps-canonicalSmiles"]')
+          console.log(representationInputFields)
 
-          const smilesInput = Array.from(document.getElementsByTagName('input')).filter(input => input.className === ('BCK-CanonicalSmiles'))
-          console.log(smilesInput)
+          //this is 8 elements long
+          // 0 is SMILES
+          // 1 is Inchi
+          // 2 is InchiKey
+          // 3 is SMILES
+          // 4 is Inchi
+          // 5 is InchiKey
+          // 6 is InchiKey
+          // 7 is Inchi
 
           switch (entity.recognisingDict.entityType) {
             case 'SMILES':
               // call addHighlightAndEventListeners with an array of HTMLElements
-              const tableBody = document.getElementsByClassName('BCK-CanonicalSmiles')[0].childNodes[1].childNodes[1].childNodes
-              // console.log(tableBody)
+              const smilesInput = document.getElementsByClassName('BCK-CanonicalSmiles')
               break;
             case 'InChI':
               // An InChIKey always comprises three blocks (14, 10 and 1 character, respectively) separated by a dash
