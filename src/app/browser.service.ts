@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {Message, MessageType, Settings, StringMessage } from '../types';
+import {defaultSettings, Message, MessageType, Settings, StringMessage} from '../types';
 import {LogService} from './popup/log.service';
 import Tab = browser.tabs.Tab;
 
@@ -41,7 +41,7 @@ export class BrowserService {
 
   loadSettings(): Promise<Settings> {
     return browser.storage.local.get('settings').then(
-      (settings) => Promise.resolve(settings.settings),
+      (settings) => Promise.resolve(settings?.settings || defaultSettings),
       (err) => this.log.Log(`error loading settings', ${JSON.stringify(err)}`)
     ) as Promise<Settings>
   }
