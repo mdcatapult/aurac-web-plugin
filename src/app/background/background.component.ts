@@ -156,9 +156,9 @@ export class BackgroundComponent {
             this.addCompoundNameToXRefObject(entityText)
           );
         }
-      xRefObservable.subscribe((xrefs: XRef[]) => {
-        this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
-          .catch(console.error);
+        xRefObservable.subscribe((xrefs: XRef[]) => {
+          this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
+            .catch(console.error);
       });
     }
   }
