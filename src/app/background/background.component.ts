@@ -44,39 +44,56 @@ export class BackgroundComponent {
     });
   }
 
-  private loadXRefs([entityTerm, resolvedEntity]: [string, string]): void {
+  private loadXRefs([entityText, resolvedEntity, entityGroup]: [string, string, string]): void {
     const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]$/;
     let xRefObservable: Observable<XRef[]>;
-    if (resolvedEntity) {
-      if (!resolvedEntity.match(inchiKeyRegex)) {
-        const encodedEntity = encodeURIComponent(resolvedEntity);
-        xRefObservable = this.client.get(`${this.settings.urls.compoundConverterURL}/${encodedEntity}?from=SMILES&to=inchikey`).pipe(
-          // @ts-ignore
-          switchMap((converterResult: ConverterResult) => {
-            return converterResult ?
-              this.client.post(
-                `${this.settings.urls.unichemURL}/x-ref/${converterResult.output}`,
-                this.getTrueKeys(this.settings.xRefConfig)
-              ) : of({});
-          }),
-          this.addCompoundNameToXRefObject(entityTerm)
-        );
-      } else {
+    if (entityGroup === 'Chemical') {
+      if (entityText.match(inchiKeyRegex)) {
         xRefObservable = this.client.post(
-          `${this.settings.urls.unichemURL}/x-ref/${resolvedEntity}`,
+          `${this.settings.urls.unichemURL}/x-ref/${entityText}`,
           this.getTrueKeys(this.settings.xRefConfig)
         ).pipe(
           // @ts-ignore
-          this.addCompoundNameToXRefObject(entityTerm)
+          this.addCompoundNameToXRefObject(entityText)
         );
+        xRefObservable.subscribe((xrefs: XRef[]) => {
+          this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
+            .catch(e => console.error(e));
+        });
       }
+      if (resolvedEntity) {
+        // Do chemicals ever resolve to inchis or is it always smiles?
+        if (!resolvedEntity.match(inchiKeyRegex)) {
+          const encodedEntity = encodeURIComponent(resolvedEntity);
+          xRefObservable = this.client.get(`${this.settings.urls.compoundConverterURL}/${encodedEntity}?from=SMILES&to=inchikey`).pipe(
+            // @ts-ignore
+            switchMap((converterResult: ConverterResult) => {
+              return converterResult ?
+                this.client.post(
+                  `${this.settings.urls.unichemURL}/x-ref/${converterResult.output}`,
+                  this.getTrueKeys(this.settings.xRefConfig)
+                ) : of({});
+            }),
+            this.addCompoundNameToXRefObject(entityText)
+          );
+        } else {
+          xRefObservable = this.client.post(
+            `${this.settings.urls.unichemURL}/x-ref/${resolvedEntity}`,
+            this.getTrueKeys(this.settings.xRefConfig)
+          ).pipe(
+            // @ts-ignore
+            this.addCompoundNameToXRefObject(entityText)
+          );
+        }
 
-      xRefObservable.subscribe((xrefs: XRef[]) => {
-        this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
-          .catch(e => console.error(e));
-      });
+        xRefObservable.subscribe((xrefs: XRef[]) => {
+          this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
+            .catch(e => console.error(e));
+        });
+      }
     }
   }
+
 
   private addCompoundNameToXRefObject = (entityTerm: string) => map((xrefs: XRef[]) => xrefs.map(xref => {
     if (xref) {
