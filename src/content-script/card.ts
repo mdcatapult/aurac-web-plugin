@@ -67,7 +67,7 @@ export module Card {
     const entityLinks = getEntityLinks(information)
     const links = createListOfLinks(entity, entityLinks);
 
-    card.appendChild(renderCardControls(card, information, entityLinks))
+    card.appendChild(createCardControls(card, information, entityLinks))
 
     card.insertAdjacentHTML('beforeend', `<p>${information.entityText}</p>`);
     card.insertAdjacentHTML('beforeend', `<p>Links:</p>`)
@@ -80,27 +80,27 @@ export module Card {
     return card;
   }
 
-  function renderCardControls(card: HTMLElement, information: Entity, entityLinks: Link[]): HTMLElement {
+  function createCardControls(card: HTMLElement, information: Entity, entityLinks: Link[]): HTMLElement {
     const controls: HTMLSpanElement = document.createElement('span');
     controls.className = 'aurac-card-controls'
     card.appendChild(controls)
 
-    const removeButton = renderRemoveEntityFromSidebarButtonElement(information);
+    const removeButton = createRemoveEntityFromSidebarButtonElement(information);
     controls.appendChild(removeButton)
 
-    const saveButton = renderSaveButton(information, entityLinks);
+    const saveButton = createSaveButton(information, entityLinks);
     controls.appendChild(saveButton);
 
-    const arrowButtons = renderArrowButtonElements(controls, information);
+    const arrowButtons = createArrowButtonElements(controls, information);
     controls.appendChild(arrowButtons)
 
-    const occurrenceCounts = renderOccurrenceCounts(controls, information);
+    const occurrenceCounts = createOccurrenceCounts(controls, information);
     controls.appendChild(occurrenceCounts)
 
     return controls
   }
 
-  function renderArrowButtonElements(parent: HTMLElement, information: Entity): HTMLElement {
+  function createArrowButtonElements(parent: HTMLElement, information: Entity): HTMLElement {
     const arrowButtons: HTMLDivElement = document.createElement('div');
     arrowButtons.className = 'aurac-arrow-buttons';
 
@@ -167,7 +167,7 @@ export module Card {
     });
   }
 
-  function renderOccurrenceCounts(card: HTMLElement, information: Entity): HTMLElement {
+  function createOccurrenceCounts(card: HTMLElement, information: Entity): HTMLElement {
     const entityText = information.entityText;
     const occurrenceElement = document.createElement('span');
     occurrenceElement.id = `${entityText}-occurrences`;
@@ -178,7 +178,7 @@ export module Card {
     return occurrenceElement
   }
 
-  function renderSaveButton(information: Entity, links: Link[]): HTMLElement {
+  function createSaveButton(information: Entity, links: Link[]): HTMLElement {
     const saveButton = document.createElement('button')
 
     const storedCardsString = window.localStorage.getItem(cardStorageKey)
@@ -201,7 +201,7 @@ export module Card {
     });
   }
 
-  function renderRemoveEntityFromSidebarButtonElement(information: Entity): HTMLElement {
+  function createRemoveEntityFromSidebarButtonElement(information: Entity): HTMLElement {
     const removeEntityFromSidebarButtonElement = document.createElement('button');
     removeEntityFromSidebarButtonElement.innerHTML = crossButton;
     removeEntityFromSidebarButtonElement.className = 'aurac-cross-button';
