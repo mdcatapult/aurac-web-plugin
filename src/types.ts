@@ -11,8 +11,10 @@ export type MessageType =
   | 'toggle_sidebar'
   | 'sidebar_rendered'
   | 'ner_lookup_performed'
-  | 'export_csv'
-  | 'awaiting_response';
+  | 'awaiting_response'
+  | 'remove_highlights'
+  | 'preferences-changed'
+  | 'export_csv';
 
 export interface Message {
   type: MessageType;
@@ -84,9 +86,15 @@ export type XRef = {
   url: string,
 };
 
+export type Preferences = {
+  hideUnresolved: boolean,
+  minEntityLength: number
+}
+
 export type Settings = {
   urls: DictionaryURLs,
   xRefConfig: {[key: string]: boolean},
+  preferences: Preferences
 }
 
 export type DictionaryURLs = {
@@ -104,6 +112,10 @@ export const defaultSettings: Settings = {
     pdfConverterURL: environment.pdfConverterURL,
   },
   xRefConfig: {},
+  preferences: {
+    hideUnresolved: true,
+    minEntityLength: 2,
+  }
 };
 
 export const DictionaryURLKeys = {

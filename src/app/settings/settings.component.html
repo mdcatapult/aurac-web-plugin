@@ -21,6 +21,11 @@
         [unichemURL]="settings ? settings.urls.unichemURL : ''"
       ></app-x-ref-sources>
     </mat-tab>
+    <mat-tab label="Preferences">
+      <app-preferences
+        [preferencesForm]="settingsForm.get('preferences')"
+      ></app-preferences>
+    </mat-tab>
   </mat-tab-group>
 
   <div class="restore-defaults-button-container">

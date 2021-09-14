@@ -28,6 +28,18 @@ export module ExternalLinks {
     createUrl: (identifier: string) => `https://www.addgene.org/search/catalog/plasmids/?q=${identifier}`,
   }
 
+  export const genecards: Link = {
+    name: 'Genecards',
+    createUrl: (identifier: string) => `https://www.genecards.org/cgi-bin/carddisp.pl?gene=${identifier}`,
+  }
+
+  export const ensembl: Link = {
+    name: 'Ensembl',
+    createUrl: (identifier: string) => `https://www.ensembl.org/Homo_sapiens/Gene/Summary?g=${identifier}`,
+  }
+
+
+
   // chemistry
 
   export const pubchem: Link = {
