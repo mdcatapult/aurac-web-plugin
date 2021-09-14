@@ -1,6 +1,6 @@
-import {Entity} from './types'
+import {Entity, SavedCard} from './types'
 import {EntityMap} from './entityMap'
-import { ExternalLinks, Link} from './externalLinks';
+import {ExternalLinks, Link} from './externalLinks';
 
 export module Card {
 
@@ -15,6 +15,8 @@ export module Card {
   import pubchem = ExternalLinks.pubchem;
   import geneProteinChemicalClinicalTrial = ExternalLinks.geneProteinChemicalClinicalTrial;
   import diseaseClinicalTrial = ExternalLinks.diseaseClinicalTrial;
+  import genecards = ExternalLinks.genecards;
+  import ensembl = ExternalLinks.ensembl;
 
   export const entityToCard = new EntityMap<HTMLDivElement>();
   const entityToOccurrence = new EntityMap<Element[]>();
@@ -28,6 +30,7 @@ export module Card {
   const geneAndProtein = 'Gene or Protein'
   const disease = 'Biological'
   const chemical = 'Chemical'
+  const cardStorageKey = 'cards'
 
   // This class stores the HTML of all aurac-highlight elements before and after we change them. That way when they are no longer
   // highlighted by our search they can return to their original HTML state
@@ -70,7 +73,8 @@ export module Card {
     let entityLinks: Array<Link> = [];
     switch (information.entityGroup || information.recognisingDict.entityType) {
       case geneAndProtein: {
-        entityLinks = [ncbi, geneNames, antibodies, pubmed, dimensions, addGene, patents, geneProteinChemicalClinicalTrial];
+        entityLinks = [ncbi, geneNames, genecards, ensembl, antibodies, pubmed, dimensions, 
+          addGene, patents, geneProteinChemicalClinicalTrial];
         break;
       }
       case disease: {
@@ -87,6 +91,8 @@ export module Card {
     card.appendChild(links)
     card.insertAdjacentHTML('beforeend', `<p class='aurac-mdc-entity-type'>Entity Type: ${information.recognisingDict.entityType}</p>`);
 
+    renderSaveButton(information, entityLinks, arrowButtonProperties);
+
     const xrefHTML: HTMLDivElement = document.createElement('div');
 
     xrefHTML.className = information.entityText;
@@ -94,7 +100,7 @@ export module Card {
     return card;
   }
 
-  function renderArrowButtonElements(card: HTMLDivElement, information: Entity): HTMLDivElement {
+  function renderArrowButtonElements(card: HTMLSpanElement, information: Entity): HTMLDivElement {
     const arrowFlexProperties: HTMLDivElement = document.createElement('div');
     arrowFlexProperties.className = 'aurac-arrow-buttons';
     card.appendChild(arrowFlexProperties);
@@ -173,6 +179,18 @@ export module Card {
     card.appendChild(occurrenceElement);
   }
 
+  function renderSaveButton(information: Entity, links: Link[], parent: HTMLDivElement): void {
+    const saveButton = document.createElement('button')
+
+    const storedCardsString = window.localStorage.getItem(cardStorageKey)
+    const savedCards = storedCardsString === null ? [] : JSON.parse(storedCardsString) as SavedCard[]
+
+    saveButton.innerHTML = savedCards.some(card => card.entityText === information.entityText) ? 'Saved' : '&#128190;'
+    saveButton.className = 'save-button'
+    saveButton.addEventListener('click', () => save(information, links, saveButton))
+    parent.appendChild(saveButton)
+  }
+
   function setNerHtmlColours(highlightedNerTerms: Element[]): void {
     highlightedNerTerms.forEach(element => {
       const index = highlightedNerTerms.indexOf(element);
@@ -229,5 +247,27 @@ export module Card {
   export function clear(): void {
     entityToCard.clear()
     Array.from(document.getElementsByClassName(cardClassName)).forEach(card => card.parentNode!.removeChild(card))
+  }
+
+  // saves the card data in local storage if it doesn't already exist
+  function save(cardData: Entity, links: Link[], saveButton: HTMLButtonElement): void {
+
+    const storedValue = window.localStorage.getItem(cardStorageKey)
+    const savedCards = storedValue === null ? [] : JSON.parse(storedValue) as SavedCard[]
+
+    if (savedCards.some(card => card.entityText === cardData.entityText)) {
+      return
+    }
+
+    savedCards.push({
+      ...cardData,
+      time: new Date().toString(),
+      originalURL: window.location.href,
+      links: links,
+    })
+
+    window.localStorage.setItem(cardStorageKey, JSON.stringify(savedCards))
+    saveButton.innerHTML = 'Saved'
+
   }
 }

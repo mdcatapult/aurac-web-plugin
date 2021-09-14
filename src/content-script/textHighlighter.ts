@@ -11,12 +11,8 @@ export module TextHighlighter {
   };
 
   const chemicalFormulae: chemicalFormula[] = [];
-  const delimiters: string[] = ['(', ')', '\\n', '\'', '\"', ',', ';', '.', '-'];
-  const noSpace = '';
-  const space = ' ';
 
   export function wrapEntitiesWithHighlight(msg: any) {
-    // document.head.appendChild(SidebarAnimations.newAuracStyleElement());
     // sort entities by length of entityText (descending) - this will ensure that we can capture e.g. VPS26A, which would not be
     // highlighted if VPS26 has already been highlighted, because the text VPS26A is now spread across more than one node
     msg.body.sort((a: Entity, b: Entity) => b.entityText.length - a.entityText.length)
@@ -109,34 +105,52 @@ export module TextHighlighter {
       }
     }
 
-  // If a string contains at least one instance of a particular term between word boundaries then return true
-// Can handle non latin unicode terms which at the moment JS Regex can't.
+  const delimiters: string[] = ['(', ')', '\\n', '\"', '\'', '\\', ',', ';', '.', '!'];
+
+  // Returns true if a string contains at least one instance of a particular term between word boundaries, i.e. not immediately
+  // followed or preceded by either a non white-space character or one of the special characters in the delimiters array.
+  // Can handle non latin unicode terms which at the moment JS Regex can't.
   function textContainsTerm(text: string, term: string): boolean {
+    const startsWithWhiteSpaceRegex = /^\s+.*/;
+    const endsWithWhiteSpaceRegex = /.*\s+$/;
     let currentText = '';
     const found: string[] = [];
     let foundTerm = false;
-    // First check if the term is found within the entire string
+
+    // First check if the term is found within the entire string.
     // If it does then step through the string 1 letter at a time until it matches the term.
     // Then check if the matched part is inside a word boundary.
     if (text.includes(term)) {
-      text.split('').forEach(letter => {
+      text.split('').forEach((letter) => {
         currentText += letter;
         if (currentText.includes(term) && !foundTerm) {
-          const removeTermFromCurrentText: string = currentText.replace(term, '');
+          const textPrecedingTerm: string = currentText.replace(term, '');
+
           // Find the remaining bit of text but also remove any line breaks from it
-          const remainingText: string = text.slice(currentText.length);
-          // We found the string but is it in the middle of something else like abcdMyString1234? ie is it a word boundary or not
-          // or is it at the start or end of the string. If it's within a word boundary we don't want to highlight it. If however, it is
-          // encapsulated by a special character delimiter then we do.
-          if ((removeTermFromCurrentText === noSpace || removeTermFromCurrentText.charAt(removeTermFromCurrentText.length - 1)
-            === space) && (remainingText.startsWith(space) || remainingText === noSpace)) {
+          const textFollowingTerm: string = text.slice(currentText.length);
+
+          // We found the string but is it in the middle of something else like abcdMyString1234? i.e. is it a word boundary or not
+          // or is it at the start or end of the string. If it's within a word boundary we don't want to highlight it.
+          if ((!!textPrecedingTerm.match(endsWithWhiteSpaceRegex) || !textPrecedingTerm.length) &&
+            (!!textFollowingTerm.match(startsWithWhiteSpaceRegex) || !textFollowingTerm.length)) {
             found.push(term);
             foundTerm = true;
           } else {
+            // If however the term is encapsulated by a special character delimiter then we do want to highlight it.
             delimiters.forEach((character) => {
-              if (removeTermFromCurrentText.includes(character) ||
-                remainingText.endsWith(character) ||
-                remainingText.startsWith(character)) {
+              if ((textPrecedingTerm.endsWith(character) &&
+                  (!!textFollowingTerm.match(startsWithWhiteSpaceRegex) ||
+                    !textFollowingTerm.length ||
+                    textFollowingTerm.startsWith(character) ||
+                    // catch a case where we have a different delimiter at the end of the term, e.g. a term between parentheses
+                    delimiters.includes(textFollowingTerm.charAt(0))))
+                ||
+                (textFollowingTerm.startsWith(character) &&
+                  (!!textPrecedingTerm.match(endsWithWhiteSpaceRegex) ||
+                    !textPrecedingTerm.length ||
+                    textPrecedingTerm.endsWith(character) ||
+                    // catch a case where we have a different delimiter at the end of the term, e.g. a term between parentheses
+                    delimiters.includes(textPrecedingTerm.charAt(textPrecedingTerm.length - 1))))) {
                 found.push(term);
                 foundTerm = true;
               }
@@ -157,6 +171,8 @@ export module TextHighlighter {
       if (formula.formulaText === entity.entityText) {
         try {
           const replacementNode = document.createElement('span');
+          // the span needs a class so that it can be deleted by the removeHighlights function
+          replacementNode.className = 'aurac-highlight';
           // Retrieves the specific highlight colour to use for this NER term
           replacementNode.innerHTML = highlightTerm(formulaNode.innerHTML, entity);
           // This new highlighted term will replace the current child (same term but with no highlight) of this parent element
@@ -181,11 +197,11 @@ export module TextHighlighter {
     selector.map(element => {
       // Try/catch for edge cases.
       try {
-        // For each term, we want to replace it's original HTML with a highlight colour
+        // For each term, we want to replace its original HTML with a highlight colour
         const replacementNode = document.createElement('span');
-        replacementNode.innerHTML = element.nodeValue!.replace(
-          new RegExp(entity.entityText, 'g'),
-          highlightTerm(entity.entityText, entity));
+        // the span needs a class so that it can be deleted by the removeHighlights function
+        replacementNode.className = 'aurac-highlight';
+        replacementNode.innerHTML = element.nodeValue!.split(entity.entityText).join(highlightTerm(entity.entityText, entity));
 
         // This new highlighted term will will replace the current child (same term but with no highlight) of this parent element.
         element.parentNode!.insertBefore(replacementNode, element);
@@ -207,5 +223,13 @@ export module TextHighlighter {
     const allElements: Array<Element> = [];
     allDescendants(document.body, allElements, entity);
     return allElements;
+  }
+
+  export function removeHighlights() {
+    return Array.from(document.getElementsByClassName('aurac-highlight'))
+      .forEach(element => {
+        const childNodes = Array.from(element.childNodes);
+        element.replaceWith(...childNodes);
+      });
   }
 }

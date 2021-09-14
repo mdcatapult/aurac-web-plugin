@@ -82,6 +82,10 @@
   padding: 5px;
 }
 
+.save-button {
+  background-color: rgb(192, 192, 192);
+}
+
 .aurac-transform {
   -webkit-transition: all 1s ease;
   -moz-transition: all 1s ease;
