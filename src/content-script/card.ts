@@ -69,7 +69,7 @@ export module Card {
     const entityLinks = getEntityLinks(information)
     const links = createListOfLinks(entity, entityLinks);
 
-    card.appendChild(createCardControls(card, information, entityLinks))
+    card.appendChild(createCardControls(information, entityLinks))
 
     card.insertAdjacentHTML('beforeend', `<p>${information.entityText}</p>`);
     card.insertAdjacentHTML('beforeend', `<p>Links:</p>`)
@@ -82,27 +82,26 @@ export module Card {
     return card;
   }
 
-  function createCardControls(card: HTMLElement, information: Entity, entityLinks: Link[]): HTMLElement {
+  function createCardControls(entityData: Entity, entityLinks: Link[]): HTMLElement {
     const controls: HTMLSpanElement = document.createElement('span');
     controls.className = 'aurac-card-controls'
-    card.appendChild(controls)
 
-    const removeButton = createRemoveEntityFromSidebarButtonElement(information);
+    const removeButton = createRemoveEntityFromSidebarButtonElement(entityData);
     controls.appendChild(removeButton)
 
-    const saveButton = createSaveButton(information, entityLinks);
+    const saveButton = createSaveButton(entityData, entityLinks);
     controls.appendChild(saveButton);
 
-    const arrowButtons = createArrowButtonElements(controls, information);
+    const arrowButtons = createArrowButtonElements(entityData);
     controls.appendChild(arrowButtons)
 
-    const occurrenceCounts = createOccurrenceCounts(controls, information);
+    const occurrenceCounts = createOccurrenceCounts(entityData);
     controls.appendChild(occurrenceCounts)
 
     return controls
   }
 
-  function createArrowButtonElements(parent: HTMLElement, information: Entity): HTMLElement {
+  function createArrowButtonElements(information: Entity): HTMLElement {
     const arrowButtons: HTMLDivElement = document.createElement('div');
     arrowButtons.className = 'aurac-arrow-buttons';
 
@@ -169,7 +168,7 @@ export module Card {
     });
   }
 
-  function createOccurrenceCounts(card: HTMLElement, information: Entity): HTMLElement {
+  function createOccurrenceCounts(information: Entity): HTMLElement {
     const entityText = information.entityText;
     const occurrenceElement = document.createElement('span');
     occurrenceElement.id = `${entityText}-occurrences`;
