@@ -77,7 +77,7 @@ export module Card {
     let entityLinks: Array<Link> = [];
     switch (information.entityGroup || information.recognisingDict.entityType) {
       case geneAndProtein: {
-        entityLinks = [ncbi, geneNames, antibodies, pubmed, dimensions, addGene, patents, geneProteinChemicalClinicalTrial];
+        entityLinks = [ncbi, antibodies, pubmed, dimensions, addGene, patents, geneProteinChemicalClinicalTrial];
         break;
       }
       case disease: {
