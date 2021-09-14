@@ -1,14 +1,15 @@
-import {Entity} from './types';
+import {chemicalFormula, Entity, inchiKeyLength} from './types';
 import {Sidebar} from './sidebar';
 import {Card} from './card';
+import {ChemblRepresentationElements} from './types';
+import {ChEMBL} from './chembl';
 
 export module TextHighlighter {
 
   import getAuracHighlightChildren = Sidebar.getAuracHighlightChildren;
-  type chemicalFormula = {
-    formulaNode: Element;
-    formulaText: string;
-  };
+  import getChemblRepresentationElements = ChEMBL.getChemblRepresentationElements;
+  import isChemblPage = ChEMBL.isChemblPage;
+
 
   const chemicalFormulae: chemicalFormula[] = [];
   const delimiters: string[] = ['(', ')', '\\n', '\'', '\"', ',', ';', '.', '-'];
@@ -16,65 +17,50 @@ export module TextHighlighter {
   const space = ' ';
 
   export function wrapEntitiesWithHighlight(msg: any) {
-    // document.head.appendChild(SidebarAnimations.newAuracStyleElement());
+
+    // get InChI, InChIKey and SMILES input elements if we are on ChEMBL
+    let chemblRepresentationElements: ChemblRepresentationElements;
+    if (isChemblPage()) {
+      chemblRepresentationElements = getChemblRepresentationElements();
+    }
+
     // sort entities by length of entityText (descending) - this will ensure that we can capture e.g. VPS26A, which would not be
     // highlighted if VPS26 has already been highlighted, because the text VPS26A is now spread across more than one node
     msg.body.sort((a: Entity, b: Entity) => b.entityText.length - a.entityText.length)
       .map((entity: Entity) => {
-        // TODO: if entity.recognisingDict.entityType is 'SMILES' or 'InChI' it is a ChEMBL representation
-        //  which on ChEMBL is an input (i.e. not an allowed tag type when calling allTextNodes ot allDescendants)
-        //  differentiate between InChI and InChIKey based on length
-        //  (InChIKey is always 14, 10 and 1 character, separated by a dash, i.e. 27 characters long
-        //  only do this if we are on ChEMBL
+
+        const selectors = getSelectors(entity.entityText);
+        wrapChemicalFormulaeWithHighlight(entity);
+        addHighlightAndEventListeners(selectors, entity);
+
+        //  only do the following if we are on ChEMBL
         if (document.location.href.includes('www.ebi.ac.uk/chembl')) {
-          // the same id is used on 8 different HTML elements!!!!! so cannot getElementById as only the first one is returned
-          const representationInputFields = document.querySelectorAll('[id="CompReps-canonicalSmiles"]')
-          console.log(representationInputFields)
-
-          //this is 8 elements long
-          // 0 is SMILES
-          // 1 is Inchi
-          // 2 is InchiKey
-          // 3 is SMILES
-          // 4 is Inchi
-          // 5 is InchiKey
-          // 6 is InchiKey
-          // 7 is Inchi
-
           switch (entity.recognisingDict.entityType) {
             case 'SMILES':
-              // call addHighlightAndEventListeners with an array of HTMLElements
-              const smilesInput = document.getElementsByClassName('BCK-CanonicalSmiles')
+              // addHighlightAndEventListeners(chemblRepresentationElements.smiles, entity);
               break;
             case 'InChI':
-              // An InChIKey always comprises three blocks (14, 10 and 1 character, respectively) separated by a dash
-              const inchiKeyLength = 27;
               if (entity.entityText.length === inchiKeyLength) {
-                const inchikeyInput = document.getElementsByClassName('BCK-StandardInchiKey')
-                // console.log(inchikeyInput)
+                // addHighlightAndEventListeners(chemblRepresentationElements.inchikey, entity);
               } else {
-                const inchiInput = document.getElementsByClassName('BCK-StandardInchi')
-                // console.log(inchiInput)
+                // addHighlightAndEventListeners(chemblRepresentationElements.inchi, entity);
               }
               break;
           }
         }
-        const selectors = getSelectors(entity.entityText);
-        wrapChemicalFormulaeWithHighlight(entity);
-        addHighlightAndEventListeners(selectors, entity);
       });
   }
 
   // Find SMILES, InChI and InChIKey in representations section of ChEMBL website
   export function chemblRepresentations(): Array<string> {
 
-    function getRepresentationValue(className: string): string | null  {
+    function getRepresentationValue(className: string): string | null {
       return document.getElementsByClassName(className)[0]?.children[0].attributes[1].textContent;
     }
 
-    const representations: Array<string> = ['BCK-CanonicalSmiles', 'BCK-StandardInchi', 'BCK-StandardInchiKey']
-    const representationValues: (string | null)[] = representations.map(representation => getRepresentationValue(representation))
-    return representationValues.filter(<(val: string | null) => val is string> (val => typeof val === 'string'))
+    const representations: Array<string> = ['BCK-CanonicalSmiles', 'BCK-StandardInchi', 'BCK-StandardInchiKey'];
+    const representationValues: (string | null)[] = representations.map(representation => getRepresentationValue(representation));
+    return representationValues.filter(<(val: string | null) => val is string> (val => typeof val === 'string'));
   }
 
   // Recursively find all text nodes which match regex
@@ -129,35 +115,35 @@ export module TextHighlighter {
       HTMLInputElement,
       HTMLButtonElement,
       HTMLAnchorElement,
-    ].some(tag => element instanceof tag)
+    ].some(tag => element instanceof tag);
   }
 
   // TODO maybe remove this when we can select via data attribute?
   // Recursively find all text nodes which match entity
   function allDescendants(node: HTMLElement, elements: Array<Element>, entity: string) {
-      if ((node && node.classList && node.classList.contains('aurac-sidebar')) || !allowedTagType(node)) {
-        return;
-      }
-      try {
-        node.childNodes.forEach(child => {
-          const element = child as HTMLElement;
-          if (isNodeAllowed(element) && element.nodeType === Node.TEXT_NODE) {
-            if (textContainsTerm(element.nodeValue!, entity)) {
-              elements.push(element);
-            }
-            // tslint:disable-next-line:max-line-length
-          } else if (element.classList && !element.classList.contains('tooltipped')
-            && !element.classList.contains('tooltipped-click')
-            && element.style.display !== 'none') {
-            allDescendants(element, elements, entity);
-          }
-        });
-      } catch (e) {
-        // There are so many things that could go wrong.
-        // The DOM is a wild west
-        console.error(e);
-      }
+    if ((node && node.classList && node.classList.contains('aurac-sidebar')) || !allowedTagType(node)) {
+      return;
     }
+    try {
+      node.childNodes.forEach(child => {
+        const element = child as HTMLElement;
+        if (isNodeAllowed(element) && element.nodeType === Node.TEXT_NODE) {
+          if (textContainsTerm(element.nodeValue!, entity)) {
+            elements.push(element);
+          }
+          // tslint:disable-next-line:max-line-length
+        } else if (element.classList && !element.classList.contains('tooltipped')
+          && !element.classList.contains('tooltipped-click')
+          && element.style.display !== 'none') {
+          allDescendants(element, elements, entity);
+        }
+      });
+    } catch (e) {
+      // There are so many things that could go wrong.
+      // The DOM is a wild west
+      console.error(e);
+    }
+  }
 
   // If a string contains at least one instance of a particular term between word boundaries then return true
 // Can handle non latin unicode terms which at the moment JS Regex can't.
