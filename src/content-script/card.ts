@@ -1,6 +1,6 @@
-import {Entity} from './types'
+import {Entity, SavedCard} from './types'
 import {EntityMap} from './entityMap'
-import { ExternalLinks, Link} from './externalLinks';
+import {ExternalLinks, Link} from './externalLinks';
 
 export module Card {
 
@@ -15,9 +15,12 @@ export module Card {
   import pubchem = ExternalLinks.pubchem;
   import geneProteinChemicalClinicalTrial = ExternalLinks.geneProteinChemicalClinicalTrial;
   import diseaseClinicalTrial = ExternalLinks.diseaseClinicalTrial;
+  import genecards = ExternalLinks.genecards;
+  import ensembl = ExternalLinks.ensembl;
 
   export const entityToCard = new EntityMap<HTMLDivElement>();
   const entityToOccurrence = new EntityMap<Element[]>();
+  const cardClassName = 'sidebar-text';
   export const collapseArrow = '&#60;';
   export const expandArrow = '&#62;';
   const rightArrow = '&#8594';
@@ -27,16 +30,16 @@ export module Card {
   const geneAndProtein = 'Gene or Protein'
   const disease = 'Biological'
   const chemical = 'Chemical'
+  const cardStorageKey = 'cards'
 
   // This class stores the HTML of all aurac-highlight elements before and after we change them. That way when they are no longer
-// highlighted by our search they can return to their original HTML state
+  // highlighted by our search they can return to their original HTML state
   type AuracHighlightHtmlColours = {
     index: number;
     elementName: Element;
     colourBefore: string;
     colourAfter: string;
   }
-
 
   type ArrowButtonProperties = {
     nerTerm: string,
@@ -58,11 +61,11 @@ export module Card {
   // Creates a card for `information`
   export function create(information: Entity): HTMLDivElement {
     const card: HTMLDivElement = document.createElement('div');
-    renderArrowButtonElements(card, information);
+    const arrowButtonProperties = renderArrowButtonElements(card, information);
     renderOccurrenceCounts(card, information);
-    renderRemoveEntityFromSidebarButtonElement(card, information);
+    renderRemoveEntityFromSidebarButtonElement(information, arrowButtonProperties);
 
-    card.className = 'sidebar-text';
+    card.className = cardClassName;
     card.style.backgroundColor = information.recognisingDict.htmlColor;
 
     // If possible link directly to the gene/protein using the resolvedEntity from the entityText
@@ -77,7 +80,8 @@ export module Card {
     let entityLinks: Array<Link> = [];
     switch (information.entityGroup || information.recognisingDict.entityType) {
       case geneAndProtein: {
-        entityLinks = [ncbi, antibodies, pubmed, dimensions, addGene, patents, geneProteinChemicalClinicalTrial];
+        entityLinks = [ncbi, genecards, ensembl, antibodies, pubmed, dimensions, 
+          addGene, patents, geneProteinChemicalClinicalTrial];
         break;
       }
       case disease: {
@@ -93,6 +97,8 @@ export module Card {
     card.insertAdjacentHTML('beforeend', `<p>Links:</p>`);
     const links = createListOfLinks(entity, entityLinks);
     card.appendChild(links)
+
+    renderSaveButton(information, entityLinks, arrowButtonProperties);
 
     const xrefHTML: HTMLDivElement = document.createElement('div');
     xrefHTML.classList.add('aurac-mdc-hidden');
@@ -114,7 +120,7 @@ export module Card {
     return card;
   }
 
-  function renderArrowButtonElements(card: HTMLDivElement, information: Entity): void {
+  function renderArrowButtonElements(card: HTMLSpanElement, information: Entity): HTMLDivElement {
     const arrowFlexProperties: HTMLDivElement = document.createElement('div');
     arrowFlexProperties.className = 'aurac-arrow-buttons';
     card.appendChild(arrowFlexProperties);
@@ -143,6 +149,7 @@ export module Card {
     rightArrowButtonElement.addEventListener('click', () => {
       pressArrowButton(arrowProperties, 'right');
     });
+    return arrowFlexProperties;
   }
 
   function pressArrowButton(arrowProperties: ArrowButtonProperties, direction: 'left' | 'right'): void {
@@ -152,7 +159,7 @@ export module Card {
 
     // TODO can we use a modulo here?
     if (direction === 'right') {
-      if (arrowProperties.positionInArray >= entityToOccurrence.get(arrowProperties.nerTerm).length - 1) {
+      if (arrowProperties.positionInArray >= entityToOccurrence.get(arrowProperties.nerTerm)!.length - 1) {
         // gone off the end of the array - reset
         arrowProperties.positionInArray = 0;
       } else if (arrowProperties.isClicked) {
@@ -162,15 +169,15 @@ export module Card {
       arrowProperties.positionInArray--;
     }
 
-    setNerHtmlColours(entityToOccurrence.get(arrowProperties.nerTerm));
+    setNerHtmlColours(entityToOccurrence.get(arrowProperties.nerTerm)!);
 
-    const targetElement = entityToOccurrence.get(arrowProperties.nerTerm)[arrowProperties.positionInArray];
-    targetElement.scrollIntoView({block: 'center'});
+    const targetElement = entityToOccurrence.get(arrowProperties.nerTerm)![arrowProperties.positionInArray];
+    targetElement.scrollIntoView({behavior: 'smooth'});
 
     toggleHighlightColor(targetElement);
 
     const occurrencesElement = document.getElementById(`${arrowProperties.nerTerm}-occurrences`);
-    occurrencesElement!.innerText = `${arrowProperties.positionInArray + 1} / ${entityToOccurrence.get(arrowProperties.nerTerm).length}`;
+    occurrencesElement!.innerText = `${arrowProperties.positionInArray + 1} / ${entityToOccurrence.get(arrowProperties.nerTerm)!.length}`;
     arrowProperties.isClicked = true;
   }
 
@@ -188,8 +195,20 @@ export module Card {
     occurrenceElement.style.display = 'flex';
     occurrenceElement.style.justifyContent = 'flex-end';
 
-    occurrenceElement.innerText = `${entityToOccurrence.get(entityText).length} matches found`;
+    occurrenceElement.innerText = `${entityToOccurrence.get(entityText)!.length} matches found`;
     card.appendChild(occurrenceElement);
+  }
+
+  function renderSaveButton(information: Entity, links: Link[], parent: HTMLDivElement): void {
+    const saveButton = document.createElement('button')
+
+    const storedCardsString = window.localStorage.getItem(cardStorageKey)
+    const savedCards = storedCardsString === null ? [] : JSON.parse(storedCardsString) as SavedCard[]
+
+    saveButton.innerHTML = savedCards.some(card => card.entityText === information.entityText) ? 'Saved' : '&#128190;'
+    saveButton.className = 'save-button'
+    saveButton.addEventListener('click', () => save(information, links, saveButton))
+    parent.appendChild(saveButton)
   }
 
   function setNerHtmlColours(highlightedNerTerms: Element[]): void {
@@ -203,12 +222,11 @@ export module Card {
     });
   }
 
-  function renderRemoveEntityFromSidebarButtonElement(card: HTMLDivElement, information: Entity): void {
-
+  function renderRemoveEntityFromSidebarButtonElement(information: Entity, arrowProperties: HTMLDivElement): void {
     const removeEntityFromSidebarButtonElement = document.createElement('button');
     removeEntityFromSidebarButtonElement.innerHTML = crossButton;
-    removeEntityFromSidebarButtonElement.className = 'cross-button';
-    card.appendChild(removeEntityFromSidebarButtonElement);
+    removeEntityFromSidebarButtonElement.className = 'aurac-cross-button';
+    arrowProperties.appendChild(removeEntityFromSidebarButtonElement);
 
     removeEntityFromSidebarButtonElement.addEventListener('click', () => {
       pressRemoveEntityFromSidebarButtonElement(information);
@@ -245,8 +263,34 @@ export module Card {
     if (!entityToOccurrence.has(entityText)) {
       entityToOccurrence.set(entityText, [occurrence]);
     } else {
-      entityToOccurrence.get(entityText).push(occurrence);
+      entityToOccurrence.get(entityText)!.push(occurrence);
     }
   }
 
+  export function clear(): void {
+    entityToCard.clear()
+    Array.from(document.getElementsByClassName(cardClassName)).forEach(card => card.parentNode!.removeChild(card))
+  }
+
+  // saves the card data in local storage if it doesn't already exist
+  function save(cardData: Entity, links: Link[], saveButton: HTMLButtonElement): void {
+
+    const storedValue = window.localStorage.getItem(cardStorageKey)
+    const savedCards = storedValue === null ? [] : JSON.parse(storedValue) as SavedCard[]
+
+    if (savedCards.some(card => card.entityText === cardData.entityText)) {
+      return
+    }
+
+    savedCards.push({
+      ...cardData,
+      time: new Date().toString(),
+      originalURL: window.location.href,
+      links: links,
+    })
+
+    window.localStorage.setItem(cardStorageKey, JSON.stringify(savedCards))
+    saveButton.innerHTML = 'Saved'
+
+  }
 }

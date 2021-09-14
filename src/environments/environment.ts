@@ -7,6 +7,7 @@ export const environment = {
   leadmineURL: 'http://localhost:8081',
   compoundConverterURL: 'http://localhost:8082/convert',
   unichemURL: 'http://localhost:8080',
+  pdfConverterURL: 'http://localhost:8083/html'
 };
 
 /*

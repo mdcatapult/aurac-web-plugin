@@ -53,8 +53,9 @@
 
 .aurac-arrow-buttons {
   display: flex;
-  justify-content: flex-end;
+  flex-wrap: wrap;
   flex-direction: row;
+  justify-content: flex-end;
 }
 
 .aurac-logo {
@@ -75,12 +76,14 @@
 }
 
 .aurac-cross-button {
-  position: relative;
-  top: -45px;
-  left: 1px;
+  margin-right: auto;
   color: red;
   background-color: rgb(192, 192, 192);
   padding: 5px;
+}
+
+.save-button {
+  background-color: rgb(192, 192, 192);
 }
 
 .aurac-transform {
@@ -115,6 +118,40 @@
   padding-top: 1vw;
 }
 
+<<<<<<< HEAD
 .aurac-mdc-hidden {
   display: none;
+=======
+.clear-button {
+  background-color: rgb(226, 152, 71);
+  color: rgb(250, 249, 249);
+  border: 1px solid black;
+  margin: 2px;
+}
+
+.clear-button:hover {
+  background-color: rgb(250, 249, 249);
+  color: black;
+}
+
+#aurac-loading-icon {
+  display: none;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  width: 60px;
+  height: 60px;
+  margin: -76px 0 0 -76px;
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid rgb(226, 152, 71);
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+>>>>>>> develop
 }

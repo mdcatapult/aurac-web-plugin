@@ -10,7 +10,11 @@ export type MessageType =
   | 'log'
   | 'toggle_sidebar'
   | 'sidebar_rendered'
-  | 'ner_lookup_performed';
+  | 'ner_lookup_performed'
+  | 'awaiting_response'
+  | 'remove_highlights'
+  | 'preferences-changed'
+  | 'export_csv';
 
 export interface Message {
   type: MessageType;
@@ -82,15 +86,22 @@ export type XRef = {
   url: string,
 };
 
+export type Preferences = {
+  hideUnresolved: boolean,
+  minEntityLength: number
+}
+
 export type Settings = {
   urls: DictionaryURLs,
   xRefConfig: {[key: string]: boolean},
+  preferences: Preferences
 }
 
 export type DictionaryURLs = {
   leadmineURL: string,
   compoundConverterURL: string,
   unichemURL: string,
+  pdfConverterURL: string,
 };
 
 export const defaultSettings: Settings = {
@@ -98,12 +109,18 @@ export const defaultSettings: Settings = {
     leadmineURL: environment.leadmineURL,
     compoundConverterURL: environment.compoundConverterURL,
     unichemURL: environment.unichemURL,
+    pdfConverterURL: environment.pdfConverterURL,
   },
   xRefConfig: {},
+  preferences: {
+    hideUnresolved: true,
+    minEntityLength: 2,
+  }
 };
 
 export const DictionaryURLKeys = {
   leadmineURL : 'leadmineURL',
   compoundConverterURL : 'compoundConverterURL',
-  unichemURL : 'unichemURL'
+  unichemURL : 'unichemURL',
+  pdfConverterURL : 'pdfConverterURL'
 };
