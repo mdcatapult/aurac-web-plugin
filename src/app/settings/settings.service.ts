@@ -19,10 +19,9 @@ export class SettingsService {
   static loadSettings(browserService: BrowserService, onResolve: (settings: Settings) => void): Promise<Settings> {
     return browserService.loadSettings().then(settings => {
       Object.keys(defaultSettings).forEach(defaultSetting => {
-        // @ts-ignore
-        if (settings[defaultSetting] === undefined) {
+        if (settings[defaultSetting as keyof Settings] === undefined) {
           // @ts-ignore
-          settings[defaultSetting] = defaultSettings[defaultSetting]
+          settings[defaultSetting as keyof Settings] = defaultSettings[defaultSetting as keyof Settings]
         }
       })
       onResolve(settings)
