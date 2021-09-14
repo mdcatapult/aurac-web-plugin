@@ -1,6 +1,7 @@
 import {Entity, SavedCard} from './types'
 import {EntityMap} from './entityMap'
 import {ExternalLinks, Link} from './externalLinks';
+import {Sidebar} from './sidebar'
 
 export module Card {
 
@@ -222,6 +223,9 @@ export module Card {
         const divToDelete: Element = elementLocator.parentElement!;
         divToDelete.remove();
       }
+    }
+    if (Array.from(entityToCard.values()).length === 0) {
+      Sidebar.toggleClearButton(false)
     }
   }
 

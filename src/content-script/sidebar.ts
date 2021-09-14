@@ -72,7 +72,7 @@ export module Sidebar {
     return clearButton
   }
 
-  function toggleClearButton(on: boolean): void {
+  export function toggleClearButton(on: boolean): void {
     clearButtonElement.style.display = on ? 'block' : 'none';
   }
 
