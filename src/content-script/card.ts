@@ -143,8 +143,6 @@ export module Card {
 
     const targetElement = entityToOccurrence.get(arrowProperties.nerTerm)![arrowProperties.positionInArray];
 
-    console.log(arrowProperties.nerTerm, entityToOccurrence)
-    console.log(targetElement)
     targetElement.scrollIntoView({behavior: 'smooth'});
 
     toggleHighlightColor(targetElement, highlightElements);
