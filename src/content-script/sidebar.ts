@@ -117,7 +117,6 @@ export module Sidebar {
         const entityId = info.resolvedEntity || info.entityText
         if (!Card.entityToCard.has(entityId)) {  // entity is a new sidecard
           const card = Card.create(info, [info.entityText])
-          // cardContainer.appendChild(sidebarCard)
           Card.entityToCard.set(entityId, {synonyms: [info.entityText], div: card});
 
           Sidebar.addCard(card);
