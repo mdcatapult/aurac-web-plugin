@@ -116,7 +116,8 @@ export class BackgroundComponent {
   }
 
   private loadXRefs([entityText, resolvedEntity, entityGroup, entityType]: [string, string, string, string]): void {
-    // default case for selected InChI keys
+    if (entityGroup === 'Chemical') {
+      // default case for selected InChI keys
     let xRefObservable: Observable<XRef[]> = this.client.post(
       `${this.settings.urls.unichemURL}/x-ref/${entityText}`,
       this.getTrueKeys(this.settings.xRefConfig)
@@ -124,7 +125,6 @@ export class BackgroundComponent {
       // @ts-ignore
       this.addCompoundNameToXRefObject(entityText)
     );
-    if (entityGroup === 'Chemical') {
       switch (entityType) {
         case "SMILES": {
           const encodedEntity = encodeURIComponent(entityText);
@@ -152,11 +152,11 @@ export class BackgroundComponent {
           break
         }
       }
+      xRefObservable.subscribe((xrefs: XRef[]) => {
+        this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
+          .catch(console.error);
+      });
     }
-    xRefObservable.subscribe((xrefs: XRef[]) => {
-      this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
-        .catch(console.error);
-    });
   }
 
   private addCompoundNameToXRefObject = (entityTerm: string) => map((xrefs: XRef[]) => xrefs.map(xref => {
