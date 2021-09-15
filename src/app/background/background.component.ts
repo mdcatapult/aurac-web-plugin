@@ -115,27 +115,19 @@ export class BackgroundComponent {
     saveAs(blob, 'export.csv')
   }
 
-  private loadXRefs([entityText, resolvedEntity, entityGroup]: [string, string, string]): void {
-    const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]$/;
-    let xRefObservable: Observable<XRef[]>;
+  private loadXRefs([entityText, resolvedEntity, entityGroup, entityType]: [string, string, string, string]): void {
+    // default case for selected InChI keys
+    let xRefObservable: Observable<XRef[]> = this.client.post(
+      `${this.settings.urls.unichemURL}/x-ref/${entityText}`,
+      this.getTrueKeys(this.settings.xRefConfig)
+    ).pipe(
+      // @ts-ignore
+      this.addCompoundNameToXRefObject(entityText)
+    );
     if (entityGroup === 'Chemical') {
-      if (entityText.match(inchiKeyRegex)) {
-        xRefObservable = this.client.post(
-          `${this.settings.urls.unichemURL}/x-ref/${entityText}`,
-          this.getTrueKeys(this.settings.xRefConfig)
-        ).pipe(
-          // @ts-ignore
-          this.addCompoundNameToXRefObject(entityText)
-        );
-        xRefObservable.subscribe((xrefs: XRef[]) => {
-          this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
-            .catch(console.error);
-        });
-      }
-      if (resolvedEntity) {
-        // Do chemicals ever resolve to inchis or is it always smiles?
-        if (!resolvedEntity.match(inchiKeyRegex)) {
-          const encodedEntity = encodeURIComponent(resolvedEntity);
+      switch (entityType) {
+        case "SMILES": {
+          const encodedEntity = encodeURIComponent(entityText);
           xRefObservable = this.client.get(`${this.settings.urls.compoundConverterURL}/${encodedEntity}?from=SMILES&to=inchikey`).pipe(
             // @ts-ignore
             switchMap((converterResult: ConverterResult) => {
@@ -147,7 +139,9 @@ export class BackgroundComponent {
             }),
             this.addCompoundNameToXRefObject(entityText)
           );
-        } else {
+          break
+        }
+        case "Mol": {
           xRefObservable = this.client.post(
             `${this.settings.urls.unichemURL}/x-ref/${resolvedEntity}`,
             this.getTrueKeys(this.settings.xRefConfig)
@@ -155,15 +149,15 @@ export class BackgroundComponent {
             // @ts-ignore
             this.addCompoundNameToXRefObject(entityText)
           );
+          break
         }
-        xRefObservable.subscribe((xrefs: XRef[]) => {
-          this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
-            .catch(console.error);
-      });
+      }
     }
+    xRefObservable.subscribe((xrefs: XRef[]) => {
+      this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
+        .catch(console.error);
+    });
   }
-}
-
 
   private addCompoundNameToXRefObject = (entityTerm: string) => map((xrefs: XRef[]) => xrefs.map(xref => {
     if (xref) {

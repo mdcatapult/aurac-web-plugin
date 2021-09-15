@@ -119,7 +119,8 @@ export module Sidebar {
         Sidebar.addCard(card);
         toggleClearButton(true);
         // @ts-ignore
-        browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity, info.entityGroup]})
+        console.log(info)
+        browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity, info.entityGroup, info.recognisingDict.entityType]})
           .catch(e => console.error(e));
       }
 
