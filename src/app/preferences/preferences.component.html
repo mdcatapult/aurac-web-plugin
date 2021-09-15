@@ -12,15 +12,17 @@
                  [formControl]="preferencesForm!.get('hideUnresolved')">
         </td>
       </tr>
+
       <tr>
         <td>
-            Minimum entity length
+          Minimum entity length
         </td>
         <td>
-          <input type="text"
-                 [ngStyle]="{'border': preferencesForm!.get('minEntityLength')!
-                 .valid ? '1px solid gray' : '1px solid red'}"
-                 [formControl]="preferencesForm!.get('minEntityLength')">
+          <select [formControl]="preferencesForm!.get('minEntityLength')">
+            <option *ngFor="let length of minEntityLength" selected>
+              {{length}}
+            </option>
+          </select>
         </td>
       </tr>
     </table>
