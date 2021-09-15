@@ -12,8 +12,8 @@ export module TextHighlighter {
 
   const chemicalFormulae: chemicalFormula[] = [];
 
-  const highlightClass = 'aurac-highlight'
-  const highlightParentClass = 'aurac-highlight-parent'
+  const highlightClass = 'aurac-highlight';
+  const highlightParentClass = 'aurac-highlight-parent';
 
   export function wrapEntitiesWithHighlight(msg: any) {
 
@@ -104,35 +104,35 @@ export module TextHighlighter {
       HTMLInputElement,
       HTMLButtonElement,
       HTMLAnchorElement,
-    ].some(tag => element instanceof tag)
+    ].some(tag => element instanceof tag);
   }
 
   // TODO maybe remove this when we can select via data attribute?
   // Recursively find all text nodes which match entity
   function allDescendants(node: HTMLElement, elements: Array<Element>, entity: string) {
-      if ((node && node.classList && node.classList.contains('aurac-sidebar')) || !allowedTagType(node)) {
-        return;
-      }
-      try {
-        node.childNodes.forEach(child => {
-          const element = child as HTMLElement;
-          if (isNodeAllowed(element) && element.nodeType === Node.TEXT_NODE) {
-            if (textContainsTerm(element.nodeValue!, entity)) {
-              elements.push(element);
-            }
-            // tslint:disable-next-line:max-line-length
-          } else if (element.classList && !element.classList.contains('tooltipped')
-            && !element.classList.contains('tooltipped-click')
-            && element.style.display !== 'none') {
-            allDescendants(element, elements, entity);
-          }
-        });
-      } catch (e) {
-        // There are so many things that could go wrong.
-        // The DOM is a wild west
-        console.error(e);
-      }
+    if ((node && node.classList && node.classList.contains('aurac-sidebar')) || !allowedTagType(node)) {
+      return;
     }
+    try {
+      node.childNodes.forEach(child => {
+        const element = child as HTMLElement;
+        if (isNodeAllowed(element) && element.nodeType === Node.TEXT_NODE) {
+          if (textContainsTerm(element.nodeValue!, entity)) {
+            elements.push(element);
+          }
+          // tslint:disable-next-line:max-line-length
+        } else if (element.classList && !element.classList.contains('tooltipped')
+          && !element.classList.contains('tooltipped-click')
+          && element.style.display !== 'none') {
+          allDescendants(element, elements, entity);
+        }
+      });
+    } catch (e) {
+      // There are so many things that could go wrong.
+      // The DOM is a wild west
+      console.error(e);
+    }
+  }
 
   const delimiters: string[] = ['(', ')', '\\n', '\"', '\'', '\\', ',', ';', '.', '!'];
 
@@ -250,17 +250,16 @@ export module TextHighlighter {
     });
   }
 
-  // highlights a term by wrapping it an HTML span
-  const highlightInput = (element: HTMLInputElement, entity: Entity) => `<span class="aurac-highlight" style="background-color: ${entity.recognisingDict.htmlColor}; position: relative; cursor: pointer">${element.value}</span>`;
+  // highlights the value of an input tag by wrapping it an HTML span.  This is a ChEMBL specific implementation which removes the passed
+  // input element from the DOM altogether, but retains the functionality of the copy and save buttons next to the (former) input elements
+  const highlightInputValue = (element: HTMLInputElement, entity: Entity) => `<span class="aurac-highlight" style="background-color: ${entity.recognisingDict.htmlColor}; position: relative; cursor: pointer">${element.value}</span>`;
 
   // wraps value (only) of input tag in aurac-highlight and adds event listener
-  // N.B. this removes the input tag from the DOM altogether
-  // implementation is specific to ChEMBL - the copy and save buttons next to the input remain functional
   function highlight(selector: HTMLInputElement[], entity: Entity) {
     selector.map(element => {
       const replacementNode = document.createElement('span');
       replacementNode.className = 'aurac-highlight-parent';
-      replacementNode.innerHTML = highlightInput(element, entity);
+      replacementNode.innerHTML = highlightInputValue(element, entity);
       element.parentNode?.insertBefore(replacementNode, element);
       element.parentNode?.removeChild(element);
     });
