@@ -1,7 +1,9 @@
 import {Sidebar} from './sidebar'
 import {TextHighlighter} from './textHighlighter'
 import { Card } from './card'
+import {UserExperience} from './userExperience';
 import {ChEMBL} from './chembl';
+
 export module Browser {
   // add listener function to browser
   import chemblRepresentations = ChEMBL.chemblRepresentations;
@@ -19,6 +21,7 @@ export module Browser {
             resolve({type: 'leadmine', body: textForNER.join('\n')});
           });
         case 'markup_page':
+          UserExperience.toggleLoadingIcon(false);
           TextHighlighter.wrapEntitiesWithHighlight(msg);
           Sidebar.open()
           break;
@@ -28,10 +31,15 @@ export module Browser {
         case 'toggle_sidebar':
           Sidebar.toggle()
           break;
+        case 'awaiting_response':
+          UserExperience.toggleLoadingIcon(msg.body as boolean);
+          break;
+        case 'remove_highlights':
+          TextHighlighter.removeHighlights();
+          break;
         default:
           throw new Error('Received unexpected message from plugin');
       }
     });
   }
-
 }

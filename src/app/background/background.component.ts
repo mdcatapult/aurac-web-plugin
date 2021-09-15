@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '../../environments/environment';
+import {SettingsService} from '../settings/settings.service';
 
 import {ConverterResult, defaultSettings, LeadminerEntity, LeadminerResult, Message, Settings, StringMessage, XRef} from 'src/types';
 import {validDict} from './types';
@@ -17,14 +18,18 @@ export class BackgroundComponent {
 
   settings: Settings = defaultSettings;
   dictionary?: validDict;
+  leadmineResult?: LeadminerResult;
 
   constructor(private client: HttpClient, private browserService: BrowserService) {
 
-    this.browserService.loadSettings().then(settings => {
+    SettingsService.loadSettings(this.browserService, (settings) => {
       this.settings = settings || defaultSettings;
+      this.browserService.addListener(this.getBrowserListenerFn());
     });
+  }
 
-    this.browserService.addListener((msg: Partial<Message>) => {
+  private getBrowserListenerFn(): (msg: Partial<Message>) => void {
+    return (msg: Partial<Message>) => {
       console.log('Received message from popup...', msg);
       switch (msg.type) {
         case 'ner_current_page': {
@@ -40,8 +45,25 @@ export class BackgroundComponent {
           this.settings = msg.body;
           break;
         }
+        case 'preferences-changed': {
+          if (!this.leadmineResult) {
+            break;
+          }
+          this.refreshHighlights();
+          break;
+        }
       }
-    });
+    }
+  }
+
+  private refreshHighlights(): void {
+    this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
+      .catch(console.error)
+      .then(() => {
+        const uniqueEntities = this.getUniqueEntities(this.leadmineResult!);
+        this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
+          .catch(console.error);
+      });
   }
 
   private loadXRefs([entityTerm, resolvedEntity]: [string, string]): void {
@@ -73,11 +95,10 @@ export class BackgroundComponent {
 
       xRefObservable.subscribe((xrefs: XRef[]) => {
         this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
-          .catch(e => console.error(e));
+          .catch(console.error);
       });
     }
   }
-
 
   private addCompoundNameToXRefObject = (entityTerm: string) => map((xrefs: XRef[]) => xrefs.map(xref => {
     if (xref) {
@@ -86,11 +107,10 @@ export class BackgroundComponent {
     return xref;
   }))
 
-
   private nerCurrentPage(dictionary: validDict): void {
     console.log('Getting content of active tab...');
     this.browserService.sendMessageToActiveTab({type: 'get_page_contents'})
-      .catch(e => console.error(e))
+      .catch(console.error)
       .then(result => {
         if (!result || !result.body) {
           console.log('No content');
@@ -113,22 +133,48 @@ export class BackgroundComponent {
           .subscribe((response) => {
             console.log('Received results from leadmine...');
             if (!response.body || !response.body.entities) {
+              this.browserService.sendMessageToActiveTab({type: 'awaiting_response', body: false})
+                .catch(console.error);
               return;
             }
-            const uniqueEntities = this.getUniqueEntities(response.body);
+            this.leadmineResult = response.body;
+            const uniqueEntities = this.getUniqueEntities(this.leadmineResult!);
             this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
-              .catch(e => console.error(e));
-          });
+              .catch(console.error);
+            },
+            () => {
+              this.browserService.sendMessageToActiveTab({type: 'awaiting_response', body: false})
+                .catch(console.error);
+            });
+
+        this.browserService.sendMessageToActiveTab({type: 'awaiting_response', body: true})
+          .catch(console.error);
       });
   }
 
+  shouldDisplayEntity(entity: LeadminerEntity): boolean {
+    // Entity must be greater than min entity length in all cases.
+    if (entity && entity.entityText.length < this.settings.preferences.minEntityLength) {
+      return false;
+    }
+
+    if (!this.settings.preferences.hideUnresolved) {
+      return true;
+    } else {
+      // If hide unresolved is true, the resolved entity string must be non-empty.
+      return !!entity.resolvedEntity;
+    }
+  }
+
+
   getUniqueEntities(leadmineResponse: LeadminerResult): Array<LeadminerEntity> {
     const uniqueEntities = new Array<LeadminerEntity>();
-    leadmineResponse.entities.forEach((entity: LeadminerEntity) => {
-      if (uniqueEntities.every(uniqueEntity => uniqueEntity.entityText !== entity.entityText)) {
-        uniqueEntities.push(entity);
-      }
-    });
+    leadmineResponse.entities
+      .forEach((entity: LeadminerEntity) => {
+        if (this.shouldDisplayEntity(entity)) {
+          uniqueEntities.push(entity);
+        }
+      });
     return uniqueEntities;
   }
 
