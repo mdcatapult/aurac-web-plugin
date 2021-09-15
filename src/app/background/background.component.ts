@@ -118,15 +118,14 @@ export class BackgroundComponent {
   private loadXRefs([entityText, resolvedEntity, entityGroup, entityType]: [string, string, string, string]): void {
     if (entityGroup === 'Chemical') {
       // default case for selected InChI keys
-    let xRefObservable: Observable<XRef[]> = this.client.post(
-      `${this.settings.urls.unichemURL}/x-ref/${entityText}`,
-      this.getTrueKeys(this.settings.xRefConfig)
-    ).pipe(
-      // @ts-ignore
-      this.addCompoundNameToXRefObject(entityText)
-    );
+      let xRefObservable: Observable<XRef[]> = this.client.post(
+        `${this.settings.urls.unichemURL}/x-ref/${entityText}`,
+        this.getTrueKeys(this.settings.xRefConfig)).pipe(
+        // @ts-ignore
+        this.addCompoundNameToXRefObject(entityText)
+      );
       switch (entityType) {
-        case "SMILES": {
+        case 'SMILES': {
           const encodedEntity = encodeURIComponent(entityText);
           xRefObservable = this.client.get(`${this.settings.urls.compoundConverterURL}/${encodedEntity}?from=SMILES&to=inchikey`).pipe(
             // @ts-ignore
@@ -141,7 +140,7 @@ export class BackgroundComponent {
           );
           break
         }
-        case "Mol": {
+        case 'Mol': {
           xRefObservable = this.client.post(
             `${this.settings.urls.unichemURL}/x-ref/${resolvedEntity}`,
             this.getTrueKeys(this.settings.xRefConfig)
@@ -153,9 +152,9 @@ export class BackgroundComponent {
         }
       }
       xRefObservable.subscribe((xrefs: XRef[]) => {
-        this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
-          .catch(console.error);
-      });
+          this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
+            .catch(console.error);
+        });
     }
   }
 

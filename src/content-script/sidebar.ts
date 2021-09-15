@@ -120,7 +120,8 @@ export module Sidebar {
         toggleClearButton(true);
         // @ts-ignore
         console.log(info)
-        browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity, info.entityGroup, info.recognisingDict.entityType]})
+        browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity, 
+          info.entityGroup, info.recognisingDict.entityType]})
           .catch(e => console.error(e));
       }
 
