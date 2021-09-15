@@ -4,19 +4,8 @@ import {ExternalLinks, Link} from './externalLinks';
 
 export module Card {
 
-  import ncbi = ExternalLinks.ncbi;
-  import geneNames = ExternalLinks.geneNames;
-  import antibodies = ExternalLinks.antibodies;
-  import pubmed = ExternalLinks.pubmed;
-  import addGene = ExternalLinks.addGene;
-  import patents = ExternalLinks.patents;
-  import dimensions = ExternalLinks.dimensions;
-  import drugBank = ExternalLinks.drugBank;
-  import pubchem = ExternalLinks.pubchem;
-  import geneProteinChemicalClinicalTrial = ExternalLinks.geneProteinChemicalClinicalTrial;
-  import diseaseClinicalTrial = ExternalLinks.diseaseClinicalTrial;
-  import genecards = ExternalLinks.genecards;
-  import ensembl = ExternalLinks.ensembl;
+  import links = ExternalLinks
+  import dimensionsLink = ExternalLinks.dimensions
 
   export const entityToCard = new EntityMap<HTMLDivElement>();
   const entityToOccurrence = new EntityMap<Element[]>();
@@ -274,16 +263,17 @@ export module Card {
     let entityLinks: Array<Link> = [];
     switch (entity.entityGroup || entity.recognisingDict.entityType) {
       case geneAndProtein: {
-        entityLinks = [ncbi, geneNames, genecards, ensembl, antibodies, pubmed, dimensions,
-          addGene, patents, geneProteinChemicalClinicalTrial];
+        entityLinks = [links.ncbi, links.geneNames, links.genecards, links.ensembl,
+          links.antibodies, links.pubmed, dimensionsLink, links.addGene, links.patents, links.geneProteinChemicalClinicalTrial];
         break;
       }
       case disease: {
-        entityLinks = [drugBank, pubmed, dimensions, patents, diseaseClinicalTrial];
+        entityLinks = [links.drugBank, links.pubmed, dimensionsLink, links.patents, links.diseaseClinicalTrial];
         break;
       }
       case chemical: {
-        entityLinks = [pubchem, drugBank, pubmed, dimensions, patents, geneProteinChemicalClinicalTrial];
+        entityLinks = [links.pubchem, links.drugBank, links.pubmed,
+          dimensionsLink, links.patents, links.geneProteinChemicalClinicalTrial];
         break;
       }
     }
