@@ -37,7 +37,7 @@ export module TextHighlighter {
         if (document.location.href.includes('www.ebi.ac.uk/chembl')) {
           switch (entity.recognisingDict.entityType) {
             case 'SMILES':
-              // addHighlightAndEventListeners(chemblRepresentationElements.smiles, entity);
+              addHighlightAndEventListeners(chemblRepresentationElements.smiles, entity);
               break;
             case 'InChI':
               if (entity.entityText.length === inchiKeyLength) {
@@ -215,6 +215,13 @@ export module TextHighlighter {
 
   function addHighlightAndEventListeners(selector: Element[], entity: Entity) {
     selector.map(element => {
+
+      // nodeValue does not exist on HTMLInputElement, and casting those as Elements in getChemblRepresentationElements does not fix it
+      // as nodeValue is null; casting the inputs as Elements does however result in e.g.
+
+      console.log(element)
+      console.log(' <--- ' + typeof element)
+      console.log(element.nodeValue)
       // Try/catch for edge cases.
       try {
         // For each term, we want to replace it's original HTML with a highlight colour
