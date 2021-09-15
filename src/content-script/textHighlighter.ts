@@ -12,6 +12,9 @@ export module TextHighlighter {
 
   const chemicalFormulae: chemicalFormula[] = [];
 
+  const highlightClass = 'aurac-highlight'
+  const highlightParentClass = 'aurac-highlight-parent'
+
   export function wrapEntitiesWithHighlight(msg: any) {
     // sort entities by length of entityText (descending) - this will ensure that we can capture e.g. VPS26A, which would not be
     // highlighted if VPS26 has already been highlighted, because the text VPS26A is now spread across more than one node
@@ -172,7 +175,7 @@ export module TextHighlighter {
         try {
           const replacementNode = document.createElement('span');
           // the span needs a class so that it can be deleted by the removeHighlights function
-          replacementNode.className = 'aurac-highlight';
+          replacementNode.className = highlightClass;
           // Retrieves the specific highlight colour to use for this NER term
           replacementNode.innerHTML = highlightTerm(formulaNode.innerHTML, entity);
           // This new highlighted term will replace the current child (same term but with no highlight) of this parent element
@@ -200,7 +203,9 @@ export module TextHighlighter {
         // For each term, we want to replace its original HTML with a highlight colour
         const replacementNode = document.createElement('span');
         // the span needs a class so that it can be deleted by the removeHighlights function
-        replacementNode.className = 'aurac-highlight';
+
+        replacementNode.className = highlightParentClass;
+
         replacementNode.innerHTML = element.nodeValue!.split(entity.entityText).join(highlightTerm(entity.entityText, entity));
 
         // This new highlighted term will will replace the current child (same term but with no highlight) of this parent element.
@@ -226,7 +231,8 @@ export module TextHighlighter {
   }
 
   export function removeHighlights() {
-    return Array.from(document.getElementsByClassName('aurac-highlight'))
+    Array.from(document.getElementsByClassName(highlightParentClass))
+      .concat(Array.from(document.getElementsByClassName(highlightClass)))
       .forEach(element => {
         const childNodes = Array.from(element.childNodes);
         element.replaceWith(...childNodes);
