@@ -10,9 +10,9 @@ export type Entity = {
 }
 
 export type ChemblRepresentationElements = {
-  inchikey: Element[],
-  inchi: Element[],
-  smiles: Element[]
+  inchikey: HTMLInputElement[],
+  inchi: HTMLInputElement[],
+  smiles: HTMLInputElement[]
 }
 
 export type chemicalFormula = {

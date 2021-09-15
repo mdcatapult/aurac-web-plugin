@@ -1,8 +1,11 @@
 import {Sidebar} from './sidebar'
 import {TextHighlighter} from './textHighlighter'
 import { Card } from './card'
+import {ChEMBL} from './chembl';
 export module Browser {
   // add listener function to browser
+  import chemblRepresentations = ChEMBL.chemblRepresentations;
+
   export function addListener() {
     browser.runtime.onMessage.addListener((msg: any) => {
       switch (msg.type) {
@@ -12,7 +15,7 @@ export module Browser {
             TextHighlighter.allTextNodes(document.body, textNodes);
             // On ChEMBL, the representations (i.e. SMILES, InChI, InChIKey) are not text nodes
             // so need to be 'manually' added to the textNodes array
-            const textForNER = textNodes.concat(TextHighlighter.chemblRepresentations());
+            const textForNER = textNodes.concat(chemblRepresentations());
             resolve({type: 'leadmine', body: textForNER.join('\n')});
           });
         case 'markup_page':

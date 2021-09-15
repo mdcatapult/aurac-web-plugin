@@ -10,7 +10,6 @@ export module TextHighlighter {
   import getChemblRepresentationElements = ChEMBL.getChemblRepresentationElements;
   import isChemblPage = ChEMBL.isChemblPage;
 
-
   const chemicalFormulae: chemicalFormula[] = [];
   const delimiters: string[] = ['(', ')', '\\n', '\'', '\"', ',', ';', '.', '-'];
   const noSpace = '';
@@ -36,31 +35,21 @@ export module TextHighlighter {
         //  only do the following if we are on ChEMBL
         if (document.location.href.includes('www.ebi.ac.uk/chembl')) {
           switch (entity.recognisingDict.entityType) {
+            // N.B. we cannot use addHighlightAndEventListeners here as we are dealing with HTMLInputElements
+            // which have different properties to Elements
             case 'SMILES':
-              addHighlightAndEventListeners(chemblRepresentationElements.smiles, entity);
+              highlightAndListen(chemblRepresentationElements.smiles, entity);
               break;
             case 'InChI':
               if (entity.entityText.length === inchiKeyLength) {
-                // addHighlightAndEventListeners(chemblRepresentationElements.inchikey, entity);
+                highlightAndListen(chemblRepresentationElements.inchikey, entity);
               } else {
-                // addHighlightAndEventListeners(chemblRepresentationElements.inchi, entity);
+                highlightAndListen(chemblRepresentationElements.inchi, entity);
               }
               break;
           }
         }
       });
-  }
-
-  // Find SMILES, InChI and InChIKey in representations section of ChEMBL website
-  export function chemblRepresentations(): Array<string> {
-
-    function getRepresentationValue(className: string): string | null {
-      return document.getElementsByClassName(className)[0]?.children[0].attributes[1].textContent;
-    }
-
-    const representations: Array<string> = ['BCK-CanonicalSmiles', 'BCK-StandardInchi', 'BCK-StandardInchiKey'];
-    const representationValues: (string | null)[] = representations.map(representation => getRepresentationValue(representation));
-    return representationValues.filter(<(val: string | null) => val is string> (val => typeof val === 'string'));
   }
 
   // Recursively find all text nodes which match regex
@@ -219,9 +208,9 @@ export module TextHighlighter {
       // nodeValue does not exist on HTMLInputElement, and casting those as Elements in getChemblRepresentationElements does not fix it
       // as nodeValue is null; casting the inputs as Elements does however result in e.g.
 
-      console.log(element)
-      console.log(' <--- ' + typeof element)
-      console.log(element.nodeValue)
+      console.log(element);
+      console.log(' <--- ' + typeof element);
+      console.log(element.nodeValue);
       // Try/catch for edge cases.
       try {
         // For each term, we want to replace it's original HTML with a highlight colour
@@ -242,6 +231,22 @@ export module TextHighlighter {
       } catch (e) {
         console.error(e);
       }
+    });
+  }
+
+  // adds highlights and event listeners to input tags - implementation is specific to ChEMBL so may not work universally
+  function highlightAndListen(selector: HTMLInputElement[], entity: Entity) {
+    selector.map(element => {
+      console.log(element)
+      console.log(' <--- BEFORE');
+      const replacementNode = document.createElement('span');
+      replacementNode.className = 'aurac-highlight';
+      replacementNode.innerHTML = element.outerHTML.split(entity.entityText)
+        .join(highlightTerm(entity.entityText, entity));
+      element.parentNode?.insertBefore(replacementNode, element);
+      element.parentNode?.removeChild(element);
+      console.log(element)
+      console.log(' <--- AFTER');
     });
   }
 
