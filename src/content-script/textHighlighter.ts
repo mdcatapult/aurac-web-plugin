@@ -38,13 +38,13 @@ export module TextHighlighter {
             // N.B. we cannot use addHighlightAndEventListeners here as we are dealing with HTMLInputElements
             // which have different properties to Elements
             case 'SMILES':
-              highlightAndListen(chemblRepresentationElements.smiles, entity);
+              highlight(chemblRepresentationElements.smiles, entity);
               break;
             case 'InChI':
               if (entity.entityText.length === inchiKeyLength) {
-                highlightAndListen(chemblRepresentationElements.inchikey, entity);
+                highlight(chemblRepresentationElements.inchikey, entity);
               } else {
-                highlightAndListen(chemblRepresentationElements.inchi, entity);
+                highlight(chemblRepresentationElements.inchi, entity);
               }
               break;
           }
@@ -250,22 +250,21 @@ export module TextHighlighter {
     });
   }
 
-  // adds highlights and event listeners to input tags - implementation is specific to ChEMBL so may not work universally
-  function highlightAndListen(selector: HTMLInputElement[], entity: Entity) {
+  // highlights a term by wrapping it an HTML span
+  const highlightInput = (element: HTMLInputElement, entity: Entity) => `<span class="aurac-highlight" style="background-color: ${entity.recognisingDict.htmlColor}; position: relative; cursor: pointer">${element.value}</span>`;
+
+  // wraps value (only) of input tag in aurac-highlight and adds event listener
+  // N.B. this removes the input tag from the DOM altogether
+  // implementation is specific to ChEMBL - the copy and save buttons next to the input remain functional
+  function highlight(selector: HTMLInputElement[], entity: Entity) {
     selector.map(element => {
-      console.log(element)
-      console.log(' <--- unaltered element');
       const replacementNode = document.createElement('span');
-      replacementNode.className = 'aurac-highlight';
-      replacementNode.innerHTML = element.outerHTML.split(entity.entityText)
-        .join(highlightTerm(entity.entityText, entity));
-      console.log(replacementNode)
-      console.log(' <--- replacementNode')
-      console.log(element.parentNode)
-      console.log(' <-- element.parentNode')
+      replacementNode.className = 'aurac-highlight-parent';
+      replacementNode.innerHTML = highlightInput(element, entity);
       element.parentNode?.insertBefore(replacementNode, element);
       element.parentNode?.removeChild(element);
     });
+    // TODO: add listeners and populate sidebar
   }
 
   function getSelectors(entity: string): Array<Element> {
