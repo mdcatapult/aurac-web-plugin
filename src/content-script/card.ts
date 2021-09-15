@@ -26,7 +26,7 @@ export module Card {
   const rightArrow = '&#8594';
   const leftArrow = '&#8592';
   const crossButton = '&#215;';
-  const highlightElements: Array<AuracHighlightHtmlColours> = [];
+  const highlightElements: Array<HighlightHtmlColours> = [];
   const geneAndProtein = 'Gene or Protein'
   const disease = 'Biological'
   const chemical = 'Chemical'
@@ -34,7 +34,7 @@ export module Card {
 
   // This class stores the HTML of all aurac-highlight elements before and after we change them. That way when they are no longer
   // highlighted by our search they can return to their original HTML state
-  type AuracHighlightHtmlColours = {
+  type HighlightHtmlColours = {
     index: number;
     elementName: Element;
     colourBefore: string;
@@ -134,7 +134,7 @@ export module Card {
 
   function pressArrowButton(arrowProperties: ArrowButtonProperties, direction: 'left' | 'right'): void {
     Array.from(entityToOccurrence.values()).forEach(entity => {
-      entity.forEach(occurrence => toggleHighlightColor(occurrence));
+      entity.forEach(occurrence => toggleHighlightColor(occurrence, highlightElements));
     });
 
     // TODO can we use a modulo here?
@@ -149,20 +149,20 @@ export module Card {
       arrowProperties.positionInArray--;
     }
 
-    setNerHtmlColours(entityToOccurrence.get(arrowProperties.nerTerm)!);
+    highlightElements.push(...getNerHighlightColors(entityToOccurrence.get(arrowProperties.nerTerm)!))
 
     const targetElement = entityToOccurrence.get(arrowProperties.nerTerm)![arrowProperties.positionInArray];
     targetElement.scrollIntoView({behavior: 'smooth'});
 
-    toggleHighlightColor(targetElement);
+    toggleHighlightColor(targetElement, highlightElements);
 
     const occurrencesElement = document.getElementById(`${arrowProperties.nerTerm}-occurrences`);
     occurrencesElement!.innerText = `${arrowProperties.positionInArray + 1} / ${entityToOccurrence.get(arrowProperties.nerTerm)!.length}`;
     arrowProperties.isClicked = true;
   }
 
-  function toggleHighlightColor(nerElement: Element): void {
-    const auracHighlightArray = Array.from(highlightElements);
+  function toggleHighlightColor(nerElement: Element, highlightedElements: HighlightHtmlColours[]): void {
+    const auracHighlightArray = Array.from(highlightedElements);
     auracHighlightArray.forEach(element => {
       element.elementName.innerHTML = element.elementName === nerElement ? element.colourAfter : element.colourBefore;
     });
@@ -191,14 +191,13 @@ export module Card {
     return saveButton
   }
 
-  function setNerHtmlColours(highlightedNerTerms: Element[]): void {
-    highlightedNerTerms.forEach(element => {
+  function getNerHighlightColors(highlightedNerTerms: Element[]): HighlightHtmlColours[] {
+    return highlightedNerTerms.map(element => {
       const index = highlightedNerTerms.indexOf(element);
       const elementName = element;
       const colourBefore = element.innerHTML;
       const colourAfter = element.textContent!.fontcolor('blue');
-      const nerHtmlColour = {index, elementName, colourBefore, colourAfter};
-      highlightElements.push(nerHtmlColour);
+      return {index, elementName, colourBefore, colourAfter};
     });
   }
 
