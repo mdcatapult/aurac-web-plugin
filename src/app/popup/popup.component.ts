@@ -1,5 +1,4 @@
 import {Component} from '@angular/core';
-import {Message} from 'src/types';
 import {LogService} from './log.service';
 import {validDict} from '../background/types';
 import {BrowserService} from '../browser.service';
@@ -22,7 +21,7 @@ export class PopupComponent {
 
   nerCurrentPage(dictionary: validDict): void {
     this.log.Log('Sending message to background page...');
-    browser.runtime.sendMessage<Message>({type: 'ner_current_page', body: dictionary})
+    this.browserService.sendMessage('ner_current_page', dictionary)
       .catch(e => this.log.Error(`Couldn't send message to background page: ${JSON.stringify(e)}`));
   }
 
@@ -33,5 +32,9 @@ export class PopupComponent {
 
   pdfClicked(): void {
     this.mode = 'pdf'
+  }
+
+  exportResults(): void {
+    this.browserService.sendMessage('export_csv')
   }
 }
