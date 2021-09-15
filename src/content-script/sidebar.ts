@@ -96,8 +96,8 @@ export module Sidebar {
 
   // TODO move style
   function setSidebarColors(highlightedDiv: HTMLDivElement): void {
-    Array.from(Card.entityToCard.values()).forEach(div => {
-      div.style.border = div === highlightedDiv ? '2px white solid' : '1px black solid';
+    Array.from(Card.entityToCard.values()).forEach(card => {
+      card.div.style.border = card.div === highlightedDiv ? '2px white solid' : '1px black solid';
     });
   }
 
@@ -113,22 +113,40 @@ export module Sidebar {
       if (getAuracHighlightChildren(element).some(child => child.className === 'aurac-highlight')
         && element.parentElement!.className === 'aurac-highlight') {
         removeEventListener('click', entityClickHandler(info, element));
-      } else if (!Card.entityToCard.has(info.entityText)) {
-        const card = Card.create(info)
-        Card.entityToCard.set(info.entityText, card);
-        Sidebar.addCard(card);
-        toggleClearButton(true);
-        // @ts-ignore
-        browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity]})
-          .catch(e => console.error(e));
-      }
+      } else {
+        const entityId = info.resolvedEntity || info.entityText
+        if (!Card.entityToCard.has(entityId)) {  // entity is a new sidecard
+          const card = Card.create(info, [info.entityText])
+          // cardContainer.appendChild(sidebarCard)
+          Card.entityToCard.set(entityId, {synonyms: [info.entityText], div: card});
 
-      const div = Card.entityToCard.get(info.entityText);
-      if (div) {
-        div.scrollIntoView({behavior: 'smooth'});
-        setSidebarColors(div);
+          Sidebar.addCard(card);
+          toggleClearButton(true);
+          // @ts-ignore
+          browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity]})
+            .catch(e => console.error(e));
+        } else { // entity is a synonym of existing sidecard
+          const synonyms = Card.entityToCard.get(entityId)!.synonyms
+
+          if (!synonyms.includes(info.entityText)) {
+            synonyms.push(info.entityText)
+
+            let synonymOccurrences: Element[] = []
+            synonyms.forEach(synonym => {
+              synonymOccurrences = synonymOccurrences.concat(Card.entityToOccurrence.get(synonym)!)
+            })
+            synonymOccurrences.sort((a, b) => a.getBoundingClientRect().y - b.getBoundingClientRect().y)
+            Card.entityToOccurrence.set(entityId, synonymOccurrences)
+            Card.entityToCard.get(entityId)!.div.replaceWith(Card.create(info, synonyms))
+          }
+        }
+        const div = Card.entityToCard.get(info.entityText)?.div;
+        if (div) {
+          div.scrollIntoView({behavior: 'smooth'});
+          setSidebarColors(div);
+        }
       }
-    };
+    }
   }
 
   function toggleNarrative(on: boolean): void {
