@@ -118,10 +118,9 @@
   padding-top: 1vw;
 }
 
-<<<<<<< HEAD
 .aurac-mdc-hidden {
   display: none;
-=======
+}
 .clear-button {
   background-color: rgb(226, 152, 71);
   color: rgb(250, 249, 249);
@@ -153,5 +152,4 @@
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
->>>>>>> develop
 }
