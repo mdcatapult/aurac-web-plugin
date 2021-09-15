@@ -221,13 +221,6 @@ export module TextHighlighter {
 
   function addHighlightAndEventListeners(selector: Element[], entity: Entity) {
     selector.map(element => {
-
-      // nodeValue does not exist on HTMLInputElement, and casting those as Elements in getChemblRepresentationElements does not fix it
-      // as nodeValue is null; casting the inputs as Elements does however result in e.g.
-
-      console.log(element);
-      console.log(' <--- ' + typeof element);
-      console.log(element.nodeValue);
       // Try/catch for edge cases.
       try {
         // For each term, we want to replace its original HTML with a highlight colour
@@ -256,15 +249,17 @@ export module TextHighlighter {
   function highlightAndListen(selector: HTMLInputElement[], entity: Entity) {
     selector.map(element => {
       console.log(element)
-      console.log(' <--- BEFORE');
+      console.log(' <--- unaltered element');
       const replacementNode = document.createElement('span');
       replacementNode.className = 'aurac-highlight';
       replacementNode.innerHTML = element.outerHTML.split(entity.entityText)
         .join(highlightTerm(entity.entityText, entity));
+      console.log(replacementNode)
+      console.log(' <--- replacementNode')
+      console.log(element.parentNode)
+      console.log(' <-- element.parentNode')
       element.parentNode?.insertBefore(replacementNode, element);
       element.parentNode?.removeChild(element);
-      console.log(element)
-      console.log(' <--- AFTER');
     });
   }
 
