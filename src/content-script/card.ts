@@ -7,8 +7,8 @@ export module Card {
   import links = ExternalLinks
   import dimensionsLink = ExternalLinks.dimensions
 
-  export const entityToCard = new EntityMap<HTMLDivElement>();
-  const entityToOccurrence = new EntityMap<Element[]>();
+  export const entityToCard = new EntityMap<{ synonyms: string[], div: HTMLDivElement }>();
+  export const entityToOccurrence = new EntityMap<Element[]>();
   const cardClassName = 'sidebar-text';
   export const collapseArrow = '&#60;';
   export const expandArrow = '&#62;';
@@ -47,37 +47,41 @@ export module Card {
     return htmlListOfLinks
   }
 
-  // Creates a card for `information`
-  export function create(information: Entity): HTMLDivElement {
+  // Creates a card for a given entity
+  export function create(information: Entity, synonyms: string[]): HTMLDivElement {
     const card: HTMLDivElement = document.createElement('div');
     card.className = cardClassName;
     card.style.backgroundColor = information.recognisingDict.htmlColor;
 
     const entity: string = information.entityText.toLowerCase().replace(/\s/g, '%20');
+
     const entityLinks = getEntityLinks(information)
-    card.appendChild(createCardControls(information, entityLinks))
+    const links = createListOfLinks(entity, entityLinks);
+
+    card.appendChild(createCardControls(information, entityLinks, synonyms))
 
     // If possible link directly to the gene/protein using the resolvedEntity from the entityText
     // We could move this to the externalLinks class (or elsewhere) and make them for each type of entity.
     if (information.entityGroup === 'Gene or Protein' && information.resolvedEntity) {
       const geneNameLink = ExternalLinks.geneNames.createUrl(information.resolvedEntity);
-      card.insertAdjacentHTML('beforeend', `<p><a target="_blank" href="${geneNameLink}" title="Link to HGNC for this gene/protein">${information.entityText}</a></p>`);
+      card.insertAdjacentHTML('beforeend', `<p><a target="_blank" href="${geneNameLink}" title="Link to HGNC for this gene/protein">${synonyms.toString()}</a></p>`);
     } else {
-      card.insertAdjacentHTML('beforeend', `<p>${information.entityText}</p>`);
+      card.insertAdjacentHTML('beforeend', `<p>${synonyms.toString()}</p>`);
     }
     card.insertAdjacentHTML('beforeend', `<p>Links:</p>`);
-    const links = createListOfLinks(entity, entityLinks);
     card.appendChild(links)
 
     card.appendChild(createCrossReferences(information.entityText));
 
     card.insertAdjacentHTML('beforeend', `<p class='aurac-mdc-entity-type'>Entity Type: ${information.recognisingDict.entityType}</p>`);
 
+    const xrefHTML: HTMLDivElement = document.createElement('div');
+    xrefHTML.className = information.entityText;
+    card.appendChild(xrefHTML);
     return card;
   }
 
-
-  function createCardControls(entityData: Entity, entityLinks: Link[]): HTMLElement {
+  function createCardControls(entityData: Entity, entityLinks: Link[], synonyms: string[]): HTMLElement {
     const controls: HTMLSpanElement = document.createElement('span');
     controls.className = 'aurac-card-controls'
 
@@ -87,16 +91,16 @@ export module Card {
     const saveButton = createSaveButton(entityData, entityLinks);
     controls.appendChild(saveButton);
 
-    const arrowButtons = createArrowButtonElements(entityData);
+    const arrowButtons = createArrowButtonElements(entityData, synonyms);
     controls.appendChild(arrowButtons)
 
-    const occurrenceCounts = createOccurrenceCounts(entityData);
+    const occurrenceCounts = createOccurrenceCounts(entityData, synonyms);
     controls.appendChild(occurrenceCounts)
 
     return controls
   }
 
-  function createArrowButtonElements(information: Entity): HTMLElement {
+  function createArrowButtonElements(information: Entity, synonyms: string[]): HTMLElement {
     const arrowButtons: HTMLDivElement = document.createElement('div');
     arrowButtons.className = 'aurac-arrow-buttons';
 
@@ -110,8 +114,9 @@ export module Card {
     rightArrowButtonElement.className = 'aurac-right-arrow-button';
     arrowButtons.appendChild(rightArrowButtonElement);
 
+    const nerTerm = synonyms.length > 1 ? information.resolvedEntity : information.entityText
     const arrowProperties: ArrowButtonProperties = {
-      nerTerm: information.entityText,
+      nerTerm: nerTerm,
       nerColor: information.recognisingDict.htmlColor,
       positionInArray: 0,
       isClicked: false
@@ -163,14 +168,16 @@ export module Card {
     });
   }
 
-  function createOccurrenceCounts(information: Entity): HTMLElement {
-    const entityText = information.entityText;
+  function createOccurrenceCounts(information: Entity, synonyms: string[]): HTMLElement {
+    const entityText = synonyms.length === 1 ? information.entityText : information.resolvedEntity;
     const occurrenceElement = document.createElement('span');
     occurrenceElement.id = `${entityText}-occurrences`;
     occurrenceElement.style.display = 'flex';
     occurrenceElement.style.justifyContent = 'flex-end';
 
-    occurrenceElement.innerText = `${entityToOccurrence.get(entityText)!.length} matches found`;
+    let numOfOccurrences = 0
+    synonyms.forEach(synonym => numOfOccurrences = numOfOccurrences + entityToOccurrence.get(synonym)!.length)
+    occurrenceElement.innerText = `${numOfOccurrences} matches found`;
     return occurrenceElement
   }
 
