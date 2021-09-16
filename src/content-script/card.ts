@@ -7,8 +7,8 @@ export module Card {
   import links = ExternalLinks
   import dimensionsLink = ExternalLinks.dimensions
 
-  export const entityToCard = new EntityMap<HTMLDivElement>();
-  const entityToOccurrence = new EntityMap<Element[]>();
+  export const entityToCard = new EntityMap<{ synonyms: string[], div: HTMLDivElement }>();
+  export const entityToOccurrence = new EntityMap<Element[]>();
   const cardClassName = 'sidebar-text';
   export const collapseArrow = '&#60;';
   export const expandArrow = '&#62;';
@@ -48,7 +48,7 @@ export module Card {
   }
 
   // Creates a card for a given entity
-  export function create(information: Entity): HTMLDivElement {
+  export function create(information: Entity, synonyms: string[]): HTMLDivElement {
     const card: HTMLDivElement = document.createElement('div');
     card.className = cardClassName;
     card.style.backgroundColor = information.recognisingDict.htmlColor;
@@ -58,9 +58,9 @@ export module Card {
     const entityLinks = getEntityLinks(information)
     const links = createListOfLinks(entity, entityLinks);
 
-    card.appendChild(createCardControls(information, entityLinks))
+    card.appendChild(createCardControls(information, entityLinks, synonyms))
 
-    card.insertAdjacentHTML('beforeend', `<p>${information.entityText}</p>`);
+    card.insertAdjacentHTML('beforeend', `<p>${synonyms.toString()}</p>`);
     card.insertAdjacentHTML('beforeend', `<p>Links:</p>`)
     card.appendChild(links)
     card.insertAdjacentHTML('beforeend', `<p class='aurac-mdc-entity-type'>Entity Type: ${information.recognisingDict.entityType}</p>`);
@@ -71,7 +71,7 @@ export module Card {
     return card;
   }
 
-  function createCardControls(entityData: Entity, entityLinks: Link[]): HTMLElement {
+  function createCardControls(entityData: Entity, entityLinks: Link[], synonyms: string[]): HTMLElement {
     const controls: HTMLSpanElement = document.createElement('span');
     controls.className = 'aurac-card-controls'
 
@@ -81,16 +81,16 @@ export module Card {
     const saveButton = createSaveButton(entityData, entityLinks);
     controls.appendChild(saveButton);
 
-    const arrowButtons = createArrowButtonElements(entityData);
+    const arrowButtons = createArrowButtonElements(entityData, synonyms);
     controls.appendChild(arrowButtons)
 
-    const occurrenceCounts = createOccurrenceCounts(entityData);
+    const occurrenceCounts = createOccurrenceCounts(entityData, synonyms);
     controls.appendChild(occurrenceCounts)
 
     return controls
   }
 
-  function createArrowButtonElements(information: Entity): HTMLElement {
+  function createArrowButtonElements(information: Entity, synonyms: string[]): HTMLElement {
     const arrowButtons: HTMLDivElement = document.createElement('div');
     arrowButtons.className = 'aurac-arrow-buttons';
 
@@ -104,8 +104,9 @@ export module Card {
     rightArrowButtonElement.className = 'aurac-right-arrow-button';
     arrowButtons.appendChild(rightArrowButtonElement);
 
+    const nerTerm = synonyms.length > 1 ? information.resolvedEntity : information.entityText
     const arrowProperties: ArrowButtonProperties = {
-      nerTerm: information.entityText,
+      nerTerm: nerTerm,
       nerColor: information.recognisingDict.htmlColor,
       positionInArray: 0,
       isClicked: false
@@ -141,6 +142,7 @@ export module Card {
     highlightElements.push(...getNerHighlightColors(entityToOccurrence.get(arrowProperties.nerTerm)!))
 
     const targetElement = entityToOccurrence.get(arrowProperties.nerTerm)![arrowProperties.positionInArray];
+
     targetElement.scrollIntoView({behavior: 'smooth'});
 
     toggleHighlightColor(targetElement, highlightElements);
@@ -157,14 +159,16 @@ export module Card {
     });
   }
 
-  function createOccurrenceCounts(information: Entity): HTMLElement {
-    const entityText = information.entityText;
+  function createOccurrenceCounts(information: Entity, synonyms: string[]): HTMLElement {
+    const entityText = synonyms.length === 1 ? information.entityText : information.resolvedEntity;
     const occurrenceElement = document.createElement('span');
     occurrenceElement.id = `${entityText}-occurrences`;
     occurrenceElement.style.display = 'flex';
     occurrenceElement.style.justifyContent = 'flex-end';
 
-    occurrenceElement.innerText = `${entityToOccurrence.get(entityText)!.length} matches found`;
+    let numOfOccurrences = 0
+    synonyms.forEach(synonym => numOfOccurrences = numOfOccurrences + entityToOccurrence.get(synonym)!.length)
+    occurrenceElement.innerText = `${numOfOccurrences} matches found`;
     return occurrenceElement
   }
 

@@ -182,9 +182,11 @@ export module TextHighlighter {
           formulaNode.parentNode!.insertBefore(replacementNode, formulaNode);
           formulaNode.parentNode!.removeChild(formulaNode);
           const childValues = Sidebar.getAuracHighlightChildren(replacementNode);
-          childValues.forEach(childValue => { // For each highlighted element, we will add an event listener to add it to our sidebar
-            Card.populateEntityToOccurrences(entity.entityText, childValue);
-            childValue.addEventListener('click', Sidebar.entityClickHandler(entity, replacementNode));
+          childValues.filter(child => {
+            return !elementHasHighlightedParents(child)
+          }).forEach(child => { // For each highlighted element, we will add an event listener to add it to our sidebar
+            Card.populateEntityToOccurrences(entity.entityText, child);
+            child.addEventListener('click', Sidebar.entityClickHandler(entity, replacementNode));
           });
         } catch (e) {
           console.error(e);
@@ -213,10 +215,12 @@ export module TextHighlighter {
         element.parentNode!.removeChild(element);
 
         // For each value we find that is a highlighted term, we want to add it to our sidebar and find its occurrences within the page
-        const childValues = getAuracHighlightChildren(replacementNode);
-        childValues.forEach(childValue => {
-          Card.populateEntityToOccurrences(entity.entityText, childValue);
-          childValue.addEventListener('click', Sidebar.entityClickHandler(entity, replacementNode));
+        const children = getAuracHighlightChildren(replacementNode);
+        children.filter(child => {
+          return !elementHasHighlightedParents(child)
+        }).forEach(child => {
+          Card.populateEntityToOccurrences(entity.entityText, child);
+          child.addEventListener('click', Sidebar.entityClickHandler(entity, replacementNode));
         });
       } catch (e) {
         console.error(e);
@@ -237,5 +241,11 @@ export module TextHighlighter {
         const childNodes = Array.from(element.childNodes);
         element.replaceWith(...childNodes);
       });
+  }
+
+  function elementHasHighlightedParents(entity: Element): boolean {
+    const parent = entity.parentElement
+    const grandparent = parent?.parentElement
+    return !!(parent?.classList.contains(highlightClass) || grandparent?.classList.contains(highlightClass))
   }
 }
