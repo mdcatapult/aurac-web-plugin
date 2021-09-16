@@ -1,4 +1,6 @@
-import {ChemblRepresentationElements, inchiKeyLength} from './types';
+import {ChemblRepresentationElements, Entity, inchiKeyLength} from './types';
+import {Card} from './card';
+import {Sidebar} from './sidebar';
 
 
 export module ChEMBL {
@@ -40,6 +42,36 @@ export module ChEMBL {
   // check if current page is ChEMBL
   export function isChemblPage(): boolean {
     return document.location.href.includes('www.ebi.ac.uk/chembl');
+  }
+
+  // wraps input tag in aurac-highlight and adds event listener
+  export function highlight(selector: HTMLInputElement[], entity: Entity) {
+    selector.map(element => {
+      try {
+        // create a copy of the input element
+        const clonedElement = element.cloneNode(true);
+
+        // create the highlight span and set classname and styling
+        const auracHighlightSpan = document.createElement('span');
+        auracHighlightSpan.className = 'aurac-highlight';
+        auracHighlightSpan.style.backgroundColor = `${entity.recognisingDict.htmlColor}`;
+        auracHighlightSpan.style.position = 'relative';
+        auracHighlightSpan.style.cursor = 'pointer';
+
+        // append the cloned input element to the highlight span
+        auracHighlightSpan.appendChild(clonedElement);
+
+        // add highlight span to the DOM and remove unhighlighted input element
+        element.parentNode?.insertBefore(auracHighlightSpan, element);
+        element.parentNode?.removeChild(element);
+
+        // add listener
+        Card.populateEntityToOccurrences(entity.entityText, auracHighlightSpan);
+        auracHighlightSpan.addEventListener('click', Sidebar.entityClickHandler(entity, auracHighlightSpan));
+      } catch (e) {
+        console.error(e);
+      }
+    });
   }
 
 }
