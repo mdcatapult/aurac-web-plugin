@@ -50,7 +50,7 @@ export class SettingsComponent implements OnInit {
       ),
       minEntityLength: new FormControl(
         defaultSettings.preferences.minEntityLength,
-        Validators.compose([Validators.pattern(/^[1-9]$/), Validators.required])
+        Validators.required
       )
     })
   });
