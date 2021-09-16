@@ -217,7 +217,6 @@ export module Card {
     if (!document.getElementById(information.entityText)) {
       return;
     }
-
     information.resolvedEntity != null ? entityToCard.delete(information.resolvedEntity, document)
       : entityToCard.delete(information.entityText, document);
 
