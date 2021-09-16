@@ -141,11 +141,16 @@ export class BackgroundComponent {
           break
         }
         case 'Mol': {
-          xRefObservable = this.client.post(
-            `${this.settings.urls.unichemURL}/x-ref/${resolvedEntity}`,
-            this.getTrueKeys(this.settings.xRefConfig)
-          ).pipe(
+          const encodedEntity = encodeURIComponent(resolvedEntity);
+          xRefObservable = this.client.get(`${this.settings.urls.compoundConverterURL}/${encodedEntity}?from=SMILES&to=inchikey`).pipe(
             // @ts-ignore
+            switchMap((converterResult: ConverterResult) => {
+              return converterResult ?
+                this.client.post(
+                  `${this.settings.urls.unichemURL}/x-ref/${converterResult.output}`,
+                  this.getTrueKeys(this.settings.xRefConfig)
+                ) : of({});
+            }),
             this.addCompoundNameToXRefObject(entityText)
           );
           break
