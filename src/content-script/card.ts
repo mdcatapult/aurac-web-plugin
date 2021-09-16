@@ -52,7 +52,7 @@ export module Card {
   export function create(information: Entity, synonyms: string[]): HTMLDivElement {
     const card: HTMLDivElement = document.createElement('div');
     card.className = cardClassName;
-    card.id = `${cardClassName} ${information.entityText}`
+    card.id = `${cardClassName}.${information.entityText}`
     card.style.backgroundColor = information.recognisingDict.htmlColor;
 
     const entity: string = information.entityText.toLowerCase().replace(/\s/g, '%20');
@@ -221,7 +221,7 @@ export module Card {
     information.resolvedEntity != null ? entityToCard.delete(information.resolvedEntity, document)
       : entityToCard.delete(information.entityText, document);
 
-    const element  = document.getElementById(`${cardClassName} ${information.entityText}`);
+    const element  = document.getElementById(`${cardClassName}.${information.entityText}`);
     element?.remove();
 
     if (Array.from(entityToCard.values()).length === 0) {
