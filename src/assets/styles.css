@@ -118,6 +118,9 @@
   padding-top: 1vw;
 }
 
+.aurac-mdc-hidden {
+  display: none;
+}
 .clear-button {
   background-color: rgb(226, 152, 71);
   color: rgb(250, 249, 249);

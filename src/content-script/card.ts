@@ -60,14 +60,21 @@ export module Card {
 
     card.appendChild(createCardControls(information, entityLinks, synonyms))
 
-    card.insertAdjacentHTML('beforeend', `<p>${synonyms.toString()}</p>`);
-    card.insertAdjacentHTML('beforeend', `<p>Links:</p>`)
+    // If possible link directly to the gene/protein using the resolvedEntity from the entityText
+    // We could move this to the externalLinks class (or elsewhere) and make them for each type of entity.
+    if (information.entityGroup === 'Gene or Protein' && information.resolvedEntity) {
+      const geneNameLink = ExternalLinks.geneNames.createUrl(information.resolvedEntity);
+      card.insertAdjacentHTML('beforeend', `<p><a target="_blank" href="${geneNameLink}" title="Link to HGNC for this gene/protein">${synonyms.toString()}</a></p>`);
+    } else {
+      card.insertAdjacentHTML('beforeend', `<p>${synonyms.toString()}</p>`);
+    }
+    card.insertAdjacentHTML('beforeend', `<p>Links:</p>`);
     card.appendChild(links)
+
+    card.appendChild(createCrossReferences(information.entityText));
+
     card.insertAdjacentHTML('beforeend', `<p class='aurac-mdc-entity-type'>Entity Type: ${information.recognisingDict.entityType}</p>`);
 
-    const xrefHTML: HTMLDivElement = document.createElement('div');
-    xrefHTML.className = information.entityText;
-    card.appendChild(xrefHTML);
     return card;
   }
 
@@ -142,7 +149,6 @@ export module Card {
     highlightElements.push(...getNerHighlightColors(entityToOccurrence.get(arrowProperties.nerTerm)!))
 
     const targetElement = entityToOccurrence.get(arrowProperties.nerTerm)![arrowProperties.positionInArray];
-
     targetElement.scrollIntoView({behavior: 'smooth'});
 
     toggleHighlightColor(targetElement, highlightElements);
@@ -206,25 +212,31 @@ export module Card {
   }
 
   function pressRemoveEntityFromSidebarButtonElement(information: Entity): void {
-    if (!document.getElementsByClassName(information.entityText).length) {
+    if (!document.getElementById(information.entityText)) {
       return;
     }
     entityToCard.delete(information.entityText, document);
-    const elementList: HTMLCollectionOf<Element> = document.getElementsByClassName(information.entityText);
-    for (let i = 0; i < elementList.length; i++) {
-      if (elementList.item(i)!.className === information.entityText) {
-        const elementLocator: Element = elementList.item(i)!;
-        const divToDelete: Element = elementLocator.parentElement!;
-        divToDelete.remove();
-      }
-    }
+    const element  = document.getElementById(information.entityText);
+    element?.parentElement?.remove();
   }
 
   export function setXRefHTML(xrefs: { databaseName: string, url: string, compoundName: string }[]): void {
-    Array.from(document.getElementsByClassName(xrefs[0] ? xrefs[0].compoundName : '')).forEach(element => element.innerHTML = '');
+    if (!xrefs.length) {
+      return;
+    }
+    // Remove existing xrefs
+    const xrefHolder: HTMLElement = document.getElementById(xrefs[0].compoundName + '_list')!;
+    while (xrefHolder.firstChild) {
+      xrefHolder.removeChild(xrefHolder.lastChild!);
+    }
+    const xrefParent: HTMLElement = document.getElementById(xrefs[0].compoundName)!;
+    // Show the parent div if there are any xrefs
+    xrefs.length > 0 ? xrefParent.classList.remove('aurac-mdc-hidden') : '';
+    // Then add the xrefs
     xrefs.forEach(xref => {
-      const xrefElement = document.getElementsByClassName(xref.compoundName).item(0);
-      xrefElement!.innerHTML += `<p> ${xref.databaseName}: <a href=${xref.url} target="_blank">${xref.url}</a></p>`;
+      const htmlListElement: HTMLLIElement = document.createElement('li');
+      htmlListElement.innerHTML = `<a href=${xref.url} target="_blank" title="Link to ${xref.databaseName} reference for this entity">${xref.databaseName}</a>`;
+      xrefHolder.appendChild(htmlListElement);
     });
   }
 
@@ -263,6 +275,7 @@ export module Card {
 
   }
 
+  // Area where links to any external info sources will be added
   export function getEntityLinks(entity: Entity): Link[] {
     let entityLinks: Array<Link> = [];
     switch (entity.entityGroup || entity.recognisingDict.entityType) {
@@ -282,5 +295,22 @@ export module Card {
       }
     }
     return entityLinks
+  }
+
+  // Div where any cross references will be added
+  export function createCrossReferences(entityText: string): HTMLDivElement {
+    const xrefHTML: HTMLDivElement = document.createElement('div');
+    xrefHTML.classList.add('aurac-mdc-hidden');
+    xrefHTML.title = 'Links direct to pages on external sources for this entity';
+    const htmlParagraphElement: HTMLParagraphElement = document.createElement('p');
+    htmlParagraphElement.innerHTML = 'Cross references:'
+
+    xrefHTML.id = entityText;
+    xrefHTML.appendChild(htmlParagraphElement);
+    const xrefHTMLList: HTMLUListElement = document.createElement('ul');
+    xrefHTMLList.className = 'aurac-mdc-href-list-style';
+    xrefHTMLList.id = entityText + '_list';
+    xrefHTML.appendChild(xrefHTMLList);
+    return xrefHTML;
   }
 }
