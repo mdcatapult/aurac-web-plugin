@@ -97,35 +97,35 @@ export module TextHighlighter {
       HTMLInputElement,
       HTMLButtonElement,
       HTMLAnchorElement,
-    ].some(tag => element instanceof tag);
+    ].some(tag => element instanceof tag)
   }
 
   // TODO maybe remove this when we can select via data attribute?
   // Recursively find all text nodes which match entity
   function allDescendants(node: HTMLElement, elements: Array<Element>, entity: string) {
-    if ((node && node.classList && node.classList.contains('aurac-sidebar')) || !allowedTagType(node)) {
-      return;
-    }
-    try {
-      node.childNodes.forEach(child => {
-        const element = child as HTMLElement;
-        if (isNodeAllowed(element) && element.nodeType === Node.TEXT_NODE) {
-          if (textContainsTerm(element.nodeValue!, entity)) {
-            elements.push(element);
+      if ((node && node.classList && node.classList.contains('aurac-sidebar')) || !allowedTagType(node)) {
+        return;
+      }
+      try {
+        node.childNodes.forEach(child => {
+          const element = child as HTMLElement;
+          if (isNodeAllowed(element) && element.nodeType === Node.TEXT_NODE) {
+            if (textContainsTerm(element.nodeValue!, entity)) {
+              elements.push(element);
+            }
+            // tslint:disable-next-line:max-line-length
+          } else if (element.classList && !element.classList.contains('tooltipped')
+            && !element.classList.contains('tooltipped-click')
+            && element.style.display !== 'none') {
+            allDescendants(element, elements, entity);
           }
-          // tslint:disable-next-line:max-line-length
-        } else if (element.classList && !element.classList.contains('tooltipped')
-          && !element.classList.contains('tooltipped-click')
-          && element.style.display !== 'none') {
-          allDescendants(element, elements, entity);
-        }
-      });
-    } catch (e) {
-      // There are so many things that could go wrong.
-      // The DOM is a wild west
-      console.error(e);
+        });
+      } catch (e) {
+        // There are so many things that could go wrong.
+        // The DOM is a wild west
+        console.error(e);
+      }
     }
-  }
 
   const delimiters: string[] = ['(', ')', '\\n', '\"', '\'', '\\', ',', ';', '.', '!'];
 
@@ -192,7 +192,9 @@ export module TextHighlighter {
     term.parentNode!.removeChild(term);
     const childValues = Sidebar.getAuracHighlightChildren(highlightedTerm);
     // For each highlighted element, we will add an event listener to add it to our sidebar
-    childValues.forEach(childValue => {
+    childValues.filter(child => {
+      return !elementHasHighlightedParents(child)
+    }).forEach(childValue => {
       Card.populateEntityToOccurrences(entity.entityText, childValue);
       childValue.addEventListener('click', Sidebar.entityClickHandler(entity, highlightedTerm));
     });
@@ -251,5 +253,11 @@ export module TextHighlighter {
         const childNodes = Array.from(element.childNodes);
         element.replaceWith(...childNodes);
       });
+  }
+
+  function elementHasHighlightedParents(entity: Element): boolean {
+    const parent = entity.parentElement
+    const grandparent = parent?.parentElement
+    return !!(parent?.classList.contains(highlightClass) || grandparent?.classList.contains(highlightClass))
   }
 }
