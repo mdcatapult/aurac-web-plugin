@@ -110,43 +110,39 @@ export module Sidebar {
 
       toggleNarrative(false)
 
-      if (getAuracHighlightChildren(element).some(child => child.className === 'aurac-highlight')
-        && element.parentElement!.className === 'aurac-highlight') {
-        removeEventListener('click', entityClickHandler(info, element));
-      } else {
-        const entityId = info.resolvedEntity || info.entityText
-        if (!Card.entityToCard.has(entityId)) {  // entity is a new sidecard
-          const card = Card.create(info, [info.entityText])
-          Card.entityToCard.set(entityId, {synonyms: [info.entityText], div: card});
+      const entityId = info.resolvedEntity || info.entityText
+      if (!Card.entityToCard.has(entityId)) {  // entity is a new sidecard
+        const card = Card.create(info, [info.entityText])
+        Card.entityToCard.set(entityId, {synonyms: [info.entityText], div: card});
 
-          Sidebar.addCard(card);
-          toggleClearButton(true);
-          // @ts-ignore
-          browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity]})
-            .catch(e => console.error(e));
-        } else { // entity is a synonym of existing sidecard
-          const synonyms = Card.entityToCard.get(entityId)!.synonyms
+        Sidebar.addCard(card);
+        toggleClearButton(true);
+        // @ts-ignore
+        browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity]})
+          .catch(e => console.error(e));
+      } else { // entity is a synonym of existing sidecard
+        const synonyms = Card.entityToCard.get(entityId)!.synonyms
 
-          if (!synonyms.includes(info.entityText)) {
-            synonyms.push(info.entityText)
+        if (!synonyms.includes(info.entityText)) {
+          synonyms.push(info.entityText)
 
-            let synonymOccurrences: Element[] = []
-            synonyms.forEach(synonym => {
-              synonymOccurrences = synonymOccurrences.concat(Card.entityToOccurrence.get(synonym)!)
-            })
-            synonymOccurrences.sort((a, b) => a.getBoundingClientRect().y - b.getBoundingClientRect().y)
-            Card.entityToOccurrence.set(entityId, synonymOccurrences)
-            Card.entityToCard.get(entityId)!.div.replaceWith(Card.create(info, synonyms))
-          }
+          let synonymOccurrences: Element[] = []
+          synonyms.forEach(synonym => {
+            synonymOccurrences = synonymOccurrences.concat(Card.entityToOccurrence.get(synonym)!)
+          })
+          synonymOccurrences.sort((a, b) => a.getBoundingClientRect().y - b.getBoundingClientRect().y)
+          Card.entityToOccurrence.set(entityId, synonymOccurrences)
+          Card.entityToCard.get(entityId)!.div.replaceWith(Card.create(info, synonyms))
         }
-        const div = Card.entityToCard.get(info.entityText)?.div;
-        if (div) {
-          div.scrollIntoView({behavior: 'smooth'});
-          setSidebarColors(div);
-        }
+      }
+      const div = Card.entityToCard.get(info.entityText)?.div;
+      if (div) {
+        div.scrollIntoView({behavior: 'smooth'});
+        setSidebarColors(div);
       }
     }
   }
+
 
   function toggleNarrative(on: boolean): void {
     document.getElementById('aurac-narrative')!.style.display = on ? 'block' : 'none';
