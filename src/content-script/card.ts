@@ -6,7 +6,6 @@ export module Card {
 
   import links = ExternalLinks
   import dimensionsLink = ExternalLinks.dimensions
-  import geneNames = ExternalLinks.geneNames;
 
   export const entityToCard = new EntityMap<HTMLDivElement>();
   const entityToOccurrence = new EntityMap<Element[]>();
@@ -61,7 +60,7 @@ export module Card {
     // If possible link directly to the gene/protein using the resolvedEntity from the entityText
     // We could move this to the externalLinks class (or elsewhere) and make them for each type of entity.
     if (information.entityGroup === 'Gene or Protein' && information.resolvedEntity) {
-      const geneNameLink = geneNames.createUrl(information.resolvedEntity);
+      const geneNameLink = ExternalLinks.geneNames.createUrl(information.resolvedEntity);
       card.insertAdjacentHTML('beforeend', `<p><a target="_blank" href="${geneNameLink}" title="Link to HGNC for this gene/protein">${information.entityText}</a></p>`);
     } else {
       card.insertAdjacentHTML('beforeend', `<p>${information.entityText}</p>`);
@@ -219,23 +218,18 @@ export module Card {
 
   export function setXRefHTML(xrefs: { databaseName: string, url: string, compoundName: string }[]): void {
     // Remove existing xrefs
-    // Lots of null checks with '?' & '!' to tell TS that things may or may not exist.
-    // Otherwise you will get compiler errors like:
-    // TS2345: Argument of type 'ChildNode | null' is not assignable to parameter of type 'Node'.
-    // Type 'null' is not assignable to type 'Node'
-    const xrefHolder: HTMLElement | null = document.getElementById(xrefs[0].compoundName + '_list');
-    while (xrefHolder?.firstChild) {
-      // xrefHolder.lastChild! asserts that lastChild is not null or the compiler will complain
-      xrefHolder!.removeChild(xrefHolder.lastChild!);
+    const xrefHolder: HTMLElement = document.getElementById(xrefs[0].compoundName + '_list')!;
+    while (xrefHolder.firstChild) {
+      xrefHolder.removeChild(xrefHolder.lastChild!);
     }
-    const xrefParent: HTMLElement | null = document.getElementById(xrefs[0].compoundName);
+    const xrefParent: HTMLElement = document.getElementById(xrefs[0].compoundName)!;
     // Show the parent div if there are any xrefs
-    xrefs.length > 0 ? xrefParent!.classList.remove('aurac-mdc-hidden') : '';
+    xrefs.length > 0 ? xrefParent.classList.remove('aurac-mdc-hidden') : '';
     // Then add the xrefs
     xrefs.forEach(xref => {
       const htmlListElement: HTMLLIElement = document.createElement('li');
       htmlListElement.innerHTML = `<a href=${xref.url} target="_blank" title="Link to ${xref.databaseName} reference for this entity">${xref.databaseName}</a>`;
-      xrefHolder?.appendChild(htmlListElement);
+      xrefHolder.appendChild(htmlListElement);
     });
   }
 
@@ -279,7 +273,7 @@ export module Card {
     let entityLinks: Array<Link> = [];
     switch (entity.entityGroup || entity.recognisingDict.entityType) {
       case geneAndProtein: {
-        entityLinks = [links.ncbi, links.geneNames, links.genecards, links.ensembl,
+        entityLinks = [links.ncbi, links.genecards, links.ensembl,
           links.antibodies, links.pubmed, dimensionsLink, links.addGene, links.patents, links.geneProteinChemicalClinicalTrial];
         break;
       }
