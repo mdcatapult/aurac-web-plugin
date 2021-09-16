@@ -259,7 +259,7 @@ export module TextHighlighter {
 
       // create the highlight span and set classname and styling
       const auracHighlightSpan = document.createElement('span')
-      auracHighlightSpan.className = 'aurac-highlight'
+      auracHighlightSpan.className = highlightClass
       auracHighlightSpan.style.backgroundColor = `${entity.recognisingDict.htmlColor}`
       auracHighlightSpan.style.position = 'relative'
       auracHighlightSpan.style.cursor = 'pointer'
