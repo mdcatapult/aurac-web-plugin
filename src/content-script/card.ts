@@ -217,6 +217,9 @@ export module Card {
   }
 
   export function setXRefHTML(xrefs: { databaseName: string, url: string, compoundName: string }[]): void {
+    if (!xrefs.length) {
+      return;
+    }
     // Remove existing xrefs
     const xrefHolder: HTMLElement = document.getElementById(xrefs[0].compoundName + '_list')!;
     while (xrefHolder.firstChild) {

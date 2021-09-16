@@ -143,8 +143,10 @@ export class BackgroundComponent {
       }
 
       xRefObservable.subscribe((xrefs: XRef[]) => {
-        this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
-          .catch(console.error);
+        if (xrefs.length) {
+          this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
+            .catch(console.error);
+      }
       });
     }
   }
