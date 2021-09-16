@@ -250,17 +250,25 @@ export module TextHighlighter {
     });
   }
 
-  // highlights the value of an input tag by wrapping it an HTML span.  This is a ChEMBL specific implementation which removes the passed
-  // input element from the DOM altogether, but retains the functionality of the copy and save buttons next to the (former) input elements
-  const highlightInputValue = (element: HTMLInputElement, entity: Entity) => `<span class="aurac-highlight" style="background-color: ${entity.recognisingDict.htmlColor}; position: relative; cursor: pointer">${element.value}</span>`;
-
-  // wraps value (only) of input tag in aurac-highlight and adds event listener
+  // wraps input tag in aurac-highlight and adds event listener
   function highlight(selector: HTMLInputElement[], entity: Entity) {
     selector.map(element => {
-      const replacementNode = document.createElement('span');
-      replacementNode.className = 'aurac-highlight-parent';
-      replacementNode.innerHTML = highlightInputValue(element, entity);
-      element.parentNode?.insertBefore(replacementNode, element);
+
+      // create a copy of the input element
+      const clonedElement = element.cloneNode(true)
+
+      // create the highlight span and set classname and styling
+      const auracHighlightSpan = document.createElement('span')
+      auracHighlightSpan.className = 'aurac-highlight'
+      auracHighlightSpan.style.backgroundColor = `${entity.recognisingDict.htmlColor}`
+      auracHighlightSpan.style.position = 'relative'
+      auracHighlightSpan.style.cursor = 'pointer'
+
+      // append the cloned input element to the highlight span
+      auracHighlightSpan.appendChild(clonedElement)
+
+     // add highlight span to the DOM and remove unhighlighted input element
+      element.parentNode?.insertBefore(auracHighlightSpan, element);
       element.parentNode?.removeChild(element);
     });
     // TODO: add listeners and populate sidebar
