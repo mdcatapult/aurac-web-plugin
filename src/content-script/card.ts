@@ -75,9 +75,6 @@ export module Card {
 
     card.insertAdjacentHTML('beforeend', `<p class='aurac-mdc-entity-type'>Entity Type: ${information.recognisingDict.entityType}</p>`);
 
-    const xrefHTML: HTMLDivElement = document.createElement('div');
-    xrefHTML.className = information.entityText;
-    card.appendChild(xrefHTML);
     return card;
   }
 
