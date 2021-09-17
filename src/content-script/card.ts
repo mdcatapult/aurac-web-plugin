@@ -1,6 +1,7 @@
 import {Entity, SavedCard} from './types'
 import {EntityMap} from './entityMap'
 import {ExternalLinks, Link} from './externalLinks';
+import {Sidebar} from './sidebar'
 
 export module Card {
 
@@ -51,6 +52,7 @@ export module Card {
   export function create(information: Entity, synonyms: string[]): HTMLDivElement {
     const card: HTMLDivElement = document.createElement('div');
     card.className = cardClassName;
+    card.id = `${cardClassName}.${information.entityText}`
     card.style.backgroundColor = information.recognisingDict.htmlColor;
 
     const entity: string = information.entityText.toLowerCase().replace(/\s/g, '%20');
@@ -215,9 +217,15 @@ export module Card {
     if (!document.getElementById(information.entityText)) {
       return;
     }
-    entityToCard.delete(information.entityText, document);
-    const element  = document.getElementById(information.entityText);
-    element?.parentElement?.remove();
+    information.resolvedEntity != null ? entityToCard.delete(information.resolvedEntity, document)
+      : entityToCard.delete(information.entityText, document);
+
+    const element  = document.getElementById(`${cardClassName}.${information.entityText}`);
+    element?.remove();
+
+    if (Array.from(entityToCard.values()).length === 0) {
+      Sidebar.toggleClearButton(false)
+    }
   }
 
   export function setXRefHTML(xrefs: { databaseName: string, url: string, compoundName: string }[]): void {
