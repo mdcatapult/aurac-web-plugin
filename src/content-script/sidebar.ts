@@ -7,6 +7,7 @@ export module Sidebar {
   const cardContainer = document.createElement('div');
   let toggleButtonElement: HTMLButtonElement;
   let clearButtonElement: HTMLButtonElement;
+  let downloadButtonElement: HTMLButtonElement;
   let isExpanded = false;
 
   export function create(): HTMLElement {
@@ -20,9 +21,11 @@ export module Sidebar {
 
     toggleButtonElement = createToggleButton();
     clearButtonElement = createClearButton();
+    downloadButtonElement = createDownloadButton();
 
     sidebar.appendChild(toggleButtonElement);
     sidebar.appendChild(clearButtonElement);
+    sidebar.appendChild(downloadButtonElement);
     sidebar.appendChild(cardContainer);
 
 
@@ -72,8 +75,23 @@ export module Sidebar {
     return clearButton
   }
 
+  function createDownloadButton(): HTMLButtonElement {
+    const downloadButton = document.createElement('button')
+    downloadButton.style.display = 'block';
+    downloadButton.innerHTML = 'Download Cards'
+    downloadButton.className = 'download-button'
+    downloadButton.addEventListener('click', () => {
+      toggleNarrative(true)
+    })
+    return downloadButton
+  }
+
   export function toggleClearButton(on: boolean): void {
     clearButtonElement.style.display = on ? 'block' : 'none';
+  }
+
+  export function toggleDownloadButton(on: boolean): void {
+    downloadButtonElement.style.display = on ? 'block' : 'none';
   }
 
   function createLogo(): [HTMLImageElement, HTMLHeadingElement] {
