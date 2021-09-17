@@ -1,6 +1,6 @@
 import {Entity} from './types';
 import {Card} from './card';
-import {waitForAsync} from '@angular/core/testing';
+import {Buttons} from './buttons';
 
 export module Sidebar {
 
@@ -8,6 +8,7 @@ export module Sidebar {
   let toggleButtonElement: HTMLButtonElement;
   let clearButtonElement: HTMLButtonElement;
   let isExpanded = false;
+
 
   export function create(): HTMLElement {
 
@@ -18,20 +19,20 @@ export module Sidebar {
     sidebar.appendChild(logoText);
     sidebar.className = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed';
 
-    toggleButtonElement = createToggleButton();
-    clearButtonElement = createClearButton();
+    toggleButtonElement = Buttons.createToggleButton();
+    clearButtonElement = Buttons.createClearButton(clearButtonElement);
 
     sidebar.appendChild(toggleButtonElement);
     sidebar.appendChild(clearButtonElement);
     sidebar.appendChild(cardContainer);
-
-
     return sidebar
   }
+
 
   export function open(): void {
     isExpanded || Sidebar.toggle()
   }
+
 
   export function toggle(): void {
 
@@ -44,37 +45,11 @@ export module Sidebar {
     toggleButtonElement.innerHTML = isExpanded ? Card.collapseArrow : Card.expandArrow;
   }
 
+
   export function addCard(card: HTMLDivElement): void {
     cardContainer.appendChild(card)
   }
 
-  // initialise the toggle sidebar button
-  function createToggleButton(): HTMLButtonElement {
-    const toggleButton = document.createElement('button')
-    toggleButton.innerHTML = Card.expandArrow;
-    toggleButton.className = 'sidebar-button';
-    toggleButton.className = 'aurac-transform aurac-sidebar-button aurac-sidebar-button--collapsed'
-    toggleButton.addEventListener('click', () => Sidebar.toggle());
-    return toggleButton;
-  }
-
-  // initialise clear cards button
-  function createClearButton(): HTMLButtonElement {
-    const clearButton = document.createElement('button')
-    clearButton.style.display = 'none';
-    clearButton.innerHTML = 'Clear'
-    clearButton.className = 'clear-button'
-    clearButton.addEventListener('click', () => {
-      Card.clear()
-      toggleClearButton(false)
-      toggleNarrative(true)
-    })
-    return clearButton
-  }
-
-  export function toggleClearButton(on: boolean): void {
-    clearButtonElement.style.display = on ? 'block' : 'none';
-  }
 
   function createLogo(): [HTMLImageElement, HTMLHeadingElement] {
     const auracLogo = document.createElement('img');
@@ -90,9 +65,11 @@ export module Sidebar {
     return [auracLogo, logoText];
   }
 
+
   export function getAuracHighlightChildren(element: Element) {
     return Array.from(element.children).filter(child => child.className === 'aurac-highlight');
   }
+
 
   // TODO move style
   function setSidebarColors(highlightedDiv: HTMLDivElement): void {
@@ -100,6 +77,7 @@ export module Sidebar {
       card.div.style.border = card.div === highlightedDiv ? '2px white solid' : '1px black solid';
     });
   }
+
 
   // returns an event listener which creates a new element with passed info and appends it to the passed element
   export function entityClickHandler(info: Entity, element: Element): (event: Event) => void {
@@ -116,7 +94,7 @@ export module Sidebar {
         Card.entityToCard.set(entityId, {synonyms: [info.entityText], div: card});
 
         Sidebar.addCard(card);
-        toggleClearButton(true);
+        Buttons.toggleClearButton(true, clearButtonElement);
         // @ts-ignore
         browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity]})
           .catch(e => console.error(e));
@@ -144,7 +122,7 @@ export module Sidebar {
   }
 
 
-  function toggleNarrative(on: boolean): void {
+  export function toggleNarrative(on: boolean): void {
     document.getElementById('aurac-narrative')!.style.display = on ? 'block' : 'none';
   }
 }

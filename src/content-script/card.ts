@@ -1,7 +1,7 @@
 import {Entity, SavedCard} from './types'
 import {EntityMap} from './entityMap'
 import {ExternalLinks, Link} from './externalLinks';
-import {Sidebar} from './sidebar'
+import {Buttons} from './buttons';
 
 export module Card {
 
@@ -208,12 +208,12 @@ export module Card {
     removeEntityFromSidebarButtonElement.className = 'aurac-cross-button';
 
     removeEntityFromSidebarButtonElement.addEventListener('click', () => {
-      pressRemoveEntityFromSidebarButtonElement(information);
+      pressRemoveEntityFromSidebarButtonElement(information, removeEntityFromSidebarButtonElement);
     });
     return removeEntityFromSidebarButtonElement
   }
 
-  function pressRemoveEntityFromSidebarButtonElement(information: Entity): void {
+  function pressRemoveEntityFromSidebarButtonElement(information: Entity, removeEntityFromSidebarButtonElement: HTMLButtonElement): void {
     if (!document.getElementById(information.entityText)) {
       return;
     }
@@ -224,7 +224,7 @@ export module Card {
     element?.remove();
 
     if (Array.from(entityToCard.values()).length === 0) {
-      Sidebar.toggleClearButton(false)
+      Buttons.toggleClearButton(false, removeEntityFromSidebarButtonElement)
     }
   }
 
