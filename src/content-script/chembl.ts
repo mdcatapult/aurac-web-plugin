@@ -6,14 +6,14 @@ import {Sidebar} from './sidebar';
 export module ChEMBL {
 
   // on ChEMBL, InChI, InChIKey and SMILES values are in input tags
-  function getChemblRepresentations(): NodeListOf<HTMLInputElement> {
-    return document.querySelectorAll('[id="CompReps-canonicalSmiles"]') as NodeListOf<HTMLInputElement>;
+  function getChemblRepresentations(): HTMLInputElement[] {
+    return Array.from(document.querySelectorAll('[id="CompReps-canonicalSmiles"]') as NodeListOf<HTMLInputElement>);
   }
 
   // extract SMILES, InChI and InChIKey values from ChEMBL representations
   export function getChemblRepresentationValues(): Array<string> {
     const chemblRepresentations = getChemblRepresentations();
-    const representationValues = Array.from(chemblRepresentations).map(representation => representation.value);
+    const representationValues = chemblRepresentations.map(representation => representation.value);
     // ensure values are unique
     return [...new Set(representationValues)];
   }
