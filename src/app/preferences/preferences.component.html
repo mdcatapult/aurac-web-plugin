@@ -1,0 +1,31 @@
+<div *ngIf="isLoaded">
+  <form [formGroup]="preferencesForm">
+    <table class="table">
+      <tr>
+        <td>
+          <label [for]="preferencesForm!.get('hideUnresolved')">
+            Hide unresolved entities
+          </label>
+        </td>
+        <td>
+          <input type="checkbox"
+                 [formControl]="preferencesForm!.get('hideUnresolved')">
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          Minimum entity length
+        </td>
+        <td>
+          <select [formControl]="preferencesForm!.get('minEntityLength')">
+            <option *ngFor="let length of minEntityLength" selected>
+              {{length}}
+            </option>
+          </select>
+        </td>
+      </tr>
+    </table>
+  </form>
+</div>
+

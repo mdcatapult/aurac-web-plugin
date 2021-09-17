@@ -1,0 +1,155 @@
+.aurac-sidebar {
+  color: black;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  background: rgb(192,192,192);
+  position: fixed;
+  z-index: 2147483647;
+  height: 100vh;
+  top: 0;
+  width: 20vw;
+  border-right: 2px solid black;
+  padding: 5px;
+  overflow-wrap: break-word;
+  overflow-y: scroll;
+}
+
+.aurac-sidebar--collapsed {
+  left: -21vw;
+}
+
+.aurac-sidebar--expanded {
+  left: 0;
+}
+
+.aurac-sidebar-button {
+  color: black;
+  background-color: rgb(192, 192, 192);
+  position: fixed;
+  top: 50%;
+}
+
+.aurac-sidebar-button--collapsed {
+  left: 0;
+}
+
+.aurac-sidebar-button--expanded {
+  left: 20vw;
+}
+
+.aurac-left-arrow-button {
+  color: black;
+  background-color: rgb(192, 192, 192);
+  order: 1;
+  padding: 5px;
+}
+
+.aurac-right-arrow-button {
+  color: black;
+  background-color: rgb(192, 192, 192);
+  order: 2;
+  padding: 5px;
+}
+
+.aurac-card-controls {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.aurac-logo {
+  width: 5vw;
+  height: 5vw;
+  display: block;
+  margin: 0.3vw auto 0.3vw auto;
+}
+
+#aurac-narrative {
+  text-align: center;
+}
+
+.sidebar-text {
+  border: 1px solid black;
+  padding: 2px;
+  margin-bottom: 5px;
+}
+
+.aurac-cross-button {
+  color: red;
+  background-color: rgb(192, 192, 192);
+  padding: 5px;
+}
+
+.save-button {
+  margin-right: auto;
+  background-color: rgb(192, 192, 192);
+}
+
+.aurac-transform {
+  -webkit-transition: all 1s ease;
+  -moz-transition: all 1s ease;
+  -o-transition: all 1s ease;
+  -ms-transition: all 1s ease;
+  transition: all 1s ease;
+}
+
+.aurac-body--sidebar-collapsed {
+  width: 100vw;
+  margin-left: 0;
+}
+
+.aurac-body--sidebar-expanded {
+  width: 80vw;
+  margin-left: 20vw;
+}
+
+.aurac-mdc-href-list-style {
+  margin: 0;
+  padding: 0;
+}
+
+.aurac-mdc-href-list-style li{
+  display: inline;
+  padding: 0 1em 0 0;
+}
+
+.aurac-mdc-entity-type {
+  padding-top: 1vw;
+}
+
+.aurac-mdc-hidden {
+  display: none;
+}
+.clear-button {
+  background-color: rgb(226, 152, 71);
+  color: rgb(250, 249, 249);
+  border: 1px solid black;
+  margin: 2px;
+}
+
+.clear-button:hover {
+  background-color: rgb(250, 249, 249);
+  color: black;
+}
+
+#aurac-loading-icon {
+  display: none;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  width: 60px;
+  height: 60px;
+  margin: -76px 0 0 -76px;
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid rgb(226, 152, 71);
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

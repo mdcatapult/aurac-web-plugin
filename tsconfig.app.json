@@ -1,7 +1,13 @@
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "strict": true,
     "outDir": "./out-tsc/app",
+    "typeRoots": [
+      "node_modules/@types",
+      "node_modules/web-ext-types"
+    ],
     "types": []
   },
   "files": [
@@ -9,6 +15,7 @@
     "src/polyfills.ts"
   ],
   "include": [
-    "src/**/*.d.ts"
+    "src/**/*.d.ts",
+    "src/content-script/*.ts"
   ]
 }

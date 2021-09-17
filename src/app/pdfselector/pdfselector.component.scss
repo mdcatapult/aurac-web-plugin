@@ -1,0 +1,26 @@
+.link-control {
+  margin: 10px;
+  width: 95%;
+}
+
+.confirm {
+  width: 50%;
+  display: block;
+  margin: 0 auto 5px;
+}
+
+.confirm:hover {
+  background-color: rgb(226, 152, 71);
+}
+
+.error {
+  color: red;
+  display: block;
+  margin: 0 auto 5px;
+}
+
+.close-button {
+  align-content: flex-start;
+  padding: 0.25rem;
+  color: red;
+}
