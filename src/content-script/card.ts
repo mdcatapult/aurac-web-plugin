@@ -56,7 +56,7 @@ export module Card {
   }
 
 
-  export function toggleHighlightColor(nerElement: Element, highlightedElements: HighlightHtmlColours[]): void {
+  export function toggleHighlightColour(nerElement: Element, highlightedElements: HighlightHtmlColours[]): void {
     const auracHighlightArray = Array.from(highlightedElements);
     auracHighlightArray.forEach(element => {
       element.elementName.innerHTML = element.elementName === nerElement ? element.colourAfter : element.colourBefore;
@@ -78,7 +78,7 @@ export module Card {
   }
 
 
-  export function getNerHighlightColors(highlightedNerTerms: Element[]): HighlightHtmlColours[] {
+  export function getNerHighlightColours(highlightedNerTerms: Element[]): HighlightHtmlColours[] {
     return highlightedNerTerms.map(element => {
       const index = highlightedNerTerms.indexOf(element);
       const elementName = element;

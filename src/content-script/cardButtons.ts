@@ -75,7 +75,7 @@ export module CardButtons {
   function pressArrowButton(arrowProperties: ArrowButtonProperties, direction: 'left' | 'right'): void {
     // TODO circular ref
     Array.from(Card.entityToOccurrence.values()).forEach(entity => {
-      entity.forEach(occurrence => Card.toggleHighlightColor(occurrence, highlightElements));
+      entity.forEach(occurrence => Card.toggleHighlightColour(occurrence, highlightElements));
     });
 
     if (direction === 'right') {
@@ -91,14 +91,14 @@ export module CardButtons {
     }
 
     // TODO circular ref
-    highlightElements.push(...Card.getNerHighlightColors(Card.entityToOccurrence.get(arrowProperties.nerTerm)!));
+    highlightElements.push(...Card.getNerHighlightColours(Card.entityToOccurrence.get(arrowProperties.nerTerm)!));
 
     // TODO circular ref
     const targetElement = Card.entityToOccurrence.get(arrowProperties.nerTerm)![arrowProperties.positionInArray];
     targetElement.scrollIntoView({behavior: 'smooth'});
 
     // TODO circular ref
-    Card.toggleHighlightColor(targetElement, highlightElements);
+    Card.toggleHighlightColour(targetElement, highlightElements);
 
     const occurrencesElement = document.getElementById(`${arrowProperties.nerTerm}-occurrences`);
     // TODO circular ref
