@@ -128,6 +128,11 @@
   margin: 2px;
 }
 
+.aurac-sidebar-tools {
+  display: flex;
+  flex-direction: row;
+}
+
 .download-button {
   background-color: rgb(226, 152, 71);
   color: rgb(250, 249, 249);

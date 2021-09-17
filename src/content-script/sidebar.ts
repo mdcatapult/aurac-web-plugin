@@ -5,6 +5,7 @@ import {waitForAsync} from '@angular/core/testing';
 export module Sidebar {
 
   const cardContainer = document.createElement('div');
+  const toolsContainer = document.createElement('div');
   let toggleButtonElement: HTMLButtonElement;
   let clearButtonElement: HTMLButtonElement;
   let downloadButtonElement: HTMLButtonElement;
@@ -17,6 +18,7 @@ export module Sidebar {
     const sidebar = document.createElement('span')
     sidebar.appendChild(logo);
     sidebar.appendChild(logoText);
+    sidebar.appendChild(toolsContainer)
     sidebar.className = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed';
 
     toggleButtonElement = createToggleButton();
@@ -24,10 +26,11 @@ export module Sidebar {
     downloadButtonElement = createDownloadButton();
 
     sidebar.appendChild(toggleButtonElement);
-    sidebar.appendChild(clearButtonElement);
-    sidebar.appendChild(downloadButtonElement);
     sidebar.appendChild(cardContainer);
 
+    toolsContainer.className = 'aurac-sidebar-tools'
+    toolsContainer.appendChild(clearButtonElement);
+    toolsContainer.appendChild(downloadButtonElement);
 
     return sidebar
   }
