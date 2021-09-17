@@ -19,6 +19,45 @@ export module CardButtons {
     isClicked: boolean,
   };
 
+  function createOccurrenceCounts(information: Entity, synonyms: string[]): HTMLElement {
+    const entityText = synonyms.length === 1 ? information.entityText : information.resolvedEntity;
+    const occurrenceElement = document.createElement('span');
+    occurrenceElement.id = `${entityText}-occurrences`;
+    occurrenceElement.style.display = 'flex';
+    occurrenceElement.style.justifyContent = 'flex-end';
+
+    let numOfOccurrences = 0;
+    synonyms.forEach(synonym => numOfOccurrences = numOfOccurrences + CardButtons.entityToOccurrence.get(synonym)!.length);
+    occurrenceElement.innerText = `${numOfOccurrences} matches found`;
+    return occurrenceElement;
+  }
+
+  function createRemoveEntityFromSidebarButtonElement(information: Entity): HTMLElement {
+    const removeEntityFromSidebarButtonElement = document.createElement('button');
+    removeEntityFromSidebarButtonElement.innerHTML = crossButton;
+    removeEntityFromSidebarButtonElement.className = 'aurac-cross-button';
+
+    removeEntityFromSidebarButtonElement.addEventListener('click', () => {
+      pressRemoveEntityFromSidebarButtonElement(information);
+    });
+    return removeEntityFromSidebarButtonElement;
+  }
+
+  function pressRemoveEntityFromSidebarButtonElement(information: Entity): void {
+    if (!document.getElementById(information.entityText)) {
+      return;
+    }
+    information.resolvedEntity != null ? SidebarButtons.entityToCard.delete(information.resolvedEntity, document)
+      : SidebarButtons.entityToCard.delete(information.entityText, document);
+
+    const element = document.getElementById(`${cardClassName}.${information.entityText}`);
+    element?.remove();
+
+    if (Array.from(SidebarButtons.entityToCard.values()).length === 0) {
+      SidebarButtons.toggleClearButton(false);
+    }
+  }
+
   export function createCardControls(entityData: Entity, entityLinks: Link[], synonyms: string[]): HTMLElement {
     const controls: HTMLSpanElement = document.createElement('span');
     controls.className = 'aurac-card-controls';
@@ -37,7 +76,6 @@ export module CardButtons {
 
     return controls;
   }
-
 
   function createArrowButtonElements(information: Entity, synonyms: string[]): HTMLElement {
     const arrowButtons: HTMLDivElement = document.createElement('div');
@@ -71,6 +109,23 @@ export module CardButtons {
     return arrowButtons;
   }
 
+  function toggleHighlightColour(nerElement: Element, highlightedElements: HighlightHtmlColours[]): void {
+    const auracHighlightArray = Array.from(highlightedElements);
+    auracHighlightArray.forEach(element => {
+      element.elementName.innerHTML = element.elementName === nerElement ? element.colourAfter : element.colourBefore;
+    });
+  }
+
+  function getNerHighlightColours(highlightedNerTerms: Element[]): HighlightHtmlColours[] {
+    return highlightedNerTerms.map(element => {
+      const index = highlightedNerTerms.indexOf(element);
+      const elementName = element;
+      const colourBefore = element.innerHTML;
+      const colourAfter = element.textContent!.fontcolor('blue');
+      return {index, elementName, colourBefore, colourAfter};
+    });
+  }
+
   function pressArrowButton(arrowProperties: ArrowButtonProperties, direction: 'left' | 'right'): void {
     Array.from(entityToOccurrence.values()).forEach(entity => {
       entity.forEach(occurrence => toggleHighlightColour(occurrence, highlightElements));
@@ -99,67 +154,6 @@ export module CardButtons {
     arrowProperties.isClicked = true;
   }
 
-
-  function createSaveButton(information: Entity, links: Link[]): HTMLElement {
-    const saveButton = document.createElement('button');
-
-    const storedCardsString = window.localStorage.getItem(cardStorageKey);
-    const savedCards = storedCardsString === null ? [] : JSON.parse(storedCardsString) as SavedCard[];
-
-    saveButton.innerHTML = savedCards.some(card => card.entityText === information.entityText) ? 'Saved' : '&#128190;';
-    saveButton.className = 'save-button';
-    saveButton.addEventListener('click', () => save(information, links, saveButton));
-    return saveButton;
-  }
-
-
-  function createRemoveEntityFromSidebarButtonElement(information: Entity): HTMLElement {
-    const removeEntityFromSidebarButtonElement = document.createElement('button');
-    removeEntityFromSidebarButtonElement.innerHTML = crossButton;
-    removeEntityFromSidebarButtonElement.className = 'aurac-cross-button';
-
-    removeEntityFromSidebarButtonElement.addEventListener('click', () => {
-      pressRemoveEntityFromSidebarButtonElement(information);
-    });
-    return removeEntityFromSidebarButtonElement;
-  }
-
-
-  function pressRemoveEntityFromSidebarButtonElement(information: Entity): void {
-    if (!document.getElementById(information.entityText)) {
-      return;
-    }
-    information.resolvedEntity != null ? SidebarButtons.entityToCard.delete(information.resolvedEntity, document)
-      : SidebarButtons.entityToCard.delete(information.entityText, document);
-
-    const element = document.getElementById(`${cardClassName}.${information.entityText}`);
-    element?.remove();
-
-    if (Array.from(SidebarButtons.entityToCard.values()).length === 0) {
-      SidebarButtons.toggleClearButton(false);
-    }
-  }
-
-
-  function toggleHighlightColour(nerElement: Element, highlightedElements: HighlightHtmlColours[]): void {
-    const auracHighlightArray = Array.from(highlightedElements);
-    auracHighlightArray.forEach(element => {
-      element.elementName.innerHTML = element.elementName === nerElement ? element.colourAfter : element.colourBefore;
-    });
-  }
-
-
-  function getNerHighlightColours(highlightedNerTerms: Element[]): HighlightHtmlColours[] {
-    return highlightedNerTerms.map(element => {
-      const index = highlightedNerTerms.indexOf(element);
-      const elementName = element;
-      const colourBefore = element.innerHTML;
-      const colourAfter = element.textContent!.fontcolor('blue');
-      return {index, elementName, colourBefore, colourAfter};
-    });
-  }
-
-
   // saves the card data in local storage if it doesn't already exist
   function save(cardData: Entity, links: Link[], saveButton: HTMLButtonElement): void {
 
@@ -181,18 +175,16 @@ export module CardButtons {
     saveButton.innerHTML = 'Saved';
   }
 
+  function createSaveButton(information: Entity, links: Link[]): HTMLElement {
+    const saveButton = document.createElement('button');
 
-  function createOccurrenceCounts(information: Entity, synonyms: string[]): HTMLElement {
-    const entityText = synonyms.length === 1 ? information.entityText : information.resolvedEntity;
-    const occurrenceElement = document.createElement('span');
-    occurrenceElement.id = `${entityText}-occurrences`;
-    occurrenceElement.style.display = 'flex';
-    occurrenceElement.style.justifyContent = 'flex-end';
+    const storedCardsString = window.localStorage.getItem(cardStorageKey);
+    const savedCards = storedCardsString === null ? [] : JSON.parse(storedCardsString) as SavedCard[];
 
-    let numOfOccurrences = 0;
-    synonyms.forEach(synonym => numOfOccurrences = numOfOccurrences + CardButtons.entityToOccurrence.get(synonym)!.length);
-    occurrenceElement.innerText = `${numOfOccurrences} matches found`;
-    return occurrenceElement;
+    saveButton.innerHTML = savedCards.some(card => card.entityText === information.entityText) ? 'Saved' : '&#128190;';
+    saveButton.className = 'save-button';
+    saveButton.addEventListener('click', () => save(information, links, saveButton));
+    return saveButton;
   }
 
 }
