@@ -17,7 +17,7 @@ export type SavedCard = Entity & {
   links: Link[]
 }
 
-export type ChemblRepresentationElements = {
+export type ChemblRepresentations = {
   inchikey: HTMLInputElement[],
   inchi: HTMLInputElement[],
   smiles: HTMLInputElement[]

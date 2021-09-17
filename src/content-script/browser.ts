@@ -6,7 +6,7 @@ import {ChEMBL} from './chembl';
 
 export module Browser {
   // add listener function to browser
-  import chemblRepresentations = ChEMBL.chemblRepresentations;
+  import chemblRepresentations = ChEMBL.getChemblRepresentationValues;
 
   export function addListener() {
     browser.runtime.onMessage.addListener((msg: any) => {

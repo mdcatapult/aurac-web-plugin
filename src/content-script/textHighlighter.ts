@@ -1,7 +1,7 @@
-import {chemicalFormula, Entity, inchiKeyLength} from './types';
+import {chemicalFormula, Entity} from './types';
 import {Sidebar} from './sidebar';
 import {Card} from './card';
-import {ChemblRepresentationElements} from './types';
+import {ChemblRepresentations} from './types';
 import {ChEMBL} from './chembl';
 
 export module TextHighlighter {
@@ -13,9 +13,9 @@ export module TextHighlighter {
   export function wrapEntitiesWithHighlight(msg: any) {
 
     // get InChI, InChIKey and SMILES input elements if we are on ChEMBL
-    let chemblRepresentationElements: ChemblRepresentationElements;
+    let chemblRepresentations: ChemblRepresentations;
     if (ChEMBL.isChemblPage()) {
-      chemblRepresentationElements = ChEMBL.getChemblRepresentationElements();
+      chemblRepresentations = ChEMBL.createChemblRepresentationsObject();
     }
 
     // sort entities by length of entityText (descending) - this will ensure that we can capture e.g. VPS26A, which would not be
@@ -26,21 +26,8 @@ export module TextHighlighter {
         const selectors = getSelectors(entity.entityText);
         wrapChemicalFormulaeWithHighlight(entity);
         addHighlightAndEventListeners(selectors, entity);
-
-        //  only do the following if we are on ChEMBL
-        if (document.location.href.includes('www.ebi.ac.uk/chembl')) {
-          switch (entity.recognisingDict.entityType) {
-            case 'SMILES':
-              ChEMBL.highlight(chemblRepresentationElements.smiles, entity);
-              break;
-            case 'InChI':
-              if (entity.entityText.length === inchiKeyLength) {
-                ChEMBL.highlight(chemblRepresentationElements.inchikey, entity);
-              } else {
-                ChEMBL.highlight(chemblRepresentationElements.inchi, entity);
-              }
-              break;
-          }
+        if (ChEMBL.isChemblPage()) {
+          ChEMBL.highlightHandler(entity, chemblRepresentations)
         }
       });
   }

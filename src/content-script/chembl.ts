@@ -1,31 +1,31 @@
-import {ChemblRepresentationElements, Entity, inchiKeyLength} from './types';
+import {ChemblRepresentations, Entity, inchiKeyLength} from './types';
 import {Card} from './card';
 import {Sidebar} from './sidebar';
 
 
 export module ChEMBL {
 
-  // Find SMILES, InChI and InChIKey values in representations section of ChEMBL website
-  export function chemblRepresentations(): Array<string> {
+  // on ChEMBL, InChI, InChIKey and SMILES values are in input tags
+  function getChemblRepresentations(): NodeListOf<HTMLInputElement> {
+    return document.querySelectorAll('[id="CompReps-canonicalSmiles"]') as NodeListOf<HTMLInputElement>;
+  }
 
-    function getRepresentationValue(className: string): string | null {
-      return document.getElementsByClassName(className)[0]?.children[0].attributes[1].textContent;
-    }
-
-    const representations: Array<string> = ['BCK-CanonicalSmiles', 'BCK-StandardInchi', 'BCK-StandardInchiKey'];
-    const representationValues: (string | null)[] = representations.map(representation => getRepresentationValue(representation));
-    return representationValues.filter(<(val: string | null) => val is string> (val => typeof val === 'string'));
+  // extract SMILES, InChI and InChIKey values from ChEMBL representations
+  export function getChemblRepresentationValues(): Array<string> {
+    const chemblRepresentations = getChemblRepresentations();
+    const representationValues = Array.from(chemblRepresentations).map(representation => representation.value);
+    // ensure values are unique
+    return [...new Set(representationValues)];
   }
 
 
-  // on ChEMBL, InChI, InChIKey and SMILES are inputs - get these elements
-  export function getChemblRepresentationElements(): ChemblRepresentationElements {
-
+  export function createChemblRepresentationsObject(): ChemblRepresentations {
     // the same id is used on 8 different HTML elements!!!!! so cannot getElementById as only the first one is returned
-    const chemblRepresentations = document.querySelectorAll('[id="CompReps-canonicalSmiles"]') as NodeListOf<HTMLInputElement>;
+    const chemblRepresentations = getChemblRepresentations();
 
-    const representationElements: ChemblRepresentationElements = {inchi: [], inchikey: [], smiles: []};
+    const representationElements: ChemblRepresentations = {inchi: [], inchikey: [], smiles: []};
 
+    // populate ChemblRepresentations object based on format of string
     chemblRepresentations.forEach((rep: HTMLInputElement) => {
       if (rep.value.length === inchiKeyLength) {
         representationElements.inchikey.push(rep);
@@ -46,7 +46,7 @@ export module ChEMBL {
 
   // wraps input tag in aurac-highlight and adds event listener
   export function highlight(selector: HTMLInputElement[], entity: Entity) {
-    selector.map(element => {
+    selector.forEach(element => {
       try {
         // create a copy of the input element
         const clonedElement = element.cloneNode(true);
@@ -72,6 +72,21 @@ export module ChEMBL {
         console.error(e);
       }
     });
+  }
+
+  export function highlightHandler(entity: Entity, chemblRepresentationElements: ChemblRepresentations) {
+    switch (entity.recognisingDict.entityType) {
+      case 'SMILES':
+        ChEMBL.highlight(chemblRepresentationElements.smiles, entity);
+        break;
+      case 'InChI':
+        if (entity.entityText.length === inchiKeyLength) {
+          ChEMBL.highlight(chemblRepresentationElements.inchikey, entity);
+        } else {
+          ChEMBL.highlight(chemblRepresentationElements.inchi, entity);
+        }
+        break;
+    }
   }
 
 }
