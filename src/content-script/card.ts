@@ -1,4 +1,4 @@
-import {cardClassName, cardStorageKey, Entity, HighlightHtmlColours, SavedCard} from './types';
+import {cardClassName, Entity} from './types';
 import {ExternalLinks, Link} from './externalLinks';
 import {CardButtons} from './cardButtons';
 
@@ -53,40 +53,6 @@ export module Card {
     return card;
   }
 
-
-  export function toggleHighlightColour(nerElement: Element, highlightedElements: HighlightHtmlColours[]): void {
-    const auracHighlightArray = Array.from(highlightedElements);
-    auracHighlightArray.forEach(element => {
-      element.elementName.innerHTML = element.elementName === nerElement ? element.colourAfter : element.colourBefore;
-    });
-  }
-
-
-  export function createOccurrenceCounts(information: Entity, synonyms: string[]): HTMLElement {
-    const entityText = synonyms.length === 1 ? information.entityText : information.resolvedEntity;
-    const occurrenceElement = document.createElement('span');
-    occurrenceElement.id = `${entityText}-occurrences`;
-    occurrenceElement.style.display = 'flex';
-    occurrenceElement.style.justifyContent = 'flex-end';
-
-    let numOfOccurrences = 0;
-    synonyms.forEach(synonym => numOfOccurrences = numOfOccurrences + CardButtons.entityToOccurrence.get(synonym)!.length);
-    occurrenceElement.innerText = `${numOfOccurrences} matches found`;
-    return occurrenceElement;
-  }
-
-
-  export function getNerHighlightColours(highlightedNerTerms: Element[]): HighlightHtmlColours[] {
-    return highlightedNerTerms.map(element => {
-      const index = highlightedNerTerms.indexOf(element);
-      const elementName = element;
-      const colourBefore = element.innerHTML;
-      const colourAfter = element.textContent!.fontcolor('blue');
-      return {index, elementName, colourBefore, colourAfter};
-    });
-  }
-
-
   export function setXRefHTML(xrefs: { databaseName: string, url: string, compoundName: string }[]): void {
     if (!xrefs.length) {
       return;
@@ -113,28 +79,6 @@ export module Card {
     } else {
       CardButtons.entityToOccurrence.get(entityText)!.push(occurrence);
     }
-  }
-
-  // saves the card data in local storage if it doesn't already exist
-  export function save(cardData: Entity, links: Link[], saveButton: HTMLButtonElement): void {
-
-    const storedValue = window.localStorage.getItem(cardStorageKey);
-    const savedCards = storedValue === null ? [] : JSON.parse(storedValue) as SavedCard[];
-
-    if (savedCards.some(card => card.entityText === cardData.entityText)) {
-      return;
-    }
-
-    savedCards.push({
-      ...cardData,
-      time: new Date().toString(),
-      originalURL: window.location.href,
-      links: links,
-    });
-
-    window.localStorage.setItem(cardStorageKey, JSON.stringify(savedCards));
-    saveButton.innerHTML = 'Saved';
-
   }
 
   // Area where links to any external info sources will be added

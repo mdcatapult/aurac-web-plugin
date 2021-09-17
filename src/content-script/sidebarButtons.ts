@@ -20,11 +20,9 @@ export module SidebarButtons {
     return toggleButton;
   }
 
-
   export function open(): void {
     isExpanded || SidebarButtons.toggle();
   }
-
 
   export function toggle(): void {
 
@@ -58,7 +56,6 @@ export module SidebarButtons {
     });
     return clearButton;
   }
-
 
   export function toggleClearButton(on: boolean): void {
     clearButtonElement.style.display = on ? 'block' : 'none';

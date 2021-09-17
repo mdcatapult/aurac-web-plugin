@@ -1,7 +1,5 @@
 import {cardClassName, cardStorageKey, Entity, HighlightHtmlColours, SavedCard} from './types';
 import {Link} from './externalLinks';
-// TODO card is circular ref
-import {Card} from './card';
 import {SidebarButtons} from './sidebarButtons';
 import {EntityMap} from './entityMap';
 
@@ -13,7 +11,6 @@ export module CardButtons {
   const crossButton = '&#215;';
   const highlightElements: Array<HighlightHtmlColours> = [];
   export const entityToOccurrence = new EntityMap<Element[]>();
-
 
   type ArrowButtonProperties = {
     nerTerm: string,
@@ -35,8 +32,7 @@ export module CardButtons {
     const arrowButtons = createArrowButtonElements(entityData, synonyms);
     controls.appendChild(arrowButtons);
 
-    // TODO circular ref
-    const occurrenceCounts = Card.createOccurrenceCounts(entityData, synonyms);
+    const occurrenceCounts = createOccurrenceCounts(entityData, synonyms);
     controls.appendChild(occurrenceCounts);
 
     return controls;
@@ -77,7 +73,7 @@ export module CardButtons {
 
   function pressArrowButton(arrowProperties: ArrowButtonProperties, direction: 'left' | 'right'): void {
     Array.from(entityToOccurrence.values()).forEach(entity => {
-      entity.forEach(occurrence => Card.toggleHighlightColour(occurrence, highlightElements));
+      entity.forEach(occurrence => toggleHighlightColour(occurrence, highlightElements));
     });
 
     if (direction === 'right') {
@@ -91,14 +87,12 @@ export module CardButtons {
       arrowProperties.positionInArray--;
     }
 
-    // TODO circular ref
-    highlightElements.push(...Card.getNerHighlightColours(entityToOccurrence.get(arrowProperties.nerTerm)!));
+    highlightElements.push(...getNerHighlightColours(entityToOccurrence.get(arrowProperties.nerTerm)!));
 
     const targetElement = entityToOccurrence.get(arrowProperties.nerTerm)![arrowProperties.positionInArray];
     targetElement.scrollIntoView({behavior: 'smooth'});
 
-    // TODO circular ref
-    Card.toggleHighlightColour(targetElement, highlightElements);
+    toggleHighlightColour(targetElement, highlightElements);
 
     const occurrencesElement = document.getElementById(`${arrowProperties.nerTerm}-occurrences`);
     occurrencesElement!.innerText = `${arrowProperties.positionInArray + 1} / ${entityToOccurrence.get(arrowProperties.nerTerm)!.length}`;
@@ -114,8 +108,7 @@ export module CardButtons {
 
     saveButton.innerHTML = savedCards.some(card => card.entityText === information.entityText) ? 'Saved' : '&#128190;';
     saveButton.className = 'save-button';
-    // TODO circular ref
-    saveButton.addEventListener('click', () => Card.save(information, links, saveButton));
+    saveButton.addEventListener('click', () => save(information, links, saveButton));
     return saveButton;
   }
 
@@ -145,6 +138,61 @@ export module CardButtons {
     if (Array.from(SidebarButtons.entityToCard.values()).length === 0) {
       SidebarButtons.toggleClearButton(false);
     }
+  }
+
+
+  function toggleHighlightColour(nerElement: Element, highlightedElements: HighlightHtmlColours[]): void {
+    const auracHighlightArray = Array.from(highlightedElements);
+    auracHighlightArray.forEach(element => {
+      element.elementName.innerHTML = element.elementName === nerElement ? element.colourAfter : element.colourBefore;
+    });
+  }
+
+
+  function getNerHighlightColours(highlightedNerTerms: Element[]): HighlightHtmlColours[] {
+    return highlightedNerTerms.map(element => {
+      const index = highlightedNerTerms.indexOf(element);
+      const elementName = element;
+      const colourBefore = element.innerHTML;
+      const colourAfter = element.textContent!.fontcolor('blue');
+      return {index, elementName, colourBefore, colourAfter};
+    });
+  }
+
+
+  // saves the card data in local storage if it doesn't already exist
+  function save(cardData: Entity, links: Link[], saveButton: HTMLButtonElement): void {
+
+    const storedValue = window.localStorage.getItem(cardStorageKey);
+    const savedCards = storedValue === null ? [] : JSON.parse(storedValue) as SavedCard[];
+
+    if (savedCards.some(card => card.entityText === cardData.entityText)) {
+      return;
+    }
+
+    savedCards.push({
+      ...cardData,
+      time: new Date().toString(),
+      originalURL: window.location.href,
+      links: links,
+    });
+
+    window.localStorage.setItem(cardStorageKey, JSON.stringify(savedCards));
+    saveButton.innerHTML = 'Saved';
+  }
+
+
+  function createOccurrenceCounts(information: Entity, synonyms: string[]): HTMLElement {
+    const entityText = synonyms.length === 1 ? information.entityText : information.resolvedEntity;
+    const occurrenceElement = document.createElement('span');
+    occurrenceElement.id = `${entityText}-occurrences`;
+    occurrenceElement.style.display = 'flex';
+    occurrenceElement.style.justifyContent = 'flex-end';
+
+    let numOfOccurrences = 0;
+    synonyms.forEach(synonym => numOfOccurrences = numOfOccurrences + CardButtons.entityToOccurrence.get(synonym)!.length);
+    occurrenceElement.innerText = `${numOfOccurrences} matches found`;
+    return occurrenceElement;
   }
 
 }

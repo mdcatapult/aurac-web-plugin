@@ -25,11 +25,9 @@ export module Sidebar {
     return sidebar;
   }
 
-
   export function addCard(card: HTMLDivElement): void {
     cardContainer.appendChild(card);
   }
-
 
   function createLogo(): [HTMLImageElement, HTMLHeadingElement] {
     const auracLogo = document.createElement('img');
@@ -45,11 +43,9 @@ export module Sidebar {
     return [auracLogo, logoText];
   }
 
-
   export function getAuracHighlightChildren(element: Element) {
     return Array.from(element.children).filter(child => child.className === 'aurac-highlight');
   }
-
 
   // TODO move style
   function setSidebarColors(highlightedDiv: HTMLDivElement): void {
@@ -57,7 +53,6 @@ export module Sidebar {
       card.div.style.border = card.div === highlightedDiv ? '2px white solid' : '1px black solid';
     });
   }
-
 
   // returns an event listener which creates a new element with passed info and appends it to the passed element
   export function entityClickHandler(info: Entity, element: Element): (event: Event) => void {
