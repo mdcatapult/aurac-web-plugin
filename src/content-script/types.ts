@@ -16,3 +16,17 @@ export type SavedCard = Entity & {
   originalURL: string,
   links: Link[]
 }
+
+export type ChemblRepresentations = {
+  inchikey: HTMLInputElement[],
+  inchi: HTMLInputElement[],
+  smiles: HTMLInputElement[]
+}
+
+export type chemicalFormula = {
+  formulaNode: Element;
+  formulaText: string;
+};
+
+// An InChIKey is always 27 characters long (blocks of 14, 10 and 1 characters, separated by a dash)
+export const inchiKeyLength = 27
