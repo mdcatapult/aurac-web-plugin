@@ -10,12 +10,10 @@ export module ChEMBL {
     return Array.from(document.querySelectorAll('[id="CompReps-canonicalSmiles"]') as NodeListOf<HTMLInputElement>);
   }
 
-  // extract SMILES, InChI and InChIKey values from ChEMBL representations
+  // return an array of unique SMILES, InChI and InChIKey values from ChEMBL representations
   export function getChemblRepresentationValues(): Array<string> {
-    const chemblRepresentations = getChemblRepresentations();
-    const representationValues = chemblRepresentations.map(representation => representation.value);
-    // ensure values are unique
-    return [...new Set(representationValues)];
+    const uniqueRepresentations = new Set(getChemblRepresentations().map(representation => representation.value));
+    return Array.from(uniqueRepresentations);
   }
 
 
