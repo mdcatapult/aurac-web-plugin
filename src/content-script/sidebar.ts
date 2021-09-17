@@ -1,6 +1,7 @@
 import {Entity} from './types';
 import {Card} from './card';
 import {SidebarButtons} from './sidebarButtons';
+import {CardButtons} from './cardButtons';
 
 export module Sidebar {
 
@@ -65,7 +66,7 @@ export module Sidebar {
         return;
       }
 
-      toggleNarrative(false);
+      SidebarButtons.toggleNarrative(false);
 
       const entityId = info.resolvedEntity || info.entityText;
       if (!SidebarButtons.entityToCard.has(entityId)) {  // entity is a new sidecard
@@ -85,10 +86,10 @@ export module Sidebar {
 
           let synonymOccurrences: Element[] = [];
           synonyms.forEach(synonym => {
-            synonymOccurrences = synonymOccurrences.concat(Card.entityToOccurrence.get(synonym)!);
+            synonymOccurrences = synonymOccurrences.concat(CardButtons.entityToOccurrence.get(synonym)!);
           });
           synonymOccurrences.sort((a, b) => a.getBoundingClientRect().y - b.getBoundingClientRect().y);
-          Card.entityToOccurrence.set(entityId, synonymOccurrences);
+          CardButtons.entityToOccurrence.set(entityId, synonymOccurrences);
           SidebarButtons.entityToCard.get(entityId)!.div.replaceWith(Card.create(info, synonyms));
         }
       }
@@ -100,8 +101,4 @@ export module Sidebar {
     };
   }
 
-
-  export function toggleNarrative(on: boolean): void {
-    document.getElementById('aurac-narrative')!.style.display = on ? 'block' : 'none';
-  }
 }

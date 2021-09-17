@@ -3,6 +3,7 @@ import {Link} from './externalLinks';
 // TODO card is circular ref
 import {Card} from './card';
 import {SidebarButtons} from './sidebarButtons';
+import {EntityMap} from './entityMap';
 
 
 export module CardButtons {
@@ -11,6 +12,8 @@ export module CardButtons {
   const leftArrow = '&#8592';
   const crossButton = '&#215;';
   const highlightElements: Array<HighlightHtmlColours> = [];
+  export const entityToOccurrence = new EntityMap<Element[]>();
+
 
   type ArrowButtonProperties = {
     nerTerm: string,
@@ -73,14 +76,12 @@ export module CardButtons {
   }
 
   function pressArrowButton(arrowProperties: ArrowButtonProperties, direction: 'left' | 'right'): void {
-    // TODO circular ref
-    Array.from(Card.entityToOccurrence.values()).forEach(entity => {
+    Array.from(entityToOccurrence.values()).forEach(entity => {
       entity.forEach(occurrence => Card.toggleHighlightColour(occurrence, highlightElements));
     });
 
     if (direction === 'right') {
-      // TODO circular ref
-      if (arrowProperties.positionInArray >= Card.entityToOccurrence.get(arrowProperties.nerTerm)!.length - 1) {
+      if (arrowProperties.positionInArray >= entityToOccurrence.get(arrowProperties.nerTerm)!.length - 1) {
         // gone off the end of the array - reset
         arrowProperties.positionInArray = 0;
       } else if (arrowProperties.isClicked) {
@@ -91,18 +92,16 @@ export module CardButtons {
     }
 
     // TODO circular ref
-    highlightElements.push(...Card.getNerHighlightColours(Card.entityToOccurrence.get(arrowProperties.nerTerm)!));
+    highlightElements.push(...Card.getNerHighlightColours(entityToOccurrence.get(arrowProperties.nerTerm)!));
 
-    // TODO circular ref
-    const targetElement = Card.entityToOccurrence.get(arrowProperties.nerTerm)![arrowProperties.positionInArray];
+    const targetElement = entityToOccurrence.get(arrowProperties.nerTerm)![arrowProperties.positionInArray];
     targetElement.scrollIntoView({behavior: 'smooth'});
 
     // TODO circular ref
     Card.toggleHighlightColour(targetElement, highlightElements);
 
     const occurrencesElement = document.getElementById(`${arrowProperties.nerTerm}-occurrences`);
-    // TODO circular ref
-    occurrencesElement!.innerText = `${arrowProperties.positionInArray + 1} / ${Card.entityToOccurrence.get(arrowProperties.nerTerm)!.length}`;
+    occurrencesElement!.innerText = `${arrowProperties.positionInArray + 1} / ${entityToOccurrence.get(arrowProperties.nerTerm)!.length}`;
     arrowProperties.isClicked = true;
   }
 

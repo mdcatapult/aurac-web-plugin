@@ -1,5 +1,4 @@
 import {cardClassName, cardStorageKey, Entity, HighlightHtmlColours, SavedCard} from './types';
-import {EntityMap} from './entityMap';
 import {ExternalLinks, Link} from './externalLinks';
 import {CardButtons} from './cardButtons';
 
@@ -8,7 +7,6 @@ export module Card {
   import links = ExternalLinks;
   import dimensionsLink = ExternalLinks.dimensions;
 
-  export const entityToOccurrence = new EntityMap<Element[]>();
   const geneAndProtein = 'Gene or Protein';
   const disease = 'Biological';
   const chemical = 'Chemical';
@@ -72,7 +70,7 @@ export module Card {
     occurrenceElement.style.justifyContent = 'flex-end';
 
     let numOfOccurrences = 0;
-    synonyms.forEach(synonym => numOfOccurrences = numOfOccurrences + entityToOccurrence.get(synonym)!.length);
+    synonyms.forEach(synonym => numOfOccurrences = numOfOccurrences + CardButtons.entityToOccurrence.get(synonym)!.length);
     occurrenceElement.innerText = `${numOfOccurrences} matches found`;
     return occurrenceElement;
   }
@@ -110,10 +108,10 @@ export module Card {
   }
 
   export function populateEntityToOccurrences(entityText: string, occurrence: Element): void {
-    if (!entityToOccurrence.has(entityText)) {
-      entityToOccurrence.set(entityText, [occurrence]);
+    if (!CardButtons.entityToOccurrence.has(entityText)) {
+      CardButtons.entityToOccurrence.set(entityText, [occurrence]);
     } else {
-      entityToOccurrence.get(entityText)!.push(occurrence);
+      CardButtons.entityToOccurrence.get(entityText)!.push(occurrence);
     }
   }
 

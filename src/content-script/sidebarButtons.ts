@@ -1,4 +1,3 @@
-import {Sidebar} from './sidebar';
 import {cardClassName} from './types';
 import {EntityMap} from './entityMap';
 
@@ -43,6 +42,10 @@ export module SidebarButtons {
     Array.from(document.getElementsByClassName(cardClassName)).forEach(card => card.parentNode!.removeChild(card));
   }
 
+  export function toggleNarrative(on: boolean): void {
+    document.getElementById('aurac-narrative')!.style.display = on ? 'block' : 'none';
+  }
+
   export function createClearButton(): HTMLButtonElement {
     const clearButton = document.createElement('button');
     clearButton.style.display = 'none';
@@ -51,8 +54,7 @@ export module SidebarButtons {
     clearButton.addEventListener('click', () => {
       clear();
       toggleClearButton(false);
-      // TODO circular ref
-      Sidebar.toggleNarrative(true);
+      toggleNarrative(true);
     });
     return clearButton;
   }
