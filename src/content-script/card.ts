@@ -224,6 +224,12 @@ export module Card {
     const element  = document.getElementById(`${cardClassName}.${information.entityText}`);
     element?.remove();
 
+    listOfEntities.forEach((value, index) => {
+      if (value.entityText === information.entityText) {
+        listOfEntities.splice(index)
+      }
+    });
+
     if (Array.from(entityToCard.values()).length === 0) {
       Sidebar.toggleClearButton(false)
       Sidebar.toggleDownloadButton(false);
