@@ -2,6 +2,7 @@ import {Component} from '@angular/core';
 import {LogService} from './log.service';
 import {validDict} from '../background/types';
 import {BrowserService} from '../browser.service';
+import { TitleCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-popup',
@@ -11,6 +12,8 @@ import {BrowserService} from '../browser.service';
 export class PopupComponent {
 
   mode: 'menu' | 'settings' | 'pdf' = 'menu'
+  selectedDictionary = ''
+  dictionaries = ['proteins', 'chemical-entities', 'chemical-inchi', 'diseases', 'general']
 
   constructor(private log: LogService, private browserService: BrowserService) {
   }

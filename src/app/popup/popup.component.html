@@ -1,27 +1,23 @@
 <div *ngIf="mode === 'menu'" class="popup-div">
 
   <img src="./assets/head-brains.icon.128.png" alt="logo" class="aurac-logo">
+
   <div class="ner-button-container">
-    <button mat-raised-button (click)="nerCurrentPage('proteins')">
-      <mat-icon inline="true" svgIcon="dna_icon" class="ner-icon"></mat-icon>
-      <!-- Icon source: https://freeicons.io/profile/2257-->
-      Genes/Proteins
-    </button>
-    <button mat-raised-button (click)="nerCurrentPage('chemical-entities')">
-      <mat-icon inline="true" class="ner-icon">science</mat-icon>
-      Chemicals(SMILES)
-    </button>
-    <button mat-raised-button (click)="nerCurrentPage('chemical-inchi')">
-      <mat-icon inline="true" class="ner-icon">vpn_key</mat-icon>
-      Chemicals(InchiKey)
-    </button>
-    <button mat-raised-button (click)="nerCurrentPage('diseases')">
-      <mat-icon inline="true" class="ner-icon">coronavirus</mat-icon>
-      Diseases
-    </button>
-    <button mat-raised-button (click)="nerCurrentPage('general')">
+
+    <mat-radio-group
+      aria-labelledby="radio-group-label"
+      class="radio-group"
+      [(ngModel)]="selectedDictionary">
+      <mat-radio-button
+        class="radio-button"
+        *ngFor="let dictionary of dictionaries"
+        [value]="dictionary">
+        {{dictionary | titlecase}}
+      </mat-radio-button>
+    </mat-radio-group>
+    <button mat-raised-button (click)="nerCurrentPage(selectedDictionary)">
       <mat-icon inline="true" class="ner-icon">manage_search</mat-icon>
-      General
+      NER
     </button>
   </div>
 
