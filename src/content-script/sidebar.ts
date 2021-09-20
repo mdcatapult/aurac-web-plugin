@@ -10,7 +10,7 @@ export module Sidebar {
   const toolsContainer = document.createElement('div');
   let toggleButtonElement: HTMLButtonElement;
   let clearButtonElement: HTMLButtonElement;
-  let downloadButtonElement: HTMLButtonElement;
+  let downloadResultsButtonElement: HTMLButtonElement;
   let isExpanded = false;
 
   export function create(): HTMLElement {
@@ -25,14 +25,14 @@ export module Sidebar {
 
     toggleButtonElement = createToggleButton();
     clearButtonElement = createClearButton();
-    downloadButtonElement = createDownloadButton();
+    downloadResultsButtonElement = createDownloadButton();
 
     sidebar.appendChild(toggleButtonElement);
     sidebar.appendChild(cardContainer);
 
     toolsContainer.className = 'aurac-sidebar-tools'
     toolsContainer.appendChild(clearButtonElement);
-    toolsContainer.appendChild(downloadButtonElement);
+    toolsContainer.appendChild(downloadResultsButtonElement);
 
     return sidebar
   }
@@ -82,26 +82,24 @@ export module Sidebar {
   }
 
   function createDownloadButton(): HTMLButtonElement {
-    const downloadButton = document.createElement('button')
-    downloadButton.style.display = 'none';
-    downloadButton.innerHTML = 'Download Cards'
-    downloadButton.className = 'download-button'
+    const downloadResultsButton = document.createElement('button')
+    downloadResultsButton.style.display = 'none';
+    downloadResultsButton.innerHTML = 'Download Results'
+    downloadResultsButton.className = 'download-results-button'
 
-    downloadButton.addEventListener('click', () => {
-      exportCSV()
-      toggleNarrative(true)
+    downloadResultsButton.addEventListener('click', () => {
+      exportToCSV()
     })
-    return downloadButton
+    return downloadResultsButton
   }
 
-  function exportCSV(): void {
+  function exportToCSV(): void {
     if (listOfEntities.length === 0) {
     return;
     }
     const headings = ['entityText',
     'resolvedEntity',
     'entityGroup',
-    'recognisingDict',
     'htmlColor',
     'entityType',
     'source']
@@ -110,13 +108,12 @@ export module Sidebar {
     text = text + entity.entityText + ','
       + entity.resolvedEntity + ','
       + entity.entityGroup + ','
-      + entity.recognisingDict + ','
       + entity.recognisingDict.htmlColor + ','
       + entity.recognisingDict.entityType + ','
       + entity.recognisingDict.source + '\n'
     })
     const blob = new Blob([text], {type: 'text/csv;charset=utf-8'})
-    saveAs(blob, 'exported_results.csv')
+    saveAs(blob, 'sidebar_results.csv')
   }
 
   export function toggleClearButton(on: boolean): void {
@@ -124,7 +121,7 @@ export module Sidebar {
   }
 
   export function toggleDownloadButton(on: boolean): void {
-    downloadButtonElement.style.display = on ? 'block' : 'none';
+    downloadResultsButtonElement.style.display = on ? 'block' : 'none';
   }
 
   function createLogo(): [HTMLImageElement, HTMLHeadingElement] {
@@ -194,7 +191,6 @@ export module Sidebar {
       }
     }
   }
-
 
   function toggleNarrative(on: boolean): void {
     document.getElementById('aurac-narrative')!.style.display = on ? 'block' : 'none';

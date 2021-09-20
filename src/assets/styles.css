@@ -133,7 +133,7 @@
   flex-direction: row;
 }
 
-.download-button {
+.download-results-button {
   background-color: rgb(226, 152, 71);
   color: rgb(250, 249, 249);
   border: 1px solid black;
