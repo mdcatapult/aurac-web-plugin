@@ -1,9 +1,11 @@
 import {Entity} from './types';
 import {Card} from './card';
 import {waitForAsync} from '@angular/core/testing';
+import {saveAs} from 'file-saver';
 
 export module Sidebar {
 
+  import listOfEntities = Card.listOfEntities;
   const cardContainer = document.createElement('div');
   const toolsContainer = document.createElement('div');
   let toggleButtonElement: HTMLButtonElement;
@@ -80,13 +82,40 @@ export module Sidebar {
 
   function createDownloadButton(): HTMLButtonElement {
     const downloadButton = document.createElement('button')
-    downloadButton.style.display = 'block';
+    downloadButton.style.display = 'none';
     downloadButton.innerHTML = 'Download Cards'
     downloadButton.className = 'download-button'
+
     downloadButton.addEventListener('click', () => {
+      exportCSV()
       toggleNarrative(true)
     })
     return downloadButton
+  }
+
+  function exportCSV(): void {
+    if ( listOfEntities.length === 0) {
+    return;
+    }
+    const headings = ['entityText',
+    'resolvedEntity',
+    'entityGroup',
+    'recognisingDict',
+    'htmlColor',
+    'entityType',
+    'source']
+    let text = headings.join(',') + '\n'
+    listOfEntities.forEach(entity => {
+    text = text + entity.entityText + ','
+      + entity.resolvedEntity + ','
+      + entity.entityGroup + ','
+      + entity.recognisingDict + ','
+      + entity.recognisingDict.htmlColor + ','
+      + entity.recognisingDict.entityType + ','
+      + entity.recognisingDict.source + '\n'
+    })
+    const blob = new Blob([text], {type: 'text/csv;charset=utf-8'})
+    saveAs(blob, 'exported_results.csv')
   }
 
   export function toggleClearButton(on: boolean): void {
@@ -138,6 +167,7 @@ export module Sidebar {
 
         Sidebar.addCard(card);
         toggleClearButton(true);
+        toggleDownloadButton(true);
         // @ts-ignore
         browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity]})
           .catch(e => console.error(e));
