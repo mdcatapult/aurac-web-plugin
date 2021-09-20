@@ -131,7 +131,7 @@ export class BackgroundComponent {
     return xRefObservable
   }
 
-  private postToUnichemPlus([entityText, inchiKeyText]: [string, string]) : Observable<XRef[]> {
+  private postToUnichemPlus([entityText, inchiKeyText]: [string, string]): Observable<XRef[]> {
     const xRefObservable = this.client.post(
       `${this.settings.urls.unichemURL}/x-ref/${inchiKeyText}`,
       this.getTrueKeys(this.settings.xRefConfig)).pipe(
