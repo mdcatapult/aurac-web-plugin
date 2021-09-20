@@ -6,6 +6,8 @@ import {CardButtons} from './cardButtons';
 export module Sidebar {
 
   const cardContainer = document.createElement('div');
+  let toggleButtonElement: HTMLButtonElement;
+  let clearButtonElement: HTMLButtonElement;
 
   export function create(): HTMLElement {
 
@@ -16,8 +18,8 @@ export module Sidebar {
     sidebar.appendChild(logoText);
     sidebar.className = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed';
 
-    const toggleButtonElement = SidebarButtons.createToggleButton();
-    const clearButtonElement = SidebarButtons.createClearButton();
+    toggleButtonElement = SidebarButtons.createToggleButton();
+    clearButtonElement = SidebarButtons.createClearButton();
 
     sidebar.appendChild(toggleButtonElement);
     sidebar.appendChild(clearButtonElement);

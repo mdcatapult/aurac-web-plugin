@@ -12,12 +12,12 @@ export module SidebarButtons {
   const expandArrow = '&#62;';
 
   export function createToggleButton(): HTMLButtonElement {
-    const toggleButton = document.createElement('button');
-    toggleButton.innerHTML = expandArrow;
-    toggleButton.className = 'sidebar-button';
-    toggleButton.className = 'aurac-transform aurac-sidebar-button aurac-sidebar-button--collapsed';
-    toggleButton.addEventListener('click', () => toggle());
-    return toggleButton;
+    toggleButtonElement = document.createElement('button');
+    toggleButtonElement.innerHTML = expandArrow;
+    toggleButtonElement.className = 'sidebar-button';
+    toggleButtonElement.className = 'aurac-transform aurac-sidebar-button aurac-sidebar-button--collapsed';
+    toggleButtonElement.addEventListener('click', () => toggle());
+    return toggleButtonElement;
   }
 
   export function open(): void {
@@ -45,16 +45,16 @@ export module SidebarButtons {
   }
 
   export function createClearButton(): HTMLButtonElement {
-    const clearButton = document.createElement('button');
-    clearButton.style.display = 'none';
-    clearButton.innerHTML = 'Clear';
-    clearButton.className = 'clear-button';
-    clearButton.addEventListener('click', () => {
+    clearButtonElement = document.createElement('button');
+    clearButtonElement.style.display = 'none';
+    clearButtonElement.innerHTML = 'Clear';
+    clearButtonElement.className = 'clear-button';
+    clearButtonElement.addEventListener('click', () => {
       clear();
       toggleClearButton(false);
       toggleNarrative(true);
     });
-    return clearButton;
+    return clearButtonElement;
   }
 
   export function toggleClearButton(on: boolean): void {
