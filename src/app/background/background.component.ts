@@ -115,7 +115,7 @@ export class BackgroundComponent {
     saveAs(blob, 'export.csv')
   }
 
-  private smilesToInChIToUnichemPlus([entityText]: [string]): Observable<XRef[]> {
+  private smilesToInChIToUnichemPlus(entityText: string): Observable<XRef[]> {
     const encodedEntity = encodeURIComponent(entityText);
     const xRefObservable = this.client.get(`${this.settings.urls.compoundConverterURL}/${encodedEntity}?from=SMILES&to=inchikey`).pipe(
       // @ts-ignore
@@ -131,7 +131,7 @@ export class BackgroundComponent {
     return xRefObservable
   }
 
-  private postToUnichemPlus([entityText, inchiKeyText]: [string, string]): Observable<XRef[]> {
+  private postToUnichemPlus(entityText, inchiKeyText: string): Observable<XRef[]> {
     const xRefObservable = this.client.post(
       `${this.settings.urls.unichemURL}/x-ref/${inchiKeyText}`,
       this.getTrueKeys(this.settings.xRefConfig)).pipe(
@@ -142,36 +142,36 @@ export class BackgroundComponent {
   }
 
   private loadXRefs([entityText, resolvedEntity, entityGroup, entityType]: [string, string, string, string]): void {
-    if (entityGroup === 'Chemical') {
-      let xRefObservable: Observable<XRef[]>;
-      switch (entityType) {
-        case 'SMILES': {
-          xRefObservable = this.smilesToInChIToUnichemPlus([entityText])
-          break
-        }
-        // likely to be more cases here.
-        case 'Mol' || 'DictMol': {
-          const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]$/;
-          if (!resolvedEntity.match(inchiKeyRegex)) {
-            xRefObservable = this.smilesToInChIToUnichemPlus([entityText])
-          } else {
-            xRefObservable = this.postToUnichemPlus([entityText, resolvedEntity])
-          }
-          break
-        }
-        default: {
-          // default case assumes that the entity text is itself an InChiKey.
-          xRefObservable = this.postToUnichemPlus([entityText, entityText])
-        }
-      }
-
-      xRefObservable.subscribe((xrefs: XRef[]) => {
-        if (xrefs.length) {
-          this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
-            .catch(console.error);
-      }
-      });
+    if (entityGroup !== 'Chemical') {
+      return
     }
+    let xRefObservable: Observable<XRef[]>;
+    switch (entityType) {
+      case 'SMILES': {
+        xRefObservable = this.smilesToInChIToUnichemPlus(entityText)
+        break
+      }
+      // likely to be more cases here.
+      case 'Mol' || 'DictMol': {
+        const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]$/;
+        if (!resolvedEntity.match(inchiKeyRegex)) {
+          xRefObservable = this.smilesToInChIToUnichemPlus(entityText)
+        } else {
+          xRefObservable = this.postToUnichemPlus(entityText, resolvedEntity)
+        }
+        break
+      }
+      default: {
+        // default case assumes that the entity text is itself an InChiKey.
+        xRefObservable = this.postToUnichemPlus(entityText, entityText)
+      }
+    }
+    xRefObservable.subscribe((xrefs: XRef[]) => {
+      if (xrefs.length) {
+        this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
+          .catch(console.error);
+    }
+  });
   }
 
   private addCompoundNameToXRefObject = (entityTerm: string) => map((xrefs: XRef[]) => xrefs.map(xref => {
