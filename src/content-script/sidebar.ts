@@ -75,6 +75,7 @@ export module Sidebar {
     clearButton.addEventListener('click', () => {
       Card.clear()
       toggleClearButton(false)
+      toggleDownloadButton(false)
       toggleNarrative(true)
     })
     return clearButton
