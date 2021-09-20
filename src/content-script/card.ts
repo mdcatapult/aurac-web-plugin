@@ -226,7 +226,7 @@ export module Card {
 
     listOfEntities.forEach((value, index) => {
       if (value.entityText === information.entityText) {
-        listOfEntities.splice(index)
+        listOfEntities.splice(index, 1)
       }
     });
 
