@@ -25,7 +25,7 @@ export module Sidebar {
 
     toggleButtonElement = createToggleButton();
     clearButtonElement = createClearButton();
-    downloadResultsButtonElement = createDownloadButton();
+    downloadResultsButtonElement = createDownloadResultsButton();
 
     sidebar.appendChild(toggleButtonElement);
     sidebar.appendChild(cardContainer);
@@ -81,7 +81,7 @@ export module Sidebar {
     return clearButton
   }
 
-  function createDownloadButton(): HTMLButtonElement {
+  function createDownloadResultsButton(): HTMLButtonElement {
     const downloadResultsButton = document.createElement('button')
     downloadResultsButton.style.display = 'none';
     downloadResultsButton.innerHTML = 'Download Results'
