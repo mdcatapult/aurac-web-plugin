@@ -112,8 +112,9 @@ export module Sidebar {
       + entity.recognisingDict.source + '\n'
     })
     const currentUrl = window.location.href
+    const urlWithoutHTTP = currentUrl.replace(/^(https?|http):\/\//, '')
     const blob = new Blob([text], {type: 'text/csv;charset=utf-8'})
-    saveAs(blob, 'aurac_results' + currentUrl + '.csv')
+    saveAs(blob, 'aurac_results_' + urlWithoutHTTP + '.csv')
   }
 
   export function toggleToolsButtons(on: boolean): void {
