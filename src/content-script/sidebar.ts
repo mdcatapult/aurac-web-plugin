@@ -111,8 +111,9 @@ export module Sidebar {
       + entity.recognisingDict.entityType + ','
       + entity.recognisingDict.source + '\n'
     })
+    const currentUrl = window.location.href
     const blob = new Blob([text], {type: 'text/csv;charset=utf-8'})
-    saveAs(blob, 'sidebar_results.csv')
+    saveAs(blob, 'aurac_results' + currentUrl + '.csv')
   }
 
   export function toggleToolsButtons(on: boolean): void {
