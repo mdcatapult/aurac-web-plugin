@@ -8,6 +8,7 @@ import {FormGroup} from '@angular/forms';
 })
 export class PreferencesComponent implements OnInit {
 
+  minEntityLength = [...Array(50).keys()].slice(2)
   isLoaded = false;
   @Input() preferencesForm?: FormGroup;
 

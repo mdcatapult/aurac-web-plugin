@@ -9,7 +9,7 @@ export module Sidebar {
   let clearButtonElement: HTMLButtonElement;
   let isExpanded = false;
 
-  export function create(): void {
+  export function create(): HTMLElement {
 
     const [logo, logoText] = createLogo();
 
@@ -25,8 +25,8 @@ export module Sidebar {
     sidebar.appendChild(clearButtonElement);
     sidebar.appendChild(cardContainer);
 
-    document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
-    document.body.appendChild(sidebar);
+
+    return sidebar
   }
 
   export function open(): void {
@@ -72,7 +72,7 @@ export module Sidebar {
     return clearButton
   }
 
-  function toggleClearButton(on: boolean): void {
+  export function toggleClearButton(on: boolean): void {
     clearButtonElement.style.display = on ? 'block' : 'none';
   }
 
@@ -96,8 +96,8 @@ export module Sidebar {
 
   // TODO move style
   function setSidebarColors(highlightedDiv: HTMLDivElement): void {
-    Array.from(Card.entityToCard.values()).forEach(div => {
-      div.style.border = div === highlightedDiv ? '2px white solid' : '1px black solid';
+    Array.from(Card.entityToCard.values()).forEach(card => {
+      card.div.style.border = card.div === highlightedDiv ? '2px white solid' : '1px black solid';
     });
   }
 
@@ -110,12 +110,11 @@ export module Sidebar {
 
       toggleNarrative(false)
 
-      if (getAuracHighlightChildren(element).some(child => child.className === 'aurac-highlight')
-        && element.parentElement!.className === 'aurac-highlight') {
-        removeEventListener('click', entityClickHandler(info, element));
-      } else if (!Card.entityToCard.has(info.entityText)) {
-        const card = Card.create(info)
-        Card.entityToCard.set(info.entityText, card);
+      const entityId = info.resolvedEntity || info.entityText
+      if (!Card.entityToCard.has(entityId)) {  // entity is a new sidecard
+        const card = Card.create(info, [info.entityText])
+        Card.entityToCard.set(entityId, {synonyms: [info.entityText], div: card});
+
         Sidebar.addCard(card);
         toggleClearButton(true);
         console.log(info)
@@ -123,18 +122,31 @@ export module Sidebar {
         browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity, 
           info.entityGroup, info.recognisingDict.entityType]})
           .catch(e => console.error(e));
-      }
+      } else { // entity is a synonym of existing sidecard
+        const synonyms = Card.entityToCard.get(entityId)!.synonyms
 
-      const div = Card.entityToCard.get(info.entityText);
+        if (!synonyms.includes(info.entityText)) {
+          synonyms.push(info.entityText)
+
+          let synonymOccurrences: Element[] = []
+          synonyms.forEach(synonym => {
+            synonymOccurrences = synonymOccurrences.concat(Card.entityToOccurrence.get(synonym)!)
+          })
+          synonymOccurrences.sort((a, b) => a.getBoundingClientRect().y - b.getBoundingClientRect().y)
+          Card.entityToOccurrence.set(entityId, synonymOccurrences)
+          Card.entityToCard.get(entityId)!.div.replaceWith(Card.create(info, synonyms))
+        }
+      }
+      const div = Card.entityToCard.get(info.entityText)?.div;
       if (div) {
         div.scrollIntoView({behavior: 'smooth'});
         setSidebarColors(div);
       }
-    };
+    }
   }
+
 
   function toggleNarrative(on: boolean): void {
     document.getElementById('aurac-narrative')!.style.display = on ? 'block' : 'none';
   }
-
 }

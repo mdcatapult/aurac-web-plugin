@@ -164,10 +164,13 @@ export class BackgroundComponent {
           xRefObservable = this.postToUnichemPlus([entityText, entityText])
         }
       }
+
       xRefObservable.subscribe((xrefs: XRef[]) => {
+        if (xrefs.length) {
           this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
             .catch(console.error);
-        });
+      }
+      });
     }
   }
 
