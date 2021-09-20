@@ -206,8 +206,8 @@ export class BackgroundComponent {
   }
 
   shouldDisplayEntity(entity: LeadminerEntity): boolean {
-    // Entity must be greater than min entity length.
-    return (entity && entity.entityText.length > this.settings.preferences.minEntityLength);
+    // Entity length must be at least minimum entity length.
+    return (entity && entity.entityText.length >= this.settings.preferences.minEntityLength);
   }
 
 
