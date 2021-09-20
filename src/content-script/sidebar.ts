@@ -104,7 +104,7 @@ export module Sidebar {
     'source']
     let text = headings.join(',') + '\n'
     listOfEntities.forEach(entity => {
-    text = text + entity.entityText + ','
+    text = text + `"${entity.entityText}"` + ','
       + entity.resolvedEntity + ','
       + entity.entityGroup + ','
       + entity.recognisingDict.htmlColor + ','
