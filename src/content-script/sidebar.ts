@@ -94,7 +94,7 @@ export module Sidebar {
   }
 
   function exportCSV(): void {
-    if ( listOfEntities.length === 0) {
+    if (listOfEntities.length === 0) {
     return;
     }
     const headings = ['entityText',

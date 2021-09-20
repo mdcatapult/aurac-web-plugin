@@ -259,8 +259,9 @@ export module Card {
   }
 
   export function clear(): void {
-    entityToCard.clear()
-    Array.from(document.getElementsByClassName(cardClassName)).forEach(card => card.parentNode!.removeChild(card))
+    entityToCard.clear();
+    listOfEntities.length = 0;
+    Array.from(document.getElementsByClassName(cardClassName)).forEach(card => card.parentNode!.removeChild(card));
   }
 
   // saves the card data in local storage if it doesn't already exist
