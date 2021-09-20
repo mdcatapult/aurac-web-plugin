@@ -74,8 +74,7 @@ export module Sidebar {
     clearButton.className = 'clear-button'
     clearButton.addEventListener('click', () => {
       Card.clear()
-      toggleClearButton(false)
-      toggleDownloadButton(false)
+      toggleToolsButtons(false)
       toggleNarrative(true)
     })
     return clearButton
@@ -116,11 +115,8 @@ export module Sidebar {
     saveAs(blob, 'sidebar_results.csv')
   }
 
-  export function toggleClearButton(on: boolean): void {
+  export function toggleToolsButtons(on: boolean): void {
     clearButtonElement.style.display = on ? 'block' : 'none';
-  }
-
-  export function toggleDownloadButton(on: boolean): void {
     downloadResultsButtonElement.style.display = on ? 'block' : 'none';
   }
 
@@ -164,8 +160,7 @@ export module Sidebar {
         Card.entityToCard.set(entityId, {synonyms: [info.entityText], div: card});
 
         Sidebar.addCard(card);
-        toggleClearButton(true);
-        toggleDownloadButton(true);
+        toggleToolsButtons(true);
         // @ts-ignore
         browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity]})
           .catch(e => console.error(e));

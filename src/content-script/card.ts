@@ -231,9 +231,7 @@ export module Card {
     });
 
     if (Array.from(entityToCard.values()).length === 0) {
-      Sidebar.toggleClearButton(false)
-      Sidebar.toggleDownloadButton(false);
-    }
+      Sidebar.toggleToolsButtons(false)}
   }
 
   export function setXRefHTML(xrefs: { databaseName: string, url: string, compoundName: string }[]): void {
