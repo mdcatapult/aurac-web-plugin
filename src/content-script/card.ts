@@ -6,7 +6,7 @@ export module Card {
 
   import links = ExternalLinks;
   import dimensionsLink = ExternalLinks.dimensions;
-  export const listOfEntities: Array<Entity> = []
+  // export const listOfEntities: Array<Entity> = []
   const geneAndProtein = 'Gene or Protein';
   const disease = 'Biological';
   const chemical = 'Chemical';
@@ -22,7 +22,7 @@ export module Card {
   }
 
   // Creates a card for a given entity
-  export function create(information: Entity, synonyms: string[]): HTMLDivElement {
+  export function create(information: Entity, synonyms: string[], listOfEntities: Entity[]): HTMLDivElement {
     const card: HTMLDivElement = document.createElement('div');
     card.className = cardClassName;
     card.id = `${cardClassName}.${information.entityText}`;
@@ -33,7 +33,7 @@ export module Card {
     const entityLinks = getEntityLinks(information);
     const links = createListOfLinks(entity, entityLinks);
 
-    card.appendChild(CardButtons.createCardControls(information, entityLinks, synonyms));
+    card.appendChild(CardButtons.createCardControls(information, entityLinks, synonyms, listOfEntities));
 
     // If possible link directly to the gene/protein using the resolvedEntity from the entityText
     // We could move this to the externalLinks class (or elsewhere) and make them for each type of entity.

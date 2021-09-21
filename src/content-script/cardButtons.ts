@@ -2,8 +2,6 @@ import {cardClassName, cardStorageKey, Entity, HighlightHtmlColours, SavedCard} 
 import {Link} from './externalLinks';
 import {SidebarButtons} from './sidebarButtons';
 import {EntityMap} from './entityMap';
-import {Card} from './card';
-
 
 export module CardButtons {
 
@@ -12,6 +10,7 @@ export module CardButtons {
   const crossButton = '&#215;';
   const highlightElements: Array<HighlightHtmlColours> = [];
   export const entityToOccurrence = new EntityMap<Element[]>();
+  // export const listOfEntities: Array<Entity> = []
 
   type ArrowButtonProperties = {
     nerTerm: string,
@@ -33,18 +32,18 @@ export module CardButtons {
     return occurrenceElement;
   }
 
-  function createRemoveEntityFromSidebarButtonElement(information: Entity): HTMLElement {
+  function createRemoveEntityFromSidebarButtonElement(information: Entity, listOfEntities: Entity[]): HTMLElement {
     const removeEntityFromSidebarButtonElement = document.createElement('button');
     removeEntityFromSidebarButtonElement.innerHTML = crossButton;
     removeEntityFromSidebarButtonElement.className = 'aurac-cross-button';
 
     removeEntityFromSidebarButtonElement.addEventListener('click', () => {
-      pressRemoveEntityFromSidebarButtonElement(information);
+      pressRemoveEntityFromSidebarButtonElement(information, listOfEntities);
     });
     return removeEntityFromSidebarButtonElement;
   }
 
-  function pressRemoveEntityFromSidebarButtonElement(information: Entity): void {
+  function pressRemoveEntityFromSidebarButtonElement(information: Entity, listOfEntities: Entity[]): void {
     if (!document.getElementById(information.entityText)) {
       return;
     }
@@ -54,9 +53,9 @@ export module CardButtons {
     const element = document.getElementById(`${cardClassName}.${information.entityText}`);
     element?.remove();
 
-    Card.listOfEntities.forEach((value, index) => {
+    listOfEntities.forEach((value, index) => {
       if (value.entityText === information.entityText) {
-        Card.listOfEntities.splice(index, 1)
+        listOfEntities.splice(index, 1)
       }
     });
 
@@ -67,11 +66,11 @@ export module CardButtons {
     }
   }
 
-  export function createCardControls(entityData: Entity, entityLinks: Link[], synonyms: string[]): HTMLElement {
+  export function createCardControls(entityData: Entity, entityLinks: Link[], synonyms: string[], listOfEntities: Entity[]): HTMLElement {
     const controls: HTMLSpanElement = document.createElement('span');
     controls.className = 'aurac-card-controls';
 
-    const removeButton = createRemoveEntityFromSidebarButtonElement(entityData);
+    const removeButton = createRemoveEntityFromSidebarButtonElement(entityData, listOfEntities);
     controls.appendChild(removeButton);
 
     const saveButton = createSaveButton(entityData, entityLinks);

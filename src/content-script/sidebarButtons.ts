@@ -1,8 +1,6 @@
-import {cardClassName} from './types';
+import {cardClassName, Entity} from './types';
 import {EntityMap} from './entityMap';
-import {Sidebar} from './sidebar';
-import {Card} from './card';
-
+import {saveAs} from 'file-saver';
 
 export module SidebarButtons {
 
@@ -28,7 +26,6 @@ export module SidebarButtons {
   }
 
   export function toggle(): void {
-
     Array.from(document.getElementsByClassName('aurac-transform')).forEach(e => {
       e.className = e.className.replace(/(expanded|collapsed)/, (g) => {
         return g === 'expanded' ? 'collapsed' : 'expanded';
@@ -38,23 +35,20 @@ export module SidebarButtons {
     toggleButtonElement.innerHTML = isExpanded ? collapseArrow : expandArrow;
   }
 
-  export function clear(): void {
-    entityToCard.clear();
-    Card.listOfEntities.length = 0;
-    Array.from(document.getElementsByClassName(cardClassName)).forEach(card => card.parentNode!.removeChild(card));
-  }
-
   export function toggleNarrative(on: boolean): void {
     document.getElementById('aurac-narrative')!.style.display = on ? 'block' : 'none';
   }
 
-  export function createClearButton(): HTMLButtonElement {
+  export function createClearButton(listOfEntities: Entity[]): HTMLButtonElement {
     clearButtonElement = document.createElement('button');
     clearButtonElement.style.display = 'none';
     clearButtonElement.innerHTML = 'Clear';
     clearButtonElement.className = 'clear-button';
     clearButtonElement.addEventListener('click', () => {
-      clear();
+
+      entityToCard.clear();
+      listOfEntities.length = 0;
+      Array.from(document.getElementsByClassName(cardClassName)).forEach(card => card.parentNode!.removeChild(card));
       toggleClearButton(false);
       toggleDownloadButton(false);
       toggleNarrative(false);
@@ -62,14 +56,14 @@ export module SidebarButtons {
     return clearButtonElement;
   }
 
-  export function createDownloadResultsButton(): HTMLButtonElement {
+  export function createDownloadResultsButton(listOfEntities: Entity[]): HTMLButtonElement {
     downloadResultsButtonElement = document.createElement('button')
     downloadResultsButtonElement.style.display = 'none';
     downloadResultsButtonElement.innerHTML = 'Download Results'
     downloadResultsButtonElement.className = 'download-results-button'
 
     downloadResultsButtonElement.addEventListener('click', () => {
-      Sidebar.exportEntityToCSV()
+      exportEntityToCSV(listOfEntities)
     })
     return downloadResultsButtonElement;
   }
@@ -83,4 +77,34 @@ export module SidebarButtons {
     downloadResultsButtonElement.style.display = on ? 'block' : 'none';
     return downloadResultsButtonElement;
   }
+
+  function exportEntityToCSV(listOfEntities: Entity[]): void {
+    if (listOfEntities.length === 0) {
+      return;
+    }
+    const headings = ['entityText',
+      'resolvedEntity',
+      'entityGroup',
+      'htmlColor',
+      'entityType',
+      'source']
+    let text = headings.join(',') + '\n'
+    listOfEntities.forEach(entity => {
+      text = text + `"${entity.entityText}"` + ','
+        + entity.resolvedEntity + ','
+        + entity.entityGroup + ','
+        + entity.recognisingDict.htmlColor + ','
+        + entity.recognisingDict.entityType + ','
+        + entity.recognisingDict.source + '\n'
+    })
+    exportToCSV(text)
+  }
+
+  export function exportToCSV(text: string): void {
+    const currentUrl = window.location.href
+    const urlWithoutHTTP = currentUrl.replace(/^(https?|http):\/\//, '')
+    const blob = new Blob([text], {type: 'text/csv;charset=utf-8'})
+    saveAs(blob, 'aurac_results_' + urlWithoutHTTP + '.csv')
+  }
+
 }
