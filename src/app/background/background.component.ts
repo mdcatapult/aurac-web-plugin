@@ -206,17 +206,8 @@ export class BackgroundComponent {
   }
 
   shouldDisplayEntity(entity: LeadminerEntity): boolean {
-    // Entity must be greater than min entity length in all cases.
-    if (entity && entity.entityText.length < this.settings.preferences.minEntityLength) {
-      return false;
-    }
-
-    if (!this.settings.preferences.hideUnresolved) {
-      return true;
-    } else {
-      // If hide unresolved is true, the resolved entity string must be non-empty.
-      return !!entity.resolvedEntity;
-    }
+    // Entity length must be at least minimum entity length.
+    return (entity && entity.entityText.length >= this.settings.preferences.minEntityLength);
   }
 
 

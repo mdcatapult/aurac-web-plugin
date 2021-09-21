@@ -87,7 +87,6 @@ export type XRef = {
 };
 
 export type Preferences = {
-  hideUnresolved: boolean,
   minEntityLength: number
 }
 
@@ -113,7 +112,6 @@ export const defaultSettings: Settings = {
   },
   xRefConfig: {},
   preferences: {
-    hideUnresolved: true,
     minEntityLength: 2,
   }
 };
