@@ -36,7 +36,7 @@ export module Sidebar {
     toolsContainer.appendChild(clearButtonElement);
     toolsContainer.appendChild(downloadResultsButtonElement);
 
-    return sidebar
+    return sidebar;
   }
 
   export function addCard(card: HTMLDivElement): void {

@@ -63,6 +63,7 @@ export module CardButtons {
     if (Array.from(SidebarButtons.entityToCard.values()).length === 0) {
       SidebarButtons.toggleNarrative(true);
       SidebarButtons.toggleDownloadButton(false);
+      SidebarButtons.toggleClearButton(false);
     }
   }
 

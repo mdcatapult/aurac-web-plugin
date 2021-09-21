@@ -76,6 +76,7 @@ export module SidebarButtons {
     clearButtonElement.style.display = on ? 'block' : 'none';
     return clearButtonElement;
   }
+
   export function toggleDownloadButton(on: boolean): HTMLButtonElement {
     downloadResultsButtonElement.style.display = on ? 'block' : 'none';
     return downloadResultsButtonElement;
