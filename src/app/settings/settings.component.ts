@@ -45,9 +45,6 @@ export class SettingsComponent implements OnInit {
     }),
     xRefConfig: new FormGroup({}),
     preferences: this.fb.group({
-      hideUnresolved: new FormControl(
-        defaultSettings.preferences.hideUnresolved
-      ),
       minEntityLength: new FormControl(
         defaultSettings.preferences.minEntityLength,
         Validators.required

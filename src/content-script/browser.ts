@@ -1,8 +1,8 @@
-import {Sidebar} from './sidebar'
 import {TextHighlighter} from './textHighlighter'
-import { Card } from './card'
+import {Card} from './card'
 import {UserExperience} from './userExperience';
 import {ChEMBL} from './chembl';
+import {SidebarButtons} from './sidebarButtons';
 
 export module Browser {
   // add listener function to browser
@@ -23,13 +23,13 @@ export module Browser {
         case 'markup_page':
           UserExperience.toggleLoadingIcon(false);
           TextHighlighter.wrapEntitiesWithHighlight(msg);
-          Sidebar.open()
+          SidebarButtons.open()
           break;
         case 'x-ref_result':
           Card.setXRefHTML(msg.body);
           break;
         case 'toggle_sidebar':
-          Sidebar.toggle()
+          SidebarButtons.toggle()
           break;
         case 'awaiting_response':
           UserExperience.toggleLoadingIcon(msg.body as boolean);

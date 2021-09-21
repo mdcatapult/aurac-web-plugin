@@ -20,9 +20,6 @@ describe('PreferencesComponent', () => {
     fixture = TestBed.createComponent(PreferencesComponent);
     component = fixture.componentInstance;
     component.preferencesForm = fb.group({
-      hideUnresolved: new FormControl(
-        defaultSettings.preferences.hideUnresolved
-      ),
       minEntityLength: new FormControl(
         defaultSettings.preferences.minEntityLength
       )
