@@ -43,7 +43,7 @@ export module Sidebar {
     cardContainer.appendChild(card);
   }
 
-  export function exportEntityToCSV() {
+  export function exportEntityToCSV(): void {
     if (listOfEntities.length === 0) {
       return;
     }
