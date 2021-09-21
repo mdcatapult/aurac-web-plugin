@@ -4,18 +4,8 @@
 
   <div class="ner-button-container">
 
-    <mat-radio-group
-      aria-labelledby="radio-group-label"
-      class="radio-group"
-      [(ngModel)]="selectedDictionary">
-      <mat-radio-button
-        class="radio-button"
-        *ngFor="let dictionary of dictionaries"
-        [value]="dictionary">
-        {{dictionary | titlecase}}
-      </mat-radio-button>
-    </mat-radio-group>
-    <button mat-raised-button (click)="nerCurrentPage(selectedDictionary)">
+
+    <button mat-raised-button (click)="nerCurrentPage()">
       <mat-icon inline="true" class="ner-icon">manage_search</mat-icon>
       NER
     </button>

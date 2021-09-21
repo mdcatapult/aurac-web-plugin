@@ -12,8 +12,6 @@ import { TitleCasePipe } from '@angular/common';
 export class PopupComponent {
 
   mode: 'menu' | 'settings' | 'pdf' = 'menu'
-  selectedDictionary = ''
-  dictionaries = ['proteins', 'chemical-entities', 'chemical-inchi', 'diseases', 'general']
 
   constructor(private log: LogService, private browserService: BrowserService) {
   }
@@ -22,10 +20,12 @@ export class PopupComponent {
     this.mode = 'settings'
   }
 
-  nerCurrentPage(dictionary: validDict): void {
-    this.log.Log('Sending message to background page...');
-    this.browserService.sendMessage('ner_current_page', dictionary)
-      .catch(e => this.log.Error(`Couldn't send message to background page: ${JSON.stringify(e)}`));
+  nerCurrentPage(): void {
+    this.browserService.loadSettings().then(settings => {
+      this.log.Log('Sending message to background page...');
+      this.browserService.sendMessage('ner_current_page', settings.preferences.dictionary)
+        .catch(e => this.log.Error(`Couldn't send message to background page: ${JSON.stringify(e)}`));
+    })
   }
 
   toggleSidebar(): void {

@@ -87,7 +87,8 @@ export type XRef = {
 };
 
 export type Preferences = {
-  minEntityLength: number
+  minEntityLength: number,
+  dictionary: string,
 }
 
 export type Settings = {
@@ -113,6 +114,7 @@ export const defaultSettings: Settings = {
   xRefConfig: {},
   preferences: {
     minEntityLength: 2,
+    dictionary: 'proteins',
   }
 };
 
