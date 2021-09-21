@@ -2,6 +2,7 @@ import {cardClassName, cardStorageKey, Entity, HighlightHtmlColours, SavedCard} 
 import {Link} from './externalLinks';
 import {SidebarButtons} from './sidebarButtons';
 import {EntityMap} from './entityMap';
+import {Card} from './card';
 
 
 export module CardButtons {
@@ -53,7 +54,15 @@ export module CardButtons {
     const element = document.getElementById(`${cardClassName}.${information.entityText}`);
     element?.remove();
 
+    Card.listOfEntities.forEach((value, index) => {
+      if (value.entityText === information.entityText) {
+        Card.listOfEntities.splice(index, 1)
+      }
+    });
+
     if (Array.from(SidebarButtons.entityToCard.values()).length === 0) {
+      SidebarButtons.toggleNarrative(true);
+      SidebarButtons.toggleDownloadButton(false);
       SidebarButtons.toggleClearButton(false);
     }
   }

@@ -2,12 +2,17 @@ import {Entity} from './types';
 import {Card} from './card';
 import {SidebarButtons} from './sidebarButtons';
 import {CardButtons} from './cardButtons';
+import {saveAs} from 'file-saver';
 
 export module Sidebar {
 
+  const listOfEntities = Card.listOfEntities;
   const cardContainer = document.createElement('div');
+  const toolsContainer = document.createElement('div');
+
   let toggleButtonElement: HTMLButtonElement;
   let clearButtonElement: HTMLButtonElement;
+  let downloadResultsButtonElement: HTMLButtonElement;
 
   export function create(): HTMLElement {
 
@@ -16,19 +21,55 @@ export module Sidebar {
     const sidebar = document.createElement('span');
     sidebar.appendChild(logo);
     sidebar.appendChild(logoText);
+    sidebar.appendChild(toolsContainer)
     sidebar.className = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed';
 
     toggleButtonElement = SidebarButtons.createToggleButton();
     clearButtonElement = SidebarButtons.createClearButton();
+    downloadResultsButtonElement = SidebarButtons.createDownloadResultsButton();
 
     sidebar.appendChild(toggleButtonElement);
     sidebar.appendChild(clearButtonElement);
     sidebar.appendChild(cardContainer);
+
+    toolsContainer.className = 'aurac-sidebar-tools'
+    toolsContainer.appendChild(clearButtonElement);
+    toolsContainer.appendChild(downloadResultsButtonElement);
+
     return sidebar;
   }
 
   export function addCard(card: HTMLDivElement): void {
     cardContainer.appendChild(card);
+  }
+
+  export function exportEntityToCSV(): void {
+    if (listOfEntities.length === 0) {
+      return;
+    }
+    const headings = ['entityText',
+      'resolvedEntity',
+      'entityGroup',
+      'htmlColor',
+      'entityType',
+      'source']
+    let text = headings.join(',') + '\n'
+    listOfEntities.forEach(entity => {
+      text = text + `"${entity.entityText}"` + ','
+        + entity.resolvedEntity + ','
+        + entity.entityGroup + ','
+        + entity.recognisingDict.htmlColor + ','
+        + entity.recognisingDict.entityType + ','
+        + entity.recognisingDict.source + '\n'
+    })
+    exportToCSV(text)
+  }
+
+  export function exportToCSV(text: string): void {
+    const currentUrl = window.location.href
+    const urlWithoutHTTP = currentUrl.replace(/^(https?|http):\/\//, '')
+    const blob = new Blob([text], {type: 'text/csv;charset=utf-8'})
+    saveAs(blob, 'aurac_results_' + urlWithoutHTTP + '.csv')
   }
 
   function createLogo(): [HTMLImageElement, HTMLHeadingElement] {
@@ -71,7 +112,9 @@ export module Sidebar {
         SidebarButtons.entityToCard.set(entityId, {synonyms: [info.entityText], div: card});
 
         Sidebar.addCard(card);
-        SidebarButtons.toggleClearButton(true);
+        clearButtonElement = SidebarButtons.toggleClearButton(true)
+        downloadResultsButtonElement = SidebarButtons.toggleDownloadButton(true);
+
         // @ts-ignore
         browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity]})
           .catch(e => console.error(e));

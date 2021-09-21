@@ -1,15 +1,18 @@
 import {cardClassName} from './types';
 import {EntityMap} from './entityMap';
+import {Sidebar} from './sidebar';
+import {Card} from './card';
 
 
 export module SidebarButtons {
 
   let toggleButtonElement: HTMLButtonElement;
   let clearButtonElement: HTMLButtonElement;
+  let downloadResultsButtonElement: HTMLButtonElement;
   let isExpanded = false;
   export const entityToCard = new EntityMap<{ synonyms: string[], div: HTMLDivElement }>();
-  const collapseArrow = '&#60;';
-  const expandArrow = '&#62;';
+  export const collapseArrow = '&#60;';
+  export const expandArrow = '&#62;';
 
   export function createToggleButton(): HTMLButtonElement {
     toggleButtonElement = document.createElement('button');
@@ -37,6 +40,7 @@ export module SidebarButtons {
 
   export function clear(): void {
     entityToCard.clear();
+    Card.listOfEntities.length = 0;
     Array.from(document.getElementsByClassName(cardClassName)).forEach(card => card.parentNode!.removeChild(card));
   }
 
@@ -52,13 +56,31 @@ export module SidebarButtons {
     clearButtonElement.addEventListener('click', () => {
       clear();
       toggleClearButton(false);
-      toggleNarrative(true);
+      toggleDownloadButton(false);
+      toggleNarrative(false);
     });
     return clearButtonElement;
   }
 
-  export function toggleClearButton(on: boolean): void {
-    clearButtonElement.style.display = on ? 'block' : 'none';
+  export function createDownloadResultsButton(): HTMLButtonElement {
+    downloadResultsButtonElement = document.createElement('button')
+    downloadResultsButtonElement.style.display = 'none';
+    downloadResultsButtonElement.innerHTML = 'Download Results'
+    downloadResultsButtonElement.className = 'download-results-button'
+
+    downloadResultsButtonElement.addEventListener('click', () => {
+      Sidebar.exportEntityToCSV()
+    })
+    return downloadResultsButtonElement;
   }
 
+  export function toggleClearButton(on: boolean): HTMLButtonElement {
+    clearButtonElement.style.display = on ? 'block' : 'none';
+    return clearButtonElement;
+  }
+
+  export function toggleDownloadButton(on: boolean): HTMLButtonElement {
+    downloadResultsButtonElement.style.display = on ? 'block' : 'none';
+    return downloadResultsButtonElement;
+  }
 }

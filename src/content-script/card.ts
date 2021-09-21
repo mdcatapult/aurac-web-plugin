@@ -6,7 +6,7 @@ export module Card {
 
   import links = ExternalLinks;
   import dimensionsLink = ExternalLinks.dimensions;
-
+  export const listOfEntities: Array<Entity> = []
   const geneAndProtein = 'Gene or Protein';
   const disease = 'Biological';
   const chemical = 'Chemical';
@@ -50,6 +50,7 @@ export module Card {
 
     card.insertAdjacentHTML('beforeend', `<p class='aurac-mdc-entity-type'>Entity Type: ${information.recognisingDict.entityType}</p>`);
 
+    listOfEntities.push(information)
     return card;
   }
 
