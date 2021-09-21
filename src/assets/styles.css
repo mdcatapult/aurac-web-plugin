@@ -140,6 +140,11 @@
   margin: 2px;
 }
 
+.download-results-button:hover {
+  background-color: rgb(250, 249, 249);
+  color: black;
+}
+
 .clear-button:hover {
   background-color: rgb(250, 249, 249);
   color: black;
