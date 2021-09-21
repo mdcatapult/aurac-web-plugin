@@ -157,13 +157,13 @@ export class BackgroundComponent {
         if (!resolvedEntity.match(inchiKeyRegex)) {
           xRefObservable = this.smilesToInChIToUnichemPlus(entityText)
         } else {
-          xRefObservable = this.postToUnichemPlus(entityText, resolvedEntity)
+          xRefObservable = this.postToUnichemPlus([entityText, resolvedEntity])
         }
         break
       }
       default: {
         // default case assumes that the entity text is itself an InChiKey.
-        xRefObservable = this.postToUnichemPlus(entityText, entityText)
+        xRefObservable = this.postToUnichemPlus([entityText, entityText])
       }
     }
     xRefObservable.subscribe((xrefs: XRef[]) => {
