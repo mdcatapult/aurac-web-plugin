@@ -10,7 +10,6 @@ export module CardButtons {
   const crossButton = '&#215;';
   const highlightElements: Array<HighlightHtmlColours> = [];
   export const entityToOccurrence = new EntityMap<Element[]>();
-  // export const listOfEntities: Array<Entity> = []
 
   type ArrowButtonProperties = {
     nerTerm: string,

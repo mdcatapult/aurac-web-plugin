@@ -6,7 +6,6 @@ export module Card {
 
   import links = ExternalLinks;
   import dimensionsLink = ExternalLinks.dimensions;
-  // export const listOfEntities: Array<Entity> = []
   const geneAndProtein = 'Gene or Protein';
   const disease = 'Biological';
   const chemical = 'Chemical';
