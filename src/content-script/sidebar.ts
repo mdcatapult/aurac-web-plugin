@@ -43,25 +43,29 @@ export module Sidebar {
     cardContainer.appendChild(card);
   }
 
-  export function exportToCSV(): void {
+  export function exportEntityToCSV() {
     if (listOfEntities.length === 0) {
-    return;
+      return;
     }
     const headings = ['entityText',
-    'resolvedEntity',
-    'entityGroup',
-    'htmlColor',
-    'entityType',
-    'source']
+      'resolvedEntity',
+      'entityGroup',
+      'htmlColor',
+      'entityType',
+      'source']
     let text = headings.join(',') + '\n'
     listOfEntities.forEach(entity => {
-    text = text + `"${entity.entityText}"` + ','
-      + entity.resolvedEntity + ','
-      + entity.entityGroup + ','
-      + entity.recognisingDict.htmlColor + ','
-      + entity.recognisingDict.entityType + ','
-      + entity.recognisingDict.source + '\n'
+      text = text + `"${entity.entityText}"` + ','
+        + entity.resolvedEntity + ','
+        + entity.entityGroup + ','
+        + entity.recognisingDict.htmlColor + ','
+        + entity.recognisingDict.entityType + ','
+        + entity.recognisingDict.source + '\n'
     })
+    exportToCSV(text)
+  }
+
+  export function exportToCSV(text: string): void {
     const currentUrl = window.location.href
     const urlWithoutHTTP = currentUrl.replace(/^(https?|http):\/\//, '')
     const blob = new Blob([text], {type: 'text/csv;charset=utf-8'})

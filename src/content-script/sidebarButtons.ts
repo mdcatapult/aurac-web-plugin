@@ -1,6 +1,7 @@
 import {cardClassName} from './types';
 import {EntityMap} from './entityMap';
 import {Sidebar} from './sidebar';
+import {Card} from './card';
 
 
 export module SidebarButtons {
@@ -39,6 +40,7 @@ export module SidebarButtons {
 
   export function clear(): void {
     entityToCard.clear();
+    Card.listOfEntities.length = 0;
     Array.from(document.getElementsByClassName(cardClassName)).forEach(card => card.parentNode!.removeChild(card));
   }
 
@@ -67,7 +69,7 @@ export module SidebarButtons {
     downloadResultsButtonElement.className = 'download-results-button'
 
     downloadResultsButtonElement.addEventListener('click', () => {
-      Sidebar.exportToCSV()
+      Sidebar.exportEntityToCSV()
     })
     return downloadResultsButtonElement;
   }
