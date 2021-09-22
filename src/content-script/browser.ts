@@ -41,7 +41,7 @@ export module Browser {
         case 'export_to_tab_csv':
           return new Promise((resolve) => {
             const result = TextHighlighter.returnAllNEROccurences();
-            resolve(result);
+            resolve({type: 'resolved', body: result});
           });
         default:
           throw new Error('Received unexpected message from plugin');

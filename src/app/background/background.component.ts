@@ -3,7 +3,17 @@ import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {SettingsService} from '../settings/settings.service';
 
-import {ConverterResult, defaultSettings, LeadminerEntity, LeadminerResult, Message, Settings, StringMessage, XRef} from 'src/types';
+import {
+  ConverterResult,
+  defaultSettings,
+  LeadmineMessage,
+  LeadminerEntity,
+  LeadminerResult,
+  Message,
+  Settings,
+  StringMessage,
+  XRef
+} from 'src/types';
 import {validDict} from './types';
 import {map, switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
@@ -20,7 +30,8 @@ export class BackgroundComponent {
   settings: Settings = defaultSettings;
   dictionary?: validDict;
   leadmineResult?: LeadminerResult;
-  private currentResults: Array<LeadminerEntity> = []
+  // private currentResults: Array<LeadminerEntity> = []
+  private listOfEntities: Array<LeadminerEntity> = []
 
   constructor(private client: HttpClient, private browserService: BrowserService) {
 
@@ -73,21 +84,25 @@ export class BackgroundComponent {
   }
 
   private exportCSV(): void {
-    /*if (this.currentResults.length === 0) {
-      return;
-    }*/
     const result = this.browserService.sendMessageToActiveTab({type: 'export_to_tab_csv'})
-    result.then((a) => {
-      const array = a as StringMessage;
-      const listOfEntities: Array<StringMessage> = []
-      listOfEntities.push(array)
 
-      console.log(listOfEntities)
-      console.log('a reached')
+    result.then((a) => {
+      const leadmineResult = a as LeadmineMessage;
+
+      this.listOfEntities = leadmineResult.body
+
+      console.log('value returned is ' + this.listOfEntities)
 
     }).catch(e => {
+      this.listOfEntities.length = 0;
       console.log(`Unable to retrieve sidebar data from the script` + e);
     });
+
+    if (this.listOfEntities.length === 0) {
+      return;
+    }
+
+    this.listOfEntities.cach
 
     const headings = ['beg',
     'begInNormalizedDoc',
@@ -106,7 +121,7 @@ export class BackgroundComponent {
     'minimumEntityLength',
     'source']
     let text = headings.join(',') + '\n'
-    this.currentResults.forEach(entity => {
+    this.listOfEntities.forEach(entity => {
       text = text + entity.beg + ','
               + entity.begInNormalizedDoc + ','
               + entity.end + ','
@@ -126,7 +141,6 @@ export class BackgroundComponent {
     })
     const blob = new Blob([text], {type: 'text/csv;charset=utf-8'})
     saveAs(blob, 'export.csv')
-    this.currentResults.length = 0;
   }
 
   private loadXRefs([entityTerm, resolvedEntity]: [string, string]): void {
@@ -204,7 +218,7 @@ export class BackgroundComponent {
             }
             this.leadmineResult = response.body;
             const uniqueEntities = this.getUniqueEntities(this.leadmineResult!);
-            this.currentResults = uniqueEntities;
+            // this.currentResults = uniqueEntities;
 
             this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
               .catch(console.error);

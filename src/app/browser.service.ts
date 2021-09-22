@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {defaultSettings, Message, MessageType, Settings, StringMessage} from '../types';
+import {defaultSettings, LeadmineMessage, Message, MessageType, Settings, StringMessage} from '../types';
 import {LogService} from './popup/log.service';
 import Tab = browser.tabs.Tab;
 
@@ -28,7 +28,7 @@ export class BrowserService {
     return browser.tabs.sendMessage<Message, StringMessage>(tabId, message);
   }
 
-  sendMessageToActiveTab(msg: Message): Promise<void | StringMessage> {
+  sendMessageToActiveTab(msg: Message): Promise<void | StringMessage | LeadmineMessage> {
     return this.getActiveTab().then(tab => this.sendMessageToTab(tab.id!, msg));
   }
 
