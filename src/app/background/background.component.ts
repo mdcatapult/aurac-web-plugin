@@ -19,6 +19,7 @@ import {map, switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {BrowserService} from '../browser.service';
 import {saveAs} from 'file-saver';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-background',
@@ -31,8 +32,9 @@ export class BackgroundComponent {
   dictionary?: validDict;
   leadmineResult?: LeadminerResult;
   private currentResults: Array<LeadminerEntity> = []
+  href = '';
 
-  constructor(private client: HttpClient, private browserService: BrowserService) {
+  constructor(private client: HttpClient, private browserService: BrowserService, private router: Router) {
 
     SettingsService.loadSettings(this.browserService, (settings) => {
       this.settings = settings || defaultSettings;
@@ -121,8 +123,10 @@ export class BackgroundComponent {
         + entity.recognisingDict.minimumEntityLength + ','
         + entity.recognisingDict.source + '\n'
     })
+    this.href = this.router.url;
+    const urlWithoutHTTP = this.href.replace(/^(https?|http):\/\//, '')
     const blob = new Blob([text], {type: 'text/csv;charset=utf-8'})
-    saveAs(blob, 'export.csv')
+    saveAs(blob, 'aurac_all_results_' + urlWithoutHTTP + '.csv')
   }
 
   private exportCSV(): void {
