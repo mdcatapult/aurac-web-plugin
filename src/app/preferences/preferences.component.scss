@@ -2,3 +2,21 @@
   border-collapse: separate;
   border-spacing: 10px 5px;
 }
+
+.dictionaries {
+  margin: 5px;
+  padding: 2px;
+  border: 1px solid gray;
+}
+
+:host ::ng-deep .mat-radio-outer-circle {
+  height: 15px !important;
+  width: 15px !important;
+  top: 2px !important;
+}
+:host ::ng-deep .mat-radio-inner-circle{
+  height: 13px !important;
+  width: 13px !important;
+  top: 3px !important;
+  left: 1px !important;
+}
