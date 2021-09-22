@@ -23,6 +23,7 @@ export module Browser {
         case 'markup_page':
           UserExperience.toggleLoadingIcon(false);
           TextHighlighter.wrapEntitiesWithHighlight(msg);
+          TextHighlighter.saveAllNEROccurences(msg);
           SidebarButtons.open()
           break;
         case 'x-ref_result':
@@ -37,6 +38,11 @@ export module Browser {
         case 'remove_highlights':
           TextHighlighter.removeHighlights();
           break;
+        case 'export_to_tab_csv':
+          return new Promise((resolve) => {
+            const result = TextHighlighter.returnAllNEROccurences();
+            resolve(result);
+          });
         default:
           throw new Error('Received unexpected message from plugin');
       }

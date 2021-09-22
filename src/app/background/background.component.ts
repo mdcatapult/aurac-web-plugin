@@ -73,9 +73,22 @@ export class BackgroundComponent {
   }
 
   private exportCSV(): void {
-    if (this.currentResults.length === 0) {
+    /*if (this.currentResults.length === 0) {
       return;
-    }
+    }*/
+    const result = this.browserService.sendMessageToActiveTab({type: 'export_to_tab_csv'})
+    result.then((a) => {
+      const array = a as StringMessage;
+      const listOfEntities: Array<StringMessage> = []
+      listOfEntities.push(array)
+
+      console.log(listOfEntities)
+      console.log('a reached')
+
+    }).catch(e => {
+      console.log(`Unable to retrieve sidebar data from the script` + e);
+    });
+
     const headings = ['beg',
     'begInNormalizedDoc',
     'end',
@@ -98,7 +111,7 @@ export class BackgroundComponent {
               + entity.begInNormalizedDoc + ','
               + entity.end + ','
               + entity.endInNormalizedDoc + ','
-              + entity.entityText + ','
+              + `"${entity.entityText}"` + ','
               + entity.possiblyCorrectedText + ','
               + entity.resolvedEntity + ','
               + entity.sectionType + ','
@@ -113,6 +126,7 @@ export class BackgroundComponent {
     })
     const blob = new Blob([text], {type: 'text/csv;charset=utf-8'})
     saveAs(blob, 'export.csv')
+    this.currentResults.length = 0;
   }
 
   private loadXRefs([entityTerm, resolvedEntity]: [string, string]): void {

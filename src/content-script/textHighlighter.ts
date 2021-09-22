@@ -3,14 +3,24 @@ import {Sidebar} from './sidebar';
 import {Card} from './card';
 import {ChemblRepresentations} from './types';
 import {ChEMBL} from './chembl';
+import {LeadminerEntity} from '../types';
 
 export module TextHighlighter {
 
   const chemicalFormulae: chemicalFormula[] = [];
   const highlightClass = 'aurac-highlight';
   const highlightParentClass = 'aurac-highlight-parent';
+  let allNEROccurences: Array<LeadminerEntity>
 
-  export function wrapEntitiesWithHighlight(msg: any) {
+  export function saveAllNEROccurences(msg: any): void {
+    allNEROccurences = msg.body;
+  }
+
+  export function returnAllNEROccurences(): Array<LeadminerEntity> {
+    return allNEROccurences;
+  }
+
+  export function wrapEntitiesWithHighlight(msg: any): any {
 
     // get InChI, InChIKey and SMILES input elements if we are on ChEMBL
     let chemblRepresentations: ChemblRepresentations;
