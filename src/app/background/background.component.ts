@@ -83,64 +83,62 @@ export class BackgroundComponent {
       });
   }
 
+  private exportIT(): void {
+    if (this.listOfEntities.length === 0) {
+      return;
+    }
+    const headings = ['beg',
+      'begInNormalizedDoc',
+      'end',
+      'endInNormalizedDoc',
+      'entityText',
+      'possiblyCorrectedText',
+      'resolvedEntity',
+      'sectionType',
+      'entityGroup',
+      'enforceBracketing',
+      'entityType',
+      'htmlColor',
+      'maxCorrectionDistance',
+      'minimumCorrectedEntityLength',
+      'minimumEntityLength',
+      'source']
+    let text = headings.join(',') + '\n'
+    this.listOfEntities.forEach(entity => {
+      text = text + entity.beg + ','
+        + entity.begInNormalizedDoc + ','
+        + entity.end + ','
+        + entity.endInNormalizedDoc + ','
+        + `"${entity.entityText}"` + ','
+        + entity.possiblyCorrectedText + ','
+        + entity.resolvedEntity + ','
+        + entity.sectionType + ','
+        + entity.entityGroup + ','
+        + entity.recognisingDict.enforceBracketing + ','
+        + entity.recognisingDict.entityType + ','
+        + entity.recognisingDict.htmlColor + ','
+        + entity.recognisingDict.maxCorrectionDistance + ','
+        + entity.recognisingDict.minimumCorrectedEntityLength + ','
+        + entity.recognisingDict.minimumEntityLength + ','
+        + entity.recognisingDict.source + '\n'
+    })
+    const blob = new Blob([text], {type: 'text/csv;charset=utf-8'})
+    saveAs(blob, 'export.csv')
+  }
+
   private exportCSV(): void {
     const result = this.browserService.sendMessageToActiveTab({type: 'export_to_tab_csv'})
-
     result.then((a) => {
       const leadmineResult = a as LeadmineMessage;
 
       this.listOfEntities = leadmineResult.body
 
       console.log('value returned is ' + this.listOfEntities)
+      this.exportIT()
 
     }).catch(e => {
-      this.listOfEntities.length = 0;
       console.log(`Unable to retrieve sidebar data from the script` + e);
     });
-
-    if (this.listOfEntities.length === 0) {
-      return;
-    }
-
-    this.listOfEntities.cach
-
-    const headings = ['beg',
-    'begInNormalizedDoc',
-    'end',
-    'endInNormalizedDoc',
-    'entityText',
-    'possiblyCorrectedText',
-    'resolvedEntity',
-    'sectionType',
-    'entityGroup',
-    'enforceBracketing',
-    'entityType',
-    'htmlColor',
-    'maxCorrectionDistance',
-    'minimumCorrectedEntityLength',
-    'minimumEntityLength',
-    'source']
-    let text = headings.join(',') + '\n'
-    this.listOfEntities.forEach(entity => {
-      text = text + entity.beg + ','
-              + entity.begInNormalizedDoc + ','
-              + entity.end + ','
-              + entity.endInNormalizedDoc + ','
-              + `"${entity.entityText}"` + ','
-              + entity.possiblyCorrectedText + ','
-              + entity.resolvedEntity + ','
-              + entity.sectionType + ','
-              + entity.entityGroup + ','
-              + entity.recognisingDict.enforceBracketing + ','
-              + entity.recognisingDict.entityType + ','
-              + entity.recognisingDict.htmlColor + ','
-              + entity.recognisingDict.maxCorrectionDistance + ','
-              + entity.recognisingDict.minimumCorrectedEntityLength + ','
-              + entity.recognisingDict.minimumEntityLength + ','
-              + entity.recognisingDict.source + '\n'
-    })
-    const blob = new Blob([text], {type: 'text/csv;charset=utf-8'})
-    saveAs(blob, 'export.csv')
   }
 
   private loadXRefs([entityTerm, resolvedEntity]: [string, string]): void {
