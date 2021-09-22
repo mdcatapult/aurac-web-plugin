@@ -126,3 +126,10 @@ SyntaxError
  @ ./src/content-script/script.ts
 
 ```
+- try specifically including the tippy.css file in the webpack config:
+```javascript
+...
+include: [path.resolve(__dirname, 'node_modules/tippy.js/dist/tippy.css')],
+...
+```
+no change - same error

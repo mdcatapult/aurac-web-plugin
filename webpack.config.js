@@ -42,6 +42,7 @@ const config = {
             },
           },
         ],
+        include: [path.resolve(__dirname, 'node_modules/tippy.js/dist/tippy.css')],
         exclude: /\.module\.css$/
       },
     ],
