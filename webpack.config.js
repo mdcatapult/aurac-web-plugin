@@ -41,21 +41,6 @@ const config = {
               modules: true
             },
           },
-          {
-            loader: "postcss-loader",
-            options: {
-              postcssOptions: {
-                plugins: [
-                  [
-                    "postcss-preset-env",
-                    {
-                      // Options
-                    },
-                  ],
-                ],
-              },
-            },
-          },
         ],
         exclude: /\.module\.css$/
       },

@@ -1,7 +1,6 @@
-import {chemicalFormula, Entity} from './types';
+import {chemicalFormula, Entity, ChemblRepresentations} from './types';
 import {Sidebar} from './sidebar';
 import {Card} from './card';
-import {ChemblRepresentations} from './types';
 import {ChEMBL} from './chembl';
 import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
