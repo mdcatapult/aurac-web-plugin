@@ -48,7 +48,8 @@ export class SettingsComponent implements OnInit {
       minEntityLength: new FormControl(
         defaultSettings.preferences.minEntityLength,
         Validators.required
-      )
+      ),
+      dictionary: new FormControl(defaultSettings.preferences.dictionary)
     })
   });
 
