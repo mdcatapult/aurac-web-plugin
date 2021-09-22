@@ -14,7 +14,7 @@ test-lint-build:
     paths:
       - dist/*
   before_script:
-    - apt-get -yqq update && apt-get upgrade -yqq chromium
+    - apt-get -yqq update && apt-get upgrade -yqq chromium libxss1
     - export CHROME_BIN=/usr/bin/chromium
     - npm install
   script:
