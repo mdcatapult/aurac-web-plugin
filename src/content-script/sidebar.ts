@@ -13,6 +13,8 @@ export module Sidebar {
   let clearButtonElement: HTMLButtonElement;
   let downloadResultsButtonElement: HTMLButtonElement;
 
+  export const sidebarClass = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed'
+
   export function create(): HTMLElement {
 
     const [logo, logoText] = createLogo();
@@ -21,7 +23,7 @@ export module Sidebar {
     sidebar.appendChild(logo);
     sidebar.appendChild(logoText);
     sidebar.appendChild(toolsContainer)
-    sidebar.className = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed';
+    sidebar.className = sidebarClass
 
     toggleButtonElement = SidebarButtons.createToggleButton();
     clearButtonElement = SidebarButtons.createClearButton(listOfEntities);
