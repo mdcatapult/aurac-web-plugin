@@ -3,12 +3,16 @@ import {Card} from './card'
 import {UserExperience} from './userExperience';
 import {ChEMBL} from './chembl';
 import {SidebarButtons} from './sidebarButtons';
+import { IBrowser } from './IBrowser';
 
-export module Browser {
+export class BrowserImplementation implements IBrowser {
+
+  static getURL(url: string): string {
+    return browser.runtime.getURL(url)
+  }
+
   // add listener function to browser
-  import chemblRepresentations = ChEMBL.getChemblRepresentationValues;
-
-  export function addListener() {
+  static addListener() {
     browser.runtime.onMessage.addListener((msg: any) => {
       switch (msg.type) {
         case 'get_page_contents':
@@ -17,7 +21,7 @@ export module Browser {
             TextHighlighter.allTextNodes(document.body, textNodes);
             // On ChEMBL, the representations (i.e. SMILES, InChI, InChIKey) are not text nodes
             // so need to be 'manually' added to the textNodes array
-            const textForNER = textNodes.concat(chemblRepresentations());
+            const textForNER = textNodes.concat(ChEMBL.getChemblRepresentationValues());
             resolve({type: 'leadmine', body: textForNER.join('\n')});
           });
         case 'markup_page':

@@ -2,8 +2,11 @@ import {Entity} from './types';
 import {Card} from './card';
 import {SidebarButtons} from './sidebarButtons';
 import {CardButtons} from './cardButtons';
+import { IBrowser } from './IBrowser';
 
 export module Sidebar {
+
+  let browserObject: IBrowser
 
   const listOfEntities: Entity[] = []
   const cardContainer = document.createElement('div');
@@ -15,8 +18,9 @@ export module Sidebar {
 
   export const sidebarClass = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed'
 
-  export function create(): HTMLElement {
+  export function create(b: IBrowser): HTMLElement {
 
+    browserObject = b
     const [logo, logoText] = createLogo();
 
     const sidebar = document.createElement('span');
@@ -50,7 +54,7 @@ export module Sidebar {
     logoText.style.color = '#b9772e';
     auracLogo.className = 'aurac-logo';
     // @ts-ignore
-    auracLogo.src = browser.runtime.getURL('assets/head-brains.png');
+    auracLogo.src = browserObject.getURL('assets/head-brains.png');
 
     logoText.innerText = 'Click on a highlighted entity to display further information and links below...';
     logoText.id = 'aurac-narrative';

@@ -1,13 +1,13 @@
-import {Browser} from './browser';
+import {BrowserImplementation} from './browser-implementation'
 import {Sidebar} from './sidebar';
 import {UserExperience} from './userExperience';
 
 console.log('script loaded');
 
-const sidebar = Sidebar.create()
+const sidebar = Sidebar.create(BrowserImplementation)
 document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
 document.body.appendChild(sidebar);
 
 UserExperience.create()
-Browser.addListener()
+BrowserImplementation.addListener()
 
