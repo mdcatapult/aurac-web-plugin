@@ -7,7 +7,7 @@ import { IBrowser } from './IBrowser';
 
 export class BrowserImplementation implements IBrowser {
 
-  static getURL(url: string): string {
+  getURL(url: string): string {
     return browser.runtime.getURL(url)
   }
 

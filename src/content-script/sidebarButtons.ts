@@ -11,10 +11,15 @@ export module SidebarButtons {
   export const entityToCard = new EntityMap<{ synonyms: string[], div: HTMLDivElement }>();
   export const collapseArrow = '&#60;';
   export const expandArrow = '&#62;';
+  export const childIDs = {
+    toggleButton: 'toggle-button',
+    clearButton: 'clear-button',
+  }
 
   export function createToggleButton(): HTMLButtonElement {
     toggleButtonElement = document.createElement('button');
     toggleButtonElement.innerHTML = expandArrow;
+    toggleButtonElement.id = childIDs.toggleButton
     toggleButtonElement.className = 'sidebar-button';
     toggleButtonElement.className = 'aurac-transform aurac-sidebar-button aurac-sidebar-button--collapsed';
     toggleButtonElement.addEventListener('click', () => toggle());
@@ -43,7 +48,9 @@ export module SidebarButtons {
     clearButtonElement = document.createElement('button');
     clearButtonElement.style.display = 'none';
     clearButtonElement.innerHTML = 'Clear';
+    clearButtonElement.id = childIDs.clearButton
     clearButtonElement.className = 'clear-button';
+    console.log('AAAAAAA', clearButtonElement.id)
     clearButtonElement.addEventListener('click', () => {
 
       entityToCard.clear();
