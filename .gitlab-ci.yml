@@ -19,9 +19,9 @@ test-lint-build:
     - npm install
   script:
     - npm run test:ci
-    - npm run mocha
     - npm run lint
     - npm run build
+    - npm run mocha
     - npm run package
   coverage: /Lines\s+:\s(\d+\.?\d*)%\s\(\s\d+\/\d+\s\)/
   except:
