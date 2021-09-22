@@ -18,11 +18,7 @@ import 'tippy.js/dist/tippy.css';
 // @ ./src/content-script/textHighlighter.ts 5:0-33
 // @ ./src/content-script/browser.ts
 // @ ./src/content-script/script.ts
-//
-//
-// npm ERR! code ELIFECYCLE
-// npm ERR! errno 1
-// npm ERR! browser-plugin@0.11.0 build: `ng build --configuration production --source-map false && webpack`
+
 
 
 export module TextHighlighter {
