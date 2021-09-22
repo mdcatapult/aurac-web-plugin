@@ -15,7 +15,7 @@ export type MessageType =
   | 'remove_highlights'
   | 'preferences-changed'
   | 'export_csv'
-  | 'export_to_tab_csv';
+  | 'retrieve_ner_from_page';
 
 export interface Message {
   type: MessageType;

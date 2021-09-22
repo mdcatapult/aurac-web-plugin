@@ -10,15 +10,6 @@ export module TextHighlighter {
   const chemicalFormulae: chemicalFormula[] = [];
   const highlightClass = 'aurac-highlight';
   const highlightParentClass = 'aurac-highlight-parent';
-  let allNEROccurences: Array<LeadminerEntity>
-
-  export function saveAllNEROccurences(msg: any): void {
-    allNEROccurences = msg.body;
-  }
-
-  export function returnAllNEROccurences(): Array<LeadminerEntity> {
-    return allNEROccurences;
-  }
 
   export function wrapEntitiesWithHighlight(msg: any): any {
 

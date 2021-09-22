@@ -2,11 +2,14 @@ import {TextHighlighter} from './textHighlighter'
 import {Card} from './card'
 import {UserExperience} from './userExperience';
 import {ChEMBL} from './chembl';
+// @ts-ignore
 import {SidebarButtons} from './sidebarButtons';
+import {LeadminerEntity} from '../types';
 
 export module Browser {
   // add listener function to browser
   import chemblRepresentations = ChEMBL.getChemblRepresentationValues;
+  let leadmineEntities: Array<LeadminerEntity>;
 
   export function addListener() {
     browser.runtime.onMessage.addListener((msg: any) => {
@@ -23,7 +26,7 @@ export module Browser {
         case 'markup_page':
           UserExperience.toggleLoadingIcon(false);
           TextHighlighter.wrapEntitiesWithHighlight(msg);
-          TextHighlighter.saveAllNEROccurences(msg);
+          leadmineEntities = msg.body as Array<LeadminerEntity>;
           SidebarButtons.open()
           break;
         case 'x-ref_result':
@@ -38,10 +41,9 @@ export module Browser {
         case 'remove_highlights':
           TextHighlighter.removeHighlights();
           break;
-        case 'export_to_tab_csv':
+        case 'retrieve_ner_from_page':
           return new Promise((resolve) => {
-            const result = TextHighlighter.returnAllNEROccurences();
-            resolve({type: 'resolved', body: result});
+            resolve({type: 'resolved', body: leadmineEntities});
           });
         default:
           throw new Error('Received unexpected message from plugin');

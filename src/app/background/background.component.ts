@@ -30,8 +30,7 @@ export class BackgroundComponent {
   settings: Settings = defaultSettings;
   dictionary?: validDict;
   leadmineResult?: LeadminerResult;
-  // private currentResults: Array<LeadminerEntity> = []
-  private listOfEntities: Array<LeadminerEntity> = []
+  private currentResults: Array<LeadminerEntity> = []
 
   constructor(private client: HttpClient, private browserService: BrowserService) {
 
@@ -83,8 +82,8 @@ export class BackgroundComponent {
       });
   }
 
-  private exportIT(): void {
-    if (this.listOfEntities.length === 0) {
+  private exportResultsToCSV(): void {
+    if (this.currentResults.length === 0) {
       return;
     }
     const headings = ['beg',
@@ -104,7 +103,7 @@ export class BackgroundComponent {
       'minimumEntityLength',
       'source']
     let text = headings.join(',') + '\n'
-    this.listOfEntities.forEach(entity => {
+    this.currentResults.forEach(entity => {
       text = text + entity.beg + ','
         + entity.begInNormalizedDoc + ','
         + entity.end + ','
@@ -127,18 +126,14 @@ export class BackgroundComponent {
   }
 
   private exportCSV(): void {
-    const result = this.browserService.sendMessageToActiveTab({type: 'export_to_tab_csv'})
+    const result = this.browserService.sendMessageToActiveTab({type: 'retrieve_ner_from_page'})
     result.then((a) => {
       const leadmineResult = a as LeadmineMessage;
 
-      this.listOfEntities = leadmineResult.body
+      this.currentResults = leadmineResult.body as Array<LeadminerEntity>
+      this.exportResultsToCSV()
 
-      console.log('value returned is ' + this.listOfEntities)
-      this.exportIT()
-
-    }).catch(e => {
-      console.log(`Unable to retrieve sidebar data from the script` + e);
-    });
+    }).catch(e => console.error(`Couldn't send message of type 'retrieve_ner_from_page' : ${JSON.stringify(e)}`));
   }
 
   private loadXRefs([entityTerm, resolvedEntity]: [string, string]): void {
@@ -216,7 +211,6 @@ export class BackgroundComponent {
             }
             this.leadmineResult = response.body;
             const uniqueEntities = this.getUniqueEntities(this.leadmineResult!);
-            // this.currentResults = uniqueEntities;
 
             this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
               .catch(console.error);
