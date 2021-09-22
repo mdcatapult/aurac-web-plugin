@@ -127,10 +127,10 @@ export class BackgroundComponent {
 
   private exportCSV(): void {
     const result = this.browserService.sendMessageToActiveTab({type: 'retrieve_ner_from_page'})
-    result.then((a) => {
-      const leadmineResult = a as LeadmineMessage;
+    result.then((contentScriptResponse) => {
+      const response = contentScriptResponse as LeadmineMessage;
 
-      this.currentResults = leadmineResult.body as Array<LeadminerEntity>
+      this.currentResults = response.body as Array<LeadminerEntity>
       this.exportResultsToCSV()
 
     }).catch(e => console.error(`Couldn't send message of type 'retrieve_ner_from_page' : ${JSON.stringify(e)}`));

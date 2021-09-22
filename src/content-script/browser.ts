@@ -24,9 +24,9 @@ export module Browser {
             resolve({type: 'leadmine', body: textForNER.join('\n')});
           });
         case 'markup_page':
+          leadmineEntities = msg.body as Array<LeadminerEntity>;
           UserExperience.toggleLoadingIcon(false);
           TextHighlighter.wrapEntitiesWithHighlight(msg);
-          leadmineEntities = msg.body as Array<LeadminerEntity>;
           SidebarButtons.open()
           break;
         case 'x-ref_result':
