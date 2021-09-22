@@ -1,10 +1,12 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
 const should = require('should');
+const Xvfb = require('xvfb');
 
 const extensionPath = 'dist/browser-plugin';
 let extensionPage = null;
 let browser = null;
+let xvfb = null;
 
 describe('Extension UI Testing', function() {
   this.timeout(20000);
@@ -22,13 +24,23 @@ describe('Extension UI Testing', function() {
 
   after(async function() {
     await browser.close();
+    xvfb.stop();
   });
 });
 
 async function boot() {
+  xvfb = new Xvfb({
+    silent: true,
+    xvfb_args: ["-screen", "0", '1280x720x24', "-ac"],
+  });
+  xvfb.start((err)=>{if (err) console.error(err)})
   browser = await puppeteer.launch({
-    headless: false, // extension are allowed only in head-full mode
+    headless: false,
+    defaultViewport: null, //otherwise it defaults to 800x600
     args: [
+      '--no-sandbox',
+      '--start-fullscreen',
+      '--display='+xvfb._display,
       `--disable-extensions-except=${extensionPath}`,
       `--load-extension=${extensionPath}`
     ]
