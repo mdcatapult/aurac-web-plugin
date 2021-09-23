@@ -67,7 +67,7 @@ export class BackgroundComponent {
           break;
         }
         case 'export_csv': {
-          this.exportCSV()
+          this.retrieveNERFromPage()
           break;
         }
       }
@@ -82,6 +82,21 @@ export class BackgroundComponent {
         this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
           .catch(console.error);
       });
+  }
+
+  private retrieveNERFromPage(): void {
+    const result = this.browserService.sendMessageToActiveTab({type: 'retrieve_ner_from_page'})
+    result.then((browserTabResponse) => {
+      const response = browserTabResponse as LeadmineMessage;
+      if (response.body.entities.length === 0) {
+        this.currentResults.length = 0;
+      } else {
+        this.currentResults = response.body.entities
+      }
+      this.currentURL = response.body.url as string;
+      this.exportResultsToCSV()
+
+    }).catch(e => console.error(`Couldn't send message of type 'retrieve_ner_from_page' : ${JSON.stringify(e)}`));
   }
 
   private exportResultsToCSV(): void {
@@ -123,22 +138,12 @@ export class BackgroundComponent {
         + entity.recognisingDict.minimumEntityLength + ','
         + entity.recognisingDict.source + '\n'
     })
-    const blob = new Blob([text], {type: 'text/csv;charset=utf-8'})
-    saveAs(blob, 'aurac_all_results_' + this.currentURL + '.csv')
+    this.exportToCSV(text)
   }
 
-  private exportCSV(): void {
-    const result = this.browserService.sendMessageToActiveTab({type: 'retrieve_ner_from_page'})
-    result.then((contentScriptResponse) => {
-      const response = contentScriptResponse as LeadmineMessage;
-      console.log('response is ' + response.body)
-      this.currentResults = response.body.entities as Array<LeadminerEntity>
-      this.currentURL = response.body.url as string;
-      console.log(this.currentResults)
-      console.log(this.currentURL)
-      this.exportResultsToCSV()
-
-    }).catch(e => console.error(`Couldn't send message of type 'retrieve_ner_from_page' : ${JSON.stringify(e)}`));
+  private exportToCSV(text: string) {
+    const blob = new Blob([text], {type: 'text/csv;charset=utf-8'})
+    saveAs(blob, 'aurac_all_results_' + this.currentURL + '.csv')
   }
 
   private loadXRefs([entityTerm, resolvedEntity]: [string, string]): void {
