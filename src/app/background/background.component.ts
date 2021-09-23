@@ -115,8 +115,8 @@ export class BackgroundComponent {
     saveAs(blob, 'export.csv')
   }
 
-  private smilesToInChIToUnichemPlus(entityText: string): Observable<XRef[]> {
-    const encodedEntity = encodeURIComponent(entityText);
+  private smilesToInChIToUnichemPlus([entityText, smilesText]: [string, string]): Observable<XRef[]> {
+    const encodedEntity = encodeURIComponent(smilesText);
     const xRefObservable = this.client.get(`${this.settings.urls.compoundConverterURL}/${encodedEntity}?from=SMILES&to=inchikey`).pipe(
       // @ts-ignore
       switchMap((converterResult: ConverterResult) => {
@@ -148,7 +148,7 @@ export class BackgroundComponent {
     let xRefObservable: Observable<XRef[]>;
     switch (entityType) {
       case 'SMILES': {
-        xRefObservable = this.smilesToInChIToUnichemPlus(entityText)
+        xRefObservable = this.smilesToInChIToUnichemPlus([entityText, entityText])
         break
       }
       // likely to be more cases here.
@@ -156,7 +156,7 @@ export class BackgroundComponent {
       case 'Mol':   {
         const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]$/;
         if (!resolvedEntity.match(inchiKeyRegex)) {
-          xRefObservable = this.smilesToInChIToUnichemPlus(entityText)
+          xRefObservable = this.smilesToInChIToUnichemPlus([entityText, resolvedEntity])
         } else {
           xRefObservable = this.postToUnichemPlus([entityText, resolvedEntity])
         }

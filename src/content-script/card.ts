@@ -22,6 +22,7 @@ export module Card {
 
   // Creates a card for a given entity
   export function create(information: Entity, synonyms: string[], listOfEntities: Entity[]): HTMLDivElement {
+    console.log(information)
     const card: HTMLDivElement = document.createElement('div');
     card.className = cardClassName;
     card.id = `${cardClassName}.${information.entityText}`;
@@ -57,6 +58,7 @@ export module Card {
     if (!xrefs.length) {
       return;
     }
+    console.log(xrefs)
     // Remove existing xrefs
     const xrefHolder: HTMLElement = document.getElementById(xrefs[0].compoundName + '_list')!;
     while (xrefHolder.firstChild) {
