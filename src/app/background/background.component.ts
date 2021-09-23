@@ -152,7 +152,8 @@ export class BackgroundComponent {
         break
       }
       // likely to be more cases here.
-      case 'Mol' || 'DictMol': {
+      case 'DictMol':
+      case 'Mol':   {
         const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]$/;
         if (!resolvedEntity.match(inchiKeyRegex)) {
           xRefObservable = this.smilesToInChIToUnichemPlus(entityText)
