@@ -6,20 +6,25 @@ import {TextHighlighter} from './textHighlighter'
 import {Sidebar} from './sidebar'
 import {BrowserMock} from './browser-mock'
 import {CardButtons} from './cardButtons'
-import * as puppeteer from 'puppeteer'
-import { cardClassName } from './types'
+import {cardClassName} from './types'
+
+// LeadminerEntity represents an entity which has come back from leadminer, and the number
+// of occurrences it has on the page.
+type LeadminerEntity = {
+  text: string,
+  occurrences: number
+}
 
 // simulates the entities which come back from leadminer
-const leadminerEntities = ['Glucans biosynthesis protein D']
+const leadminerEntities: LeadminerEntity[] = [{
+  text: 'entity1',
+  occurrences: 10
+}]
 
 beforeAll(() => {
   window.HTMLElement.prototype.scrollIntoView = jest.fn() // scrollIntoView won't work in jest context without this
 
-  // create document
-  document.implementation.createHTMLDocument()
-  var fs = require('fs');
-  const html = fs.readFileSync('src/ner-edge-case-tests.html');
-  document.documentElement.innerHTML = html
+  createDocument()
 
   // highlight entities - simulates 'markup_page' message
   const leadminerResults = getLeadminerResults(leadminerEntities)
@@ -28,18 +33,15 @@ beforeAll(() => {
   document.body.appendChild(Sidebar.create(new BrowserMock()))
 })
 
-describe('highlighting', () => {
+test('text elements in leadminerResult should be highlighted', () => {
 
-  test('text elements in leadminerResult should be highlighted', () => {
-
-    const hasHighlights = leadminerEntities.every(entityText => {
-      const highlightedElements = Array.from(document.getElementsByClassName(TextHighlighter.highlightClass))
-      return highlightedElements.length && highlightedElements.some(highlightedElement => {
-        return highlightedElement.textContent === entityText
-      })
+  const hasHighlights = leadminerEntities.every(entity => {
+    const highlightedElements = Array.from(document.getElementsByClassName(TextHighlighter.highlightClass))
+    return highlightedElements.length && highlightedElements.some(highlightedElement => {
+      return highlightedElement.textContent === entity.text
     })
-    expect(hasHighlights).toBe(true)
   })
+  expect(hasHighlights).toBe(true)
 })
 
 test('clicking highlighted elements should create card', () => {
@@ -55,7 +57,7 @@ test('clicking highlighted elements should create card', () => {
   expect(cards.length).toBe(leadminerEntities.length)
 })
 
-test ('clicking clear button should remove all cards', () => {
+test('clicking clear button should remove all cards', () => {
   const numberOfCards = Array.from(document.getElementsByClassName(cardClassName)).length
   // there must be cards from a previous test for this test to be valid
   expect(numberOfCards > 0).toBe(true)
@@ -65,7 +67,7 @@ test ('clicking clear button should remove all cards', () => {
 })
 
 test('clicking remove on a card should remove that card', () => {
-  const entity = leadminerEntities[0]
+  const entity = leadminerEntities[0].text
   clickElementForEntity(entity)
 
   const numOfCards = Array.from(document.getElementsByClassName(cardClassName)).length
@@ -75,7 +77,7 @@ test('clicking remove on a card should remove that card', () => {
     return cardElement.innerHTML.includes(entity)
   })
 
-  // get remove button
+  // click remove button
   document.getElementById(`${CardButtons.baseRemoveClass}-${entity}`).click()
 
   expect(Array.from(document.getElementsByClassName(cardClassName)).length).toBe(numOfCards - 1)
@@ -84,20 +86,20 @@ test('clicking remove on a card should remove that card', () => {
 describe('occurrences', () => {
   test('occurrences count', () => {
     const entity = leadminerEntities[0]
-    clickElementForEntity(entity)
-    const occurrencesElement = document.getElementById(`${entity}-occurrences`)
+    clickElementForEntity(entity.text)
+    const occurrencesElement = document.getElementById(`${entity.text}-occurrences`)
     expect(occurrencesElement).toBeTruthy()
 
-    let numOfOccurrences = CardButtons.entityToOccurrence.get(entity).length
-    expect(numOfOccurrences).toBe(6) // there are 6 instances in the HTML doc
+    let numOfOccurrences = CardButtons.entityToOccurrence.get(entity.text).length
+    expect(numOfOccurrences).toBe(entity.occurrences)
   })
 
   test('arrow buttons', () => {
     const entity = leadminerEntities[0]
-    clickElementForEntity(entity)
-    const rightArrow = document.getElementById(`right-${CardButtons.baseArrowClass}-${entity}`)
+    clickElementForEntity(entity.text)
+    const rightArrow = document.getElementById(`right-${CardButtons.baseArrowClass}-${entity.text}`)
 
-    for (let timesClicked = 0; timesClicked < 6; timesClicked++) {
+    for (let timesClicked = 0; timesClicked < entity.occurrences; timesClicked++) {
       const oldScrollPos = window.scrollY
       rightArrow.click()
       const newScrollPos = window.scrollY
@@ -127,7 +129,7 @@ function clickElementForEntity(entity: string): void {
 }
 
 // returns sample leadminer results for each entityText
-function getLeadminerResults(entities: string[]): Object {
+function getLeadminerResults(entities: LeadminerEntity[]): Object {
   return entities.map(entity => {
     return {
       beg: 325,
@@ -135,8 +137,8 @@ function getLeadminerResults(entities: string[]): Object {
       end: 355,
       endInNormalizedDoc: 355,
       entityGroup: "Gene or Protein",
-      entityText: entity,
-      possiblyCorrectedText: entity,
+      entityText: entity.text,
+      possiblyCorrectedText: entity.text,
       recognisingDict: {
         enforceBracketing: false,
         entityType: "GeneOrProtein",
@@ -147,6 +149,22 @@ function getLeadminerResults(entities: string[]): Object {
         source: "/srv/config/common/leadmine/2018-11-06/dictionary/CFDictGeneAndProtein.cfx",
       },
       resolvedEntity: null,
+    }
+  })
+}
+
+function createDocument(): void {
+  document.implementation.createHTMLDocument()
+  var fs = require('fs');
+  const html = fs.readFileSync('src/ner-edge-case-tests.html');
+  document.documentElement.innerHTML = html
+
+  // add each entity in leadminerentities 'entity.occurrences' number of times
+  leadminerEntities.forEach(entity => {
+    for (let i = 0; i < entity.occurrences; i++) {
+      const el = document.createElement('div')
+      el.innerHTML = `${entity.text}`
+      document.body.appendChild(el)
     }
   })
 }
