@@ -11,7 +11,6 @@ let sidebar: HTMLElement
 
 beforeAll(() => {
   sidebar = Sidebar.create(new BrowserMock())
-  document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
   document.body.appendChild(sidebar);
 });
 
@@ -26,4 +25,4 @@ test('sidebar children should be added to DOM', () => {
   expectedIds.forEach(expectedId => {
     expect(sidebarChildren.some(v => v.id === expectedId)).toBe(true)
   })
-})
+});

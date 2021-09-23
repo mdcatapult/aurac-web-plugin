@@ -5,5 +5,6 @@ module.exports = {
   "transform": {
     "^.+\\.(ts|tsx)$": "ts-jest"
   },
-  "preset": "jest-puppeteer"
+  "preset": "jest-puppeteer",
+  "testRunner": "jest-jasmine2",
 }
