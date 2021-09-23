@@ -12,6 +12,7 @@ export module Browser {
   let leadmineEntities: Array<LeadminerEntity>;
   let currentUrl: string;
   let urlWithoutHTTP: string;
+  let hasNERBeenPerformed = false;
 
   export function addListener() {
     browser.runtime.onMessage.addListener((msg: any) => {
@@ -26,6 +27,7 @@ export module Browser {
             resolve({type: 'leadmine', body: textForNER.join('\n')});
           });
         case 'markup_page':
+          hasNERBeenPerformed = true;
           leadmineEntities = msg.body as Array<LeadminerEntity>;
           UserExperience.toggleLoadingIcon(false);
           TextHighlighter.wrapEntitiesWithHighlight(msg);
@@ -47,7 +49,7 @@ export module Browser {
           currentUrl = window.location.href;
           urlWithoutHTTP = currentUrl.replace(/^(https?|http):\/\//, '')
           return new Promise((resolve) => {
-            resolve({type: 'resolved', body: {entities: leadmineEntities, url: urlWithoutHTTP}});
+            resolve({type: 'resolved', body: {entities: leadmineEntities, url: urlWithoutHTTP, hasNERBeenPerformed}});
           });
         default:
           throw new Error('Received unexpected message from plugin');

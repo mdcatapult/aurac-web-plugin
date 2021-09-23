@@ -33,6 +33,7 @@ export interface LeadmineMessage extends Message {
   body: {
     entities: Array<LeadminerEntity>,
     url: string;
+    ner_performed: boolean
   }
 }
 

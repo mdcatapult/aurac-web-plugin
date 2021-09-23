@@ -75,11 +75,12 @@ export class BackgroundComponent {
   }
 
   private refreshHighlights(): void {
+    //We don't want to refresh the highlight on a page that hasn't had NER ran on it. If we send leadmineResult to a new page that hasn't
+    //had ner ran on it then it will show the ner from the request before it.
     const result = this.browserService.sendMessageToActiveTab({type: 'retrieve_ner_from_page'})
     result.then((browserTabResponse) => {
       const response = browserTabResponse as LeadmineMessage;
-      if (response.body.entities.length === 0) {
-        this.currentResults.length = 0;
+      if (response.body.entities.length === 0 && !response.body.ner_performed) {
         return;
       } else {
         this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
