@@ -30,7 +30,9 @@ export interface StringMessage extends Message {
 }
 
 export interface LeadmineMessage extends Message {
-  body: Array<LeadminerEntity>;
+  body: string,
+  entities: Array<LeadminerEntity>,
+  url: string;
 }
 
 export interface XRefMessage extends Message {

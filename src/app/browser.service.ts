@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import {defaultSettings, LeadmineMessage, Message, MessageType, Settings, StringMessage} from '../types';
+import {Injectable} from '@angular/core';
+import {defaultSettings, LeadmineMessage, LeadmineResult, Message, MessageType, Settings, StringMessage} from '../types';
 import {LogService} from './popup/log.service';
 import Tab = browser.tabs.Tab;
 

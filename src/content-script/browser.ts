@@ -4,12 +4,14 @@ import {UserExperience} from './userExperience';
 import {ChEMBL} from './chembl';
 // @ts-ignore
 import {SidebarButtons} from './sidebarButtons';
-import {LeadminerEntity} from '../types';
+import {LeadmineMessage, LeadminerEntity} from '../types';
 
 export module Browser {
   // add listener function to browser
   import chemblRepresentations = ChEMBL.getChemblRepresentationValues;
   let leadmineEntities: Array<LeadminerEntity>;
+  let currentUrl = '';
+  let urlWithoutHTTP = ''
 
   export function addListener() {
     browser.runtime.onMessage.addListener((msg: any) => {
@@ -42,8 +44,10 @@ export module Browser {
           TextHighlighter.removeHighlights();
           break;
         case 'retrieve_ner_from_page':
+          currentUrl = window.location.href;
+          urlWithoutHTTP = currentUrl.replace(/^(https?|http):\/\//, '')
           return new Promise((resolve) => {
-            resolve({type: 'resolved', body: leadmineEntities});
+            resolve({type: 'resolved', entities: leadmineEntities, url: urlWithoutHTTP});
           });
         default:
           throw new Error('Received unexpected message from plugin');

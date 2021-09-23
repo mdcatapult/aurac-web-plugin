@@ -32,7 +32,7 @@ export class BackgroundComponent {
   dictionary?: validDict;
   leadmineResult?: LeadminerResult;
   private currentResults: Array<LeadminerEntity> = []
-  href = '';
+  private currentURL = ''
 
   constructor(private client: HttpClient, private browserService: BrowserService, private router: Router) {
 
@@ -123,18 +123,19 @@ export class BackgroundComponent {
         + entity.recognisingDict.minimumEntityLength + ','
         + entity.recognisingDict.source + '\n'
     })
-    this.href = this.router.url;
-    const urlWithoutHTTP = this.href.replace(/^(https?|http):\/\//, '')
     const blob = new Blob([text], {type: 'text/csv;charset=utf-8'})
-    saveAs(blob, 'aurac_all_results_' + urlWithoutHTTP + '.csv')
+    saveAs(blob, 'aurac_all_results_' + this.currentURL + '.csv')
   }
 
   private exportCSV(): void {
     const result = this.browserService.sendMessageToActiveTab({type: 'retrieve_ner_from_page'})
     result.then((contentScriptResponse) => {
       const response = contentScriptResponse as LeadmineMessage;
-
-      this.currentResults = response.body as Array<LeadminerEntity>
+      console.log('response is ' + response.body)
+      this.currentResults = response.entities as Array<LeadminerEntity>
+      this.currentURL = response.url as string;
+      console.log(this.currentResults)
+      console.log(this.currentURL)
       this.exportResultsToCSV()
 
     }).catch(e => console.error(`Couldn't send message of type 'retrieve_ner_from_page' : ${JSON.stringify(e)}`));
