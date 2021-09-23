@@ -3,7 +3,7 @@ import {Card} from './card'
 import {UserExperience} from './userExperience';
 import {ChEMBL} from './chembl';
 import {SidebarButtons} from './sidebarButtons';
-import { Modal } from "./modal";
+import { Modal } from './modal';
 
 
 export module Browser {

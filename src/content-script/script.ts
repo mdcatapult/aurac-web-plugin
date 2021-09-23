@@ -1,6 +1,6 @@
 import {Browser} from './browser';
 import {Sidebar} from './sidebar';
-import {Modal} from "./modal";
+import {Modal} from './modal';
 import {UserExperience} from './userExperience';
 
 console.log('script loaded');

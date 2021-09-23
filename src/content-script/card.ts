@@ -85,8 +85,8 @@ export module Card {
       const htmlListElement: HTMLLIElement = document.createElement('li');
       htmlListElement.innerHTML = `<a href=${xref.url} target="_blank" title="Link to ${xref.databaseName} reference for this entity">${xref.databaseName}</a>`;
       xrefHolder.appendChild(htmlListElement);
-      const splitURLList: Array<string> = xref.url.split("/")
-      const identifier: string = splitURLList[splitURLList.length-1]
+      const splitURLList: Array<string> = xref.url.split('/')
+      const identifier: string = splitURLList[splitURLList.length - 1]
       const regex = /^CHEMBL/
       if (identifier.match(regex)){
         chemblId = identifier
