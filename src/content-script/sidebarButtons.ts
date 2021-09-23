@@ -50,7 +50,6 @@ export module SidebarButtons {
     clearButtonElement.innerHTML = 'Clear';
     clearButtonElement.id = childIDs.clearButton
     clearButtonElement.className = 'clear-button';
-    console.log('AAAAAAA', clearButtonElement.id)
     clearButtonElement.addEventListener('click', () => {
 
       entityToCard.clear();

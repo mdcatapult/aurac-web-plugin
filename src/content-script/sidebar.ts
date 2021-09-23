@@ -18,6 +18,9 @@ export module Sidebar {
 
   export const sidebarClass = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed'
 
+  export const narrativeId = 'aurac-narrative'
+  export const toolsId = 'aurac-sidebar-tools'
+
   export function create(b: IBrowser): HTMLElement {
 
     browserObject = b
@@ -38,6 +41,7 @@ export module Sidebar {
     sidebar.appendChild(cardContainer);
 
     toolsContainer.className = 'aurac-sidebar-tools'
+    toolsContainer.id = toolsId
     toolsContainer.appendChild(clearButtonElement);
     toolsContainer.appendChild(downloadResultsButtonElement);
 
@@ -57,7 +61,7 @@ export module Sidebar {
     auracLogo.src = browserObject.getURL('assets/head-brains.png');
 
     logoText.innerText = 'Click on a highlighted entity to display further information and links below...';
-    logoText.id = 'aurac-narrative';
+    logoText.id = narrativeId;
 
     return [auracLogo, logoText];
   }

@@ -21,27 +21,9 @@ test('sidebar should be added to DOM', () => {
 });
 
 test('sidebar children should be added to DOM', () => {
-  const sidebarChildren = getAllChildren(sidebar)
-  const expectedIDs = Object.values(SidebarButtons.childIDs)
-
-  expectedIDs.forEach(expectedId => {
-    expect(sidebarChildren.some(child => {
-      console.log('expected: ', expectedId, 'actual: ', child.id)
-      return child.id === expectedId
-    })).toBe(true)
+  const sidebarChildren = Array.from(sidebar.children)
+  const expectedIds = [Sidebar.toolsId, Sidebar.narrativeId]
+  expectedIds.forEach(expectedId => {
+    expect(sidebarChildren.some(v => v.id === expectedId)).toBe(true)
   })
-
 })
-
-function getAllChildren(element: Element): Element[] {
-  const children: Element[] = []
-  Array.from(element.children).forEach((child, i) => {
-    getAllChildren(child);
-    console.log('AAAAA', child.id, i)
-    children.push(child)
-  })
-  children.forEach(v => console.log("BBBBBB: ", v.id))
-
-
-  return children
-}
