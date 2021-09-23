@@ -4,7 +4,7 @@ import {UserExperience} from './userExperience';
 
 console.log('script loaded');
 
-const sidebar = Sidebar.create(BrowserImplementation)
+const sidebar = Sidebar.create(new BrowserImplementation())
 document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
 document.body.appendChild(sidebar);
 

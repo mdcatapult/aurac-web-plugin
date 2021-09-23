@@ -4,8 +4,12 @@ import {UserExperience} from './userExperience';
 import {ChEMBL} from './chembl';
 import {SidebarButtons} from './sidebarButtons';
 import { IBrowser } from './IBrowser';
+import { Message } from 'src/types';
 
 export class BrowserImplementation implements IBrowser {
+  sendMessage(msg: Message): Promise<any> {
+      return browser.runtime.sendMessage(msg)
+  }
 
   getURL(url: string): string {
     return browser.runtime.getURL(url)

@@ -7,11 +7,10 @@ import {ChEMBL} from './chembl';
 export module TextHighlighter {
 
   const chemicalFormulae: chemicalFormula[] = [];
-  const highlightClass = 'aurac-highlight';
+  export const highlightClass = 'aurac-highlight';
   const highlightParentClass = 'aurac-highlight-parent';
 
   export function wrapEntitiesWithHighlight(msg: any) {
-
     // get InChI, InChIKey and SMILES input elements if we are on ChEMBL
     let chemblRepresentations: ChemblRepresentations;
     if (ChEMBL.isChemblPage()) {

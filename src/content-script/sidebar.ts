@@ -14,6 +14,7 @@ export module Sidebar {
 
   let toggleButtonElement: HTMLButtonElement;
   let clearButtonElement: HTMLButtonElement;
+  export const clearButtonId = 'aurac-clear-button'
   let downloadResultsButtonElement: HTMLButtonElement;
 
   export const sidebarClass = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed'
@@ -34,6 +35,7 @@ export module Sidebar {
 
     toggleButtonElement = SidebarButtons.createToggleButton();
     clearButtonElement = SidebarButtons.createClearButton(listOfEntities);
+    clearButtonElement.id = clearButtonId
     downloadResultsButtonElement = SidebarButtons.createDownloadResultsButton(listOfEntities);
 
     sidebar.appendChild(toggleButtonElement);
@@ -96,7 +98,7 @@ export module Sidebar {
         downloadResultsButtonElement = SidebarButtons.toggleDownloadButton(true);
 
         // @ts-ignore
-        browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity]})
+        browserObject.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity]})
           .catch(e => console.error(e));
       } else { // entity is a synonym of existing sidecard
         const synonyms = SidebarButtons.entityToCard.get(entityId)!.synonyms;
