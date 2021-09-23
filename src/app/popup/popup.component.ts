@@ -10,6 +10,7 @@ import { TitleCasePipe } from '@angular/common';
   styleUrls: ['./popup.component.scss']
 })
 export class PopupComponent {
+  isNerPerformed = true;
 
   mode: 'menu' | 'settings' | 'pdf' = 'menu'
 

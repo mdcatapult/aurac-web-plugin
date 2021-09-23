@@ -47,7 +47,7 @@ export module Browser {
           currentUrl = window.location.href;
           urlWithoutHTTP = currentUrl.replace(/^(https?|http):\/\//, '')
           return new Promise((resolve) => {
-            resolve({type: 'resolved', entities: leadmineEntities, url: urlWithoutHTTP});
+            resolve({type: 'resolved', body: {entities: leadmineEntities, url: urlWithoutHTTP}});
           });
         default:
           throw new Error('Received unexpected message from plugin');

@@ -132,8 +132,8 @@ export class BackgroundComponent {
     result.then((contentScriptResponse) => {
       const response = contentScriptResponse as LeadmineMessage;
       console.log('response is ' + response.body)
-      this.currentResults = response.entities as Array<LeadminerEntity>
-      this.currentURL = response.url as string;
+      this.currentResults = response.body.entities as Array<LeadminerEntity>
+      this.currentURL = response.body.url as string;
       console.log(this.currentResults)
       console.log(this.currentURL)
       this.exportResultsToCSV()
