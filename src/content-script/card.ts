@@ -9,6 +9,7 @@ export module Card {
   const geneAndProtein = 'Gene or Protein';
   const disease = 'Biological';
   const chemical = 'Chemical';
+  let chemblId: string;
 
   function createListOfLinks(categoryName: string, hrefList: Array<Link>): HTMLUListElement {
     const htmlListOfLinks: HTMLUListElement = document.createElement('ul');
@@ -47,10 +48,24 @@ export module Card {
 
     card.appendChild(createCrossReferences(information.entityText));
 
+    if (information.entityGroup === 'Chemical') {
+      const modalButton = createModalOpeningButton()
+      card.append(modalButton)
+    }
+
     card.insertAdjacentHTML('beforeend', `<p class='aurac-mdc-entity-type'>Entity Type: ${information.recognisingDict.entityType}</p>`);
 
     listOfEntities.push(information)
     return card;
+  }
+
+  function  createModalOpeningButton(): HTMLElement {
+    const modalButton = document.createElement('button')
+    modalButton.insertAdjacentHTML('beforeend', `Structure`)
+    modalButton.addEventListener('click', () => browser.runtime.sendMessage({type: 'open_modal', body: chemblId})
+    .catch(e => console.error(e)));
+
+    return modalButton
   }
 
   export function setXRefHTML(xrefs: { databaseName: string, url: string, compoundName: string }[]): void {
@@ -70,6 +85,13 @@ export module Card {
       const htmlListElement: HTMLLIElement = document.createElement('li');
       htmlListElement.innerHTML = `<a href=${xref.url} target="_blank" title="Link to ${xref.databaseName} reference for this entity">${xref.databaseName}</a>`;
       xrefHolder.appendChild(htmlListElement);
+      const splitURLList: Array<string> = xref.url.split("/")
+      const identifier: string = splitURLList[splitURLList.length-1]
+      const regex = /^CHEMBL/
+      if (identifier.match(regex)){
+        chemblId = identifier
+      }
+
     });
   }
 
