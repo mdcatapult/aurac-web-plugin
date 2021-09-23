@@ -8,7 +8,7 @@
     "dev": "ng build --source-map true && webpack && web-ext run --verbose --source-dir=dist/browser-plugin",
     "package": "cd dist/browser-plugin && web-ext build",
     "test": "jest && ng test",
-    "test:ci": "ng test --browsers GitlabCI --watch false",
+    "test:ci": "jest && ng test --browsers GitlabCI --watch false",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "build:prod": "cross-env NODE_ENV=production ng build --configuration production",

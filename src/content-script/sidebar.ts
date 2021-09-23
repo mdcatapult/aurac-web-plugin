@@ -39,7 +39,6 @@ export module Sidebar {
     downloadResultsButtonElement = SidebarButtons.createDownloadResultsButton(listOfEntities);
 
     sidebar.appendChild(toggleButtonElement);
-    sidebar.appendChild(clearButtonElement);
     sidebar.appendChild(cardContainer);
 
     toolsContainer.className = 'aurac-sidebar-tools'

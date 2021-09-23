@@ -5,6 +5,7 @@
 import {TextHighlighter} from './textHighlighter'
 import {Sidebar} from './sidebar'
 import {BrowserMock} from './browser-mock'
+import {CardButtons} from './cardButtons'
 import * as puppeteer from 'puppeteer'
 import { cardClassName } from './types'
 
@@ -29,7 +30,7 @@ beforeAll(() => {
 
 describe('highlighting', () => {
 
-  test('text elements in leadminerResult should be highlighted', async () => {
+  test('text elements in leadminerResult should be highlighted', () => {
 
     const hasHighlights = leadminerEntities.every(entityText => {
       const highlightedElements = Array.from(document.getElementsByClassName(TextHighlighter.highlightClass))
@@ -62,6 +63,68 @@ test ('clicking clear button should remove all cards', () => {
   document.getElementById(Sidebar.clearButtonId).click()
   expect(Array.from(document.getElementsByClassName(cardClassName)).length).toBe(0)
 })
+
+test('clicking remove on a card should remove that card', () => {
+  const entity = leadminerEntities[0]
+  clickElementForEntity(entity)
+
+  const numOfCards = Array.from(document.getElementsByClassName(cardClassName)).length
+
+  // get the card for the clicked entity
+  const card = Array.from(document.getElementsByClassName(cardClassName)).find(cardElement => {
+    return cardElement.innerHTML.includes(entity)
+  })
+
+  // get remove button
+  document.getElementById(`${CardButtons.baseRemoveClass}-${entity}`).click()
+
+  expect(Array.from(document.getElementsByClassName(cardClassName)).length).toBe(numOfCards - 1)
+})
+
+describe('occurrences', () => {
+  test('occurrences count', () => {
+    const entity = leadminerEntities[0]
+    clickElementForEntity(entity)
+    const occurrencesElement = document.getElementById(`${entity}-occurrences`)
+    expect(occurrencesElement).toBeTruthy()
+
+    let numOfOccurrences = CardButtons.entityToOccurrence.get(entity).length
+    expect(numOfOccurrences).toBe(6) // there are 6 instances in the HTML doc
+  })
+
+  test('arrow buttons', () => {
+    const entity = leadminerEntities[0]
+    clickElementForEntity(entity)
+    const rightArrow = document.getElementById(`right-${CardButtons.baseArrowClass}-${entity}`)
+
+    for (let timesClicked = 0; timesClicked < 6; timesClicked++) {
+      const oldScrollPos = window.scrollY
+      rightArrow.click()
+      const newScrollPos = window.scrollY
+      expect(newScrollPos !== oldScrollPos)
+
+      const occurrences = Array.from(document.getElementsByClassName(TextHighlighter.highlightClass)).forEach((occurrence, i) => {
+        const font = <HTMLFontElement>occurrence.children[0]
+        if (timesClicked === i) {
+          // entity that has been scrolled to should be highlighted
+          expect(font.color).toBe(CardButtons.highlightColor)
+        } else {
+          // all other entites should not have the highlight color
+          expect(!font || font.color !== CardButtons.highlightColor)
+        }
+      })
+    }
+  })
+})
+
+function clickElementForEntity(entity: string): void {
+  Array.from(document.getElementsByClassName(TextHighlighter.highlightClass)).forEach((element: HTMLElement) => {
+    if (element.textContent === entity) {
+      element.click()
+      return
+    }
+  })
+}
 
 // returns sample leadminer results for each entityText
 function getLeadminerResults(entities: string[]): Object {
