@@ -10,6 +10,8 @@ export class PreferencesComponent implements OnInit {
 
   minEntityLength = [...Array(50).keys()].slice(2)
   isLoaded = false;
+  dictionaries = ['proteins', 'chemical-entities', 'diseases', 'general']
+
   @Input() preferencesForm?: FormGroup;
 
   constructor() {}
@@ -17,6 +19,5 @@ export class PreferencesComponent implements OnInit {
   ngOnInit(): void {
     this.isLoaded = true;
   }
-
 }
 

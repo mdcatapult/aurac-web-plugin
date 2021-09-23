@@ -3,7 +3,6 @@ import {Link} from './externalLinks';
 import {SidebarButtons} from './sidebarButtons';
 import {EntityMap} from './entityMap';
 
-
 export module CardButtons {
 
   const rightArrow = '&#8594';
@@ -32,18 +31,18 @@ export module CardButtons {
     return occurrenceElement;
   }
 
-  function createRemoveEntityFromSidebarButtonElement(information: Entity): HTMLElement {
+  function createRemoveEntityFromSidebarButtonElement(information: Entity, listOfEntities: Entity[]): HTMLElement {
     const removeEntityFromSidebarButtonElement = document.createElement('button');
     removeEntityFromSidebarButtonElement.innerHTML = crossButton;
     removeEntityFromSidebarButtonElement.className = 'aurac-cross-button';
 
     removeEntityFromSidebarButtonElement.addEventListener('click', () => {
-      pressRemoveEntityFromSidebarButtonElement(information);
+      pressRemoveEntityFromSidebarButtonElement(information, listOfEntities);
     });
     return removeEntityFromSidebarButtonElement;
   }
 
-  function pressRemoveEntityFromSidebarButtonElement(information: Entity): void {
+  function pressRemoveEntityFromSidebarButtonElement(information: Entity, listOfEntities: Entity[]): void {
     if (!document.getElementById(information.entityText)) {
       return;
     }
@@ -53,16 +52,24 @@ export module CardButtons {
     const element = document.getElementById(`${cardClassName}.${information.entityText}`);
     element?.remove();
 
+    listOfEntities.forEach((value, index) => {
+      if (value.entityText === information.entityText) {
+        listOfEntities.splice(index, 1)
+      }
+    });
+
     if (Array.from(SidebarButtons.entityToCard.values()).length === 0) {
+      SidebarButtons.toggleNarrative(true);
+      SidebarButtons.toggleDownloadButton(false);
       SidebarButtons.toggleClearButton(false);
     }
   }
 
-  export function createCardControls(entityData: Entity, entityLinks: Link[], synonyms: string[]): HTMLElement {
+  export function createCardControls(entityData: Entity, entityLinks: Link[], synonyms: string[], listOfEntities: Entity[]): HTMLElement {
     const controls: HTMLSpanElement = document.createElement('span');
     controls.className = 'aurac-card-controls';
 
-    const removeButton = createRemoveEntityFromSidebarButtonElement(entityData);
+    const removeButton = createRemoveEntityFromSidebarButtonElement(entityData, listOfEntities);
     controls.appendChild(removeButton);
 
     const saveButton = createSaveButton(entityData, entityLinks);

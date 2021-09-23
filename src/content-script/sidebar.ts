@@ -5,9 +5,13 @@ import {CardButtons} from './cardButtons';
 
 export module Sidebar {
 
+  const listOfEntities: Entity[] = []
   const cardContainer = document.createElement('div');
+  const toolsContainer = document.createElement('div');
+
   let toggleButtonElement: HTMLButtonElement;
   let clearButtonElement: HTMLButtonElement;
+  let downloadResultsButtonElement: HTMLButtonElement;
 
   export function create(): HTMLElement {
 
@@ -16,14 +20,21 @@ export module Sidebar {
     const sidebar = document.createElement('span');
     sidebar.appendChild(logo);
     sidebar.appendChild(logoText);
+    sidebar.appendChild(toolsContainer)
     sidebar.className = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed';
 
     toggleButtonElement = SidebarButtons.createToggleButton();
-    clearButtonElement = SidebarButtons.createClearButton();
+    clearButtonElement = SidebarButtons.createClearButton(listOfEntities);
+    downloadResultsButtonElement = SidebarButtons.createDownloadResultsButton(listOfEntities);
 
     sidebar.appendChild(toggleButtonElement);
     sidebar.appendChild(clearButtonElement);
     sidebar.appendChild(cardContainer);
+
+    toolsContainer.className = 'aurac-sidebar-tools'
+    toolsContainer.appendChild(clearButtonElement);
+    toolsContainer.appendChild(downloadResultsButtonElement);
+
     return sidebar;
   }
 
@@ -67,11 +78,13 @@ export module Sidebar {
 
       const entityId = info.resolvedEntity || info.entityText;
       if (!SidebarButtons.entityToCard.has(entityId)) {  // entity is a new sidecard
-        const card = Card.create(info, [info.entityText]);
+        const card = Card.create(info, [info.entityText], listOfEntities);
         SidebarButtons.entityToCard.set(entityId, {synonyms: [info.entityText], div: card});
 
         Sidebar.addCard(card);
-        SidebarButtons.toggleClearButton(true);
+        clearButtonElement = SidebarButtons.toggleClearButton(true)
+        downloadResultsButtonElement = SidebarButtons.toggleDownloadButton(true);
+
         // @ts-ignore
         browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity, 
           info.entityGroup, info.recognisingDict.entityType]})
@@ -88,7 +101,7 @@ export module Sidebar {
           });
           synonymOccurrences.sort((a, b) => a.getBoundingClientRect().y - b.getBoundingClientRect().y);
           CardButtons.entityToOccurrence.set(entityId, synonymOccurrences);
-          SidebarButtons.entityToCard.get(entityId)!.div.replaceWith(Card.create(info, synonyms));
+          SidebarButtons.entityToCard.get(entityId)!.div.replaceWith(Card.create(info, synonyms, listOfEntities));
         }
       }
       const div = SidebarButtons.entityToCard.get(info.entityText)?.div;

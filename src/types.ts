@@ -87,8 +87,8 @@ export type XRef = {
 };
 
 export type Preferences = {
-  hideUnresolved: boolean,
-  minEntityLength: number
+  minEntityLength: number,
+  dictionary: string,
 }
 
 export type Settings = {
@@ -113,8 +113,8 @@ export const defaultSettings: Settings = {
   },
   xRefConfig: {},
   preferences: {
-    hideUnresolved: true,
     minEntityLength: 2,
+    dictionary: 'proteins',
   }
 };
 
