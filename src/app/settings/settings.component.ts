@@ -67,6 +67,8 @@ export class SettingsComponent implements OnInit {
 
       this.settingsForm.controls['preferences'].valueChanges.subscribe(() => {
           if (this.valid()) {
+            this.log.Log('preferences have been changed')
+            console.log('preferences have been changedd')
             this.browserService.sendMessage('preferences-changed')
               .catch(console.error);
           }

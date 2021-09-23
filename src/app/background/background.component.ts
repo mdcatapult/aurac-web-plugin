@@ -75,25 +75,36 @@ export class BackgroundComponent {
   }
 
   private refreshHighlights(): void {
-    this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
-      .catch(console.error)
-      .then(() => {
-        const uniqueEntities = this.getUniqueEntities(this.leadmineResult!);
-        this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
-          .catch(console.error);
-      });
+    const result = this.browserService.sendMessageToActiveTab({type: 'retrieve_ner_from_page'})
+    result.then((browserTabResponse) => {
+      const response = browserTabResponse as LeadmineMessage;
+      if (response.body.entities.length === 0) {
+        this.currentResults.length = 0;
+        return;
+      } else {
+        this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
+          .catch(console.error)
+          .then(() => {
+            const uniqueEntities = this.getUniqueEntities(this.leadmineResult!);
+            this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
+              .catch(console.error);
+          });
+      }
+    }).catch(e => console.error(`Couldn't send message of type 'retrieve_ner_from_page' : ${JSON.stringify(e)}`));
   }
 
   private retrieveNERFromPage(): void {
     const result = this.browserService.sendMessageToActiveTab({type: 'retrieve_ner_from_page'})
     result.then((browserTabResponse) => {
       const response = browserTabResponse as LeadmineMessage;
+      console.log(response.body.entities)
+      console.log(response.body.url)
       if (response.body.entities.length === 0) {
         this.currentResults.length = 0;
       } else {
         this.currentResults = response.body.entities
       }
-      this.currentURL = response.body.url as string;
+      this.currentURL = response.body.url;
       this.exportResultsToCSV()
 
     }).catch(e => console.error(`Couldn't send message of type 'retrieve_ner_from_page' : ${JSON.stringify(e)}`));

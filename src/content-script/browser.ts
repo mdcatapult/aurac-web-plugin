@@ -10,8 +10,8 @@ export module Browser {
   // add listener function to browser
   import chemblRepresentations = ChEMBL.getChemblRepresentationValues;
   let leadmineEntities: Array<LeadminerEntity>;
-  let currentUrl = '';
-  let urlWithoutHTTP = ''
+  let currentUrl: string;
+  let urlWithoutHTTP: string;
 
   export function addListener() {
     browser.runtime.onMessage.addListener((msg: any) => {
