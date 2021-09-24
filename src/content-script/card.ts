@@ -60,8 +60,9 @@ export module Card {
     return card;
   }
 
-  function  createModalOpeningButton(): HTMLElement {
+  export function  createModalOpeningButton(): HTMLElement {
     const modalButton = document.createElement('button')
+    modalButton.disabled = true
     modalButton.insertAdjacentHTML('beforeend', `Structure`)
     modalButton.id = 'aurac-modal-open-button'
     modalButton.addEventListener('click', () => browser.runtime.sendMessage({type: 'open_modal', body: chemblId})
