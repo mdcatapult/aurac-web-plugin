@@ -97,24 +97,37 @@ describe('occurrences', () => {
   test('arrow buttons', () => {
     const entity = leadminerEntities[0]
     clickElementForEntity(entity.text)
-    const rightArrow = document.getElementById(`right-${CardButtons.baseArrowClass}-${entity.text}`)
 
+    // scroll forwards through the occurrences
+    const rightArrow = document.getElementById(`right-${CardButtons.baseArrowClass}-${entity.text}`)
     for (let timesClicked = 0; timesClicked < entity.occurrences; timesClicked++) {
+      const expectedHighlightIndex = timesClicked
+      clickArrowButton(rightArrow, timesClicked, expectedHighlightIndex)
+    }
+
+    // scroll backwards through the occurrences
+    const leftArrow = document.getElementById(`left-${CardButtons.baseArrowClass}-${entity.text}`)
+    for (let timesClicked = 0; timesClicked < entity.occurrences; timesClicked++) {
+      const expectedHighlightIndex = entity.occurrences - timesClicked - 1
+      clickArrowButton(leftArrow, timesClicked, expectedHighlightIndex)
+    }
+
+    function clickArrowButton(arrowButton: HTMLElement, timesClicked: number, expectedHighlightIndex: number) {
       const oldScrollPos = window.scrollY
-      rightArrow.click()
+      arrowButton.click()
       const newScrollPos = window.scrollY
       expect(newScrollPos !== oldScrollPos)
 
-      const occurrences = Array.from(document.getElementsByClassName(TextHighlighter.highlightClass)).forEach((occurrence, i) => {
-        const font = <HTMLFontElement>occurrence.children[0]
-        if (timesClicked === i) {
-          // entity that has been scrolled to should be highlighted
-          expect(font.color).toBe(CardButtons.highlightColor)
-        } else {
-          // all other entites should not have the highlight color
-          expect(!font || font.color !== CardButtons.highlightColor)
-        }
-      })
+      const occurrence = Array.from(document.getElementsByClassName(TextHighlighter.highlightClass))[expectedHighlightIndex]
+
+      const font = <HTMLFontElement>occurrence.children[0]
+      if (timesClicked === expectedHighlightIndex) {
+        // entity that has been scrolled to should be highlighted
+        expect(font.color).toBe(CardButtons.highlightColor)
+      } else {
+        // all other entites should not have the highlight color
+        expect(!font || font.color !== CardButtons.highlightColor)
+      }
     }
   })
 })
