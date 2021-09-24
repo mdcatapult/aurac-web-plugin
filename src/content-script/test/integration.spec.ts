@@ -78,7 +78,7 @@ test('clicking remove on a card should remove that card', () => {
   })
 
   // click remove button
-  document.getElementById(`${CardButtons.baseRemoveClass}-${entity}`).click()
+  document.getElementById(`${CardButtons.baseRemoveId}-${entity}`).click()
 
   expect(Array.from(document.getElementsByClassName(cardClassName)).length).toBe(numOfCards - 1)
 })
@@ -99,14 +99,14 @@ describe('occurrences', () => {
     clickElementForEntity(entity.text)
 
     // scroll forwards through the occurrences
-    const rightArrow = document.getElementById(`right-${CardButtons.baseArrowClass}-${entity.text}`)
+    const rightArrow = document.getElementById(`right-${CardButtons.baseArrowId}-${entity.text}`)
     for (let timesClicked = 0; timesClicked < entity.occurrences; timesClicked++) {
       const expectedHighlightIndex = timesClicked
       clickArrowButton(rightArrow, timesClicked, expectedHighlightIndex)
     }
 
     // scroll backwards through the occurrences
-    const leftArrow = document.getElementById(`left-${CardButtons.baseArrowClass}-${entity.text}`)
+    const leftArrow = document.getElementById(`left-${CardButtons.baseArrowId}-${entity.text}`)
     for (let timesClicked = 0; timesClicked < entity.occurrences; timesClicked++) {
       const expectedHighlightIndex = entity.occurrences - timesClicked - 1
       clickArrowButton(leftArrow, timesClicked, expectedHighlightIndex)
