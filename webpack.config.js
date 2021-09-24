@@ -29,23 +29,23 @@ const config = {
         test: /\.ts(x)?$/,
         loader: "ts-loader",
         exclude: /node_modules/
-      },
-      {
-        test: /\.css$/,
-        use: [
-          "style-loader",
-          {
-            loader: "css-loader",
-            options: {
-              importLoaders: 1,
-              modules: true
-            },
-          },
-        ],
-        include: [path.resolve(__dirname, 'node_modules/tippy.js/dist/tippy.css')],
-        exclude: /\.module\.css$/
-      },
-    ],
+      }
+      // {
+      //   test: /\.css$/,
+      //   use: [
+      //     "style-loader",
+      //     {
+      //       loader: "css-loader",
+      //       options: {
+      //         importLoaders: 1,
+      //         modules: true
+      //       },
+      //     },
+      //   ],
+      //   // include: [path.resolve(__dirname, 'node_modules/tippy.js/dist/tippy.css')],
+      //   exclude: /\.module\.css$/
+      // }
+    ]
   },
   resolve: {
     extensions: [".js", ".ts"],
@@ -55,7 +55,10 @@ const config = {
   },
   plugins: [
     new CopyPlugin({
-      patterns: [{from: "./node_modules/webextension-polyfill/dist/", to: "." }],
+      patterns: [
+        {from: "./node_modules/webextension-polyfill/dist/", to: "." },
+        {from: "./node_modules/tippy.js/dist/*.css", to: "./assets/tippy/[name].[ext]"}
+      ]
     })
   ]
 };

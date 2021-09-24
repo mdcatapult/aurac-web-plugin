@@ -20,7 +20,11 @@
         "content.js"
       ],
       "css": [
-        "assets/styles.css"
+        "assets/styles.css",
+        "assets/tippy/tippy.css",
+        "assets/tippy/svg-arrow.css",
+        "assets/tippy/border.css",
+        "assets/tippy/backdrop.css"
       ]
     }
   ],

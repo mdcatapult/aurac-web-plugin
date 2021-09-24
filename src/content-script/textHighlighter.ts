@@ -3,7 +3,7 @@ import {Sidebar} from './sidebar';
 import {Card} from './card';
 import {ChEMBL} from './chembl';
 import tippy from 'tippy.js';
-import 'tippy.js/dist/tippy.css';
+// import 'tippy.js/dist/tippy.css';
 // Error: ./node_modules/tippy.js/dist/tippy.css
 // Module build failed (from ./node_modules/@angular-devkit/build-angular/node_modules/postcss-loader/dist/cjs.js):
 // SyntaxError
