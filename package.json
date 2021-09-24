@@ -8,12 +8,15 @@
     "dev": "ng build --source-map true && webpack && web-ext run --verbose --source-dir=dist/browser-plugin",
     "package": "cd dist/browser-plugin && web-ext build",
     "test": "jest && ng test",
-    "test:ci": "jest --coverage && ng test --browsers GitlabCI --watch false",
+    "test:ci": "npm i --save-dev @types/jest && jest --coverage && ng test --browsers GitlabCI --watch false",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "build:prod": "cross-env NODE_ENV=production ng build --configuration production",
     "weblint": "cd dist/browser-plugin && web-ext lint",
     "version": "VERSION=$(jq -r '.version' package.json) && jq --arg v $VERSION '.version = $v' src/manifest.json > tmp.json && mv tmp.json src/manifest.json && git add src/manifest.json"
+  },
+  "browser": {
+    "fs": false
   },
   "private": true,
   "dependencies": {
