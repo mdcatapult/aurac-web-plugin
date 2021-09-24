@@ -145,6 +145,7 @@
   width: 800px;
   max-width: 100%;
   z-index: 1000;
+  height: 80%;
   overflow: auto;
 }
 
@@ -152,6 +153,7 @@
   padding: 20px;
   background: #fff;
   margin: 20px;
+  height: 80%;
 }
 
 
