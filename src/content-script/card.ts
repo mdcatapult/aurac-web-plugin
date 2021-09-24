@@ -63,6 +63,7 @@ export module Card {
   function  createModalOpeningButton(): HTMLElement {
     const modalButton = document.createElement('button')
     modalButton.insertAdjacentHTML('beforeend', `Structure`)
+    modalButton.id = 'aurac-modal-open-button'
     modalButton.addEventListener('click', () => browser.runtime.sendMessage({type: 'open_modal', body: chemblId})
     .catch(e => console.error(e)));
 
@@ -73,7 +74,6 @@ export module Card {
     if (!xrefs.length) {
       return;
     }
-    console.log(xrefs)
     // Remove existing xrefs
     const xrefHolder: HTMLElement = document.getElementById(xrefs[0].compoundName + '_list')!;
     while (xrefHolder.firstChild) {
@@ -93,8 +93,10 @@ export module Card {
       if (identifier.match(regex)){
         chemblId = identifier
       }
-
     });
+    if (!chemblId){
+      document.getElementById('aurac-modal-open-button')!.style.display = 'none'
+    }
   }
 
   export function populateEntityToOccurrences(entityText: string, occurrence: Element): void {

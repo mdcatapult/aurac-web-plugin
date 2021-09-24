@@ -78,8 +78,8 @@ export class BackgroundComponent {
       });
   }
 
-  private openModal(information: Entity): void {
-    this.browserService.sendMessageToActiveTab({type: 'open_modal', body: information})
+  private openModal(chemblId: string): void {
+    this.browserService.sendMessageToActiveTab({type: 'open_modal', body: chemblId})
   }
 
 
