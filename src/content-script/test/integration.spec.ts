@@ -2,11 +2,11 @@
  * @jest-environment jsdom
  */
 
-import {TextHighlighter} from './textHighlighter'
-import {Sidebar} from './sidebar'
-import {BrowserMock} from './browser-mock'
-import {CardButtons} from './cardButtons'
-import {cardClassName} from './types'
+import {TextHighlighter} from './../textHighlighter'
+import {Sidebar} from './../sidebar'
+import {BrowserMock} from './../browser-mock'
+import {CardButtons} from './../cardButtons'
+import {cardClassName} from './../types'
 
 // LeadminerEntity represents an entity which has come back from leadminer, and the number
 // of occurrences it has on the page.

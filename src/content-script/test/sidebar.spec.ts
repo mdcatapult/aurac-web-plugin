@@ -2,10 +2,10 @@
  * @jest-environment jsdom
  */
 
-import {Sidebar} from './sidebar'
-import {UserExperience} from './userExperience'
-import {BrowserMock} from './browser-mock'
-import {SidebarButtons} from './sidebarButtons';
+import {Sidebar} from './../sidebar'
+import {UserExperience} from './../userExperience'
+import {BrowserMock} from './../browser-mock'
+import {SidebarButtons} from './../sidebarButtons';
 
 let sidebar: HTMLElement
 
