@@ -1,4 +1,4 @@
-import { Link } from './externalLinks'
+import {Link} from './externalLinks'
 
 export type Entity = {
   entityText: string,
@@ -38,6 +38,22 @@ export type HighlightHtmlColours = {
   elementName: Element;
   colourBefore: string;
   colourAfter: string;
+}
+
+
+export const EntityGroupColours: { [name: string]: string }   = {
+  'Chemical Identifiers' : "#C3FCF1",
+  'Chemical General' : "#00C9AD",
+  'Other' : "#009962",
+  'Chemical' : "#1A7E55",
+  'Biological' : "#C35354",
+  'Biological Identifiers' : "#FF8885",
+  'General Chemical Identifiers' : "#E0B288",
+  'Gene or Protein Class' : "#FFC0BA",
+  'Gene or Protein' : "#B9A89A",
+  'Noise' : "#DFE0DF",
+  'Activity Terms' : "#F0972D",
+  'Identifiers' : "#9CB0A4"
 }
 
 export const cardClassName = 'sidebar-text';
