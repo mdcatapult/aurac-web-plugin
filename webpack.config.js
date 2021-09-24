@@ -57,7 +57,7 @@ const config = {
     new CopyPlugin({
       patterns: [
         {from: "./node_modules/webextension-polyfill/dist/", to: "." },
-        {from: "./node_modules/tippy.js/dist/*.css", to: "./assets/tippy/[name].[ext]"}
+        {from: "./node_modules/tippy.js/dist/tippy.css", to: "./assets/tippy.css"}
       ]
     })
   ]
