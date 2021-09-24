@@ -48,11 +48,12 @@ export module TextHighlighter {
         }
         // add tooltip
         // N.B. styling dos not work - issue with css import above and webpack
-        tippy('.aurac-highlight', {
-          content: entity.entityText,
-        })
+        // tippy('.aurac-highlight', {
+        //   content: entity.entityText,
+        // })
 
       });
+    tippy('[data-tippy-content]');
   }
 
   // Recursively find all text nodes which match regex
@@ -232,7 +233,7 @@ export module TextHighlighter {
 
   // highlights a term by wrapping it an HTML span
   const highlightTerm = (term: string, entity: Entity) => {
-    return `<span class="aurac-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative; cursor: pointer">${term}</span>`;
+    return `<span class="aurac-highlight" data-tippy-content="${entity.entityText}" style="background-color: ${entity.recognisingDict.htmlColor};position: relative; cursor: pointer">${term}</span>`;
   };
 
   function addHighlightAndEventListeners(selector: Element[], entity: Entity) {
