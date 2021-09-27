@@ -40,20 +40,20 @@ export type HighlightHtmlColours = {
   colourAfter: string;
 }
 
-
+// colours taken from - https://lospec.com/palette-list/colorblind-16
 export const EntityGroupColours: { [name: string]: string }   = {
-  'Chemical Identifiers' : "#C3FCF1",
-  'Chemical General' : "#00C9AD",
+  'Chemical Identifiers' : "#ffdf4d",
+  'Chemical General' : "#ffdf4d",
   'Other' : "#009962",
-  'Chemical' : "#1A7E55",
-  'Biological' : "#C35354",
-  'Biological Identifiers' : "#FF8885",
-  'General Chemical Identifiers' : "#E0B288",
-  'Gene or Protein Class' : "#FFC0BA",
-  'Gene or Protein' : "#B9A89A",
-  'Noise' : "#DFE0DF",
-  'Activity Terms' : "#F0972D",
-  'Identifiers' : "#9CB0A4"
+  'Chemical' : "#ffdf4d",
+  'Biological' : "#db6d00",
+  'Biological Identifiers' : "#db6d00",
+  'General Chemical Identifiers' : "#22cf22",
+  'Gene or Protein Class' : "#22cf22",
+  'Gene or Protein' : "#22cf22",
+  'Noise' : "#676767",
+  'Activity Terms' : "#490092",
+  'Identifiers' : "#920000"
 }
 
 export const cardClassName = 'sidebar-text';
