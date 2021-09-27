@@ -3,7 +3,16 @@ import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {SettingsService} from '../settings/settings.service';
 
-import {ConverterResult, defaultSettings, LeadminerEntity, LeadminerResult, Message, Settings, StringMessage, XRef} from 'src/types';
+import {
+  ConverterResult,
+  defaultSettings,
+  LeadminerEntity,
+  LeadminerResult,
+  Message,
+  Settings,
+  StringMessage,
+  XRef
+} from 'src/types';
 import {validDict} from './types';
 import {map, switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
@@ -250,6 +259,10 @@ export class BackgroundComponent {
     return uniqueEntities;
   }
 
+  /**
+   * Use the entity's entity group to amend the html colour returned from Leadmine.
+   * If we don't have a matching key in the EntityGroupColours object, leave the htmlColor unchanged
+   */
   amendEntityHtmlColor(entity: LeadminerEntity): LeadminerEntity {
     let newColor = EntityGroupColours[entity.entityGroup]
     if (newColor != null) {
