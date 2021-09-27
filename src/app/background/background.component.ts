@@ -2,17 +2,7 @@ import {Component} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {SettingsService} from '../settings/settings.service';
-
-import {
-  ConverterResult,
-  defaultSettings,
-  LeadminerEntity,
-  LeadminerResult,
-  Message,
-  Settings,
-  StringMessage,
-  XRef
-} from 'src/types';
+import {ConverterResult, defaultSettings, LeadminerEntity, LeadminerResult, Message, Settings, StringMessage, XRef} from 'src/types';
 import {validDict} from './types';
 import {map, switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
