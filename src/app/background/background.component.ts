@@ -74,14 +74,12 @@ export class BackgroundComponent {
           this.openModal(msg.body)
           break;
         }
-
       }
     }
   }
 
   private refreshHighlights(): void {
-    //We don't want to refresh the highlight on a page that hasn't had NER ran on it. If we send uniqueEntities to a new page that hasn't
-    //had NER ran on it then it will show the NER from the request before it.
+    //We don't want to refresh the highlight on a page that hasn't had NER ran on it.
     const result = this.browserService.sendMessageToActiveTab({type: 'retrieve_ner_from_page'})
     result.then((browserTabResponse) => {
       const response = browserTabResponse as LeadmineMessage;
