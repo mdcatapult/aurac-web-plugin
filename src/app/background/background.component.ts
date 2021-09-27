@@ -1,3 +1,4 @@
+import {Entity} from './../../content-script/types';
 import {Component} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '../../environments/environment';
@@ -58,6 +59,11 @@ export class BackgroundComponent {
           this.exportCSV()
           break;
         }
+        case 'open_modal': {
+          this.openModal(msg.body)
+          break;
+        }
+
       }
     }
   }
@@ -71,6 +77,11 @@ export class BackgroundComponent {
           .catch(console.error);
       });
   }
+
+  private openModal(chemblId: string): void {
+    this.browserService.sendMessageToActiveTab({type: 'open_modal', body: chemblId})
+  }
+
 
   private exportCSV(): void {
     if (this.currentResults.length === 0) {

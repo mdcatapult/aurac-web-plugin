@@ -9,6 +9,7 @@ export module Card {
   const geneAndProtein = 'Gene or Protein';
   const disease = 'Biological';
   const chemical = 'Chemical';
+  let chemblId: string;
 
   function createListOfLinks(categoryName: string, hrefList: Array<Link>): HTMLUListElement {
     const htmlListOfLinks: HTMLUListElement = document.createElement('ul');
@@ -22,7 +23,6 @@ export module Card {
 
   // Creates a card for a given entity
   export function create(information: Entity, synonyms: string[], listOfEntities: Entity[]): HTMLDivElement {
-    console.log(information)
     const card: HTMLDivElement = document.createElement('div');
     card.className = cardClassName;
     card.id = `${cardClassName}.${information.entityText}`;
@@ -48,17 +48,32 @@ export module Card {
 
     card.appendChild(createCrossReferences(information.entityText));
 
+    if (information.entityGroup === 'Chemical') {
+      const modalButton = createModalOpeningButton()
+      card.append(modalButton)
+    }
+
     card.insertAdjacentHTML('beforeend', `<p class='aurac-mdc-entity-type'>Entity Type: ${information.recognisingDict.entityType}</p>`);
 
     listOfEntities.push(information)
     return card;
   }
 
+  export function  createModalOpeningButton(): HTMLElement {
+    const modalButton = document.createElement('button')
+    modalButton.disabled = true
+    modalButton.insertAdjacentHTML('beforeend', `Structure`)
+    modalButton.id = 'aurac-modal-open-button'
+    modalButton.addEventListener('click', () => browser.runtime.sendMessage({type: 'open_modal', body: chemblId})
+    .catch(e => console.error(e)));
+
+    return modalButton
+  }
+
   export function setXRefHTML(xrefs: { databaseName: string, url: string, compoundName: string }[]): void {
     if (!xrefs.length) {
       return;
     }
-    console.log(xrefs)
     // Remove existing xrefs
     const xrefHolder: HTMLElement = document.getElementById(xrefs[0].compoundName + '_list')!;
     while (xrefHolder.firstChild) {
@@ -72,7 +87,16 @@ export module Card {
       const htmlListElement: HTMLLIElement = document.createElement('li');
       htmlListElement.innerHTML = `<a href=${xref.url} target="_blank" title="Link to ${xref.databaseName} reference for this entity">${xref.databaseName}</a>`;
       xrefHolder.appendChild(htmlListElement);
+      const splitURLList: Array<string> = xref.url.split('/')
+      const identifier: string = splitURLList[splitURLList.length - 1]
+      const regex = /^CHEMBL/
+      if (identifier.match(regex)){
+        chemblId = identifier
+      }
     });
+    if (!chemblId){
+      document.getElementById('aurac-modal-open-button')!.style.display = 'none'
+    }
   }
 
   export function populateEntityToOccurrences(entityText: string, occurrence: Element): void {
