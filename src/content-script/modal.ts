@@ -36,7 +36,8 @@ export module Modal {
         document.body.classList.add('aurac-modal-open');
         const auracBody = document.getElementById('aurac-modal-body-1')
         auracBody!.insertAdjacentHTML('afterbegin', `<object id="compound-data" data="https://www.ebi.ac.uk/chembl/embed/#compound_report_card/${chemblId}/name_and_classification" width="100%" height="100%"></object>`!)
-        document.getElementById('aurac-modal-open-button')!.style.display = 'none'
+        const openButton = document.getElementById('aurac-modal-open-button') as HTMLButtonElement
+        openButton.disabled = true
     }
 
     export function closeModal() {
@@ -44,6 +45,7 @@ export module Modal {
         document.body.classList.remove('aurac-modal-open');
         const auracData = document.getElementById('compound-data')
         auracData!.remove()
-        document.getElementById('aurac-modal-open-button')!.style.display = 'block'
+        const openButton = document.getElementById('aurac-modal-open-button') as HTMLButtonElement
+        openButton.disabled = false
     }
 }
