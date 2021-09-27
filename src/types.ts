@@ -32,8 +32,9 @@ export interface StringMessage extends Message {
 
 export interface LeadmineMessage extends Message {
   body: {
-    entities: Array<LeadminerEntity>,
-    ner_performed: boolean
+    entities: LeadminerEntity[],
+    ner_performed: boolean,
+    filtered_entities: LeadminerEntity[]
   }
 }
 

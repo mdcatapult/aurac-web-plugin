@@ -11,7 +11,9 @@ export module Browser {
   // add listener function to browser
   import chemblRepresentations = ChEMBL.getChemblRepresentationValues;
   let leadmineEntities: Array<LeadminerEntity>;
+  let filteredEntities: Array<LeadminerEntity>;
   let hasNERBeenPerformed = false;
+  let otherMarkup = true;
 
   export function addListener() {
     browser.runtime.onMessage.addListener((msg: any) => {
@@ -27,7 +29,11 @@ export module Browser {
           });
         case 'markup_page':
           hasNERBeenPerformed = true;
-          leadmineEntities = msg.body as Array<LeadminerEntity>;
+          if (otherMarkup) {
+            leadmineEntities = msg.body as Array<LeadminerEntity>;
+          }
+          filteredEntities = msg.body as Array<LeadminerEntity>
+          otherMarkup = false;
           UserExperience.toggleLoadingIcon(false);
           TextHighlighter.wrapEntitiesWithHighlight(msg);
           SidebarButtons.open()
@@ -51,7 +57,12 @@ export module Browser {
           break;
         case 'retrieve_ner_from_page':
           return new Promise((resolve) => {
-            resolve({type: 'resolved', body: {entities: leadmineEntities,  ner_performed: hasNERBeenPerformed}});
+            resolve({type: 'resolved', body: {
+              entities: leadmineEntities,
+              ner_performed: hasNERBeenPerformed,
+              filtered_entities: filteredEntities
+              }
+            });
           });
         default:
           throw new Error('Received unexpected message from plugin');

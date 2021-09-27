@@ -73,14 +73,21 @@ export class BackgroundComponent {
     const result = this.browserService.sendMessageToActiveTab({type: 'retrieve_ner_from_page'})
     result.then((browserTabResponse) => {
       const response = browserTabResponse as LeadmineMessage;
+
       if (!response.body.ner_performed) {
         return;
       }
       this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
           .catch(console.error)
           .then(() => {
-            const uniqueEntities = this.getUniqueEntities(this.leadmineResult!);
-            this.currentResults = uniqueEntities;
+            console.log(this.leadmineResult?.entities)
+            console.log(response.body.entities)
+            console.log(response.body.filtered_entities)
+            this.leadmineResult!.entities = response.body.entities
+
+            const uniqueEntities = this.getUniqueEntities(this.leadmineResult!)
+            this.currentResults = response.body.filtered_entities;
+
             this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
               .catch(console.error);
           });
@@ -100,7 +107,7 @@ export class BackgroundComponent {
         if (!nerResponse.body.ner_performed) {
           return
         }
-        this.currentResults = nerResponse.body.entities
+        this.currentResults =  nerResponse.body.filtered_entities
         this.exportResultsToCSV()
       })
       .catch(e => console.error(`Error: ' : ${JSON.stringify(e)}`));
@@ -274,8 +281,18 @@ export class BackgroundComponent {
 
   getUniqueEntities(leadmineResponse: LeadminerResult): Array<LeadminerEntity> {
     const uniqueEntities = new Array<LeadminerEntity>();
-    leadmineResponse.entities
+    leadmineResponse?.entities
       .forEach((entity: LeadminerEntity) => {
+        if (this.shouldDisplayEntity(entity)) {
+          uniqueEntities.push(entity);
+        }
+      });
+    return uniqueEntities;
+  }
+
+  getOtherUniqueEntities(refreshResponse: LeadmineMessage): Array<LeadminerEntity> {
+    const uniqueEntities = new Array<LeadminerEntity>();
+    refreshResponse!.body.entities.forEach((entity: LeadminerEntity) => {
         if (this.shouldDisplayEntity(entity)) {
           uniqueEntities.push(entity);
         }
