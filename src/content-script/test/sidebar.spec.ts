@@ -6,6 +6,7 @@ import {Sidebar} from './../sidebar'
 import {UserExperience} from './../userExperience'
 import {BrowserMock} from './../browser-mock'
 import {SidebarButtons} from './../sidebarButtons';
+import { beforeAll, describe, test, expect } from 'jest-without-globals'
 
 let sidebar: HTMLElement
 

@@ -7,6 +7,7 @@ import {Sidebar} from './../sidebar'
 import {BrowserMock} from './../browser-mock'
 import {CardButtons} from './../cardButtons'
 import {cardClassName} from './../types'
+import { beforeAll, describe, test, expect } from 'jest-without-globals'
 
 // LeadminerEntity represents an entity which has come back from leadminer, and the number
 // of occurrences it has on the page.

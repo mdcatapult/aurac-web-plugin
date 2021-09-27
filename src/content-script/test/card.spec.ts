@@ -7,6 +7,7 @@ import {Sidebar} from './../sidebar'
 import {BrowserMock} from './../browser-mock'
 import {CardButtons} from './../cardButtons'
 import {cardClassName} from '../types'
+import { beforeAll, describe, test, expect } from 'jest-without-globals'
 
 let sidebar: HTMLElement
 
