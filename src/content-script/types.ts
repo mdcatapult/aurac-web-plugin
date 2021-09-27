@@ -44,16 +44,16 @@ export type HighlightHtmlColours = {
 export const EntityGroupColours: { [name: string]: string }   = {
   'Chemical Identifiers' : '#ffdf4d',
   'Chemical General' : '#ffdf4d',
-  'Other' : '#009962',
-  'Chemical' : '#ffdf4d',
-  'Biological' : '#db6d00',
+  Other : '#009962',
+  Chemical : '#ffdf4d',
+  Biological : '#db6d00',
   'Biological Identifiers' : '#db6d00',
   'General Chemical Identifiers' : '#22cf22',
   'Gene or Protein Class' : '#22cf22',
   'Gene or Protein' : '#22cf22',
-  'Noise' : '#676767',
+  Noise : '#676767',
   'Activity Terms' : '#490092',
-  'Identifiers' : '#920000'
+  Identifiers : '#920000'
 }
 
 export const cardClassName = 'sidebar-text';
