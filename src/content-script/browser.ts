@@ -2,9 +2,10 @@ import {TextHighlighter} from './textHighlighter'
 import {Card} from './card'
 import {UserExperience} from './userExperience';
 import {ChEMBL} from './chembl';
-// @ts-ignore
 import {SidebarButtons} from './sidebarButtons';
-import {LeadmineMessage, LeadminerEntity} from '../types';
+import {LeadminerEntity} from '../types';
+import {Modal} from './modal';
+
 
 export module Browser {
   // add listener function to browser
@@ -33,6 +34,8 @@ export module Browser {
           break;
         case 'x-ref_result':
           Card.setXRefHTML(msg.body);
+          const modalButton: HTMLButtonElement = document.getElementById('aurac-modal-open-button') as HTMLButtonElement
+          modalButton.disabled = false
           break;
         case 'toggle_sidebar':
           SidebarButtons.toggle()
@@ -42,6 +45,9 @@ export module Browser {
           break;
         case 'remove_highlights':
           TextHighlighter.removeHighlights();
+          break;
+        case 'open_modal':
+          Modal.openModal(msg.body)
           break;
         case 'retrieve_ner_from_page':
           return new Promise((resolve) => {

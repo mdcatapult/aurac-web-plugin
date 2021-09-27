@@ -1,3 +1,4 @@
+import {Entity} from './../../content-script/types';
 import {Component} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '../../environments/environment';
@@ -19,8 +20,6 @@ import {map, switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {BrowserService} from '../browser.service';
 import {saveAs} from 'file-saver';
-import {Router} from '@angular/router';
-import {resolveSanitizationFn} from '@angular/compiler/src/render3/view/template';
 
 @Component({
   selector: 'app-background',
@@ -35,7 +34,7 @@ export class BackgroundComponent {
   private currentResults: Array<LeadminerEntity> = []
   private currentURL?: string
 
-  constructor(private client: HttpClient, private browserService: BrowserService, private router: Router) {
+  constructor(private client: HttpClient, private browserService: BrowserService) {
 
     SettingsService.loadSettings(this.browserService, (settings) => {
       this.settings = settings || defaultSettings;
@@ -71,6 +70,11 @@ export class BackgroundComponent {
           this.retrieveNERFromPage()
           break;
         }
+        case 'open_modal': {
+          this.openModal(msg.body)
+          break;
+        }
+
       }
     }
   }
@@ -86,14 +90,15 @@ export class BackgroundComponent {
           });
   }
 
+  private openModal(chemblId: string): void {
+    this.browserService.sendMessageToActiveTab({type: 'open_modal', body: chemblId})
+  }
 
   private retrieveNERFromPage(): void {
     Promise.all([this.browserService.getActiveTab(), this.browserService.sendMessageToActiveTab({type: 'retrieve_ner_from_page'}) ])
       .then(([tabResponse, retrieveNERResponse]) => {
         this.currentURL = tabResponse.url!.replace(/^(https?|http):\/\//, '')
         const nerResponse = retrieveNERResponse as LeadmineMessage;
-        console.log(nerResponse.body.ner_performed)
-        console.log(nerResponse.body.entities)
 
         if (!nerResponse.body.ner_performed) {
           return
@@ -101,7 +106,7 @@ export class BackgroundComponent {
         this.currentResults = nerResponse.body.entities
         this.exportResultsToCSV()
       })
-    .catch(e => console.error(`Error: ' : ${JSON.stringify(e)}`));
+      .catch(e => console.error(`Error: ' : ${JSON.stringify(e)}`));
   }
 
   private exportResultsToCSV(): void {
@@ -151,40 +156,64 @@ export class BackgroundComponent {
     saveAs(blob, 'aurac_all_results_' + this.currentURL + '.csv')
   }
 
-  private loadXRefs([entityTerm, resolvedEntity]: [string, string]): void {
-    const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]$/;
-    let xRefObservable: Observable<XRef[]>;
-    if (resolvedEntity) {
-      if (!resolvedEntity.match(inchiKeyRegex)) {
-        const encodedEntity = encodeURIComponent(resolvedEntity);
-        xRefObservable = this.client.get(`${this.settings.urls.compoundConverterURL}/${encodedEntity}?from=SMILES&to=inchikey`).pipe(
-          // @ts-ignore
-          switchMap((converterResult: ConverterResult) => {
-            return converterResult ?
-              this.client.post(
-                `${this.settings.urls.unichemURL}/x-ref/${converterResult.output}`,
-                this.getTrueKeys(this.settings.xRefConfig)
-              ) : of({});
-          }),
-          this.addCompoundNameToXRefObject(entityTerm)
-        );
-      } else {
-        xRefObservable = this.client.post(
-          `${this.settings.urls.unichemURL}/x-ref/${resolvedEntity}`,
-          this.getTrueKeys(this.settings.xRefConfig)
-        ).pipe(
-          // @ts-ignore
-          this.addCompoundNameToXRefObject(entityTerm)
-        );
-      }
+  private smilesToInChIToUnichemPlus([entityText, smilesText]: [string, string]): Observable<XRef[]> {
+    const encodedEntity = encodeURIComponent(smilesText);
+    const xRefObservable = this.client.get(`${this.settings.urls.compoundConverterURL}/${encodedEntity}?from=SMILES&to=inchikey`).pipe(
+      // @ts-ignore
+      switchMap((converterResult: ConverterResult) => {
+        return converterResult ?
+          this.client.post(
+            `${this.settings.urls.unichemURL}/x-ref/${converterResult.output}`,
+            this.getTrueKeys(this.settings.xRefConfig)
+          ) : of({});
+      }),
+      this.addCompoundNameToXRefObject(entityText)
+    );
+    return xRefObservable
+  }
 
-      xRefObservable.subscribe((xrefs: XRef[]) => {
-        if (xrefs.length) {
-          this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
-            .catch(console.error);
-      }
-      });
+  private postToUnichemPlus([entityText, inchiKeyText]: [string, string]): Observable<XRef[]> {
+    const xRefObservable = this.client.post(
+      `${this.settings.urls.unichemURL}/x-ref/${inchiKeyText}`,
+      this.getTrueKeys(this.settings.xRefConfig)).pipe(
+      // @ts-ignore
+      this.addCompoundNameToXRefObject(entityText)
+    );
+    return xRefObservable
+  }
+
+  private loadXRefs([entityText, resolvedEntity, entityGroup, entityType]: [string, string, string, string]): void {
+    if (entityGroup !== 'Chemical') {
+      return
     }
+    let xRefObservable: Observable<XRef[]>;
+    switch (entityType) {
+      case 'SMILES': {
+        xRefObservable = this.smilesToInChIToUnichemPlus([entityText, entityText])
+        break
+      }
+      // likely to be more cases here.
+      case 'DictMol':
+      case 'Mol':   {
+        const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]$/;
+        if (!resolvedEntity.match(inchiKeyRegex)) {
+          xRefObservable = this.smilesToInChIToUnichemPlus([entityText, resolvedEntity])
+        } else {
+          xRefObservable = this.postToUnichemPlus([entityText, resolvedEntity])
+        }
+        break
+      }
+      default: {
+        // default case assumes that the entity text is itself an InChiKey.
+        xRefObservable = this.postToUnichemPlus([entityText, entityText])
+      }
+    }
+    xRefObservable.subscribe((xrefs: XRef[]) => {
+      if (xrefs.length) {
+        this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
+          .catch(console.error);
+    }
+  });
   }
 
   private addCompoundNameToXRefObject = (entityTerm: string) => map((xrefs: XRef[]) => xrefs.map(xref => {

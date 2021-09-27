@@ -65,15 +65,14 @@ export class SettingsComponent implements OnInit {
         }
       });
 
-      this.settingsForm.get('preferences')?.get('minEntityLength')?.valueChanges.subscribe(() => {
+      this.settingsForm.get('preferences')?.get('minEntityLength')!.valueChanges.subscribe(() => {
           if (this.valid()) {
-            this.log.Log('preferences have been changed')
             this.browserService.sendMessage('min-entity-length-changed')
               .catch(console.error);
           }
         }
       );
-     });
+    });
   }
 
   valid(): boolean {

@@ -15,7 +15,8 @@ export type MessageType =
   | 'remove_highlights'
   | 'min-entity-length-changed'
   | 'export_csv'
-  | 'retrieve_ner_from_page';
+  | 'retrieve_ner_from_page'
+  | 'open_modal';
 
 export interface Message {
   type: MessageType;
