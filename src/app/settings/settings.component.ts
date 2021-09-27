@@ -65,16 +65,15 @@ export class SettingsComponent implements OnInit {
         }
       });
 
-      this.settingsForm.controls['preferences'].valueChanges.subscribe(() => {
+      this.settingsForm.get('preferences')?.get('minEntityLength')?.valueChanges.subscribe(() => {
           if (this.valid()) {
             this.log.Log('preferences have been changed')
-            console.log('preferences have been changedd')
-            this.browserService.sendMessage('preferences-changed')
+            this.browserService.sendMessage('min-entity-length-changed')
               .catch(console.error);
           }
         }
       );
-    });
+     });
   }
 
   valid(): boolean {

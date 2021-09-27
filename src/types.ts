@@ -13,7 +13,7 @@ export type MessageType =
   | 'ner_lookup_performed'
   | 'awaiting_response'
   | 'remove_highlights'
-  | 'preferences-changed'
+  | 'min-entity-length-changed'
   | 'export_csv'
   | 'retrieve_ner_from_page';
 
@@ -32,7 +32,6 @@ export interface StringMessage extends Message {
 export interface LeadmineMessage extends Message {
   body: {
     entities: Array<LeadminerEntity>,
-    url: string;
     ner_performed: boolean
   }
 }

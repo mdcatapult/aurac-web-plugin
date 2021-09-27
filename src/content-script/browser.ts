@@ -10,8 +10,6 @@ export module Browser {
   // add listener function to browser
   import chemblRepresentations = ChEMBL.getChemblRepresentationValues;
   let leadmineEntities: Array<LeadminerEntity>;
-  let currentUrl: string;
-  let urlWithoutHTTP: string;
   let hasNERBeenPerformed = false;
 
   export function addListener() {
@@ -46,10 +44,8 @@ export module Browser {
           TextHighlighter.removeHighlights();
           break;
         case 'retrieve_ner_from_page':
-          currentUrl = window.location.href;
-          urlWithoutHTTP = currentUrl.replace(/^(https?|http):\/\//, '')
           return new Promise((resolve) => {
-            resolve({type: 'resolved', body: {entities: leadmineEntities, url: urlWithoutHTTP, hasNERBeenPerformed}});
+            resolve({type: 'resolved', body: {entities: leadmineEntities,  ner_performed: hasNERBeenPerformed}});
           });
         default:
           throw new Error('Received unexpected message from plugin');

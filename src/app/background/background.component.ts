@@ -20,6 +20,7 @@ import {Observable, of} from 'rxjs';
 import {BrowserService} from '../browser.service';
 import {saveAs} from 'file-saver';
 import {Router} from '@angular/router';
+import {resolveSanitizationFn} from '@angular/compiler/src/render3/view/template';
 
 @Component({
   selector: 'app-background',
@@ -32,7 +33,7 @@ export class BackgroundComponent {
   dictionary?: validDict;
   leadmineResult?: LeadminerResult;
   private currentResults: Array<LeadminerEntity> = []
-  private currentURL = ''
+  private currentURL?: string
 
   constructor(private client: HttpClient, private browserService: BrowserService, private router: Router) {
 
@@ -59,7 +60,7 @@ export class BackgroundComponent {
           this.settings = msg.body;
           break;
         }
-        case 'preferences-changed': {
+        case 'min-entity-length-changed': {
           if (!this.leadmineResult) {
             break;
           }
@@ -75,40 +76,32 @@ export class BackgroundComponent {
   }
 
   private refreshHighlights(): void {
-    //We don't want to refresh the highlight on a page that hasn't had NER ran on it. If we send leadmineResult to a new page that hasn't
-    //had ner ran on it then it will show the ner from the request before it.
-    const result = this.browserService.sendMessageToActiveTab({type: 'retrieve_ner_from_page'})
-    result.then((browserTabResponse) => {
-      const response = browserTabResponse as LeadmineMessage;
-      if (response.body.entities.length === 0 && !response.body.ner_performed) {
-        return;
-      } else {
-        this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
+    this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
           .catch(console.error)
           .then(() => {
             const uniqueEntities = this.getUniqueEntities(this.leadmineResult!);
             this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
               .catch(console.error);
           });
-      }
-    }).catch(e => console.error(`Couldn't send message of type 'retrieve_ner_from_page' : ${JSON.stringify(e)}`));
   }
 
-  private retrieveNERFromPage(): void {
-    const result = this.browserService.sendMessageToActiveTab({type: 'retrieve_ner_from_page'})
-    result.then((browserTabResponse) => {
-      const response = browserTabResponse as LeadmineMessage;
-      console.log(response.body.entities)
-      console.log(response.body.url)
-      if (response.body.entities.length === 0) {
-        this.currentResults.length = 0;
-      } else {
-        this.currentResults = response.body.entities
-      }
-      this.currentURL = response.body.url;
-      this.exportResultsToCSV()
 
-    }).catch(e => console.error(`Couldn't send message of type 'retrieve_ner_from_page' : ${JSON.stringify(e)}`));
+  private retrieveNERFromPage(): void {
+    Promise.all([this.browserService.getActiveTab(), this.browserService.sendMessageToActiveTab({type: 'retrieve_ner_from_page'}) ])
+      .then(([tabResponse, retrieveNERResponse]) => {
+
+        this.currentURL = tabResponse.url!.replace(/^(https?|http):\/\//, '')
+        const nerResponse = retrieveNERResponse as LeadmineMessage;
+        console.log(nerResponse.body.ner_performed)
+        console.log(nerResponse.body.entities)
+
+        if (!nerResponse.body.ner_performed) {
+          return
+        }
+        this.currentResults = nerResponse.body.entities
+        this.exportResultsToCSV()
+      })
+    .catch(e => console.error(`Error: ' : ${JSON.stringify(e)}`));
   }
 
   private exportResultsToCSV(): void {
