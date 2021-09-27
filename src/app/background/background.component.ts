@@ -80,7 +80,15 @@ export class BackgroundComponent {
   }
 
   private refreshHighlights(): void {
-    this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
+    //We don't want to refresh the highlight on a page that hasn't had NER ran on it. If we send uniqueEntities to a new page that hasn't
+    //had NER ran on it then it will show the NER from the request before it.
+    const result = this.browserService.sendMessageToActiveTab({type: 'retrieve_ner_from_page'})
+    result.then((browserTabResponse) => {
+      const response = browserTabResponse as LeadmineMessage;
+      if (!response.body.ner_performed) {
+        return;
+      }
+      this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
           .catch(console.error)
           .then(() => {
             const uniqueEntities = this.getUniqueEntities(this.leadmineResult!);
@@ -88,6 +96,7 @@ export class BackgroundComponent {
             this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
               .catch(console.error);
           });
+    })
   }
 
   private openModal(chemblId: string): void {
