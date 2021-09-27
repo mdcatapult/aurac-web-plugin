@@ -18,7 +18,7 @@ import {map, switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {BrowserService} from '../browser.service';
 import {saveAs} from 'file-saver';
-import {EntityGroupColours} from "../../content-script/types";
+import {EntityGroupColours} from '../../content-script/types';
 
 @Component({
   selector: 'app-background',
