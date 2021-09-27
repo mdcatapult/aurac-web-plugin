@@ -80,6 +80,7 @@ export class BackgroundComponent {
           .catch(console.error)
           .then(() => {
             const uniqueEntities = this.getUniqueEntities(this.leadmineResult!);
+            this.currentResults = uniqueEntities;
             this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
               .catch(console.error);
           });
@@ -89,7 +90,6 @@ export class BackgroundComponent {
   private retrieveNERFromPage(): void {
     Promise.all([this.browserService.getActiveTab(), this.browserService.sendMessageToActiveTab({type: 'retrieve_ner_from_page'}) ])
       .then(([tabResponse, retrieveNERResponse]) => {
-
         this.currentURL = tabResponse.url!.replace(/^(https?|http):\/\//, '')
         const nerResponse = retrieveNERResponse as LeadmineMessage;
         console.log(nerResponse.body.ner_performed)
