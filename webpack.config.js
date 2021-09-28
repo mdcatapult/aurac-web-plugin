@@ -43,7 +43,8 @@ const config = {
       patterns: [
         {from: "./node_modules/webextension-polyfill/dist/", to: "." },
         {from: "./node_modules/tippy.js/dist/tippy.css", to: "./assets/tippy.css"},
-        {from: "./node_modules/tippy.js/themes/light-border.css", to: "./assets/tippy-light-border.css"}
+        {from: "./node_modules/tippy.js/themes/light-border.css", to: "./assets/tippy-light-border.css"},
+        {from: "./node_modules/tippy.js/animations/shift-away.css", to: "./assets/tippy-shift-away.css"}
       ]
     })
   ]

@@ -30,11 +30,12 @@ export module TextHighlighter {
           ChEMBL.highlightHandler(entity, chemblRepresentations)
         }
       });
-    // TODO: play with styling
     tippy('[data-tippy-content]',
       {
         // allowHTML: true,
-        theme: 'light-border'
+        theme: 'light-border',
+        animation: 'shift-away',
+        duration: 600,
       },
       );
   }
