@@ -29,14 +29,14 @@ export module TextHighlighter {
         if (ChEMBL.isChemblPage()) {
           ChEMBL.highlightHandler(entity, chemblRepresentations)
         }
-        // add tooltip
-        // N.B. styling dos not work - issue with css import above and webpack
-        // tippy('.aurac-highlight', {
-        //   content: entity.entityText,
-        // })
-
       });
-    tippy('[data-tippy-content]');
+    // TODO: play with styling
+    tippy('[data-tippy-content]',
+      {
+        // allowHTML: true,
+        theme: 'light-border'
+      },
+      );
   }
 
   // Recursively find all text nodes which match regex
@@ -216,6 +216,8 @@ export module TextHighlighter {
 
   // highlights a term by wrapping it an HTML span
   const highlightTerm = (term: string, entity: Entity) => {
+    // TODO: move creation of data-tippy-content to a separate function?
+    //  content will eventually be HTML
     return `<span class="aurac-highlight" data-tippy-content="${entity.entityText}" style="background-color: ${entity.recognisingDict.htmlColor};position: relative; cursor: pointer">${term}</span>`;
   };
 
