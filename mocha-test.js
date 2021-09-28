@@ -1,6 +1,5 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
-const should = require('should');
 const Xvfb = require('xvfb');
 
 const extensionPath = 'dist/browser-plugin';
@@ -18,7 +17,7 @@ describe('Extension UI Testing', function() {
     it('Has restore defaults button', async function() {
       await extensionPage.click('#aurac-settings-button');
       let defaultsButton = (await extensionPage.$('.restore-defaults-button-container'));
-      should.exist(defaultsButton);
+      assert.notStrictEqual(defaultsButton, null);
     })
   });
 
