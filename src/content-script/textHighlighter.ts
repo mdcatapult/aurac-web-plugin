@@ -3,23 +3,6 @@ import {Sidebar} from './sidebar';
 import {Card} from './card';
 import {ChEMBL} from './chembl';
 import tippy from 'tippy.js';
-// import 'tippy.js/dist/tippy.css';
-// Error: ./node_modules/tippy.js/dist/tippy.css
-// Module build failed (from ./node_modules/@angular-devkit/build-angular/node_modules/postcss-loader/dist/cjs.js):
-// SyntaxError
-//
-// (1:1) /home/nick.etherington@medcat.local/Workspace/Ferret/ferret-browser-plugin/node_modules/tippy.js/dist/tippy.css Unknown word
-//
-// > 1 | import api from "!../../style-loader/dist/runtime/injectStylesIntoStyleTag.js";
-// | ^
-// 2 |             import content from "!!../../css-loader/dist/cjs.js??ref--19-1!./tippy.css";
-// 3 |
-//
-// @ ./src/content-script/textHighlighter.ts 5:0-33
-// @ ./src/content-script/browser.ts
-// @ ./src/content-script/script.ts
-
-
 
 export module TextHighlighter {
 
