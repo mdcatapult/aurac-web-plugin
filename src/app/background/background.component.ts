@@ -1,3 +1,4 @@
+import {Entity} from './../../content-script/types';
 import {Component} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '../../environments/environment';
@@ -58,6 +59,11 @@ export class BackgroundComponent {
           this.exportCSV()
           break;
         }
+        case 'open_modal': {
+          this.openModal(msg.body)
+          break;
+        }
+
       }
     }
   }
@@ -71,6 +77,11 @@ export class BackgroundComponent {
           .catch(console.error);
       });
   }
+
+  private openModal(chemblId: string): void {
+    this.browserService.sendMessageToActiveTab({type: 'open_modal', body: chemblId})
+  }
+
 
   private exportCSV(): void {
     if (this.currentResults.length === 0) {
@@ -115,40 +126,64 @@ export class BackgroundComponent {
     saveAs(blob, 'export.csv')
   }
 
-  private loadXRefs([entityTerm, resolvedEntity]: [string, string]): void {
-    const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]$/;
-    let xRefObservable: Observable<XRef[]>;
-    if (resolvedEntity) {
-      if (!resolvedEntity.match(inchiKeyRegex)) {
-        const encodedEntity = encodeURIComponent(resolvedEntity);
-        xRefObservable = this.client.get(`${this.settings.urls.compoundConverterURL}/${encodedEntity}?from=SMILES&to=inchikey`).pipe(
-          // @ts-ignore
-          switchMap((converterResult: ConverterResult) => {
-            return converterResult ?
-              this.client.post(
-                `${this.settings.urls.unichemURL}/x-ref/${converterResult.output}`,
-                this.getTrueKeys(this.settings.xRefConfig)
-              ) : of({});
-          }),
-          this.addCompoundNameToXRefObject(entityTerm)
-        );
-      } else {
-        xRefObservable = this.client.post(
-          `${this.settings.urls.unichemURL}/x-ref/${resolvedEntity}`,
-          this.getTrueKeys(this.settings.xRefConfig)
-        ).pipe(
-          // @ts-ignore
-          this.addCompoundNameToXRefObject(entityTerm)
-        );
-      }
+  private smilesToInChIToUnichemPlus([entityText, smilesText]: [string, string]): Observable<XRef[]> {
+    const encodedEntity = encodeURIComponent(smilesText);
+    const xRefObservable = this.client.get(`${this.settings.urls.compoundConverterURL}/${encodedEntity}?from=SMILES&to=inchikey`).pipe(
+      // @ts-ignore
+      switchMap((converterResult: ConverterResult) => {
+        return converterResult ?
+          this.client.post(
+            `${this.settings.urls.unichemURL}/x-ref/${converterResult.output}`,
+            this.getTrueKeys(this.settings.xRefConfig)
+          ) : of({});
+      }),
+      this.addCompoundNameToXRefObject(entityText)
+    );
+    return xRefObservable
+  }
 
-      xRefObservable.subscribe((xrefs: XRef[]) => {
-        if (xrefs.length) {
-          this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
-            .catch(console.error);
-      }
-      });
+  private postToUnichemPlus([entityText, inchiKeyText]: [string, string]): Observable<XRef[]> {
+    const xRefObservable = this.client.post(
+      `${this.settings.urls.unichemURL}/x-ref/${inchiKeyText}`,
+      this.getTrueKeys(this.settings.xRefConfig)).pipe(
+      // @ts-ignore
+      this.addCompoundNameToXRefObject(entityText)
+    );
+    return xRefObservable
+  }
+
+  private loadXRefs([entityText, resolvedEntity, entityGroup, entityType]: [string, string, string, string]): void {
+    if (entityGroup !== 'Chemical') {
+      return
     }
+    let xRefObservable: Observable<XRef[]>;
+    switch (entityType) {
+      case 'SMILES': {
+        xRefObservable = this.smilesToInChIToUnichemPlus([entityText, entityText])
+        break
+      }
+      // likely to be more cases here.
+      case 'DictMol':
+      case 'Mol':   {
+        const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]$/;
+        if (!resolvedEntity.match(inchiKeyRegex)) {
+          xRefObservable = this.smilesToInChIToUnichemPlus([entityText, resolvedEntity])
+        } else {
+          xRefObservable = this.postToUnichemPlus([entityText, resolvedEntity])
+        }
+        break
+      }
+      default: {
+        // default case assumes that the entity text is itself an InChiKey.
+        xRefObservable = this.postToUnichemPlus([entityText, entityText])
+      }
+    }
+    xRefObservable.subscribe((xrefs: XRef[]) => {
+      if (xrefs.length) {
+        this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
+          .catch(console.error);
+    }
+  });
   }
 
   private addCompoundNameToXRefObject = (entityTerm: string) => map((xrefs: XRef[]) => xrefs.map(xref => {

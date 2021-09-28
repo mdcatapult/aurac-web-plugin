@@ -3,6 +3,8 @@ import {Card} from './card'
 import {UserExperience} from './userExperience';
 import {ChEMBL} from './chembl';
 import {SidebarButtons} from './sidebarButtons';
+import { Modal } from './modal';
+
 
 export module Browser {
   // add listener function to browser
@@ -27,6 +29,8 @@ export module Browser {
           break;
         case 'x-ref_result':
           Card.setXRefHTML(msg.body);
+          const modalButton: HTMLButtonElement = document.getElementById('aurac-modal-open-button') as HTMLButtonElement
+          modalButton.disabled = false
           break;
         case 'toggle_sidebar':
           SidebarButtons.toggle()
@@ -37,6 +41,10 @@ export module Browser {
         case 'remove_highlights':
           TextHighlighter.removeHighlights();
           break;
+        case 'open_modal': 
+          Modal.openModal(msg.body)
+          break;
+
         default:
           throw new Error('Received unexpected message from plugin');
       }
