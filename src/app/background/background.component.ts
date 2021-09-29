@@ -23,6 +23,7 @@ export class BackgroundComponent {
   leadmineResult?: LeadminerResult;
   private currentResults: Array<LeadminerEntity> = []
   private currentURL?: string
+  URLToEntityMapper: Map<string, Array<LeadminerEntity>> = new Map()
 
   constructor(private client: HttpClient, private browserService: BrowserService) {
 
@@ -68,6 +69,16 @@ export class BackgroundComponent {
     }
   }
 
+  private saveURLToEntityMapper(entities: Array<LeadminerEntity>) {
+    this.browserService.getActiveTab()
+      .then(tabResponse => {
+        const currentURL = tabResponse.url!.replace(/^(https?|http):\/\//, '')
+        this.URLToEntityMapper.set(currentURL, entities)
+        const jsonValue = JSON.stringify(Array.from(this.URLToEntityMapper.entries()))
+        this.browserService.saveURLToEntityMapper(jsonValue)
+      })
+  }
+
   private refreshHighlights(): void {
     //We don't want to refresh the highlight on a page that hasn't had NER ran on it.
     const result = this.browserService.sendMessageToActiveTab({type: 'retrieve_ner_from_page'})
@@ -85,8 +96,9 @@ export class BackgroundComponent {
             console.log(response.body.filtered_entities)
             this.leadmineResult!.entities = response.body.entities
 
-            const uniqueEntities = this.getUniqueEntities(this.leadmineResult!)
+            const uniqueEntities = this.getUniqueEntities(this.leadmineResult?.entities!)
             this.currentResults = response.body.filtered_entities;
+
 
             this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
               .catch(console.error);
@@ -99,22 +111,18 @@ export class BackgroundComponent {
   }
 
   private retrieveNERFromPage(): void {
-    Promise.all([this.browserService.getActiveTab(), this.browserService.sendMessageToActiveTab({type: 'retrieve_ner_from_page'}) ])
-      .then(([tabResponse, retrieveNERResponse]) => {
+    Promise.all([this.browserService.getActiveTab(), this.browserService.loadURLToEntityMapper()])
+      .then(([tabResponse, urlToEntityMap]) => {
         this.currentURL = tabResponse.url!.replace(/^(https?|http):\/\//, '')
-        const nerResponse = retrieveNERResponse as LeadmineMessage;
+        const leadmineResult = urlToEntityMap.get(this.currentURL)
 
-        if (!nerResponse.body.ner_performed) {
-          return
-        }
-        this.currentResults =  nerResponse.body.filtered_entities
-        this.exportResultsToCSV()
+        this.exportResultsToCSV(this.getUniqueEntities(leadmineResult!))
       })
       .catch(e => console.error(`Error: ' : ${JSON.stringify(e)}`));
   }
 
-  private exportResultsToCSV(): void {
-    if (this.currentResults.length === 0) {
+  private exportResultsToCSV(currentResults: Array<LeadminerEntity>): void {
+    if (currentResults.length === 0) {
       return;
     }
     const headings = ['beg',
@@ -134,7 +142,7 @@ export class BackgroundComponent {
       'minimumEntityLength',
       'source']
     let text = headings.join(',') + '\n'
-    this.currentResults.forEach(entity => {
+    currentResults.forEach(entity => {
       text = text + entity.beg + ','
         + entity.begInNormalizedDoc + ','
         + entity.end + ','
@@ -258,7 +266,9 @@ export class BackgroundComponent {
               return;
             }
             this.leadmineResult = response.body;
-            const uniqueEntities = this.getUniqueEntities(this.leadmineResult!);
+            const uniqueEntities = this.getUniqueEntities(this.leadmineResult!.entities);
+
+            this.saveURLToEntityMapper(this.leadmineResult?.entities!)
 
             this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
               .catch(console.error);
@@ -279,20 +289,10 @@ export class BackgroundComponent {
   }
 
 
-  getUniqueEntities(leadmineResponse: LeadminerResult): Array<LeadminerEntity> {
+  getUniqueEntities(leadmineResponse: LeadminerEntity[]): Array<LeadminerEntity> {
     const uniqueEntities = new Array<LeadminerEntity>();
-    leadmineResponse?.entities
+    leadmineResponse
       .forEach((entity: LeadminerEntity) => {
-        if (this.shouldDisplayEntity(entity)) {
-          uniqueEntities.push(entity);
-        }
-      });
-    return uniqueEntities;
-  }
-
-  getOtherUniqueEntities(refreshResponse: LeadmineMessage): Array<LeadminerEntity> {
-    const uniqueEntities = new Array<LeadminerEntity>();
-    refreshResponse!.body.entities.forEach((entity: LeadminerEntity) => {
         if (this.shouldDisplayEntity(entity)) {
           uniqueEntities.push(entity);
         }

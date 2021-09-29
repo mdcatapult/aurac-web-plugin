@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {defaultSettings, LeadmineMessage, LeadmineResult, Message, MessageType, Settings, StringMessage} from '../types';
+import {defaultSettings, LeadmineMessage, LeadminerEntity, LeadmineResult, Message, MessageType, Settings, StringMessage} from '../types';
 import {LogService} from './popup/log.service';
 import Tab = browser.tabs.Tab;
 
@@ -45,4 +45,29 @@ export class BrowserService {
       (err) => this.log.Log(`error loading settings', ${JSON.stringify(err)}`)
     ) as Promise<Settings>
   }
+
+  saveURLToEntityMapper(urlToEntityMap: string): void {
+    browser.storage.local.set({urlToEntityMap}).then(
+      () => {},
+      (err) => this.log.Log(`error saving settings for URLEntityMap', ${err}`)
+    )
+  }
+
+  loadURLToEntityMapper(): Promise<Map<string, Array<LeadminerEntity>>> {
+    return browser.storage.local.get('urlToEntityMap').then(
+      (storage) => {
+        const myMap = new Map(JSON.parse(storage?.urlToEntityMap! as string))
+        return Promise.resolve(myMap)
+      },
+      (err) => this.log.Log(`error loading urlToEntityMap', ${JSON.stringify(err)}`)
+    ) as Promise<Map<string, Array<LeadminerEntity>>>
+  }
 }
+
+/*return browser.storage.local.get('urlToEntityMap').then(
+  (storage) => {
+    const myMap = new Map(JSON.parse(storage.urlToEntityMap))
+    return Promise.resolve(myMap)
+  }),
+  (err) => this.log.Log(`error loading urlToEntityMap', ${JSON.stringify(err)}`)
+as Promise<Map<string, Array<LeadminerEntity>>>*/
