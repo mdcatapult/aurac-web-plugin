@@ -3,6 +3,7 @@ import {Sidebar} from './sidebar';
 import {Card} from './card';
 import {ChemblRepresentations} from './types';
 import {ChEMBL} from './chembl';
+import {Document} from './document'
 
 export module TextHighlighter {
 
@@ -79,7 +80,7 @@ export module TextHighlighter {
   function allowedTagType(element: HTMLElement): boolean {
     return ![HTMLScriptElement,
       HTMLStyleElement,
-      SVGElement,
+      window.SVGElement,
       HTMLInputElement,
       HTMLButtonElement,
       HTMLAnchorElement,
@@ -192,7 +193,7 @@ export module TextHighlighter {
       const formulaNode = formula.formulaNode;
       if (formula.formulaText === entity.entityText) {
         try {
-          const replacementNode = document.createElement('span');
+          const replacementNode = Document.document.createElement('span');
           // the span needs a class so that it can be deleted by the removeHighlights function
           replacementNode.className = highlightClass;
           // Retrieves the specific highlight colour to use for this NER term
@@ -215,7 +216,7 @@ export module TextHighlighter {
       // Try/catch for edge cases.
       try {
         // For each term, we want to replace its original HTML with a highlight colour
-        const replacementNode = document.createElement('span');
+        const replacementNode = Document.document.createElement('span');
         // the span needs a class so that it can be deleted by the removeHighlights function
         replacementNode.className = highlightParentClass;
         replacementNode.innerHTML = element.nodeValue!.split(entity.entityText).join(highlightTerm(entity.entityText, entity));
@@ -228,13 +229,13 @@ export module TextHighlighter {
 
   function getSelectors(entity: string): Array<Element> {
     const allElements: Array<Element> = [];
-    allDescendants(document.body, allElements, entity);
+    allDescendants(Document.document.body, allElements, entity);
     return allElements;
   }
 
   export function removeHighlights() {
-    Array.from(document.getElementsByClassName(highlightParentClass))
-      .concat(Array.from(document.getElementsByClassName(highlightClass)))
+    Array.from(Document.document.getElementsByClassName(highlightParentClass))
+      .concat(Array.from(Document.document.getElementsByClassName(highlightClass)))
       .forEach(element => {
         const childNodes = Array.from(element.childNodes);
         element.replaceWith(...childNodes);

@@ -5,6 +5,7 @@ import {ChEMBL} from './chembl';
 import {SidebarButtons} from './sidebarButtons';
 import { IBrowser } from './IBrowser';
 import { Message } from 'src/types';
+import { SavedCard } from './types';
 
 export class BrowserImplementation implements IBrowser {
   sendMessage(msg: Message): Promise<any> {
@@ -13,6 +14,11 @@ export class BrowserImplementation implements IBrowser {
 
   getURL(url: string): string {
     return browser.runtime.getURL(url)
+  }
+
+  getStoredCards(cardStorageKey: string): SavedCard[] {
+    const storedCardsString = window.localStorage.getItem(cardStorageKey)
+    return storedCardsString === null ? [] : JSON.parse(storedCardsString) as SavedCard[];
   }
 
   // add listener function to browser

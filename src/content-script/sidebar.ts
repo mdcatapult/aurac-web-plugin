@@ -7,10 +7,11 @@ import { IBrowser } from './IBrowser';
 export module Sidebar {
 
   let browserObject: IBrowser
+  let documentObject: Document
 
   const listOfEntities: Entity[] = []
-  const cardContainer = document.createElement('div');
-  const toolsContainer = document.createElement('div');
+  let cardContainer: HTMLElement
+  let toolsContainer: HTMLElement
 
   let toggleButtonElement: HTMLButtonElement;
   let clearButtonElement: HTMLButtonElement;
@@ -22,12 +23,18 @@ export module Sidebar {
   export const narrativeId = 'aurac-narrative'
   export const toolsId = 'aurac-sidebar-tools'
 
-  export function create(b: IBrowser): HTMLElement {
+  export function create(b: IBrowser, doc: Document): HTMLElement {
 
     browserObject = b
+    documentObject = doc
+    cardContainer = documentObject.createElement('div');
+    cardContainer.id = 'card-container'
+    toolsContainer = documentObject.createElement('div');
+
+
     const [logo, logoText] = createLogo();
 
-    const sidebar = document.createElement('span');
+    const sidebar = documentObject.createElement('span');
     sidebar.appendChild(logo);
     sidebar.appendChild(logoText);
     sidebar.appendChild(toolsContainer)
@@ -50,12 +57,18 @@ export module Sidebar {
   }
 
   export function addCard(card: HTMLDivElement): void {
+
+    console.log(card, card.innerHTML)
+    console.log('before:', cardContainer.innerHTML)
     cardContainer.appendChild(card);
+    console.log('after:', cardContainer.innerHTML)
+    console.log('full:')
+    console.log(documentObject.body.innerHTML)
   }
 
   function createLogo(): [HTMLImageElement, HTMLHeadingElement] {
-    const auracLogo = document.createElement('img');
-    const logoText = document.createElement('h4');
+    const auracLogo = documentObject.createElement('img');
+    const logoText = documentObject.createElement('h4');
     logoText.style.color = '#b9772e';
     auracLogo.className = 'aurac-logo';
     // @ts-ignore
