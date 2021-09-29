@@ -56,7 +56,16 @@ export class BrowserService {
   loadURLToEntityMapper(): Promise<Map<string, Array<LeadminerEntity>>> {
     return browser.storage.local.get('urlToEntityMap').then(
       (storage) => {
-        const myMap = new Map(JSON.parse(storage?.urlToEntityMap! as string))
+        function reader(key: string, value: any) {
+          if(typeof value === 'object' && value !== null) {
+            if (value.dataType === 'Map') {
+              return new Map(value.value);
+            }
+          }
+          return value;
+        }
+        const myMap = new Map(JSON.parse(storage?.urlToEntityMap! as string, reader))
+        console.log(myMap)
         return Promise.resolve(myMap)
       },
       (err) => this.log.Log(`error loading urlToEntityMap', ${JSON.stringify(err)}`)

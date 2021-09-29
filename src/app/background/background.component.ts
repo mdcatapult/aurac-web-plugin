@@ -80,7 +80,19 @@ export class BackgroundComponent {
         dictionaryToEntities!.set(dictionary, entities)
 
         this.URLToEntityMapper.set(currentURL, dictionaryToEntities!)
-        const jsonValue = JSON.stringify(Array.from(this.URLToEntityMapper.entries()))
+
+
+        const jsonValue = JSON.stringify(this.URLToEntityMapper, (key: string, value: any) => {
+          if(value instanceof Map) {
+            return {
+              dataType: 'Map',
+              value: Array.from(value.entries()),
+            };
+          } else {
+            return value;
+          }
+        });
+
         console.log(jsonValue)
         this.browserService.saveURLToEntityMapper(jsonValue)
       })
