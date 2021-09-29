@@ -82,13 +82,6 @@ export class BackgroundComponent {
 
         this.URLToEntityMapper.set(currentURL, dictionaryToEntities!)
 
-        /*let res: Array<LeadminerEntity> = []
-
-        Array.from(this.URLToEntityMapper.get(currentURL)!.values()).forEach(leadmineEntities => {
-          console.log(leadmineEntities)
-          res = res.concat(leadmineEntities)
-        })*/
-
         const jsonValue = JSON.stringify(this.URLToEntityMapper, (key: string, value: any) => {
           if (value instanceof Map) {
             return {
@@ -99,8 +92,6 @@ export class BackgroundComponent {
             return value;
           }
         });
-
-        // console.log(jsonValue)
         this.browserService.saveURLToEntityMapper(jsonValue)
       })
   }
