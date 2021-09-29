@@ -26,6 +26,7 @@ export class BackgroundComponent {
   leadmineResult?: LeadminerResult;
   private currentURL?: string
   URLToEntityMapper: MyMap = new Map()
+  currentResults: Array<LeadminerEntity> = []
 
   constructor(private client: HttpClient, private browserService: BrowserService) {
 
@@ -81,9 +82,15 @@ export class BackgroundComponent {
 
         this.URLToEntityMapper.set(currentURL, dictionaryToEntities!)
 
+        /*let res: Array<LeadminerEntity> = []
+
+        Array.from(this.URLToEntityMapper.get(currentURL)!.values()).forEach(leadmineEntities => {
+          console.log(leadmineEntities)
+          res = res.concat(leadmineEntities)
+        })*/
 
         const jsonValue = JSON.stringify(this.URLToEntityMapper, (key: string, value: any) => {
-          if(value instanceof Map) {
+          if (value instanceof Map) {
             return {
               dataType: 'Map',
               value: Array.from(value.entries()),
@@ -93,7 +100,7 @@ export class BackgroundComponent {
           }
         });
 
-        console.log(jsonValue)
+        // console.log(jsonValue)
         this.browserService.saveURLToEntityMapper(jsonValue)
       })
   }
@@ -122,9 +129,13 @@ export class BackgroundComponent {
     Promise.all([this.browserService.getActiveTab(), this.browserService.loadURLToEntityMapper()])
       .then(([tabResponse, urlToEntityMap]) => {
         this.currentURL = tabResponse.url!.replace(/^(https?|http):\/\//, '')
-        const leadmineResult = urlToEntityMap.get(this.currentURL)
+        let AllEntities: Array<LeadminerEntity> = []
 
-        this.exportResultsToCSV(this.getUniqueEntities(leadmineResult!))
+        Array.from(urlToEntityMap.get(this.currentURL)!.values()).forEach(leadmineEntities => {
+          AllEntities = AllEntities.concat(leadmineEntities)
+        })
+
+        this.exportResultsToCSV(this.getUniqueEntities(AllEntities))
       })
       .catch(e => console.error(`Error: ' : ${JSON.stringify(e)}`));
   }
