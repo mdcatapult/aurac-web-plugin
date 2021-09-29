@@ -81,29 +81,18 @@ export class BackgroundComponent {
 
   private refreshHighlights(): void {
     //We don't want to refresh the highlight on a page that hasn't had NER ran on it.
-    const result = this.browserService.sendMessageToActiveTab({type: 'retrieve_ner_from_page'})
-    result.then((browserTabResponse) => {
-      const response = browserTabResponse as LeadmineMessage;
-
-      if (!response.body.ner_performed) {
-        return;
-      }
+    Promise.all([
+      this.browserService.getActiveTab(),
+      this.browserService.loadURLToEntityMapper(),
       this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
-          .catch(console.error)
-          .then(() => {
-            console.log(this.leadmineResult?.entities)
-            console.log(response.body.entities)
-            console.log(response.body.filtered_entities)
-            this.leadmineResult!.entities = response.body.entities
-
-            const uniqueEntities = this.getUniqueEntities(this.leadmineResult?.entities!)
-            this.currentResults = response.body.filtered_entities;
-
-
-            this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
-              .catch(console.error);
-          });
-    })
+    ])
+      .then(([tabResponse, urlToEntityMap]) => {
+        this.currentURL = tabResponse.url!.replace(/^(https?|http):\/\//, '')
+        const leadmineResult = urlToEntityMap.get(this.currentURL)
+        const uniqueEntities = this.getUniqueEntities(leadmineResult!)
+        this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
+          .catch(console.error);
+      })
   }
 
   private openModal(chemblId: string): void {
