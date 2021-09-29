@@ -11,6 +11,9 @@ import {Observable, of} from 'rxjs';
 import {BrowserService} from '../browser.service';
 import {saveAs} from 'file-saver';
 
+type MyMap = Map<string, Map<string, Array<LeadminerEntity>>>;
+
+
 @Component({
   selector: 'app-background',
   template: '<app-logger></app-logger>',
@@ -21,9 +24,8 @@ export class BackgroundComponent {
   settings: Settings = defaultSettings;
   dictionary?: validDict;
   leadmineResult?: LeadminerResult;
-  private currentResults: Array<LeadminerEntity> = []
   private currentURL?: string
-  URLToEntityMapper: Map<string, Array<LeadminerEntity>> = new Map()
+  URLToEntityMapper: MyMap = new Map()
 
   constructor(private client: HttpClient, private browserService: BrowserService) {
 
@@ -69,12 +71,17 @@ export class BackgroundComponent {
     }
   }
 
-  private saveURLToEntityMapper(entities: Array<LeadminerEntity>) {
+  private saveURLToEntityMapper(dictionary: validDict, entities: Array<LeadminerEntity>) {
     this.browserService.getActiveTab()
       .then(tabResponse => {
         const currentURL = tabResponse.url!.replace(/^(https?|http):\/\//, '')
-        this.URLToEntityMapper.set(currentURL, entities)
+        const dictionaryToEntities = this.URLToEntityMapper.has(currentURL) ?
+          this.URLToEntityMapper.get(currentURL) : new Map<string, Array<LeadminerEntity>>()
+        dictionaryToEntities!.set(dictionary, entities)
+
+        this.URLToEntityMapper.set(currentURL, dictionaryToEntities!)
         const jsonValue = JSON.stringify(Array.from(this.URLToEntityMapper.entries()))
+        console.log(jsonValue)
         this.browserService.saveURLToEntityMapper(jsonValue)
       })
   }
@@ -257,7 +264,7 @@ export class BackgroundComponent {
             this.leadmineResult = response.body;
             const uniqueEntities = this.getUniqueEntities(this.leadmineResult!.entities);
 
-            this.saveURLToEntityMapper(this.leadmineResult?.entities!)
+            this.saveURLToEntityMapper(dictionary, this.leadmineResult?.entities!)
 
             this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
               .catch(console.error);
