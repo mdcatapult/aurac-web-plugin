@@ -49,7 +49,7 @@ export module Card {
     card.appendChild(createCrossReferences(information.entityText));
 
     if (information.entityGroup === 'Chemical') {
-      const modalButton = createModalOpeningButton()
+      const modalButton = createModalOpeningButton(information)
       card.append(modalButton)
     }
 
@@ -57,18 +57,18 @@ export module Card {
     return card;
   }
 
-  export function  createModalOpeningButton(): HTMLElement {
+  export function  createModalOpeningButton(information: Entity): HTMLElement {
     const modalButton = document.createElement('button')
     modalButton.disabled = true
     modalButton.insertAdjacentHTML('beforeend', `Structure`)
-    modalButton.id = 'aurac-modal-open-button'
-    modalButton.addEventListener('click', () => browser.runtime.sendMessage({type: 'open_modal', body: chemblId})
+    modalButton.id = `aurac-modal-open-button-${information.entityText}`
+    modalButton.addEventListener('click', () => browser.runtime.sendMessage({type: 'open_modal', body: [chemblId, information]})
     .catch(e => console.error(e)));
 
     return modalButton
   }
 
-  export function setXRefHTML(xrefs: { databaseName: string, url: string, compoundName: string }[]): void {
+  export function setXRefHTML(information: Entity, xrefs: { databaseName: string, url: string, compoundName: string }[]): void {
     if (!xrefs.length) {
       return;
     }
@@ -93,7 +93,7 @@ export module Card {
       }
     });
     if (!chemblId){
-      document.getElementById('aurac-modal-open-button')!.style.display = 'none'
+      document.getElementById(`aurac-modal-open-button-${information.entityText}`)!.style.display = 'none'
     }
   }
 

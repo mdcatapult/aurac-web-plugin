@@ -1,4 +1,6 @@
+import { Entity } from './types';
 export module Modal {
+    let currentModalInformation: Entity;
 
     export function create(): HTMLElement{
         const newModal = document.createElement('span')
@@ -31,12 +33,13 @@ export module Modal {
         newModal.appendChild(modalWrapper)
         return newModal
     }
-    export function openModal(chemblId: string) {
+    export function openModal(chemblId: string, information: Entity) {
+        currentModalInformation = information
         document.getElementById('aurac-modal-1')!.style.display = 'block';
         document.body.classList.add('aurac-modal-open');
         const auracBody = document.getElementById('aurac-modal-body-1')
         auracBody!.insertAdjacentHTML('afterbegin', `<object id="compound-data" data="https://www.ebi.ac.uk/chembl/embed/#compound_report_card/${chemblId}/name_and_classification" width="100%" height="100%"></object>`!)
-        const openButton = document.getElementById('aurac-modal-open-button') as HTMLButtonElement
+        const openButton = document.getElementById(`aurac-modal-open-button-${currentModalInformation.entityText}`) as HTMLButtonElement
         openButton.disabled = true
     }
 
@@ -45,7 +48,7 @@ export module Modal {
         document.body.classList.remove('aurac-modal-open');
         const auracData = document.getElementById('compound-data')
         auracData!.remove()
-        const openButton = document.getElementById('aurac-modal-open-button') as HTMLButtonElement
+        const openButton = document.getElementById(`aurac-modal-open-button-${currentModalInformation.entityText}`) as HTMLButtonElement
         openButton.disabled = false
     }
 }

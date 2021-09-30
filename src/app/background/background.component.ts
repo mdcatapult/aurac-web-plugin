@@ -60,7 +60,7 @@ export class BackgroundComponent {
           break;
         }
         case 'open_modal': {
-          this.openModal(msg.body)
+          this.openModal(msg.body[0], msg.body[1])
           break;
         }
 
@@ -78,8 +78,8 @@ export class BackgroundComponent {
       });
   }
 
-  private openModal(chemblId: string): void {
-    this.browserService.sendMessageToActiveTab({type: 'open_modal', body: chemblId})
+  private openModal(chemblId: string, information: Entity): void {
+    this.browserService.sendMessageToActiveTab({type: 'open_modal', body: [chemblId, information]})
   }
 
 
@@ -152,7 +152,7 @@ export class BackgroundComponent {
     return xRefObservable
   }
 
-  private loadXRefs([entityText, resolvedEntity, entityGroup, entityType]: [string, string, string, string]): void {
+  private loadXRefs([info, entityText, resolvedEntity, entityGroup, entityType]: [Entity, string, string, string, string]): void {
     if (entityGroup !== 'Chemical') {
       return
     }
@@ -180,7 +180,7 @@ export class BackgroundComponent {
     }
     xRefObservable.subscribe((xrefs: XRef[]) => {
       if (xrefs.length) {
-        this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
+        this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: [info, xrefs]})
           .catch(console.error);
     }
   });
