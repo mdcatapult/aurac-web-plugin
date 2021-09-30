@@ -3,6 +3,7 @@ import {Sidebar} from './sidebar';
 import {Card} from './card';
 import {ChEMBL} from './chembl';
 import tippy from 'tippy.js';
+import {CardButtons} from './cardButtons';
 
 export module TextHighlighter {
 
@@ -195,6 +196,8 @@ export module TextHighlighter {
       // TODO something here? createTooltipContent(entity)?
       //  but which element to set data attribute on?
       //  ?.dataset.tippy-content="${createTooltipContent(entity).outerHTML}"  ???
+      const childValueHTML = childValue as HTMLElement
+      childValueHTML.dataset.tippyContent =  createTooltipContent(entity).outerHTML
 
       childValue.addEventListener('click', Sidebar.entityClickHandler(entity));
     });
@@ -228,10 +231,10 @@ export module TextHighlighter {
     tooltipTitle.innerHTML = `<p>${entity.entityText}</p>`
     // TODO make the tooltip even remotely useful
     //   getOccurrenceCounts must be called after populateEntityToOccurrence because it requires entityToOccurrence to be populated
-    // const occurrenceCount = CardButtons.getOccurrenceCounts([entity.entityText.toLowerCase()])
+    const occurrenceCount = CardButtons.getOccurrenceCounts([entity.entityText.toLowerCase()])
     // content.js:1 TypeError: Cannot read properties of undefined (reading 'length')
-    // const occurrenceCountDiv = document.createElement('div')
-    // occurrenceCountDiv.innerHTML = `<!--<p>${occurrenceCount} instances of this term on the current page</p>-->`
+    const occurrenceCountDiv = document.createElement('div')
+    occurrenceCountDiv.innerHTML = `<p>${occurrenceCount} instances of this term on the current page</p>`
     const button = document.createElement('button')
     button.innerHTML = 'add to sidebar'
     // TODO make the button actually do something
@@ -241,15 +244,15 @@ export module TextHighlighter {
     // button.onclick = () => console.log('hello')
     // cannot get anything to happen with onclick, with any function...
     tooltipContainer.appendChild(tooltipTitle)
-    // tooltipContainer.appendChild(occurrenceCountDiv)
+    tooltipContainer.appendChild(occurrenceCountDiv)
     tooltipContainer.appendChild(button)
     return tooltipContainer
   }
 
   // highlights a term by wrapping it an HTML span
   const highlightTerm = (term: string, entity: Entity) => {
-    const tooltipContainer = createTooltipContent(entity)
-    return `<span class="aurac-highlight" data-tippy-content="${tooltipContainer.outerHTML}" style="background-color: ${entity.recognisingDict.htmlColor};position: relative; cursor: pointer">${term}</span>`;
+    // const tooltipContainer = createTooltipContent(entity)
+    return `<span class="aurac-highlight" data-tippy-content="" style="background-color: ${entity.recognisingDict.htmlColor};position: relative; cursor: pointer">${term}</span>`;
   };
 
   function addHighlightAndEventListeners(selector: Element[], entity: Entity) {
