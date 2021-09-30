@@ -53,8 +53,6 @@ export module Card {
       card.append(modalButton)
     }
 
-    card.insertAdjacentHTML('beforeend', `<p class='aurac-mdc-entity-type'>Entity Type: ${information.recognisingDict.entityType}</p>`);
-
     listOfEntities.push(information)
     return card;
   }
