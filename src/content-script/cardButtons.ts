@@ -18,6 +18,12 @@ export module CardButtons {
     isClicked: boolean,
   };
 
+  export function getOccurrenceCounts(synonyms: string[]): number {
+    let numOfOccurrences = 0;
+    synonyms.forEach(synonym => numOfOccurrences = numOfOccurrences + CardButtons.entityToOccurrence.get(synonym)!.length);
+    return numOfOccurrences
+  }
+
   function createOccurrenceCounts(information: Entity, synonyms: string[]): HTMLElement {
     const entityText = synonyms.length === 1 ? information.entityText : information.resolvedEntity;
     const occurrenceElement = document.createElement('span');
@@ -25,8 +31,7 @@ export module CardButtons {
     occurrenceElement.style.display = 'flex';
     occurrenceElement.style.justifyContent = 'flex-end';
 
-    let numOfOccurrences = 0;
-    synonyms.forEach(synonym => numOfOccurrences = numOfOccurrences + CardButtons.entityToOccurrence.get(synonym)!.length);
+    const numOfOccurrences = getOccurrenceCounts(synonyms);
     occurrenceElement.innerText = `${numOfOccurrences} matches found`;
     return occurrenceElement;
   }
@@ -152,7 +157,7 @@ export module CardButtons {
     highlightElements.push(...getNerHighlightColours(entityToOccurrence.get(arrowProperties.nerTerm)!));
 
     const targetElement = entityToOccurrence.get(arrowProperties.nerTerm)![arrowProperties.positionInArray];
-    targetElement.scrollIntoView({behavior: 'smooth'});
+    targetElement.scrollIntoView({behavior: 'smooth', block: 'center'});
 
     toggleHighlightColour(targetElement, highlightElements);
 
