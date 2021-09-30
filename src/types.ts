@@ -16,7 +16,6 @@ export type MessageType =
   | 'remove_highlights'
   | 'min-entity-length-changed'
   | 'export_csv'
-  | 'retrieve_ner_from_page'
   | 'open_modal';
 
 export interface Message {
@@ -32,11 +31,7 @@ export interface StringMessage extends Message {
 }
 
 export interface LeadmineMessage extends Message {
-  body: {
-    entities: LeadminerEntity[],
-    ner_performed: boolean,
-    filtered_entities: LeadminerEntity[]
-  }
+  body: Array<LeadminerEntity>;
 }
 
 export interface XRefMessage extends Message {

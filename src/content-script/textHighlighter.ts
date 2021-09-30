@@ -11,7 +11,7 @@ export module TextHighlighter {
   const highlightClass = 'aurac-highlight';
   const highlightParentClass = 'aurac-highlight-parent';
 
-  export function wrapEntitiesWithHighlight(msg: any): any {
+  export function wrapEntitiesWithHighlight(msg: any) {
 
     // get InChI, InChIKey and SMILES input elements if we are on ChEMBL
     let chemblRepresentations: ChemblRepresentations;
