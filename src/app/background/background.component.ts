@@ -23,8 +23,6 @@ export class BackgroundComponent {
 
   settings: Settings = defaultSettings;
   dictionary?: validDict;
-  leadmineResult?: LeadminerResult;
-  private currentURL?: string
   entityCache: EntityCache = new Map()
 
   constructor(private client: HttpClient, private browserService: BrowserService) {
@@ -132,13 +130,12 @@ export class BackgroundComponent {
       .then(([tabResponse, urlToEntityMap]) => {
         const currentURL = this.sanitiseURL(tabResponse.url!)
         const entities = urlToEntityMap.get(currentURL)!.get(dictionary)!
-
-        this.exportResultsToCSV(this.getUniqueEntities(entities))
+        this.exportResultsToCSV(this.getUniqueEntities(entities), currentURL)
       })
       .catch(e => console.error(`Error: ' : ${JSON.stringify(e)}`));
   }
 
-  private exportResultsToCSV(currentResults: Array<LeadminerEntity>): void {
+  private exportResultsToCSV(currentResults: Array<LeadminerEntity>, currentURL: string): void {
     if (currentResults.length === 0) {
       return;
     }
@@ -177,12 +174,12 @@ export class BackgroundComponent {
         + entity.recognisingDict.minimumEntityLength + ','
         + entity.recognisingDict.source + '\n'
     })
-    this.exportToCSV(text)
+    this.exportToCSV(text, currentURL)
   }
 
-  private exportToCSV(text: string): void {
+  private exportToCSV(text: string, currentURL: string): void {
     const blob = new Blob([text], {type: 'text/csv;charset=utf-8'})
-    saveAs(blob, 'aurac_all_results_' + this.currentURL + '.csv')
+    saveAs(blob, 'aurac_all_results_' + currentURL + '.csv')
   }
 
   private smilesToInChIToUnichemPlus([entityText, smilesText]: [string, string]): Observable<XRef[]> {
