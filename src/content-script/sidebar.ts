@@ -68,7 +68,7 @@ export module Sidebar {
   }
 
   // returns an event listener which creates a new element with passed info and appends it to the passed element
-  export function entityClickHandler(info: Entity, element: Element): (event: Event) => void {
+  export function entityClickHandler(info: Entity): (event: Event) => void {
     return (event: Event) => {
       if (event.type !== 'click') {
         return;
@@ -86,7 +86,7 @@ export module Sidebar {
         downloadResultsButtonElement = SidebarButtons.toggleDownloadButton(true);
 
         // @ts-ignore
-        browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity, 
+        browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity,
           info.entityGroup, info.recognisingDict.entityType]})
           .catch(e => console.error(e));
       } else { // entity is a synonym of existing sidecard

@@ -30,14 +30,15 @@ export module TextHighlighter {
           ChEMBL.highlightHandler(entity, chemblRepresentations)
         }
       });
-    tippy('[data-tippy-content]',
+    tippy(
+      '[data-tippy-content]',
       {
-        // allowHTML: true,
+        allowHTML: true,
         theme: 'light-border',
         animation: 'shift-away',
         duration: 600,
-      },
-      );
+        interactive: true
+      });
   }
 
   // Recursively find all text nodes which match regex
@@ -191,8 +192,7 @@ export module TextHighlighter {
       return !elementHasHighlightedParents(child)
     }).forEach(childValue => {
       Card.populateEntityToOccurrences(entity.entityText, childValue);
-      childValue.addEventListener('click', Sidebar.entityClickHandler(entity, highlightedTerm));
-      // TODO: add hover event listener here
+      childValue.addEventListener('click', Sidebar.entityClickHandler(entity));
     });
   }
 
@@ -215,11 +215,27 @@ export module TextHighlighter {
     }
   }
 
+
+
+  function createTooltipContent(entity: Entity): HTMLElement {
+    const tooltipContainer = document.createElement('span')
+    const tooltipTitle = document.createElement('div')
+    tooltipTitle.innerHTML = `<p>${entity.entityText}</p>`
+    const button = document.createElement('button')
+    button.innerHTML = 'add to sidebar'
+    // entityClickHandler not being called??
+    // button.addEventListener('click', Sidebar.entityClickHandler(entity));
+    // button.onclick = Sidebar.entityClickHandler(entity)
+    // cannot get anything to happen with onclick, with any function...
+    tooltipContainer.appendChild(tooltipTitle)
+    tooltipContainer.appendChild(button)
+    return tooltipContainer
+  }
+
   // highlights a term by wrapping it an HTML span
   const highlightTerm = (term: string, entity: Entity) => {
-    // TODO: move creation of data-tippy-content to a separate function?
-    //  content will eventually be HTML
-    return `<span class="aurac-highlight" data-tippy-content="${entity.entityText}" style="background-color: ${entity.recognisingDict.htmlColor};position: relative; cursor: pointer">${term}</span>`;
+    const tooltipContainer = createTooltipContent(entity)
+    return `<span class="aurac-highlight" data-tippy-content="${tooltipContainer.outerHTML}" style="background-color: ${entity.recognisingDict.htmlColor};position: relative; cursor: pointer">${term}</span>`;
   };
 
   function addHighlightAndEventListeners(selector: Element[], entity: Entity) {
@@ -232,6 +248,7 @@ export module TextHighlighter {
         replacementNode.className = highlightParentClass;
         replacementNode.innerHTML = element.nodeValue!.split(entity.entityText).join(highlightTerm(entity.entityText, entity));
         addEventListeners(element, replacementNode, entity);
+
       } catch (e) {
         console.error(e);
       }
