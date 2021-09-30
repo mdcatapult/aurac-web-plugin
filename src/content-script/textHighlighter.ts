@@ -192,6 +192,10 @@ export module TextHighlighter {
       return !elementHasHighlightedParents(child)
     }).forEach(childValue => {
       Card.populateEntityToOccurrences(entity.entityText, childValue);
+      // TODO something here? createTooltipContent(entity)?
+      //  but which element to set data attribute on?
+      //  ?.dataset.tippy-content="${createTooltipContent(entity).outerHTML}"  ???
+
       childValue.addEventListener('click', Sidebar.entityClickHandler(entity));
     });
   }
@@ -218,16 +222,26 @@ export module TextHighlighter {
 
 
   function createTooltipContent(entity: Entity): HTMLElement {
+    console.log('creating tooltip content')
     const tooltipContainer = document.createElement('span')
     const tooltipTitle = document.createElement('div')
     tooltipTitle.innerHTML = `<p>${entity.entityText}</p>`
+    // TODO make the tooltip even remotely useful
+    //   getOccurrenceCounts must be called after populateEntityToOccurrence because it requires entityToOccurrence to be populated
+    // const occurrenceCount = CardButtons.getOccurrenceCounts([entity.entityText.toLowerCase()])
+    // content.js:1 TypeError: Cannot read properties of undefined (reading 'length')
+    // const occurrenceCountDiv = document.createElement('div')
+    // occurrenceCountDiv.innerHTML = `<!--<p>${occurrenceCount} instances of this term on the current page</p>-->`
     const button = document.createElement('button')
     button.innerHTML = 'add to sidebar'
-    // entityClickHandler not being called??
+    // TODO make the button actually do something
     // button.addEventListener('click', Sidebar.entityClickHandler(entity));
+    // button.addEventListener('click', () => Sidebar.entityClickHandler(entity));
     // button.onclick = Sidebar.entityClickHandler(entity)
+    // button.onclick = () => console.log('hello')
     // cannot get anything to happen with onclick, with any function...
     tooltipContainer.appendChild(tooltipTitle)
+    // tooltipContainer.appendChild(occurrenceCountDiv)
     tooltipContainer.appendChild(button)
     return tooltipContainer
   }
@@ -248,7 +262,6 @@ export module TextHighlighter {
         replacementNode.className = highlightParentClass;
         replacementNode.innerHTML = element.nodeValue!.split(entity.entityText).join(highlightTerm(entity.entityText, entity));
         addEventListeners(element, replacementNode, entity);
-
       } catch (e) {
         console.error(e);
       }
