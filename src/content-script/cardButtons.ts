@@ -152,7 +152,7 @@ export module CardButtons {
     highlightElements.push(...getNerHighlightColours(entityToOccurrence.get(arrowProperties.nerTerm)!));
 
     const targetElement = entityToOccurrence.get(arrowProperties.nerTerm)![arrowProperties.positionInArray];
-    targetElement.scrollIntoView({behavior: 'smooth'});
+    targetElement.scrollIntoView({behavior: 'smooth', block: 'center'});
 
     toggleHighlightColour(targetElement, highlightElements);
 
