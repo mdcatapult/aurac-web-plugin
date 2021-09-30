@@ -11,8 +11,8 @@ import {Observable, of} from 'rxjs';
 import {BrowserService} from '../browser.service';
 import {saveAs} from 'file-saver';
 
-export type MyMap = Map<string, Map<string, Array<LeadminerEntity>>>;
-
+type url = string
+export type EntityCache = Map<url, Map<validDict, Array<LeadminerEntity>>>;
 
 @Component({
   selector: 'app-background',
@@ -25,7 +25,7 @@ export class BackgroundComponent {
   dictionary?: validDict;
   leadmineResult?: LeadminerResult;
   private currentURL?: string
-  URLToEntityMapper: MyMap = new Map()
+  entityCache: EntityCache = new Map()
 
   constructor(private client: HttpClient, private browserService: BrowserService) {
 
@@ -44,7 +44,6 @@ export class BackgroundComponent {
           this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
             .then(() => {
               this.nerCurrentPage(this.dictionary!);
-
             })
           break;
         }
@@ -76,13 +75,13 @@ export class BackgroundComponent {
     this.browserService.getActiveTab()
       .then(tabResponse => {
         const currentURL = this.sanitiseURL(tabResponse.url!)
-        const dictionaryToEntities = this.URLToEntityMapper.has(currentURL) ?
-          this.URLToEntityMapper.get(currentURL) : new Map<string, Array<LeadminerEntity>>()
+        const dictionaryToEntities = this.entityCache.has(currentURL) ?
+          this.entityCache.get(currentURL) : new Map<validDict, Array<LeadminerEntity>>()
         dictionaryToEntities!.set(dictionary, entities)
 
-        this.URLToEntityMapper.set(currentURL, dictionaryToEntities!)
+        this.entityCache.set(currentURL, dictionaryToEntities!)
 
-        const jsonValue = JSON.stringify(this.URLToEntityMapper, (key: string, value: any) => {
+        const jsonValue = JSON.stringify(this.entityCache, (key: string, value: any) => {
           if (value instanceof Map) {
             return {
               dataType: 'Map',
@@ -104,14 +103,13 @@ export class BackgroundComponent {
     ])
       .then(([tabResponse, urlToEntityMap]) => {
         const currentURL = this.sanitiseURL(tabResponse.url!)
-        const AllEntities = urlToEntityMap.get(currentURL)!.get(dictionary)!
-
-        if (AllEntities.length === 0) {
+        const entities = urlToEntityMap.get(currentURL)!.get(dictionary)!
+        if (entities.length === 0) {
           return;
         }
         this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
           .then(() => {
-            const uniqueEntities = this.getUniqueEntities(AllEntities)
+            const uniqueEntities = this.getUniqueEntities(entities)
             this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
               .catch(console.error);
           }
@@ -128,14 +126,15 @@ export class BackgroundComponent {
   }
 
   private retrieveNERFromPage(dictionary: validDict): void {
-    Promise.all([this.browserService.getActiveTab(), this.browserService.loadURLToEntityMapper()])
+    Promise.all([
+      this.browserService.getActiveTab(),
+      this.browserService.loadURLToEntityMapper()
+    ])
       .then(([tabResponse, urlToEntityMap]) => {
         const currentURL = this.sanitiseURL(tabResponse.url!)
-        const AllEntities = urlToEntityMap.get(currentURL)!.get(dictionary)!
+        const entities = urlToEntityMap.get(currentURL)!.get(dictionary)!
 
-        console.log(this.getUniqueEntities(AllEntities))
-        this.exportResultsToCSV(this.getUniqueEntities(AllEntities))
-
+        this.exportResultsToCSV(this.getUniqueEntities(entities))
       })
       .catch(e => console.error(`Error: ' : ${JSON.stringify(e)}`));
   }
@@ -307,7 +306,6 @@ export class BackgroundComponent {
     // Entity length must be at least minimum entity length.
     return (entity && entity.entityText.length >= this.settings.preferences.minEntityLength);
   }
-
 
   getUniqueEntities(leadmineResponse: LeadminerEntity[]): Array<LeadminerEntity> {
     const uniqueEntities = new Array<LeadminerEntity>();

@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {defaultSettings, LeadmineMessage, LeadminerEntity, LeadmineResult, Message, MessageType, Settings, StringMessage} from '../types';
 import {LogService} from './popup/log.service';
 import Tab = browser.tabs.Tab;
-import {MyMap} from './background/background.component';
+import {EntityCache} from './background/background.component';
 
 @Injectable({
   providedIn: 'root'
@@ -54,7 +54,7 @@ export class BrowserService {
     )
   }
 
-  loadURLToEntityMapper(): Promise<MyMap> {
+  loadURLToEntityMapper(): Promise<EntityCache> {
     return browser.storage.local.get('urlToEntityMap').then(
       (storage) => {
         function reader(key: string, value: any) {
@@ -65,11 +65,11 @@ export class BrowserService {
           }
           return value;
         }
-        const myMap = new Map(JSON.parse(storage?.urlToEntityMap! as string, reader))
-        return Promise.resolve(myMap)
+        const entityCache = new Map(JSON.parse(storage?.urlToEntityMap! as string, reader))
+        return Promise.resolve(entityCache)
       },
       (err) => this.log.Log(`error loading urlToEntityMap', ${JSON.stringify(err)}`)
-    ) as Promise<MyMap>
+    ) as Promise<EntityCache>
   }
 }
 
