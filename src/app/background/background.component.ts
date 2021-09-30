@@ -11,7 +11,7 @@ import {Observable, of} from 'rxjs';
 import {BrowserService} from '../browser.service';
 import {saveAs} from 'file-saver';
 
-type MyMap = Map<string, Map<string, Array<LeadminerEntity>>>;
+export type MyMap = Map<string, Map<string, Array<LeadminerEntity>>>;
 
 
 @Component({
@@ -26,7 +26,6 @@ export class BackgroundComponent {
   leadmineResult?: LeadminerResult;
   private currentURL?: string
   URLToEntityMapper: MyMap = new Map()
-  currentResults: Array<LeadminerEntity> = []
 
   constructor(private client: HttpClient, private browserService: BrowserService) {
 
@@ -42,7 +41,11 @@ export class BackgroundComponent {
       switch (msg.type) {
         case 'ner_current_page': {
           this.dictionary = msg.body;
-          this.nerCurrentPage(this.dictionary!);
+          this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
+            .then(() => {
+              this.nerCurrentPage(this.dictionary!);
+
+            })
           break;
         }
         case 'compound_x-refs' : {
@@ -54,14 +57,11 @@ export class BackgroundComponent {
           break;
         }
         case 'min-entity-length-changed': {
-          if (!this.leadmineResult) {
-            break;
-          }
-          this.refreshHighlights();
+          this.refreshHighlights(this.dictionary!);
           break;
         }
         case 'export_csv': {
-          this.retrieveNERFromPage()
+          this.retrieveNERFromPage(this.dictionary!)
           break;
         }
         case 'open_modal': {
@@ -75,7 +75,7 @@ export class BackgroundComponent {
   private saveURLToEntityMapper(dictionary: validDict, entities: Array<LeadminerEntity>) {
     this.browserService.getActiveTab()
       .then(tabResponse => {
-        const currentURL = tabResponse.url!.replace(/^(https?|http):\/\//, '')
+        const currentURL = this.sanitiseURL(tabResponse.url!)
         const dictionaryToEntities = this.URLToEntityMapper.has(currentURL) ?
           this.URLToEntityMapper.get(currentURL) : new Map<string, Array<LeadminerEntity>>()
         dictionaryToEntities!.set(dictionary, entities)
@@ -96,19 +96,26 @@ export class BackgroundComponent {
       })
   }
 
-  private refreshHighlights(): void {
+  private refreshHighlights(dictionary: validDict): void {
     //We don't want to refresh the highlight on a page that hasn't had NER ran on it.
     Promise.all([
       this.browserService.getActiveTab(),
       this.browserService.loadURLToEntityMapper(),
-      this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
     ])
       .then(([tabResponse, urlToEntityMap]) => {
-        this.currentURL = tabResponse.url!.replace(/^(https?|http):\/\//, '')
-        const leadmineResult = urlToEntityMap.get(this.currentURL)
-        const uniqueEntities = this.getUniqueEntities(leadmineResult!)
-        this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
-          .catch(console.error);
+        const currentURL = this.sanitiseURL(tabResponse.url!)
+        const AllEntities = urlToEntityMap.get(currentURL)!.get(dictionary)!
+
+        if (AllEntities.length === 0) {
+          return;
+        }
+        this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
+          .then(() => {
+            const uniqueEntities = this.getUniqueEntities(AllEntities)
+            this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
+              .catch(console.error);
+          }
+        )
       })
   }
 
@@ -116,17 +123,19 @@ export class BackgroundComponent {
     this.browserService.sendMessageToActiveTab({type: 'open_modal', body: chemblId})
   }
 
-  private retrieveNERFromPage(): void {
+  private sanitiseURL(url: string): string {
+    return url!.replace(/^(https?|http):\/\//, '').split('#')[0]
+  }
+
+  private retrieveNERFromPage(dictionary: validDict): void {
     Promise.all([this.browserService.getActiveTab(), this.browserService.loadURLToEntityMapper()])
       .then(([tabResponse, urlToEntityMap]) => {
-        this.currentURL = tabResponse.url!.replace(/^(https?|http):\/\//, '')
-        let AllEntities: Array<LeadminerEntity> = []
+        const currentURL = this.sanitiseURL(tabResponse.url!)
+        const AllEntities = urlToEntityMap.get(currentURL)!.get(dictionary)!
 
-        Array.from(urlToEntityMap.get(this.currentURL)!.values()).forEach(leadmineEntities => {
-          AllEntities = AllEntities.concat(leadmineEntities)
-        })
-
+        console.log(this.getUniqueEntities(AllEntities))
         this.exportResultsToCSV(this.getUniqueEntities(AllEntities))
+
       })
       .catch(e => console.error(`Error: ' : ${JSON.stringify(e)}`));
   }
@@ -275,10 +284,11 @@ export class BackgroundComponent {
                 .catch(console.error);
               return;
             }
-            this.leadmineResult = response.body;
-            const uniqueEntities = this.getUniqueEntities(this.leadmineResult!.entities);
+            const leadminerResult = response.body;
+            const uniqueEntities = this.getUniqueEntities(leadminerResult.entities);
 
-            this.saveURLToEntityMapper(dictionary, this.leadmineResult?.entities!)
+
+            this.saveURLToEntityMapper(dictionary, leadminerResult.entities!)
 
             this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
               .catch(console.error);
