@@ -47,14 +47,14 @@ export class BrowserService {
     ) as Promise<Settings>
   }
 
-  saveURLToEntityMapper(urlToEntityMap: string): void {
+  saveEntityCache(urlToEntityMap: string): void {
     browser.storage.local.set({urlToEntityMap}).then(
       () => {},
       (err) => this.log.Log(`error saving settings for URLEntityMap', ${err}`)
     )
   }
 
-  loadURLToEntityMapper(): Promise<EntityCache> {
+  loadEntityCache(): Promise<EntityCache> {
     return browser.storage.local.get('urlToEntityMap').then(
       (storage) => {
         function reader(key: string, value: any) {

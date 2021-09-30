@@ -97,14 +97,14 @@ export class BackgroundComponent {
             return value;
           }
         });
-        this.browserService.saveURLToEntityMapper(entityCacheToJson)
+        this.browserService.saveEntityCache(entityCacheToJson)
       })
   }
 
   private refreshHighlights(dictionary: validDict): void {
     Promise.all([
       this.browserService.getActiveTab(),
-      this.browserService.loadURLToEntityMapper(),
+      this.browserService.loadEntityCache(),
     ])
       .then(([tabResponse, urlToEntityMap]) => {
         const currentURL = this.sanitiseURL(tabResponse.url!)
@@ -133,7 +133,7 @@ export class BackgroundComponent {
   private retrieveNERFromPage(dictionary: validDict): void {
     Promise.all([
       this.browserService.getActiveTab(),
-      this.browserService.loadURLToEntityMapper()
+      this.browserService.loadEntityCache()
     ])
       .then(([tabResponse, urlToEntityMap]) => {
         const currentURL = this.sanitiseURL(tabResponse.url!)
