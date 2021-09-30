@@ -71,7 +71,7 @@ export class BackgroundComponent {
     }
   }
 
-  private saveURLToEntityMapper(dictionary: validDict, entities: Array<LeadminerEntity>) {
+  private saveURLToEntityMapper(dictionary: validDict, entities: Array<LeadminerEntity>): void {
     this.browserService.getActiveTab()
       .then(tabResponse => {
         const currentURL = this.sanitiseURL(tabResponse.url!)
@@ -81,7 +81,7 @@ export class BackgroundComponent {
 
         this.entityCache.set(currentURL, dictionaryToEntities!)
 
-        const jsonValue = JSON.stringify(this.entityCache, (key: string, value: any) => {
+        const entityCacheToJson = JSON.stringify(this.entityCache, (key: string, value: any) => {
           if (value instanceof Map) {
             return {
               dataType: 'Map',
@@ -91,12 +91,11 @@ export class BackgroundComponent {
             return value;
           }
         });
-        this.browserService.saveURLToEntityMapper(jsonValue)
+        this.browserService.saveURLToEntityMapper(entityCacheToJson)
       })
   }
 
   private refreshHighlights(dictionary: validDict): void {
-    //We don't want to refresh the highlight on a page that hasn't had NER ran on it.
     Promise.all([
       this.browserService.getActiveTab(),
       this.browserService.loadURLToEntityMapper(),
@@ -285,8 +284,6 @@ export class BackgroundComponent {
             }
             const leadminerResult = response.body;
             const uniqueEntities = this.getUniqueEntities(leadminerResult.entities);
-
-
             this.saveURLToEntityMapper(dictionary, leadminerResult.entities!)
 
             this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
