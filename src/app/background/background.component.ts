@@ -4,15 +4,23 @@ import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {SettingsService} from '../settings/settings.service';
 
-import {ConverterResult, defaultSettings, LeadminerEntity, LeadminerResult, Message, Settings, StringMessage, XRef, LeadmineMessage} from 'src/types';
+import {
+  ConverterResult,
+  defaultSettings,
+  LeadminerEntity,
+  LeadminerResult,
+  Message,
+  Settings,
+  StringMessage,
+  XRef,
+  LeadmineMessage,
+  EntityCache
+} from 'src/types';
 import {validDict} from './types';
 import {map, switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {BrowserService} from '../browser.service';
 import {saveAs} from 'file-saver';
-
-type url = string
-export type EntityCache = Map<url, Map<validDict, Array<LeadminerEntity>>>;
 
 @Component({
   selector: 'app-background',

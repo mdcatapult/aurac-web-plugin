@@ -1,4 +1,5 @@
 import {environment} from './environments/environment';
+import {validDict} from './app/background/types';
 
 export type MessageType =
   'ner_current_page'
@@ -130,3 +131,6 @@ export const DictionaryURLKeys = {
   unichemURL : 'unichemURL',
   pdfConverterURL : 'pdfConverterURL'
 };
+
+type url = string
+export type EntityCache = Map<url, Map<validDict, Array<LeadminerEntity>>>;

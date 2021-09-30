@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {defaultSettings, LeadmineMessage, LeadminerEntity, LeadmineResult, Message, MessageType, Settings, StringMessage} from '../types';
 import {LogService} from './popup/log.service';
 import Tab = browser.tabs.Tab;
-import {EntityCache} from './background/background.component';
+import {EntityCache} from '../types';
 
 @Injectable({
   providedIn: 'root'
