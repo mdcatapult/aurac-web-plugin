@@ -180,7 +180,7 @@ export class BackgroundComponent {
     this.exportToCSV(text)
   }
 
-  private exportToCSV(text: string) {
+  private exportToCSV(text: string): void {
     const blob = new Blob([text], {type: 'text/csv;charset=utf-8'})
     saveAs(blob, 'aurac_all_results_' + this.currentURL + '.csv')
   }
