@@ -60,7 +60,7 @@ export class BackgroundComponent {
           break;
         }
         case 'open_modal': {
-          this.openModal(msg.body[0], msg.body[1])
+          this.openModal(msg.body)
           break;
         }
 
@@ -78,8 +78,8 @@ export class BackgroundComponent {
       });
   }
 
-  private openModal(chemblId: string, information: Entity): void {
-    this.browserService.sendMessageToActiveTab({type: 'open_modal', body: [chemblId, information]})
+  private openModal(chemblId: string): void {
+    this.browserService.sendMessageToActiveTab({type: 'open_modal', body: chemblId})
   }
 
 

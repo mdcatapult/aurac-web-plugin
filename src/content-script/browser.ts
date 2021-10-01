@@ -40,7 +40,7 @@ export module Browser {
           TextHighlighter.removeHighlights();
           break;
         case 'open_modal': 
-          Modal.openModal(msg.body[0], msg.body[1])
+          Modal.openModal(msg.body)
           break;
 
         default:

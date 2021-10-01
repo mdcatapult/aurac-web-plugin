@@ -51,11 +51,12 @@ export module Card {
     return card;
   }
 
-  export function  createModalOpeningButton(chemblId: string, information: Entity): HTMLElement {
+  export function  createModalOpeningButton(chemblId: string, compoundName: string): HTMLElement {
     const modalButton = document.createElement('button')
     modalButton.insertAdjacentHTML('beforeend', `Structure`)
-    modalButton.id = `aurac-modal-open-button-${information.entityText}`
-    modalButton.addEventListener('click', () => browser.runtime.sendMessage({type: 'open_modal', body: [chemblId, information]})
+    modalButton.id = `aurac-modal-open-button-${compoundName}`
+    modalButton.className = 'open-modal-button'
+    modalButton.addEventListener('click', () => browser.runtime.sendMessage({type: 'open_modal', body: chemblId})
     .catch(e => console.error(e)));
 
     return modalButton
@@ -83,7 +84,7 @@ export module Card {
       const regex = /^CHEMBL/
       if (identifier.match(regex)){
         const locationForButton = document.getElementById(`${xrefs[0].compoundName}`)
-        const modalButton = createModalOpeningButton(identifier, information)
+        const modalButton = createModalOpeningButton(identifier, xrefs[0].compoundName)
         locationForButton!.append(modalButton)
       }
     });
