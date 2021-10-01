@@ -28,7 +28,7 @@ export module Browser {
           SidebarButtons.open()
           break;
         case 'x-ref_result':
-          Card.setXRefHTML(msg.body[0], msg.body[1]);
+          Card.setXRefHTML(msg.body);
           break;
         case 'toggle_sidebar':
           SidebarButtons.toggle()

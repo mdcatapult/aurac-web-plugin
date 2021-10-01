@@ -152,7 +152,7 @@ export class BackgroundComponent {
     return xRefObservable
   }
 
-  private loadXRefs([info, entityText, resolvedEntity, entityGroup, entityType]: [Entity, string, string, string, string]): void {
+  private loadXRefs([entityText, resolvedEntity, entityGroup, entityType]: [string, string, string, string]): void {
     if (entityGroup !== 'Chemical') {
       return
     }
@@ -180,7 +180,7 @@ export class BackgroundComponent {
     }
     xRefObservable.subscribe((xrefs: XRef[]) => {
       if (xrefs.length) {
-        this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: [info, xrefs]})
+        this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
           .catch(console.error);
     }
   });

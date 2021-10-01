@@ -62,7 +62,7 @@ export module Card {
     return modalButton
   }
 
-  export function setXRefHTML(information: Entity, xrefs: { databaseName: string, url: string, compoundName: string }[]): void {
+  export function setXRefHTML(xrefs: { databaseName: string, url: string, compoundName: string }[]): void {
     if (!xrefs.length) {
       return;
     }
