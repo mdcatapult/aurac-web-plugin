@@ -32,17 +32,22 @@ export module Modal {
         newModal.appendChild(modalWrapper)
         return newModal
     }
+    
+    function disableOpenModalButtonToggle(choice: boolean) {
+        const openButtons = document.getElementsByClassName('open-modal-button')
+        for (let i = 0; i < openButtons.length; i++) {
+            const openButton = openButtons[i] as HTMLButtonElement
+            openButton.disabled = choice
+        }
+    }
+
     export function openModal(chemblId: string) {
         // currentModalInformation = information
         document.getElementById('aurac-modal-1')!.style.display = 'block';
         document.body.classList.add('aurac-modal-open');
         const auracBody = document.getElementById('aurac-modal-body-1')
         auracBody!.insertAdjacentHTML('afterbegin', `<object id="compound-data" data="https://www.ebi.ac.uk/chembl/embed/#compound_report_card/${chemblId}/name_and_classification" width="100%" height="100%"></object>`!)
-        const openButtons = document.getElementsByClassName('open-modal-button')
-        for(let i = 0; i < openButtons.length; i++) {
-            const openButton = openButtons[i] as HTMLButtonElement
-            openButton.disabled = true
-        }
+        disableOpenModalButtonToggle(true)
     }
 
     export function closeModal() {
@@ -50,10 +55,6 @@ export module Modal {
         document.body.classList.remove('aurac-modal-open');
         const auracData = document.getElementById('compound-data')
         auracData!.remove()
-        const openButtons = document.getElementsByClassName('open-modal-button')
-        for(let i = 0; i < openButtons.length; i++) {
-            const openButton = openButtons[i] as HTMLButtonElement
-            openButton.disabled = false
-        }
+        disableOpenModalButtonToggle(false)
     }
 }
