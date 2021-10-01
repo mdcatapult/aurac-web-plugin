@@ -7,7 +7,6 @@ import {CardButtons} from './cardButtons';
 
 export module TextHighlighter {
 
-  import getOccurrenceCounts = CardButtons.getOccurrenceCounts;
   const chemicalFormulae: chemicalFormula[] = [];
   const highlightClass = 'aurac-highlight';
   const highlightParentClass = 'aurac-highlight-parent';
@@ -188,7 +187,7 @@ export module TextHighlighter {
     // highlighted term will replace the current child (same term but with no highlight) of the parent element
     term.parentNode!.insertBefore(highlightedTerm, term);
     term.parentNode!.removeChild(term);
-    let childValues = Sidebar.getAuracHighlightChildren(highlightedTerm);
+    const childValues = Sidebar.getAuracHighlightChildren(highlightedTerm);
     // For each highlighted element, we will add an event listener to add it to our sidebar
     childValues.filter(child => {
       return !elementHasHighlightedParents(child)
@@ -216,8 +215,6 @@ export module TextHighlighter {
       }
     }
   }
-
-  let count = 1
 
   function createTooltipContent(entity: Entity): HTMLElement {
     const tooltipContainer = document.createElement('span')
