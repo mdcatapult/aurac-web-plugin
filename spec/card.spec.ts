@@ -42,7 +42,6 @@ describe('card creation', () => {
 
   it('card should be added to DOM', () => {
     const card = Globals.document.getElementById(`${cardClassName}.${entityText}`)
-    console.log('in test: ', Globals.document.body.innerHTML)
     expect(card).toBeTruthy()
   })
 

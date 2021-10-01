@@ -6,6 +6,7 @@ import {SidebarButtons} from './sidebarButtons';
 import { IBrowser } from './IBrowser';
 import { Message } from 'src/types';
 import { SavedCard } from './types';
+import {Globals} from './globals';
 
 export class BrowserImplementation implements IBrowser {
   sendMessage(msg: Message): Promise<any> {
@@ -28,7 +29,7 @@ export class BrowserImplementation implements IBrowser {
         case 'get_page_contents':
           return new Promise(resolve => {
             const textNodes: Array<string> = [];
-            TextHighlighter.allTextNodes(document.body, textNodes);
+            TextHighlighter.allTextNodes(Globals.document.body, textNodes);
             // On ChEMBL, the representations (i.e. SMILES, InChI, InChIKey) are not text nodes
             // so need to be 'manually' added to the textNodes array
             const textForNER = textNodes.concat(ChEMBL.getChemblRepresentationValues());

@@ -56,13 +56,7 @@ export module Sidebar {
   }
 
   export function addCard(card: HTMLDivElement): void {
-
-    console.log(card, card.innerHTML)
-    console.log('before:', cardContainer.innerHTML)
     cardContainer.appendChild(card);
-    console.log('after:', cardContainer.innerHTML)
-    console.log('full:')
-    console.log(Globals.document.body.innerHTML)
   }
 
   function createLogo(): [HTMLImageElement, HTMLHeadingElement] {

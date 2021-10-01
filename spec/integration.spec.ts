@@ -33,124 +33,119 @@ const leadminerEntities: LeadminerEntity[] = [{
   text: 'entity1',
   occurrences: 10
 }]
-// require('jsdom-global')()
 
-beforeAll(() => {
+describe('integration', () => {
+  beforeAll(() => {
+    Globals.document = createDocument()
+    Globals.browser = new BrowserMock()
 
-  // window.HTMLElement.prototype.scrollIntoView = jest.fn() // scrollIntoView won't work in jest context without this
+    // scrollIntoView will not work in test contents without this
+    Globals.document.defaultView.HTMLElement.prototype.scrollIntoView = () => {}
 
-  Globals.document = document
-  Globals.browser = new BrowserMock()
+    // highlight entities - simulates 'markup_page' message
+    const leadminerResults = getLeadminerResults(leadminerEntities)
+    TextHighlighter.wrapEntitiesWithHighlight({body: leadminerResults})
 
-  // scrollIntoView will not work in test contents without this
-  Globals.document.defaultView.HTMLElement.prototype.scrollIntoView = function() {}
+    document.body.appendChild(Sidebar.create())
+  })
 
-  createGlobals()
+  it('text elements in leadminerResult should be highlighted', () => {
 
-  // highlight entities - simulates 'markup_page' message
-  const leadminerResults = getLeadminerResults(leadminerEntities)
-  TextHighlighter.wrapEntitiesWithHighlight({body: leadminerResults})
-
-  document.body.appendChild(Sidebar.create())
-})
-
-it('text elements in leadminerResult should be highlighted', () => {
-
-  const hasHighlights = leadminerEntities.every(entity => {
-    const highlightedElements = Array.from(document.getElementsByClassName(TextHighlighter.highlightClass))
-    return highlightedElements.length && highlightedElements.some(highlightedElement => {
-      return highlightedElement.textContent === entity.text
+    const hasHighlights = leadminerEntities.every(entity => {
+      const highlightedElements = Array.from(document.getElementsByClassName(TextHighlighter.highlightClass))
+      return highlightedElements.length && highlightedElements.some(highlightedElement => {
+        return highlightedElement.textContent === entity.text
+      })
     })
-  })
-  expect(hasHighlights).toBe(true)
-})
-
-it('clicking highlighted elements should create card', () => {
-
-  const highlightedElements = Array.from(Globals.document.getElementsByClassName(TextHighlighter.highlightClass))
-
-  // click every highlighted element
-  highlightedElements.forEach((element: HTMLElement) => element.click())
-
-  const cards = Array.from(Globals.document.getElementsByClassName(cardClassName))
-
-  // there should be one card per entity
-  expect(cards.length).toBe(leadminerEntities.length)
-})
-
-it('clicking clear button should remove all cards', () => {
-  const numberOfCards = Array.from(document.getElementsByClassName(cardClassName)).length
-  // there must be cards from a previous test for this test to be valid
-  expect(numberOfCards > 0).toBe(true)
-
-  document.getElementById(Sidebar.clearButtonId).click()
-  expect(Array.from(document.getElementsByClassName(cardClassName)).length).toBe(0)
-})
-
-it('clicking remove on a card should remove that card', () => {
-  const entity = leadminerEntities[0].text
-  clickElementForEntity(entity)
-
-  const numOfCards = Array.from(document.getElementsByClassName(cardClassName)).length
-
-  // get the card for the clicked entity
-  const card = Array.from(document.getElementsByClassName(cardClassName)).find(cardElement => {
-    return cardElement.innerHTML.includes(entity)
+    expect(hasHighlights).toBe(true)
   })
 
-  // click remove button
-  document.getElementById(`${CardButtons.baseRemoveId}-${entity}`).click()
+  it('clicking highlighted elements should create card', () => {
+    const highlightedElements = Array.from(Globals.document.getElementsByClassName(TextHighlighter.highlightClass))
 
-  expect(Array.from(document.getElementsByClassName(cardClassName)).length).toBe(numOfCards - 1)
-})
+    // click every highlighted element
+    highlightedElements.forEach((element: HTMLElement) => element.click())
 
-describe('occurrences', () => {
-  it('occurrences count', () => {
-    const entity = leadminerEntities[0]
-    clickElementForEntity(entity.text)
-    const occurrencesElement = document.getElementById(`${entity.text}-occurrences`)
-    expect(occurrencesElement).toBeTruthy()
+    const cards = Array.from(Globals.document.getElementsByClassName(cardClassName))
 
-    let numOfOccurrences = CardButtons.entityToOccurrence.get(entity.text).length
-    expect(numOfOccurrences).toBe(entity.occurrences)
+    // there should be one card per entity
+    expect(cards.length).toBe(leadminerEntities.length)
   })
 
-  it('arrow buttons', () => {
-    const entity = leadminerEntities[0]
-    clickElementForEntity(entity.text)
+  it('clicking clear button should remove all cards', () => {
+    const numberOfCards = Array.from(document.getElementsByClassName(cardClassName)).length
+    // there must be cards from a previous test for this test to be valid
+    expect(numberOfCards > 0).toBe(true)
 
-    // scroll forwards through the occurrences
-    const rightArrow = document.getElementById(`right-${CardButtons.baseArrowId}-${entity.text}`)
-    for (let timesClicked = 0; timesClicked < entity.occurrences; timesClicked++) {
-      const expectedHighlightIndex = timesClicked
-      clickArrowButton(rightArrow, timesClicked, expectedHighlightIndex)
-    }
+    document.getElementById(Sidebar.clearButtonId).click()
+    expect(Array.from(document.getElementsByClassName(cardClassName)).length).toBe(0)
+  })
 
-    // scroll backwards through the occurrences
-    const leftArrow = document.getElementById(`left-${CardButtons.baseArrowId}-${entity.text}`)
-    for (let timesClicked = 0; timesClicked < entity.occurrences; timesClicked++) {
-      const expectedHighlightIndex = entity.occurrences - timesClicked - 1
-      clickArrowButton(leftArrow, timesClicked, expectedHighlightIndex)
-    }
+  it('clicking remove on a card should remove that card', () => {
+    const entity = leadminerEntities[0].text
+    clickElementForEntity(entity)
 
-    function clickArrowButton(arrowButton: HTMLElement, timesClicked: number, expectedHighlightIndex: number) {
-      const window = Globals.document.defaultView.window
-      const oldScrollPos = window.scrollY
-      arrowButton.click()
-      const newScrollPos = window.scrollY
-      expect(newScrollPos !== oldScrollPos)
+    const numOfCards = Array.from(document.getElementsByClassName(cardClassName)).length
 
-      const occurrence = Array.from(document.getElementsByClassName(TextHighlighter.highlightClass))[expectedHighlightIndex]
+    // get the card for the clicked entity
+    const card = Array.from(document.getElementsByClassName(cardClassName)).find(cardElement => {
+      return cardElement.innerHTML.includes(entity)
+    })
 
-      const font = <HTMLFontElement>occurrence.children[0]
-      if (timesClicked === expectedHighlightIndex) {
-        // entity that has been scrolled to should be highlighted
-        expect(font.color).toBe(CardButtons.highlightColor)
-      } else {
-        // all other entites should not have the highlight color
-        expect(!font || font.color !== CardButtons.highlightColor)
+    // click remove button
+    document.getElementById(`${CardButtons.baseRemoveId}-${entity}`).click()
+
+    expect(Array.from(document.getElementsByClassName(cardClassName)).length).toBe(numOfCards - 1)
+  })
+
+  describe('occurrences', () => {
+    it('occurrences count', () => {
+      const entity = leadminerEntities[0]
+      clickElementForEntity(entity.text)
+      const occurrencesElement = document.getElementById(`${entity.text}-occurrences`)
+      expect(occurrencesElement).toBeTruthy()
+
+      let numOfOccurrences = CardButtons.entityToOccurrence.get(entity.text).length
+      expect(numOfOccurrences).toBe(entity.occurrences)
+    })
+
+    it('arrow buttons', () => {
+      const entity = leadminerEntities[0]
+      clickElementForEntity(entity.text)
+
+      // scroll forwards through the occurrences
+      const rightArrow = document.getElementById(`right-${CardButtons.baseArrowId}-${entity.text}`)
+      for (let timesClicked = 0; timesClicked < entity.occurrences; timesClicked++) {
+        const expectedHighlightIndex = timesClicked
+        clickArrowButton(rightArrow, timesClicked, expectedHighlightIndex)
       }
-    }
+
+      // scroll backwards through the occurrences
+      const leftArrow = document.getElementById(`left-${CardButtons.baseArrowId}-${entity.text}`)
+      for (let timesClicked = 0; timesClicked < entity.occurrences; timesClicked++) {
+        const expectedHighlightIndex = entity.occurrences - timesClicked - 1
+        clickArrowButton(leftArrow, timesClicked, expectedHighlightIndex)
+      }
+
+      function clickArrowButton(arrowButton: HTMLElement, timesClicked: number, expectedHighlightIndex: number) {
+        const window = Globals.document.defaultView.window
+        const oldScrollPos = window.scrollY
+        arrowButton.click()
+        const newScrollPos = window.scrollY
+        expect(newScrollPos !== oldScrollPos)
+
+        const occurrence = Array.from(document.getElementsByClassName(TextHighlighter.highlightClass))[expectedHighlightIndex]
+
+        const font = <HTMLFontElement>occurrence.children[0]
+        if (timesClicked === expectedHighlightIndex) {
+          // entity that has been scrolled to should be highlighted
+          expect(font.color).toBe(CardButtons.highlightColor)
+        } else {
+          // all other entites should not have the highlight color
+          expect(!font || font.color !== CardButtons.highlightColor)
+        }
+      }
+    })
   })
 })
 
@@ -188,7 +183,8 @@ function getLeadminerResults(entities: LeadminerEntity[]): Object {
   })
 }
 
-function createGlobals(): void {
+function createDocument(): Document {
+  const documet = new JSDOM('').window.document
   document.implementation.createHTMLDocument()
   var fs = require('fs');
   const html = fs.readFileSync('src/ner-edge-case-tests.html');
@@ -202,4 +198,5 @@ function createGlobals(): void {
       document.body.appendChild(el)
     }
   })
+  return document
 }
