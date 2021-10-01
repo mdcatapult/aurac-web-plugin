@@ -192,14 +192,9 @@ export module TextHighlighter {
     // For each highlighted element, we will add an event listener to add it to our sidebar
     childValues.filter(child => {
       return !elementHasHighlightedParents(child)
-    }).map(childValue => {
+    }).forEach(childValue => {
       Card.populateEntityToOccurrences(entity.entityText, childValue);
-      // const childValueHTML = childValue as HTMLElement
       childValue.addEventListener('click', Sidebar.entityClickHandler(entity));
-      // TODO entityToOccurrences is not fully populated until this forEach has completed
-      //  so the first occurrence of a term will have a count of 1, the second a count of 2, etc.
-      // childValueHTML.dataset.tippyContent =  createTooltipContent(entity).outerHTML
-      return childValue
     })
   }
 
