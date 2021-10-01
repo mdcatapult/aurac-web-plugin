@@ -3,11 +3,12 @@ import {Card} from './card';
 import {SidebarButtons} from './sidebarButtons';
 import {CardButtons} from './cardButtons';
 import { IBrowser } from './IBrowser';
+import {Globals} from './globals'
 
 export module Sidebar {
 
-  let browserObject: IBrowser
-  let documentObject: Document
+  // let browserObject: IBrowser
+  // let documentObject: Globals
 
   const listOfEntities: Entity[] = []
   let cardContainer: HTMLElement
@@ -23,18 +24,16 @@ export module Sidebar {
   export const narrativeId = 'aurac-narrative'
   export const toolsId = 'aurac-sidebar-tools'
 
-  export function create(b: IBrowser, doc: Document): HTMLElement {
+  export function create(): HTMLElement {
 
-    browserObject = b
-    documentObject = doc
-    cardContainer = documentObject.createElement('div');
+    cardContainer = Globals.document.createElement('div');
     cardContainer.id = 'card-container'
-    toolsContainer = documentObject.createElement('div');
+    toolsContainer = Globals.document.createElement('div');
 
 
     const [logo, logoText] = createLogo();
 
-    const sidebar = documentObject.createElement('span');
+    const sidebar = Globals.document.createElement('span');
     sidebar.appendChild(logo);
     sidebar.appendChild(logoText);
     sidebar.appendChild(toolsContainer)
@@ -63,16 +62,16 @@ export module Sidebar {
     cardContainer.appendChild(card);
     console.log('after:', cardContainer.innerHTML)
     console.log('full:')
-    console.log(documentObject.body.innerHTML)
+    console.log(Globals.document.body.innerHTML)
   }
 
   function createLogo(): [HTMLImageElement, HTMLHeadingElement] {
-    const auracLogo = documentObject.createElement('img');
-    const logoText = documentObject.createElement('h4');
+    const auracLogo = Globals.document.createElement('img');
+    const logoText = Globals.document.createElement('h4');
     logoText.style.color = '#b9772e';
     auracLogo.className = 'aurac-logo';
     // @ts-ignore
-    auracLogo.src = browserObject.getURL('assets/head-brains.png');
+    auracLogo.src = Globals.browser.getURL('assets/head-brains.png');
 
     logoText.innerText = 'Click on a highlighted entity to display further information and links below...';
     logoText.id = narrativeId;
@@ -109,8 +108,7 @@ export module Sidebar {
         clearButtonElement = SidebarButtons.toggleClearButton(true)
         downloadResultsButtonElement = SidebarButtons.toggleDownloadButton(true);
 
-        // @ts-ignore
-        browserObject.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity]})
+        Globals.browser.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity]})
           .catch(e => console.error(e));
       } else { // entity is a synonym of existing sidecard
         const synonyms = SidebarButtons.entityToCard.get(entityId)!.synonyms;

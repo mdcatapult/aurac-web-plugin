@@ -1,10 +1,9 @@
 import {cardClassName, Entity} from './types';
 import {EntityMap} from './entityMap';
 import {saveAs} from 'file-saver';
+import {Globals} from './globals'
 
 export module SidebarButtons {
-
-  export let documentObject: Document
 
   let toggleButtonElement: HTMLButtonElement;
   let clearButtonElement: HTMLButtonElement;
@@ -19,7 +18,7 @@ export module SidebarButtons {
   }
 
   export function createToggleButton(): HTMLButtonElement {
-    toggleButtonElement = documentObject.createElement('button');
+    toggleButtonElement = Globals.document.createElement('button');
     toggleButtonElement.innerHTML = expandArrow;
     toggleButtonElement.id = childIDs.toggleButton
     toggleButtonElement.className = 'sidebar-button';
@@ -33,7 +32,7 @@ export module SidebarButtons {
   }
 
   export function toggle(): void {
-    Array.from(documentObject.getElementsByClassName('aurac-transform')).forEach(e => {
+    Array.from(Globals.document.getElementsByClassName('aurac-transform')).forEach(e => {
       e.className = e.className.replace(/(expanded|collapsed)/, (g) => {
         return g === 'expanded' ? 'collapsed' : 'expanded';
       });
@@ -43,11 +42,11 @@ export module SidebarButtons {
   }
 
   export function toggleNarrative(on: boolean): void {
-    documentObject.getElementById('aurac-narrative')!.style.display = on ? 'block' : 'none';
+    Globals.document.getElementById('aurac-narrative')!.style.display = on ? 'block' : 'none';
   }
 
   export function createClearButton(listOfEntities: Entity[]): HTMLButtonElement {
-    clearButtonElement = documentObject.createElement('button');
+    clearButtonElement = Globals.document.createElement('button');
     clearButtonElement.style.display = 'none';
     clearButtonElement.innerHTML = 'Clear';
     clearButtonElement.id = childIDs.clearButton
@@ -56,7 +55,7 @@ export module SidebarButtons {
 
       entityToCard.clear();
       listOfEntities.length = 0;
-      Array.from(documentObject.getElementsByClassName(cardClassName)).forEach(card => card.parentNode!.removeChild(card));
+      Array.from(Globals.document.getElementsByClassName(cardClassName)).forEach(card => card.parentNode!.removeChild(card));
       toggleClearButton(false);
       toggleDownloadButton(false);
       toggleNarrative(false);
@@ -65,7 +64,7 @@ export module SidebarButtons {
   }
 
   export function createDownloadResultsButton(listOfEntities: Entity[]): HTMLButtonElement {
-    downloadResultsButtonElement = documentObject.createElement('button')
+    downloadResultsButtonElement = Globals.document.createElement('button')
     downloadResultsButtonElement.style.display = 'none';
     downloadResultsButtonElement.innerHTML = 'Download Results'
     downloadResultsButtonElement.className = 'download-results-button'

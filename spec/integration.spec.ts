@@ -5,11 +5,16 @@ import {CardButtons} from './../src/content-script/cardButtons'
 import {Card} from './../src/content-script/card'
 import {SidebarButtons} from './../src/content-script/sidebarButtons'
 import {cardClassName} from './../src/content-script/types'
-import {Document} from './../src/content-script/document'
+import {Globals} from './../src/content-script/globals'
 
 const jsdom = require("jsdom");
 const {JSDOM} = jsdom;
 const document: Document = new JSDOM('').window.document;
+
+global.Node = document.defaultView.Node
+
+
+
 
 // //@ts-ignore
 // global.SVGElement = global.Element;
@@ -34,19 +39,19 @@ beforeAll(() => {
 
   // window.HTMLElement.prototype.scrollIntoView = jest.fn() // scrollIntoView won't work in jest context without this
 
-  Document.document = document
-  // Card.documentObject = document
-  CardButtons.documentObject = document
-  CardButtons.browserObject = new BrowserMock()
-  SidebarButtons.documentObject = document
+  Globals.document = document
+  Globals.browser = new BrowserMock()
 
-  createDocument()
+  // scrollIntoView will not work in test contents without this
+  Globals.document.defaultView.HTMLElement.prototype.scrollIntoView = function() {}
+
+  createGlobals()
 
   // highlight entities - simulates 'markup_page' message
   const leadminerResults = getLeadminerResults(leadminerEntities)
   TextHighlighter.wrapEntitiesWithHighlight({body: leadminerResults})
 
-  document.body.appendChild(Sidebar.create(new BrowserMock(), document))
+  document.body.appendChild(Sidebar.create())
 })
 
 it('text elements in leadminerResult should be highlighted', () => {
@@ -62,12 +67,12 @@ it('text elements in leadminerResult should be highlighted', () => {
 
 it('clicking highlighted elements should create card', () => {
 
-  const highlightedElements = Array.from(document.getElementsByClassName(TextHighlighter.highlightClass))
+  const highlightedElements = Array.from(Globals.document.getElementsByClassName(TextHighlighter.highlightClass))
 
   // click every highlighted element
   highlightedElements.forEach((element: HTMLElement) => element.click())
 
-  const cards = Array.from(document.getElementsByClassName(cardClassName))
+  const cards = Array.from(Globals.document.getElementsByClassName(cardClassName))
 
   // there should be one card per entity
   expect(cards.length).toBe(leadminerEntities.length)
@@ -129,6 +134,7 @@ describe('occurrences', () => {
     }
 
     function clickArrowButton(arrowButton: HTMLElement, timesClicked: number, expectedHighlightIndex: number) {
+      const window = Globals.document.defaultView.window
       const oldScrollPos = window.scrollY
       arrowButton.click()
       const newScrollPos = window.scrollY
@@ -182,7 +188,7 @@ function getLeadminerResults(entities: LeadminerEntity[]): Object {
   })
 }
 
-function createDocument(): void {
+function createGlobals(): void {
   document.implementation.createHTMLDocument()
   var fs = require('fs');
   const html = fs.readFileSync('src/ner-edge-case-tests.html');

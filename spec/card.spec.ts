@@ -4,21 +4,33 @@ import {SidebarButtons} from './../src/content-script/sidebarButtons'
 import {BrowserMock} from './../src/content-script/browser-mock'
 import {CardButtons} from './../src/content-script/cardButtons'
 import {cardClassName} from './../src/content-script/types'
+import {Globals} from './../src/content-script/globals'
 
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 const documentObject = new JSDOM('').window.document;
 
+global.HTMLStyleElement = documentObject.defaultView.HTMLStyleElement
+global.HTMLScriptElement = documentObject.defaultView.HTMLScriptElement
+global.HTMLInputElement = documentObject.defaultView.HTMLInputElement
+global.HTMLButtonElement = documentObject.defaultView.HTMLButtonElement
+global.HTMLAnchorElement = documentObject.defaultView.HTMLAnchorElement
+
 let sidebar: HTMLElement
 
 beforeAll(() => {
-  // Card.documentObject = documentObject
-  CardButtons.documentObject = documentObject
-  CardButtons.browserObject = new BrowserMock()
-  SidebarButtons.documentObject = documentObject
 
-  sidebar = Sidebar.create(new BrowserMock(), documentObject)
-  documentObject.body.appendChild(sidebar)
+  Globals.document = documentObject
+  Globals.browser = new BrowserMock()
+
+
+  // Card.documentObject = documentObject
+  // CardButtons.documentObject = documentObject
+  // CardButtons.browserObject = new BrowserMock()
+  // SidebarButtons.documentObject = documentObject
+
+  sidebar = Sidebar.create()
+  Globals.document.body.appendChild(sidebar)
 })
 
 describe('card creation', () => {
@@ -28,15 +40,15 @@ describe('card creation', () => {
     createCard(entityText)
   })
 
-  fit('card should be added to DOM', () => {
-    const card = documentObject.getElementById(`${cardClassName}.${entityText}`)
-    // console.log(document.body.innerHTML)
+  it('card should be added to DOM', () => {
+    const card = Globals.document.getElementById(`${cardClassName}.${entityText}`)
+    console.log('in test: ', Globals.document.body.innerHTML)
     expect(card).toBeTruthy()
   })
 
   it('card should be a child of sidebar card container', () => {
-    const card = documentObject.getElementById(`${cardClassName}.${entityText}`)
-    const sidebar = documentObject.getElementsByClassName(Sidebar.sidebarClass)[0]
+    const card = Globals.document.getElementById(`${cardClassName}.${entityText}`)
+    const sidebar = <HTMLElement>Globals.document.getElementsByClassName(Sidebar.sidebarClass)[0]
     expect(card.parentElement.parentElement).toBe(sidebar)
   })
 })
@@ -49,7 +61,7 @@ describe('card contents', () => {
 
   beforeAll(() => {
     createCard(term)
-    card = documentObject.getElementById(`${cardClassName}.${term}`)
+    card = Globals.document.getElementById(`${cardClassName}.${term}`)
     controls = <HTMLElement>Array.from(card.children).find(el => el.className === CardButtons.controlsClass)
   })
 
@@ -92,8 +104,6 @@ function createCard(entityText: string): void {
     }
   }, [entityText], [])
 
-  // console.log('before:', sidebar.innerHTML)
   Sidebar.addCard(card)
-  // console.log('after:', sidebar.innerHTML)
 }
 

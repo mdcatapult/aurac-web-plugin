@@ -1,14 +1,14 @@
 import {ChemblRepresentations, Entity, inchiKeyLength} from './types';
 import {Card} from './card';
 import {Sidebar} from './sidebar';
-import {Document} from './document'
+import {Globals} from './globals'
 
 
 export module ChEMBL {
 
   // on ChEMBL, InChI, InChIKey and SMILES values are in input tags
   function getChemblRepresentations(): HTMLInputElement[] {
-    return Array.from(Document.document.querySelectorAll('[id="CompReps-canonicalSmiles"]') as NodeListOf<HTMLInputElement>);
+    return Array.from(Globals.document.querySelectorAll('[id="CompReps-canonicalSmiles"]') as NodeListOf<HTMLInputElement>);
   }
 
   // return an array of unique SMILES, InChI and InChIKey values from ChEMBL representations
@@ -40,7 +40,7 @@ export module ChEMBL {
 
   // check if current page is ChEMBL
   export function isChemblPage(): boolean {
-    return Document.document.location.href.includes('www.ebi.ac.uk/chembl');
+    return Globals.document.location.href.includes('www.ebi.ac.uk/chembl');
   }
 
   // wraps input tag in aurac-highlight and adds event listener
@@ -51,7 +51,7 @@ export module ChEMBL {
         const clonedElement = element.cloneNode(true);
 
         // create the highlight span and set classname and styling
-        const auracHighlightSpan = Document.document.createElement('span');
+        const auracHighlightSpan = Globals.document.createElement('span');
         auracHighlightSpan.className = 'aurac-highlight';
         auracHighlightSpan.style.backgroundColor = `${entity.recognisingDict.htmlColor}`;
         auracHighlightSpan.style.position = 'relative';
