@@ -190,7 +190,7 @@ export module TextHighlighter {
     term.parentNode!.removeChild(term);
     let childValues = Sidebar.getAuracHighlightChildren(highlightedTerm);
     // For each highlighted element, we will add an event listener to add it to our sidebar
-    childValues = childValues.filter(child => {
+    childValues.filter(child => {
       return !elementHasHighlightedParents(child)
     }).map(childValue => {
       Card.populateEntityToOccurrences(entity.entityText, childValue);
@@ -201,12 +201,6 @@ export module TextHighlighter {
       // childValueHTML.dataset.tippyContent =  createTooltipContent(entity).outerHTML
       return childValue
     })
-    childValues.forEach(childValue => {
-        console.log(CardButtons.entityToOccurrence)
-        console.log(getOccurrenceCounts([entity.entityText]) + ' <-- <-- numOfOccurrences in addEventListeners')
-        const childValueHTML = childValue as HTMLElement;
-        childValueHTML.dataset.tippyContent = createTooltipContent(entity).outerHTML;
-      });
   }
 
   // TODO chemical class for stuff like this?
@@ -233,7 +227,7 @@ export module TextHighlighter {
   function createTooltipContent(entity: Entity): HTMLElement {
     const tooltipContainer = document.createElement('span')
     //   getOccurrenceCounts must be called after populateEntityToOccurrence
-    const occurrenceCount = CardButtons.getOccurrenceCounts([entity.entityText])
+    const occurrenceCount = CardButtons.entityToOccurrence.get(entity.entityText)!.length
     const occurrenceCountDiv = document.createElement('div')
     const occurrences = occurrenceCount === 1 ? 'occurrence' : 'occurrences';
     occurrenceCountDiv.innerHTML = `<p>${occurrenceCount} ${occurrences} of ${entity.entityText} found on the current page</p>`
@@ -258,10 +252,10 @@ export module TextHighlighter {
 
   function addHighlightAndEventListeners(selector: Element[], entity: Entity) {
     selector.map(element => {
+      const replacementNode = document.createElement('span');
       // Try/catch for edge cases.
       try {
         // For each term, we want to replace its original HTML with a highlight colour
-        const replacementNode = document.createElement('span');
         // the span needs a class so that it can be deleted by the removeHighlights function
         replacementNode.className = highlightParentClass;
         replacementNode.innerHTML = element.nodeValue!.split(entity.entityText).join(highlightTerm(entity.entityText, entity));
@@ -269,7 +263,13 @@ export module TextHighlighter {
       } catch (e) {
         console.error(e);
       }
-    });
+      return replacementNode
+    }).filter(child => {
+      return !elementHasHighlightedParents(child)
+    }).forEach(element => {
+      const childValueHTML = element as HTMLElement;
+      childValueHTML.dataset.tippyContent = createTooltipContent(entity).outerHTML;
+    })
   }
 
   function getSelectors(entity: string): Array<Element> {
