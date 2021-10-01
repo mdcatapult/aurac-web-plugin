@@ -7,7 +7,8 @@ import {SidebarButtons} from './../src/content-script/sidebarButtons'
 import {cardClassName} from './../src/content-script/types'
 import {Globals} from './../src/content-script/globals'
 
-const jsdom = require("jsdom");
+// const jsdom = require("jsdom");
+import * as jsdom from 'jsdom'
 const {JSDOM} = jsdom;
 const document: Document = new JSDOM('').window.document;
 
