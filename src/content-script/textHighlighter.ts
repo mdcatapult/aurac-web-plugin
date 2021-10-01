@@ -193,13 +193,9 @@ export module TextHighlighter {
       return !elementHasHighlightedParents(child)
     }).forEach(childValue => {
       Card.populateEntityToOccurrences(entity.entityText, childValue);
-      // TODO something here? createTooltipContent(entity)?
-      //  but which element to set data attribute on?
-      //  ?.dataset.tippy-content="${createTooltipContent(entity).outerHTML}"  ???
       const childValueHTML = childValue as HTMLElement
-      childValueHTML.dataset.tippyContent =  createTooltipContent(entity).outerHTML
-
       childValue.addEventListener('click', Sidebar.entityClickHandler(entity));
+      childValueHTML.dataset.tippyContent =  createTooltipContent(entity).outerHTML
     });
   }
 
@@ -227,31 +223,27 @@ export module TextHighlighter {
   function createTooltipContent(entity: Entity): HTMLElement {
     console.log('creating tooltip content')
     const tooltipContainer = document.createElement('span')
-    const tooltipTitle = document.createElement('div')
-    tooltipTitle.innerHTML = `<p>${entity.entityText}</p>`
-    // TODO make the tooltip even remotely useful
-    //   getOccurrenceCounts must be called after populateEntityToOccurrence because it requires entityToOccurrence to be populated
-    const occurrenceCount = CardButtons.getOccurrenceCounts([entity.entityText.toLowerCase()])
-    // content.js:1 TypeError: Cannot read properties of undefined (reading 'length')
+    //   getOccurrenceCounts must be called after populateEntityToOccurrence
+    const occurrenceCount = CardButtons.getOccurrenceCounts([entity.entityText])
     const occurrenceCountDiv = document.createElement('div')
-    occurrenceCountDiv.innerHTML = `<p>${occurrenceCount} instances of this term on the current page</p>`
-    const button = document.createElement('button')
-    button.innerHTML = 'add to sidebar'
+    const occurrences = occurrenceCount === 1 ? 'occurrence' : 'occurrences';
+    occurrenceCountDiv.innerHTML = `<p>${occurrenceCount} ${occurrences} of ${entity.entityText} found on the current page</p>`
     // TODO make the button actually do something
+    // const button = document.createElement('button')
+    // button.innerHTML = 'add to sidebar'
     // button.addEventListener('click', Sidebar.entityClickHandler(entity));
     // button.addEventListener('click', () => Sidebar.entityClickHandler(entity));
     // button.onclick = Sidebar.entityClickHandler(entity)
     // button.onclick = () => console.log('hello')
     // cannot get anything to happen with onclick, with any function...
-    tooltipContainer.appendChild(tooltipTitle)
+    // tooltipContainer.appendChild(button)
     tooltipContainer.appendChild(occurrenceCountDiv)
-    tooltipContainer.appendChild(button)
     return tooltipContainer
   }
 
   // highlights a term by wrapping it an HTML span
   const highlightTerm = (term: string, entity: Entity) => {
-    // const tooltipContainer = createTooltipContent(entity)
+    // data attribute is empty as occurrence counts are not yet available - value is updated in createTooltipContent
     return `<span class="aurac-highlight" data-tippy-content="" style="background-color: ${entity.recognisingDict.htmlColor};position: relative; cursor: pointer">${term}</span>`;
   };
 
