@@ -263,6 +263,7 @@ export module TextHighlighter {
       return !elementHasHighlightedParents(child)
     }).forEach(element => {
       const childValueHTML = element as HTMLElement;
+      // tooltips must be created after entityToOccurrence is fully populated
       childValueHTML.dataset.tippyContent = createTooltipContent(entity).outerHTML;
     })
   }
