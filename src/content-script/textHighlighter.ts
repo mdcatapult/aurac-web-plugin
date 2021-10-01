@@ -7,6 +7,7 @@ import {CardButtons} from './cardButtons';
 
 export module TextHighlighter {
 
+  import getOccurrenceCounts = CardButtons.getOccurrenceCounts;
   const chemicalFormulae: chemicalFormula[] = [];
   const highlightClass = 'aurac-highlight';
   const highlightParentClass = 'aurac-highlight-parent';
@@ -187,16 +188,25 @@ export module TextHighlighter {
     // highlighted term will replace the current child (same term but with no highlight) of the parent element
     term.parentNode!.insertBefore(highlightedTerm, term);
     term.parentNode!.removeChild(term);
-    const childValues = Sidebar.getAuracHighlightChildren(highlightedTerm);
+    let childValues = Sidebar.getAuracHighlightChildren(highlightedTerm);
     // For each highlighted element, we will add an event listener to add it to our sidebar
-    childValues.filter(child => {
+    childValues = childValues.filter(child => {
       return !elementHasHighlightedParents(child)
-    }).forEach(childValue => {
+    }).map(childValue => {
       Card.populateEntityToOccurrences(entity.entityText, childValue);
-      const childValueHTML = childValue as HTMLElement
+      // const childValueHTML = childValue as HTMLElement
       childValue.addEventListener('click', Sidebar.entityClickHandler(entity));
-      childValueHTML.dataset.tippyContent =  createTooltipContent(entity).outerHTML
-    });
+      // TODO entityToOccurrences is not fully populated until this forEach has completed
+      //  so the first occurrence of a term will have a count of 1, the second a count of 2, etc.
+      // childValueHTML.dataset.tippyContent =  createTooltipContent(entity).outerHTML
+      return childValue
+    })
+    childValues.forEach(childValue => {
+        console.log(CardButtons.entityToOccurrence)
+        console.log(getOccurrenceCounts([entity.entityText]) + ' <-- <-- numOfOccurrences in addEventListeners')
+        const childValueHTML = childValue as HTMLElement;
+        childValueHTML.dataset.tippyContent = createTooltipContent(entity).outerHTML;
+      });
   }
 
   // TODO chemical class for stuff like this?
@@ -218,10 +228,9 @@ export module TextHighlighter {
     }
   }
 
-
+  let count = 1
 
   function createTooltipContent(entity: Entity): HTMLElement {
-    console.log('creating tooltip content')
     const tooltipContainer = document.createElement('span')
     //   getOccurrenceCounts must be called after populateEntityToOccurrence
     const occurrenceCount = CardButtons.getOccurrenceCounts([entity.entityText])
