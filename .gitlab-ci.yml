@@ -14,13 +14,14 @@ test-lint-build:
     paths:
       - dist/*
   before_script:
-    - apt-get -yqq update && apt-get upgrade -yqq chromium
+    - apt-get -yqq update && apt-get upgrade -yqq chromium libxss1 xvfb
     - export CHROME_BIN=/usr/bin/chromium
     - npm install
   script:
     - npm run test:ci
     - npm run lint
     - npm run build
+    - npm run mocha
     - npm run package
   coverage: /Lines\s+:\s(\d+\.?\d*)%\s\(\s\d+\/\d+\s\)/
   except:

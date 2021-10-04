@@ -125,6 +125,6 @@ There are various convenience scripts inside the `package.json` that can be run 
 * start - start up a browser with the plugin pre-loaded
 * weblint - lint the code using web-ext
 * build - build the plugin
-
+* mocha - tests the popup via [mocha](https://mochajs.org/) & [puppeteer](https://github.com/puppeteer/puppeteer) in a headless chrome browser. Tests and setup are in `mocha-test.js`. Uses the compiled plugin code so needs a recent `npm run build` first.
 ### Credits
 Designed using elements from Heroicon and Vecteezy.com.

@@ -30,8 +30,6 @@ export module Browser {
           break;
         case 'x-ref_result':
           Card.setXRefHTML(msg.body);
-          const modalButton: HTMLButtonElement = document.getElementById('aurac-modal-open-button') as HTMLButtonElement
-          modalButton.disabled = false
           break;
         case 'toggle_sidebar':
           SidebarButtons.toggle()
