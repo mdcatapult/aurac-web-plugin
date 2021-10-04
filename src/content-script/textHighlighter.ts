@@ -230,11 +230,20 @@ export module TextHighlighter {
 
   function addTooltips() {
     const highlights = Array.from(document.getElementsByClassName('aurac-highlight'))
+
+    // we are currently adding multiple aurac-highlights if a term appears multiple time on a page and therefore only want to add a
+    // tooltip to a highlight if it is the direct parent of term, i.e. the firstChild of the highlight span is a text node
+    // tried filtering highlights on this basis and the occurrence counts were incorrect and multiple tooltips are still being added
+    // const textNode = 3
+    // const filteredHighlights = highlights.filter(highlight => highlight.firstChild!.nodeType === textNode)
+
+    // TODO multiple tooltips are being added to terms which appear more than once...
     highlights.map(highlight => {
-      const highlightHTML = highlight as HTMLElement
       const highlightContent = highlight.firstChild!.textContent!
+      // we need to cast the Element as an HTMLElement in order to have access to data attributes
+      const highlightHTML = highlight as HTMLElement
       highlightHTML.dataset.tippyContent = createTooltipContent(highlightContent).outerHTML;
-    })
+      })
   }
 
   // highlights a term by wrapping it an HTML span
@@ -257,6 +266,7 @@ export module TextHighlighter {
         console.error(e);
       }
     })
+    // addTooltips must be called after all highlighting has been completed in order for occurrence counts to include synonyms
     addTooltips()
   }
 
