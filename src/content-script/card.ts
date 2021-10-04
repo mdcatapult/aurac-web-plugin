@@ -57,7 +57,7 @@ export module Card {
     modalButton.insertAdjacentHTML('beforeend', `Structure`)
     modalButton.id = `aurac-modal-open-button-${compoundName}`
     modalButton.className = 'open-modal-button'
-    modalButton.addEventListener('click', () => browser.runtime.sendMessage({type: 'open_modal', body: chemblId})
+    modalButton.addEventListener('click', () => Globals.browser.sendMessage({type: 'open_modal', body: chemblId})
     .catch(e => console.error(e)));
 
     return modalButton
