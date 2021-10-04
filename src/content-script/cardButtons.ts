@@ -2,12 +2,9 @@ import {cardClassName, cardStorageKey, Entity, HighlightHtmlColours, SavedCard} 
 import {Link} from './externalLinks';
 import {SidebarButtons} from './sidebarButtons';
 import {EntityMap} from './entityMap';
-import { IBrowser } from './IBrowser';
 import {Globals} from './globals'
 
 export module CardButtons {
-
-  export let browserObject: IBrowser
 
   const rightArrow = '&#8594';
   const leftArrow = '&#8592';

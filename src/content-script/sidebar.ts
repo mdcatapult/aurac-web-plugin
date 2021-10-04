@@ -2,13 +2,9 @@ import {Entity} from './types';
 import {Card} from './card';
 import {SidebarButtons} from './sidebarButtons';
 import {CardButtons} from './cardButtons';
-import { IBrowser } from './IBrowser';
 import {Globals} from './globals'
 
 export module Sidebar {
-
-  // let browserObject: IBrowser
-  // let documentObject: Globals
 
   const listOfEntities: Entity[] = []
   let cardContainer: HTMLElement
