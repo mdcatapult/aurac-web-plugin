@@ -9,7 +9,6 @@ export module Card {
   const geneAndProtein = 'Gene or Protein';
   const disease = 'Biological';
   const chemical = 'Chemical';
-  let chemblId: string;
 
   function createListOfLinks(categoryName: string, hrefList: Array<Link>): HTMLUListElement {
     const htmlListOfLinks: HTMLUListElement = document.createElement('ul');
@@ -48,20 +47,15 @@ export module Card {
 
     card.appendChild(createCrossReferences(information.entityText));
 
-    if (information.entityGroup === 'Chemical') {
-      const modalButton = createModalOpeningButton()
-      card.append(modalButton)
-    }
-
     listOfEntities.push(information)
     return card;
   }
 
-  export function  createModalOpeningButton(): HTMLElement {
+  export function  createModalOpeningButton(chemblId: string, compoundName: string): HTMLElement {
     const modalButton = document.createElement('button')
-    modalButton.disabled = true
     modalButton.insertAdjacentHTML('beforeend', `Structure`)
-    modalButton.id = 'aurac-modal-open-button'
+    modalButton.id = `aurac-modal-open-button-${compoundName}`
+    modalButton.className = 'open-modal-button'
     modalButton.addEventListener('click', () => browser.runtime.sendMessage({type: 'open_modal', body: chemblId})
     .catch(e => console.error(e)));
 
@@ -89,12 +83,11 @@ export module Card {
       const identifier: string = splitURLList[splitURLList.length - 1]
       const regex = /^CHEMBL/
       if (identifier.match(regex)){
-        chemblId = identifier
+        const locationForButton = document.getElementById(`${xrefs[0].compoundName}`)
+        const modalButton = createModalOpeningButton(identifier, xrefs[0].compoundName)
+        locationForButton!.append(modalButton)
       }
     });
-    if (!chemblId){
-      document.getElementById('aurac-modal-open-button')!.style.display = 'none'
-    }
   }
 
   export function populateEntityToOccurrences(entityText: string, occurrence: Element): void {
