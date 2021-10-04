@@ -8,13 +8,13 @@ import {Globals} from './../src/content-script/globals'
 let sidebar: HTMLElement
 
 import * as jsdom from 'jsdom'
+import { setup } from './util';
 const { JSDOM } = jsdom;
 const documentObject = new JSDOM('').window.document;
 
 beforeAll(() => {
 
-  Globals.document = documentObject
-  Globals.browser = new BrowserMock()
+  setup([])
 
   sidebar = Sidebar.create()
   Globals.document.body.appendChild(sidebar);

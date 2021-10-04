@@ -6,25 +6,17 @@ import {Card} from './../src/content-script/card'
 import {SidebarButtons} from './../src/content-script/sidebarButtons'
 import {cardClassName} from './../src/content-script/types'
 import {Globals} from './../src/content-script/globals'
+import {setup} from './util'
 
-// const jsdom = require("jsdom");
 import * as jsdom from 'jsdom'
 const {JSDOM} = jsdom;
-const document: Document = new JSDOM('').window.document;
+let document: Document = new JSDOM('').window.document;
 
 global.Node = document.defaultView.Node
 
-
-
-
-// //@ts-ignore
-// global.SVGElement = global.Element;
-
-// document.registerElement
-
 // LeadminerEntity represents an entity which has come back from leadminer, and the number
 // of occurrences it has on the page.
-type LeadminerEntity = {
+export type LeadminerEntity = {
   text: string,
   occurrences: number
 }
@@ -37,11 +29,7 @@ const leadminerEntities: LeadminerEntity[] = [{
 
 describe('integration', () => {
   beforeAll(() => {
-    Globals.document = createDocument()
-    Globals.browser = new BrowserMock()
-
-    // scrollIntoView will not work in test contents without this
-    Globals.document.defaultView.HTMLElement.prototype.scrollIntoView = () => {}
+    document = setup(leadminerEntities)
 
     // highlight entities - simulates 'markup_page' message
     const leadminerResults = getLeadminerResults(leadminerEntities)
@@ -182,22 +170,4 @@ function getLeadminerResults(entities: LeadminerEntity[]): Object {
       resolvedEntity: null,
     }
   })
-}
-
-function createDocument(): Document {
-  const documet = new JSDOM('').window.document
-  document.implementation.createHTMLDocument()
-  var fs = require('fs');
-  const html = fs.readFileSync('src/ner-edge-case-tests.html');
-  document.documentElement.innerHTML = html
-
-  // add each entity in leadminerentities 'entity.occurrences' number of times
-  leadminerEntities.forEach(entity => {
-    for (let i = 0; i < entity.occurrences; i++) {
-      const el = document.createElement('div')
-      el.innerHTML = `${entity.text}`
-      document.body.appendChild(el)
-    }
-  })
-  return document
 }

@@ -7,6 +7,7 @@ import {cardClassName} from './../src/content-script/types'
 import {Globals} from './../src/content-script/globals'
 
 import * as jsdom from 'jsdom'
+import { setup } from './util'
 const { JSDOM } = jsdom;
 const documentObject = new JSDOM('').window.document;
 
@@ -19,10 +20,7 @@ global.HTMLAnchorElement = documentObject.defaultView.HTMLAnchorElement
 let sidebar: HTMLElement
 
 beforeAll(() => {
-
-  Globals.document = documentObject
-  Globals.browser = new BrowserMock()
-
+  setup([])
   sidebar = Sidebar.create()
   Globals.document.body.appendChild(sidebar)
 })
