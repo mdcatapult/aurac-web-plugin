@@ -9,18 +9,6 @@ import { SavedCard } from './types';
 import {Globals} from './globals';
 
 export class BrowserImplementation implements IBrowser {
-  sendMessage(msg: Message): Promise<any> {
-      return browser.runtime.sendMessage(msg)
-  }
-
-  getURL(url: string): string {
-    return browser.runtime.getURL(url)
-  }
-
-  getStoredCards(cardStorageKey: string): SavedCard[] {
-    const storedCardsString = window.localStorage.getItem(cardStorageKey)
-    return storedCardsString === null ? [] : JSON.parse(storedCardsString) as SavedCard[];
-  }
 
   // add listener function to browser
   static addListener() {
@@ -56,5 +44,17 @@ export class BrowserImplementation implements IBrowser {
           throw new Error('Received unexpected message from plugin');
       }
     });
+  }
+  sendMessage(msg: Message): Promise<any> {
+      return browser.runtime.sendMessage(msg)
+  }
+
+  getURL(url: string): string {
+    return browser.runtime.getURL(url)
+  }
+
+  getStoredCards(cardStorageKey: string): SavedCard[] {
+    const storedCardsString = window.localStorage.getItem(cardStorageKey)
+    return storedCardsString === null ? [] : JSON.parse(storedCardsString) as SavedCard[];
   }
 }
