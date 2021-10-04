@@ -102,7 +102,9 @@ export module Sidebar {
         clearButtonElement = SidebarButtons.toggleClearButton(true)
         downloadResultsButtonElement = SidebarButtons.toggleDownloadButton(true);
 
-        Globals.browser.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity]})
+        // @ts-ignore
+        Globals.browser.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity,
+          info.entityGroup, info.recognisingDict.entityType]})
           .catch(e => console.error(e));
       } else { // entity is a synonym of existing sidecard
         const synonyms = SidebarButtons.entityToCard.get(entityId)!.synonyms;

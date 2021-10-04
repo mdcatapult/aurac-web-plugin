@@ -3,6 +3,8 @@ import {Card} from './card'
 import {UserExperience} from './userExperience';
 import {ChEMBL} from './chembl';
 import {SidebarButtons} from './sidebarButtons';
+import { Modal } from './modal';
+
 import { IBrowser } from './IBrowser';
 import { Message } from 'src/types';
 import { SavedCard } from './types';
@@ -40,6 +42,10 @@ export class BrowserImplementation implements IBrowser {
         case 'remove_highlights':
           TextHighlighter.removeHighlights();
           break;
+        case 'open_modal':
+          Modal.openModal(msg.body)
+          break;
+
         default:
           throw new Error('Received unexpected message from plugin');
       }

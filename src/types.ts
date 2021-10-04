@@ -14,7 +14,8 @@ export type MessageType =
   | 'awaiting_response'
   | 'remove_highlights'
   | 'preferences-changed'
-  | 'export_csv';
+  | 'export_csv'
+  | 'open_modal';
 
 export interface Message {
   type: MessageType;

@@ -1,14 +1,15 @@
+import {Entity} from './../../content-script/types';
 import {Component} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {SettingsService} from '../settings/settings.service';
-
 import {ConverterResult, defaultSettings, LeadminerEntity, LeadminerResult, Message, Settings, StringMessage, XRef} from 'src/types';
 import {validDict} from './types';
 import {map, switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {BrowserService} from '../browser.service';
 import {saveAs} from 'file-saver';
+import {EntityGroupColours} from '../../content-script/types';
 
 @Component({
   selector: 'app-background',
@@ -58,6 +59,11 @@ export class BackgroundComponent {
           this.exportCSV()
           break;
         }
+        case 'open_modal': {
+          this.openModal(msg.body)
+          break;
+        }
+
       }
     }
   }
@@ -72,83 +78,112 @@ export class BackgroundComponent {
       });
   }
 
+  private openModal(chemblId: string): void {
+    this.browserService.sendMessageToActiveTab({type: 'open_modal', body: chemblId})
+  }
+
+
   private exportCSV(): void {
     if (this.currentResults.length === 0) {
       return;
     }
     const headings = ['beg',
-    'begInNormalizedDoc',
-    'end',
-    'endInNormalizedDoc',
-    'entityText',
-    'possiblyCorrectedText',
-    'resolvedEntity',
-    'sectionType',
-    'entityGroup',
-    'enforceBracketing',
-    'entityType',
-    'htmlColor',
-    'maxCorrectionDistance',
-    'minimumCorrectedEntityLength',
-    'minimumEntityLength',
-    'source']
+      'begInNormalizedDoc',
+      'end',
+      'endInNormalizedDoc',
+      'entityText',
+      'possiblyCorrectedText',
+      'resolvedEntity',
+      'sectionType',
+      'entityGroup',
+      'enforceBracketing',
+      'entityType',
+      'htmlColor',
+      'maxCorrectionDistance',
+      'minimumCorrectedEntityLength',
+      'minimumEntityLength',
+      'source']
     let text = headings.join(',') + '\n'
     this.currentResults.forEach(entity => {
       text = text + entity.beg + ','
-              + entity.begInNormalizedDoc + ','
-              + entity.end + ','
-              + entity.endInNormalizedDoc + ','
-              + entity.entityText + ','
-              + entity.possiblyCorrectedText + ','
-              + entity.resolvedEntity + ','
-              + entity.sectionType + ','
-              + entity.entityGroup + ','
-              + entity.recognisingDict.enforceBracketing + ','
-              + entity.recognisingDict.entityType + ','
-              + entity.recognisingDict.htmlColor + ','
-              + entity.recognisingDict.maxCorrectionDistance + ','
-              + entity.recognisingDict.minimumCorrectedEntityLength + ','
-              + entity.recognisingDict.minimumEntityLength + ','
-              + entity.recognisingDict.source + '\n'
+        + entity.begInNormalizedDoc + ','
+        + entity.end + ','
+        + entity.endInNormalizedDoc + ','
+        + entity.entityText + ','
+        + entity.possiblyCorrectedText + ','
+        + entity.resolvedEntity + ','
+        + entity.sectionType + ','
+        + entity.entityGroup + ','
+        + entity.recognisingDict.enforceBracketing + ','
+        + entity.recognisingDict.entityType + ','
+        + entity.recognisingDict.htmlColor + ','
+        + entity.recognisingDict.maxCorrectionDistance + ','
+        + entity.recognisingDict.minimumCorrectedEntityLength + ','
+        + entity.recognisingDict.minimumEntityLength + ','
+        + entity.recognisingDict.source + '\n'
     })
     const blob = new Blob([text], {type: 'text/csv;charset=utf-8'})
     saveAs(blob, 'export.csv')
   }
 
-  private loadXRefs([entityTerm, resolvedEntity]: [string, string]): void {
-    const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]$/;
-    let xRefObservable: Observable<XRef[]>;
-    if (resolvedEntity) {
-      if (!resolvedEntity.match(inchiKeyRegex)) {
-        const encodedEntity = encodeURIComponent(resolvedEntity);
-        xRefObservable = this.client.get(`${this.settings.urls.compoundConverterURL}/${encodedEntity}?from=SMILES&to=inchikey`).pipe(
-          // @ts-ignore
-          switchMap((converterResult: ConverterResult) => {
-            return converterResult ?
-              this.client.post(
-                `${this.settings.urls.unichemURL}/x-ref/${converterResult.output}`,
-                this.getTrueKeys(this.settings.xRefConfig)
-              ) : of({});
-          }),
-          this.addCompoundNameToXRefObject(entityTerm)
-        );
-      } else {
-        xRefObservable = this.client.post(
-          `${this.settings.urls.unichemURL}/x-ref/${resolvedEntity}`,
-          this.getTrueKeys(this.settings.xRefConfig)
-        ).pipe(
-          // @ts-ignore
-          this.addCompoundNameToXRefObject(entityTerm)
-        );
-      }
+  private smilesToInChIToUnichemPlus([entityText, smilesText]: [string, string]): Observable<XRef[]> {
+    const encodedEntity = encodeURIComponent(smilesText);
+    const xRefObservable = this.client.get(`${this.settings.urls.compoundConverterURL}/${encodedEntity}?from=SMILES&to=inchikey`).pipe(
+      // @ts-ignore
+      switchMap((converterResult: ConverterResult) => {
+        return converterResult ?
+          this.client.post(
+            `${this.settings.urls.unichemURL}/x-ref/${converterResult.output}`,
+            this.getTrueKeys(this.settings.xRefConfig)
+          ) : of({});
+      }),
+      this.addCompoundNameToXRefObject(entityText)
+    );
+    return xRefObservable
+  }
 
-      xRefObservable.subscribe((xrefs: XRef[]) => {
-        if (xrefs.length) {
-          this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
-            .catch(console.error);
-      }
-      });
+  private postToUnichemPlus([entityText, inchiKeyText]: [string, string]): Observable<XRef[]> {
+    const xRefObservable = this.client.post(
+      `${this.settings.urls.unichemURL}/x-ref/${inchiKeyText}`,
+      this.getTrueKeys(this.settings.xRefConfig)).pipe(
+      // @ts-ignore
+      this.addCompoundNameToXRefObject(entityText)
+    );
+    return xRefObservable
+  }
+
+  private loadXRefs([entityText, resolvedEntity, entityGroup, entityType]: [string, string, string, string]): void {
+    if (entityGroup !== 'Chemical') {
+      return
     }
+    let xRefObservable: Observable<XRef[]>;
+    switch (entityType) {
+      case 'SMILES': {
+        xRefObservable = this.smilesToInChIToUnichemPlus([entityText, entityText])
+        break
+      }
+      // likely to be more cases here.
+      case 'DictMol':
+      case 'Mol': {
+        const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]$/;
+        if (!resolvedEntity.match(inchiKeyRegex)) {
+          xRefObservable = this.smilesToInChIToUnichemPlus([entityText, resolvedEntity])
+        } else {
+          xRefObservable = this.postToUnichemPlus([entityText, resolvedEntity])
+        }
+        break
+      }
+      default: {
+        // default case assumes that the entity text is itself an InChiKey.
+        xRefObservable = this.postToUnichemPlus([entityText, entityText])
+      }
+    }
+    xRefObservable.subscribe((xrefs: XRef[]) => {
+      if (xrefs.length) {
+        this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
+          .catch(console.error);
+      }
+    });
   }
 
   private addCompoundNameToXRefObject = (entityTerm: string) => map((xrefs: XRef[]) => xrefs.map(xref => {
@@ -182,18 +217,21 @@ export class BackgroundComponent {
           result.body,
           {observe: 'response', params: queryParams})
           .subscribe((response) => {
-            console.log('Received results from leadmine...');
-            if (!response.body || !response.body.entities) {
-              this.browserService.sendMessageToActiveTab({type: 'awaiting_response', body: false})
-                .catch(console.error);
-              return;
-            }
-            this.leadmineResult = response.body;
-            const uniqueEntities = this.getUniqueEntities(this.leadmineResult!);
-            this.currentResults = uniqueEntities;
+              console.log('Received results from leadmine...');
+              if (!response.body || !response.body.entities) {
+                this.browserService.sendMessageToActiveTab({type: 'awaiting_response', body: false})
+                  .catch(console.error);
+                return;
+              }
+              this.leadmineResult = response.body;
 
-            this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
-              .catch(console.error);
+              const uniqueEntitiesWithAmendedHtmlColour =
+                this.getUniqueEntities(this.leadmineResult!).map(this.amendEntityHtmlColor);
+
+              this.currentResults = uniqueEntitiesWithAmendedHtmlColour;
+
+              this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntitiesWithAmendedHtmlColour})
+                .catch(console.error);
             },
             () => {
               this.browserService.sendMessageToActiveTab({type: 'awaiting_response', body: false})
@@ -222,7 +260,20 @@ export class BackgroundComponent {
     return uniqueEntities;
   }
 
-  private getTrueKeys(v: {[_: string]: boolean}): string[] {
+  /**
+   * Use the entity's entity group to amend the html colour returned from Leadmine.
+   * If we don't have a matching key in the EntityGroupColours object, leave the htmlColor unchanged
+   */
+  amendEntityHtmlColor(entity: LeadminerEntity): LeadminerEntity {
+    let newColor = EntityGroupColours[entity.entityGroup]
+    if (newColor != null) {
+      entity.recognisingDict.htmlColor = newColor
+    }
+
+    return entity;
+  }
+
+  private getTrueKeys(v: { [_: string]: boolean }): string[] {
     return Object.keys(v).filter(k => v[k] === true);
   }
 }
