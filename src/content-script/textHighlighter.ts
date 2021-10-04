@@ -78,12 +78,13 @@ export module TextHighlighter {
   }
 
   function allowedTagType(element: HTMLElement): boolean {
-    return ![HTMLScriptElement,
-      HTMLStyleElement,
+    return ![
+      Globals.document.defaultView!.HTMLScriptElement,
+      Globals.document.defaultView!.HTMLStyleElement,
       Globals.document.defaultView!.SVGElement,
-      HTMLInputElement,
-      HTMLButtonElement,
-      HTMLAnchorElement,
+      Globals.document.defaultView!.HTMLInputElement,
+      Globals.document.defaultView!.HTMLButtonElement,
+      Globals.document.defaultView!.HTMLAnchorElement,
     ].some(tag => element instanceof tag)
   }
 

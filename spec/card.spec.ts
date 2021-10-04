@@ -11,12 +11,6 @@ import { setup } from './util'
 const { JSDOM } = jsdom;
 const documentObject = new JSDOM('').window.document;
 
-global.HTMLStyleElement = documentObject.defaultView.HTMLStyleElement
-global.HTMLScriptElement = documentObject.defaultView.HTMLScriptElement
-global.HTMLInputElement = documentObject.defaultView.HTMLInputElement
-global.HTMLButtonElement = documentObject.defaultView.HTMLButtonElement
-global.HTMLAnchorElement = documentObject.defaultView.HTMLAnchorElement
-
 let sidebar: HTMLElement
 
 beforeAll(() => {
