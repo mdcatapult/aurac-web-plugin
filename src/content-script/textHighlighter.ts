@@ -80,7 +80,7 @@ export module TextHighlighter {
   function allowedTagType(element: HTMLElement): boolean {
     return ![HTMLScriptElement,
       HTMLStyleElement,
-      // window.SVGElement,
+      Globals.document.defaultView.SVGElement,
       HTMLInputElement,
       HTMLButtonElement,
       HTMLAnchorElement,

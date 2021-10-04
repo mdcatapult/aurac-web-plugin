@@ -21,7 +21,7 @@ function createDocument(leadminerEntities: LeadminerEntity[]): Document {
   const html = fs.readFileSync('src/ner-edge-case-tests.html');
   document.documentElement.innerHTML = html
 
-  // add each entity in leadminerentities 'entity.occurrences' number of times
+  // add to document each entity in leadminerentities 'entity.occurrences' number of times
   leadminerEntities.forEach(entity => {
     for (let i = 0; i < entity.occurrences; i++) {
       const el = document.createElement('div')
