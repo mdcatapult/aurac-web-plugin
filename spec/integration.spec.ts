@@ -6,20 +6,13 @@ import {Card} from './../src/content-script/card'
 import {SidebarButtons} from './../src/content-script/sidebarButtons'
 import {cardClassName} from './../src/content-script/types'
 import {Globals} from './../src/content-script/globals'
-import {setup} from './util'
+import {LeadminerEntity, setup} from './util'
 
 import * as jsdom from 'jsdom'
 const {JSDOM} = jsdom;
 let document: Document = new JSDOM('').window.document;
 
 global.Node = document.defaultView.Node
-
-// LeadminerEntity represents an entity which has come back from leadminer, and the number
-// of occurrences it has on the page.
-export type LeadminerEntity = {
-  text: string,
-  occurrences: number
-}
 
 // simulates the entities which come back from leadminer
 const leadminerEntities: LeadminerEntity[] = [{
@@ -125,7 +118,7 @@ describe('integration', () => {
 
         const occurrence = Array.from(document.getElementsByClassName(TextHighlighter.highlightClass))[expectedHighlightIndex]
 
-        const font = <HTMLFontElement>occurrence.children[0]
+        const font = <HTMLFontElement> occurrence.children[0]
         if (timesClicked === expectedHighlightIndex) {
           // entity that has been scrolled to should be highlighted
           expect(font.color).toBe(CardButtons.highlightColor)
@@ -155,17 +148,17 @@ function getLeadminerResults(entities: LeadminerEntity[]): Object {
       begInNormalizedDoc: 325,
       end: 355,
       endInNormalizedDoc: 355,
-      entityGroup: "Gene or Protein",
+      entityGroup: 'Gene or Protein',
       entityText: entity.text,
       possiblyCorrectedText: entity.text,
       recognisingDict: {
         enforceBracketing: false,
-        entityType: "GeneOrProtein",
-        htmlColor: "pink",
+        entityType: 'GeneOrProtein',
+        htmlColor: 'pink',
         maxCorrectionDistance: 0,
         minimumCorrectedEntityLength: 9,
         minimumEntityLength: 0,
-        source: "/srv/config/common/leadmine/2018-11-06/dictionary/CFDictGeneAndProtein.cfx",
+        source: '/srv/config/common/leadmine/2018-11-06/dictionary/CFDictGeneAndProtein.cfx',
       },
       resolvedEntity: null,
     }

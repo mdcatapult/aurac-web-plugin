@@ -10,7 +10,7 @@
     "test": "jasmine-ts && ng test",
     "test:ci": "jasmine-ts && ng test --browsers GitlabCI --watch false",
     "mocha": "mocha mocha-test.js",
-    "lint": "ng lint",
+    "lint": "ng lint && tslint -p .",
     "e2e": "ng e2e",
     "build:prod": "cross-env NODE_ENV=production ng build --configuration production",
     "weblint": "cd dist/browser-plugin && web-ext lint",

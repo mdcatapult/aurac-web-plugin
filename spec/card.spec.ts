@@ -33,7 +33,7 @@ describe('card creation', () => {
 
   it('card should be a child of sidebar card container', () => {
     const card = Globals.document.getElementById(`${cardClassName}.${entityText}`)
-    const sidebar = <HTMLElement>Globals.document.getElementsByClassName(Sidebar.sidebarClass)[0]
+    const sidebar = <HTMLElement> Globals.document.getElementsByClassName(Sidebar.sidebarClass)[0]
     expect(card.parentElement.parentElement).toBe(sidebar)
   })
 })
@@ -47,7 +47,7 @@ describe('card contents', () => {
   beforeAll(() => {
     createCard(term)
     card = Globals.document.getElementById(`${cardClassName}.${term}`)
-    controls = <HTMLElement>Array.from(card.children).find(el => el.className === CardButtons.controlsClass)
+    controls = <HTMLElement> Array.from(card.children).find(el => el.className === CardButtons.controlsClass)
   })
 
   it('card should contain term', () => {
