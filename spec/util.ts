@@ -1,9 +1,15 @@
-import { Globals } from "./../src/content-script/globals"
+import { Globals } from './../src/content-script/globals'
 
 import * as jsdom from 'jsdom'
-import { BrowserMock } from "./../src/content-script/browser-mock";
-import { LeadminerEntity } from "./integration.spec";
+import { BrowserMock } from './../src/content-script/browser-mock';
 const {JSDOM} = jsdom;
+
+// LeadminerEntity represents an entity which has come back from leadminer, and the number
+// of occurrences it has on the page.
+export type LeadminerEntity = {
+  text: string,
+  occurrences: number
+}
 
 export function setup(leadminerEntities: LeadminerEntity[]): Document {
   Globals.document = createDocument(leadminerEntities)
