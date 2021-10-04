@@ -86,7 +86,8 @@ export module Sidebar {
         downloadResultsButtonElement = SidebarButtons.toggleDownloadButton(true);
 
         // @ts-ignore
-        browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity]})
+        browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity, 
+          info.entityGroup, info.recognisingDict.entityType]})
           .catch(e => console.error(e));
       } else { // entity is a synonym of existing sidecard
         const synonyms = SidebarButtons.entityToCard.get(entityId)!.synonyms;
