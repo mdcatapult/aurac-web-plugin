@@ -216,25 +216,25 @@ export module TextHighlighter {
     }
   }
 
-  function createTooltipContent(entity: Entity): HTMLElement {
+  function createTooltipContent(entity: string): HTMLElement {
     const tooltipContainer = document.createElement('span')
     //   getOccurrenceCounts must be called after populateEntityToOccurrence
-    const occurrenceCount = CardButtons.getOccurrenceCounts([entity.entityText])
-    // const occurrenceCount = CardButtons.entityToOccurrence.get(entity.entityText)!.length
+    const occurrenceCount = CardButtons.getOccurrenceCounts([entity])
     const occurrenceCountDiv = document.createElement('div')
     const occurrences = occurrenceCount === 1 ? 'occurrence' : 'occurrences';
-    occurrenceCountDiv.innerHTML = `<p>${occurrenceCount} ${occurrences} of ${entity.entityText} found on the current page</p>`
-    // TODO make the button actually do something
-    // const button = document.createElement('button')
-    // button.innerHTML = 'add to sidebar'
-    // button.addEventListener('click', Sidebar.entityClickHandler(entity));
-    // button.addEventListener('click', () => Sidebar.entityClickHandler(entity));
-    // button.onclick = Sidebar.entityClickHandler(entity)
-    // button.onclick = () => console.log('hello')
-    // cannot get anything to happen with onclick, with any function...
-    // tooltipContainer.appendChild(button)
+    occurrenceCountDiv.innerHTML = `<p>${occurrenceCount} ${occurrences} of ${entity} found on the current page</p>`
+
     tooltipContainer.appendChild(occurrenceCountDiv)
     return tooltipContainer
+  }
+
+  function addTooltips() {
+    const highlights = Array.from(document.getElementsByClassName('aurac-highlight'))
+    highlights.map(highlight => {
+      const highlightHTML = highlight as HTMLElement
+      const highlightContent = highlight.firstChild!.textContent!
+      highlightHTML.dataset.tippyContent = createTooltipContent(highlightContent).outerHTML;
+    })
   }
 
   // highlights a term by wrapping it an HTML span
@@ -245,10 +245,10 @@ export module TextHighlighter {
 
   function addHighlightAndEventListeners(selector: Element[], entity: Entity) {
     selector.map(element => {
-      const replacementNode = document.createElement('span');
       // Try/catch for edge cases.
       try {
         // For each term, we want to replace its original HTML with a highlight colour
+        const replacementNode = document.createElement('span');
         // the span needs a class so that it can be deleted by the removeHighlights function
         replacementNode.className = highlightParentClass;
         replacementNode.innerHTML = element.nodeValue!.split(entity.entityText).join(highlightTerm(entity.entityText, entity));
@@ -256,14 +256,8 @@ export module TextHighlighter {
       } catch (e) {
         console.error(e);
       }
-      return replacementNode
-    }).filter(child => {
-      return !elementHasHighlightedParents(child)
-    }).forEach(element => {
-      const childValueHTML = element as HTMLElement;
-      // tooltips must be created after entityToOccurrence is fully populated
-      childValueHTML.dataset.tippyContent = createTooltipContent(entity).outerHTML;
     })
+    addTooltips()
   }
 
   function getSelectors(entity: string): Array<Element> {
