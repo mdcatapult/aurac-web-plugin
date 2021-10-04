@@ -1,6 +1,6 @@
 {
   "name": "browser-plugin",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "scripts": {
     "ng": "ng",
     "start": "web-ext run --verbose --source-dir=dist/browser-plugin",
