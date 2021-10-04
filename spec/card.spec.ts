@@ -6,7 +6,6 @@ import {CardButtons} from './../src/content-script/cardButtons'
 import {cardClassName} from './../src/content-script/types'
 import {Globals} from './../src/content-script/globals'
 
-// const jsdom = require("jsdom");
 import * as jsdom from 'jsdom'
 const { JSDOM } = jsdom;
 const documentObject = new JSDOM('').window.document;
@@ -23,12 +22,6 @@ beforeAll(() => {
 
   Globals.document = documentObject
   Globals.browser = new BrowserMock()
-
-
-  // Card.documentObject = documentObject
-  // CardButtons.documentObject = documentObject
-  // CardButtons.browserObject = new BrowserMock()
-  // SidebarButtons.documentObject = documentObject
 
   sidebar = Sidebar.create()
   Globals.document.body.appendChild(sidebar)
