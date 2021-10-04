@@ -219,7 +219,8 @@ export module TextHighlighter {
   function createTooltipContent(entity: Entity): HTMLElement {
     const tooltipContainer = document.createElement('span')
     //   getOccurrenceCounts must be called after populateEntityToOccurrence
-    const occurrenceCount = CardButtons.entityToOccurrence.get(entity.entityText)!.length
+    const occurrenceCount = CardButtons.getOccurrenceCounts([entity.entityText])
+    // const occurrenceCount = CardButtons.entityToOccurrence.get(entity.entityText)!.length
     const occurrenceCountDiv = document.createElement('div')
     const occurrences = occurrenceCount === 1 ? 'occurrence' : 'occurrences';
     occurrenceCountDiv.innerHTML = `<p>${occurrenceCount} ${occurrences} of ${entity.entityText} found on the current page</p>`
@@ -239,7 +240,7 @@ export module TextHighlighter {
   // highlights a term by wrapping it an HTML span
   const highlightTerm = (term: string, entity: Entity) => {
     // data attribute is empty as occurrence counts are not yet available - value is updated in createTooltipContent
-    return `<span class="aurac-highlight" data-tippy-content="" style="background-color: ${entity.recognisingDict.htmlColor};position: relative; cursor: pointer">${term}</span>`;
+    return `<span class="aurac-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative; cursor: pointer">${term}</span>`;
   };
 
   function addHighlightAndEventListeners(selector: Element[], entity: Entity) {
