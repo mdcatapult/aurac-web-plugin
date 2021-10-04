@@ -3,13 +3,13 @@ import {Component} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {SettingsService} from '../settings/settings.service';
-
 import {ConverterResult, defaultSettings, LeadminerEntity, LeadminerResult, Message, Settings, StringMessage, XRef} from 'src/types';
 import {validDict} from './types';
 import {map, switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {BrowserService} from '../browser.service';
 import {saveAs} from 'file-saver';
+import {EntityGroupColours} from '../../content-script/types';
 
 @Component({
   selector: 'app-background',
@@ -88,39 +88,39 @@ export class BackgroundComponent {
       return;
     }
     const headings = ['beg',
-    'begInNormalizedDoc',
-    'end',
-    'endInNormalizedDoc',
-    'entityText',
-    'possiblyCorrectedText',
-    'resolvedEntity',
-    'sectionType',
-    'entityGroup',
-    'enforceBracketing',
-    'entityType',
-    'htmlColor',
-    'maxCorrectionDistance',
-    'minimumCorrectedEntityLength',
-    'minimumEntityLength',
-    'source']
+      'begInNormalizedDoc',
+      'end',
+      'endInNormalizedDoc',
+      'entityText',
+      'possiblyCorrectedText',
+      'resolvedEntity',
+      'sectionType',
+      'entityGroup',
+      'enforceBracketing',
+      'entityType',
+      'htmlColor',
+      'maxCorrectionDistance',
+      'minimumCorrectedEntityLength',
+      'minimumEntityLength',
+      'source']
     let text = headings.join(',') + '\n'
     this.currentResults.forEach(entity => {
       text = text + entity.beg + ','
-              + entity.begInNormalizedDoc + ','
-              + entity.end + ','
-              + entity.endInNormalizedDoc + ','
-              + entity.entityText + ','
-              + entity.possiblyCorrectedText + ','
-              + entity.resolvedEntity + ','
-              + entity.sectionType + ','
-              + entity.entityGroup + ','
-              + entity.recognisingDict.enforceBracketing + ','
-              + entity.recognisingDict.entityType + ','
-              + entity.recognisingDict.htmlColor + ','
-              + entity.recognisingDict.maxCorrectionDistance + ','
-              + entity.recognisingDict.minimumCorrectedEntityLength + ','
-              + entity.recognisingDict.minimumEntityLength + ','
-              + entity.recognisingDict.source + '\n'
+        + entity.begInNormalizedDoc + ','
+        + entity.end + ','
+        + entity.endInNormalizedDoc + ','
+        + entity.entityText + ','
+        + entity.possiblyCorrectedText + ','
+        + entity.resolvedEntity + ','
+        + entity.sectionType + ','
+        + entity.entityGroup + ','
+        + entity.recognisingDict.enforceBracketing + ','
+        + entity.recognisingDict.entityType + ','
+        + entity.recognisingDict.htmlColor + ','
+        + entity.recognisingDict.maxCorrectionDistance + ','
+        + entity.recognisingDict.minimumCorrectedEntityLength + ','
+        + entity.recognisingDict.minimumEntityLength + ','
+        + entity.recognisingDict.source + '\n'
     })
     const blob = new Blob([text], {type: 'text/csv;charset=utf-8'})
     saveAs(blob, 'export.csv')
@@ -164,7 +164,7 @@ export class BackgroundComponent {
       }
       // likely to be more cases here.
       case 'DictMol':
-      case 'Mol':   {
+      case 'Mol': {
         const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]$/;
         if (!resolvedEntity.match(inchiKeyRegex)) {
           xRefObservable = this.smilesToInChIToUnichemPlus([entityText, resolvedEntity])
@@ -182,8 +182,8 @@ export class BackgroundComponent {
       if (xrefs.length) {
         this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
           .catch(console.error);
-    }
-  });
+      }
+    });
   }
 
   private addCompoundNameToXRefObject = (entityTerm: string) => map((xrefs: XRef[]) => xrefs.map(xref => {
@@ -217,18 +217,21 @@ export class BackgroundComponent {
           result.body,
           {observe: 'response', params: queryParams})
           .subscribe((response) => {
-            console.log('Received results from leadmine...');
-            if (!response.body || !response.body.entities) {
-              this.browserService.sendMessageToActiveTab({type: 'awaiting_response', body: false})
-                .catch(console.error);
-              return;
-            }
-            this.leadmineResult = response.body;
-            const uniqueEntities = this.getUniqueEntities(this.leadmineResult!);
-            this.currentResults = uniqueEntities;
+              console.log('Received results from leadmine...');
+              if (!response.body || !response.body.entities) {
+                this.browserService.sendMessageToActiveTab({type: 'awaiting_response', body: false})
+                  .catch(console.error);
+                return;
+              }
+              this.leadmineResult = response.body;
 
-            this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
-              .catch(console.error);
+              const uniqueEntitiesWithAmendedHtmlColour =
+                this.getUniqueEntities(this.leadmineResult!).map(this.amendEntityHtmlColor);
+
+              this.currentResults = uniqueEntitiesWithAmendedHtmlColour;
+
+              this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntitiesWithAmendedHtmlColour})
+                .catch(console.error);
             },
             () => {
               this.browserService.sendMessageToActiveTab({type: 'awaiting_response', body: false})
@@ -257,7 +260,20 @@ export class BackgroundComponent {
     return uniqueEntities;
   }
 
-  private getTrueKeys(v: {[_: string]: boolean}): string[] {
+  /**
+   * Use the entity's entity group to amend the html colour returned from Leadmine.
+   * If we don't have a matching key in the EntityGroupColours object, leave the htmlColor unchanged
+   */
+  amendEntityHtmlColor(entity: LeadminerEntity): LeadminerEntity {
+    let newColor = EntityGroupColours[entity.entityGroup]
+    if (newColor != null) {
+      entity.recognisingDict.htmlColor = newColor
+    }
+
+    return entity;
+  }
+
+  private getTrueKeys(v: { [_: string]: boolean }): string[] {
     return Object.keys(v).filter(k => v[k] === true);
   }
 }
