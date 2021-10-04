@@ -2,6 +2,7 @@ import {Component} from '@angular/core';
 import {LogService} from './log.service';
 import {validDict} from '../background/types';
 import {BrowserService} from '../browser.service';
+import { TitleCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-popup',
@@ -19,10 +20,12 @@ export class PopupComponent {
     this.mode = 'settings'
   }
 
-  nerCurrentPage(dictionary: validDict): void {
-    this.log.Log('Sending message to background page...');
-    this.browserService.sendMessage('ner_current_page', dictionary)
-      .catch(e => this.log.Error(`Couldn't send message to background page: ${JSON.stringify(e)}`));
+  nerCurrentPage(): void {
+    this.browserService.loadSettings().then(settings => {
+      this.log.Log('Sending message to background page...');
+      this.browserService.sendMessage('ner_current_page', settings.preferences.dictionary)
+        .catch(e => this.log.Error(`Couldn't send message to background page: ${JSON.stringify(e)}`));
+    })
   }
 
   toggleSidebar(): void {

@@ -7,11 +7,13 @@ Once the extension is loaded you will see the following icon:
 
 ![image](src/assets/head-brains.icon.48.png)
 
-Clicking this icon will reveal a popup, which currently has 5 NER options (the `Settings` button is not yet functional), corresponding to a specific Leadmine deployment:
+Clicking this icon will reveal a popup. To run NER on the current page, click 'NER'.
+
+Aurac is capable of using different dictionaries for NER, accessible through Settings -> Preferences. Selecting a dictionary will
+cause Aurac to use that dictionary for NER. Each dictionary corresponds to a specific Leadmine deployment:
 * Genes/Proteins
 * Diseases
 * Chemicals(SMILES)
-* Chemicals(InchiKey) - N.B. this instance will only resolve IUPACs to Inchi/InchiKey, other chemical synonyma will resolve to SMILES
 * General - the general purpose Leadmine config provided by NextMove which covers:
   * Chemicals
   * Diseases
@@ -21,9 +23,7 @@ Clicking this icon will reveal a popup, which currently has 5 NER options (the `
   * Antibodies
   * Mass Spec
   * Organisms
-
-Clicking one of these four buttons will run Leadmine (by making an API call to the Leadmine web service) on the contents of the active tab.
-
+  
 ## Settings and Preferences
 
 There are three tabs in the settings page of the popup:
@@ -46,9 +46,9 @@ There are three tabs in the settings page of the popup:
 
 
 3. Preferences: 
-   - options which will determine what is highlighted on a page when NER is run, currently 
+   - options which will determine what is highlighted on a page when NER is run, currently
        - minimum entity length - minimum length of terms to higlight, defaults to 2
-       - hide unresolved entities -  only terms which resolve to something, defaults to checked (true) 
+       - which dictionary to use for NER
 
 ### Development
 
@@ -125,6 +125,6 @@ There are various convenience scripts inside the `package.json` that can be run 
 * start - start up a browser with the plugin pre-loaded
 * weblint - lint the code using web-ext
 * build - build the plugin
-
+* mocha - tests the popup via [mocha](https://mochajs.org/) & [puppeteer](https://github.com/puppeteer/puppeteer) in a headless chrome browser. Tests and setup are in `mocha-test.js`. Uses the compiled plugin code so needs a recent `npm run build` first.
 ### Credits
 Designed using elements from Heroicon and Vecteezy.com.

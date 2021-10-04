@@ -14,7 +14,8 @@ export type MessageType =
   | 'awaiting_response'
   | 'remove_highlights'
   | 'preferences-changed'
-  | 'export_csv';
+  | 'export_csv'
+  | 'open_modal';
 
 export interface Message {
   type: MessageType;
@@ -87,8 +88,8 @@ export type XRef = {
 };
 
 export type Preferences = {
-  hideUnresolved: boolean,
-  minEntityLength: number
+  minEntityLength: number,
+  dictionary: string,
 }
 
 export type Settings = {
@@ -113,8 +114,8 @@ export const defaultSettings: Settings = {
   },
   xRefConfig: {},
   preferences: {
-    hideUnresolved: true,
     minEntityLength: 2,
+    dictionary: 'proteins',
   }
 };
 
