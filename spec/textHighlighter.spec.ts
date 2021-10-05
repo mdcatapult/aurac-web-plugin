@@ -100,16 +100,17 @@ describe('textContainsTerm', () => {
   }
 )
 
+
 fdescribe('allTextNodes', () => {
 
   let document: Document;
-  let textNodes;
+  let textNodes: Array<string>;
 
   beforeAll (() => {
     document = setup([])
   })
 
-  it('text nodes should populate when child node has a sub tag ', () => {
+  it('text nodes array should populate when child node has a sub tag type', () => {
     textNodes = []
     const parentNodeElement = document.createElement('div');
     const subNodeElement = document.createElement('sub')
@@ -120,7 +121,7 @@ fdescribe('allTextNodes', () => {
     expect(textNodes.length).toBe(1)
   })
 
-  it('text nodes should populate when child node has text node type ', () => {
+  it('text nodes array should populate when child node has text node type', () => {
     textNodes = []
     const parentNodeElement = document.createElement('div');
     const textNode = document.createTextNode('textNode')
@@ -131,7 +132,7 @@ fdescribe('allTextNodes', () => {
     expect(textNodes.length).toBe(1)
   })
 
-  it('text nodes should not populate when child node has a comment node type ', () => {
+  it('text nodes array should not populate when child node has a comment node type', () => {
     textNodes = []
     const nodeElement = document.createElement('div')
     const commentNode = document.createComment('commentNode')
@@ -139,6 +140,18 @@ fdescribe('allTextNodes', () => {
     nodeElement.appendChild(commentNode)
 
     TextHighlighter.allTextNodes(nodeElement, textNodes)
+
+    expect(textNodes.length).toBe(0)
+  })
+
+  it('text nodes array should not populate when child node has a processing instruction node type', () => {
+    textNodes = []
+    const parentElement = document.createElement('div')
+    const processingInstructionNode = document.createProcessingInstruction('test', 'test')
+
+    parentElement.appendChild(processingInstructionNode)
+
+    TextHighlighter.allTextNodes(parentElement, textNodes)
 
     expect(textNodes.length).toBe(0)
   })
