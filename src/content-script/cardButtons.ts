@@ -193,9 +193,7 @@ export module CardButtons {
 
   function createSaveButton(information: Entity, links: Link[]): HTMLElement {
     const saveButton = Globals.document.createElement('button');
-
     const savedCards = Globals.browser.getStoredCards(cardStorageKey)
-
 
     saveButton.innerHTML = savedCards.some(card => card.entityText === information.entityText) ? 'Saved' : '&#128190;';
     saveButton.className = 'save-button';

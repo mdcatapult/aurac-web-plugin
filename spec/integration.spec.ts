@@ -1,6 +1,5 @@
 import {TextHighlighter} from './../src/content-script/textHighlighter'
 import {Sidebar} from './../src/content-script/sidebar'
-import {BrowserMock} from './../src/content-script/browser-mock'
 import {CardButtons} from './../src/content-script/cardButtons'
 import {Card} from './../src/content-script/card'
 import {SidebarButtons} from './../src/content-script/sidebarButtons'
@@ -9,9 +8,11 @@ import {Globals} from './../src/content-script/globals'
 import {LeadminerEntity, setup} from './util'
 
 import * as jsdom from 'jsdom'
-const {JSDOM} = jsdom;
-let document: Document = new JSDOM('').window.document;
+const {JSDOM} = jsdom
+let document: Document = new JSDOM('').window.document
 
+// sets global Node object to default value from JSDOM. Without this, the
+// global Node object is not understood from within test context
 global.Node = document.defaultView.Node
 
 // simulates the entities which come back from leadminer
@@ -32,13 +33,16 @@ describe('integration', () => {
   })
 
   it('text elements in leadminerResult should be highlighted', () => {
-
     const hasHighlights = leadminerEntities.every(entity => {
       const highlightedElements = Array.from(document.getElementsByClassName(TextHighlighter.highlightClass))
-      return highlightedElements.length && highlightedElements.some(highlightedElement => {
+
+      const isExpectedHighlightedEntityText = highlightedElements.some(highlightedElement => {
         return highlightedElement.textContent === entity.text
       })
+
+      return highlightedElements.length && isExpectedHighlightedEntityText
     })
+
     expect(hasHighlights).toBe(true)
   })
 
@@ -123,7 +127,7 @@ describe('integration', () => {
           // entity that has been scrolled to should be highlighted
           expect(font.color).toBe(CardButtons.highlightColor)
         } else {
-          // all other entites should not have the highlight color
+          // all other entities should not have the highlight color
           expect(!font || font.color !== CardButtons.highlightColor)
         }
       }
