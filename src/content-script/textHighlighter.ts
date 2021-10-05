@@ -230,7 +230,7 @@ export module TextHighlighter {
 
   function addTooltips() {
     const highlights = Array.from(document.getElementsByClassName('aurac-highlight'));
-    highlights.map(highlight => {
+    highlights.forEach(highlight => {
       const highlightContent = highlight.firstChild!.textContent!;
       // we need to cast the Element as an HTMLElement in order to have access to data attributes
       const highlightHTML = highlight as HTMLElement;
