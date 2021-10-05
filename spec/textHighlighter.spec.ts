@@ -103,18 +103,43 @@ describe('textContainsTerm', () => {
 fdescribe('allTextNodes', () => {
 
   let document: Document;
+  let textNodes;
+
   beforeAll (() => {
     document = setup([])
   })
 
-  it('text nodes length should ', () => {
-    const textNodes = []
+  it('text nodes should populate when child node has a sub tag ', () => {
+    textNodes = []
+    const parentNodeElement = document.createElement('div');
+    const subNodeElement = document.createElement('sub')
+    parentNodeElement.appendChild(subNodeElement)
 
-    const subChildNodeElement = document.createElement('sub')
-    document.body.appendChild(subChildNodeElement)
-
-    TextHighlighter.allTextNodes(document.body, textNodes)
+    TextHighlighter.allTextNodes(parentNodeElement, textNodes)
 
     expect(textNodes.length).toBe(1)
+  })
+
+  it('text nodes should populate when child node has text node type ', () => {
+    textNodes = []
+    const parentNodeElement = document.createElement('div');
+    const textNode = document.createTextNode('textNode')
+    parentNodeElement.appendChild(textNode)
+
+    TextHighlighter.allTextNodes(parentNodeElement, textNodes)
+
+    expect(textNodes.length).toBe(1)
+  })
+
+  it('text nodes should not populate when child node has a comment node type ', () => {
+    textNodes = []
+    const nodeElement = document.createElement('div')
+    const commentNode = document.createComment('commentNode')
+
+    nodeElement.appendChild(commentNode)
+
+    TextHighlighter.allTextNodes(nodeElement, textNodes)
+
+    expect(textNodes.length).toBe(0)
   })
 })
