@@ -1,6 +1,8 @@
 import {TextHighlighter} from '../src/content-script/textHighlighter';
+import * as Util from 'util';
+import {setup} from './util';
 
-fdescribe('textContainsTerm', () => {
+describe('textContainsTerm', () => {
 
   const terms = ['protein', 'Glucans biosynthesis protein D']
 
@@ -98,3 +100,21 @@ fdescribe('textContainsTerm', () => {
   }
 )
 
+fdescribe('allTextNodes', () => {
+
+  let document: Document;
+  beforeAll (() => {
+    document = setup([])
+  })
+
+  it('text nodes length should ', () => {
+    const textNodes = []
+
+    const subChildNodeElement = document.createElement('sub')
+    document.body.appendChild(subChildNodeElement)
+
+    TextHighlighter.allTextNodes(document.body, textNodes)
+
+    expect(textNodes.length).toBe(1)
+  })
+})
