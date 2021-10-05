@@ -1,15 +1,14 @@
 import {Card} from './../src/content-script/card'
 import {Sidebar} from './../src/content-script/sidebar'
 import {SidebarButtons} from './../src/content-script/sidebarButtons'
-import {BrowserMock} from './../src/content-script/browser-mock'
 import {CardButtons} from './../src/content-script/cardButtons'
 import {cardClassName} from './../src/content-script/types'
 import {Globals} from './../src/content-script/globals'
 
 import * as jsdom from 'jsdom'
 import { setup } from './util'
-const { JSDOM } = jsdom;
-const documentObject = new JSDOM('').window.document;
+const { JSDOM } = jsdom
+const documentObject = new JSDOM('').window.document
 
 let sidebar: HTMLElement
 
@@ -57,18 +56,21 @@ describe('card contents', () => {
   it('card should have remove button', () => {
     const removeButton = Array.from(controls.children)
       .find(el => el.id === `${CardButtons.baseRemoveId}-${term}`)
+
     expect(removeButton).toBeTruthy()
   })
 
   it('card should have save button', () => {
     const saveButton = Array.from(controls.children)
       .find(el => el.id === `${CardButtons.baseSaveId}-${term}`)
+
     expect(saveButton).toBeTruthy()
   })
 
   it('card should have arrow buttons', () => {
     const saveButton = Array.from(controls.children)
       .find(el => el.classList.contains('aurac-arrow-buttons'))
+
     expect(saveButton).toBeTruthy()
   })
 })
