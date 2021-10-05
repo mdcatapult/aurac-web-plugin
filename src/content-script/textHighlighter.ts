@@ -115,12 +115,12 @@ export module TextHighlighter {
       }
     }
 
-  const delimiters: string[] = ['(', ')', '\\n', '\"', '\'', '\\', ',', ';', '.', '!'];
+  export const delimiters: string[] = ['(', ')', '\\n', '\"', '\'', '\\', ',', ';', '.', '!'];
 
   // Returns true if a string contains at least one instance of a particular term between word boundaries, i.e. not immediately
   // followed or preceded by either a non white-space character or one of the special characters in the delimiters array.
   // Can handle non latin unicode terms which at the moment JS Regex can't.
-  function textContainsTerm(text: string, term: string): boolean {
+  export function textContainsTerm(text: string, term: string): boolean {
     const startsWithWhiteSpaceRegex = /^\s+.*/;
     const endsWithWhiteSpaceRegex = /.*\s+$/;
     let currentText = '';
