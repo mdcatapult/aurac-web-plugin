@@ -75,7 +75,19 @@ fdescribe('textContainsTerm', () => {
         expect(result).toBe(true);
       })
     });
-  })
+
+    it('text starts and ends with the same delimiter', () => {
+      TextHighlighter.delimiters.forEach(delimiter => {
+        let result = TextHighlighter.textContainsTerm(`${delimiter}${term}${delimiter}`, term)
+        expect(result).toBe(true);
+      })
+    });
+
+    it('text starts and ends with the same delimiter', () => {
+      let result = TextHighlighter.textContainsTerm(`(${term})`, term)
+      expect(result).toBe(true);
+      })
+    })
   }
 )
 
