@@ -65,9 +65,9 @@ export class SettingsComponent implements OnInit {
         }
       });
 
-      this.settingsForm.controls['preferences'].valueChanges.subscribe(() => {
+      this.settingsForm.get('preferences')?.get('minEntityLength')!.valueChanges.subscribe(() => {
           if (this.valid()) {
-            this.browserService.sendMessage('preferences-changed')
+            this.browserService.sendMessage('min-entity-length-changed')
               .catch(console.error);
           }
         }

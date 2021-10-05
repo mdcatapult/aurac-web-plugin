@@ -3,6 +3,7 @@ import {Sidebar} from './sidebar';
 import {Card} from './card';
 import {ChemblRepresentations} from './types';
 import {ChEMBL} from './chembl';
+import {LeadminerEntity} from '../types';
 
 export module TextHighlighter {
 

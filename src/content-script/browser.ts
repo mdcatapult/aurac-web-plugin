@@ -3,7 +3,8 @@ import {Card} from './card'
 import {UserExperience} from './userExperience';
 import {ChEMBL} from './chembl';
 import {SidebarButtons} from './sidebarButtons';
-import { Modal } from './modal';
+import {LeadminerEntity} from '../types';
+import {Modal} from './modal';
 
 
 export module Browser {
@@ -39,10 +40,9 @@ export module Browser {
         case 'remove_highlights':
           TextHighlighter.removeHighlights();
           break;
-        case 'open_modal': 
+        case 'open_modal':
           Modal.openModal(msg.body)
           break;
-
         default:
           throw new Error('Received unexpected message from plugin');
       }
