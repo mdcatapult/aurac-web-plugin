@@ -1,13 +1,8 @@
 import {Sidebar} from './../src/content-script/sidebar'
-import {UserExperience} from './../src/content-script/userExperience'
 import {Globals} from './../src/content-script/globals'
+import {setup} from './util'
 
 let sidebar: HTMLElement
-
-import * as jsdom from 'jsdom'
-import { setup } from './util'
-const { JSDOM } = jsdom
-const documentObject = new JSDOM('').window.document
 
 beforeAll(() => {
 

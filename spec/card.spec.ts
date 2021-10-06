@@ -1,12 +1,11 @@
 import {Card} from './../src/content-script/card'
 import {Sidebar} from './../src/content-script/sidebar'
-import {SidebarButtons} from './../src/content-script/sidebarButtons'
 import {CardButtons} from './../src/content-script/cardButtons'
 import {cardClassName} from './../src/content-script/types'
 import {Globals} from './../src/content-script/globals'
+import {setup} from './util'
 
 import * as jsdom from 'jsdom'
-import { setup } from './util'
 const { JSDOM } = jsdom
 const documentObject = new JSDOM('').window.document
 

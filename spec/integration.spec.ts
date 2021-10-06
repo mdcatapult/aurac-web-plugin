@@ -1,8 +1,6 @@
 import {TextHighlighter} from './../src/content-script/textHighlighter'
 import {Sidebar} from './../src/content-script/sidebar'
 import {CardButtons} from './../src/content-script/cardButtons'
-import {Card} from './../src/content-script/card'
-import {SidebarButtons} from './../src/content-script/sidebarButtons'
 import {cardClassName} from './../src/content-script/types'
 import {Globals} from './../src/content-script/globals'
 import {LeadmineEntity, setup} from './util'
@@ -94,39 +92,54 @@ describe('integration', () => {
     it('arrow buttons', () => {
       const entity = leadminerEntities[0]
       clickElementForEntity(entity.text)
+      const window = Globals.document.defaultView.window
+      const occurrences = Array.from(document.getElementsByClassName(TextHighlighter.highlightClass))
 
       // scroll forwards through the occurrences
       const rightArrow = document.getElementById(`right-${CardButtons.baseArrowId}-${entity.text}`)
       for (let timesClicked = 0; timesClicked < entity.occurrences; timesClicked++) {
+        const oldScrollPos = window.scrollY
+
+        rightArrow.click()
+
+        const newScrollPos = window.scrollY
+        expect(newScrollPos !== oldScrollPos)
+
         const expectedHighlightIndex = timesClicked
-        clickArrowButton(rightArrow, timesClicked, expectedHighlightIndex)
+        assertHighlighting(occurrences, expectedHighlightIndex)
       }
 
       // scroll backwards through the occurrences
       const leftArrow = document.getElementById(`left-${CardButtons.baseArrowId}-${entity.text}`)
       for (let timesClicked = 0; timesClicked < entity.occurrences; timesClicked++) {
-        const expectedHighlightIndex = entity.occurrences - timesClicked - 1
-        clickArrowButton(leftArrow, timesClicked, expectedHighlightIndex)
-      }
-
-      function clickArrowButton(arrowButton: HTMLElement, timesClicked: number, expectedHighlightIndex: number) {
-        const window = Globals.document.defaultView.window
         const oldScrollPos = window.scrollY
-        arrowButton.click()
+
+        leftArrow.click()
+
         const newScrollPos = window.scrollY
         expect(newScrollPos !== oldScrollPos)
 
-        const occurrence = Array.from(document.getElementsByClassName(TextHighlighter.highlightClass))[expectedHighlightIndex]
+        const expectedHighlightIndex = entity.occurrences - timesClicked - 1
+        assertHighlighting(occurrences, expectedHighlightIndex)
+      }
 
-        // highlight elements are wrapped in a font tag
-        const font = <HTMLFontElement> occurrence.children[0]
-        if (timesClicked === expectedHighlightIndex) {
-          // entity that has been scrolled to should be highlighted
-          expect(font.color).toBe(CardButtons.highlightColor)
-        } else if (font) {
-          // all other entities should not have the highlight color if they have a font element
-          expect(font.color !== CardButtons.highlightColor)
-        }
+      function assertHighlighting(occurrences: Element[], expectedHighlightIndex: number): void {
+
+        occurrences.forEach((occurrence, occurrenceNumber) => {
+          // highlight elements are wrapped in a font tag
+          const font = <HTMLFontElement> occurrence.getElementsByTagName('font')[0]
+          if (!font) {
+            return
+          }
+
+          if (occurrenceNumber === expectedHighlightIndex) {
+            // entity that has been scrolled to should be highlighted
+            expect(font.color).toBe(CardButtons.highlightColor)
+          } else {
+            // all other entities should not have the highlight color if they have a font element
+            expect(font.color !== CardButtons.highlightColor)
+          }
+        })
       }
     })
   })
