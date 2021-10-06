@@ -117,26 +117,6 @@ export module TextHighlighter {
       }
     }
 
-  /*function allDescendants(node: HTMLElement, elements: Array<Element>, entity: string) {
-    if ((!allowedClassList(node) || !allowedTagType(node))) {
-      return;
-    }
-    try {
-      node.childNodes.forEach(child => {
-        const element = child as HTMLElement;
-        if (isNodeAllowed(element) && element.nodeType === Node.TEXT_NODE) {
-          if (textContainsTerm(element.nodeValue!, entity)) {
-            elements.push(element);
-          }
-        }
-      });
-    } catch (e) {
-      // There are so many things that could go wrong.
-      // The DOM is a wild west
-      console.error(e);
-    }
-  }*/
-
   export const delimiters: string[] = ['(', ')', '\\n', '\"', '\'', '\\', ',', ';', '.', '!'];
 
   // Returns true if a string contains at least one instance of a particular term between word boundaries, i.e. not immediately
