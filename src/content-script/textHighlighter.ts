@@ -95,7 +95,7 @@ export module TextHighlighter {
 
   // TODO maybe remove this when we can select via data attribute?
   // Recursively find all text nodes which match entity
-  function allDescendants(node: HTMLElement, elements: Array<Element>, entity: string) {
+  export function allDescendants(node: HTMLElement, elements: Array<Element>, entity: string) {
       if ((node && node.classList && node.classList.contains('aurac-sidebar')) || !allowedTagType(node)) {
         return;
       }
@@ -119,6 +119,26 @@ export module TextHighlighter {
         console.error(e);
       }
     }
+
+  /*function allDescendants(node: HTMLElement, elements: Array<Element>, entity: string) {
+    if ((!allowedClassList(node) || !allowedTagType(node))) {
+      return;
+    }
+    try {
+      node.childNodes.forEach(child => {
+        const element = child as HTMLElement;
+        if (isNodeAllowed(element) && element.nodeType === Node.TEXT_NODE) {
+          if (textContainsTerm(element.nodeValue!, entity)) {
+            elements.push(element);
+          }
+        }
+      });
+    } catch (e) {
+      // There are so many things that could go wrong.
+      // The DOM is a wild west
+      console.error(e);
+    }
+  }*/
 
   export const delimiters: string[] = ['(', ')', '\\n', '\"', '\'', '\\', ',', ';', '.', '!'];
 
