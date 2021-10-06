@@ -4,6 +4,7 @@ import {Card} from './card';
 import {ChemblRepresentations} from './types';
 import {ChEMBL} from './chembl';
 import {Globals} from './globals'
+import {LeadminerEntity} from '../types';
 
 export module TextHighlighter {
 
