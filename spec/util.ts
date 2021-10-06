@@ -6,12 +6,12 @@ const {JSDOM} = jsdom
 
 // LeadminerEntity represents an entity which has come back from leadminer, and the number
 // of occurrences it has on the page.
-export type LeadminerEntity = {
+export type LeadmineEntity = {
   text: string,
   occurrences: number
 }
 
-export function setup(leadminerEntities: LeadminerEntity[]): Document {
+export function setup(leadminerEntities: LeadmineEntity[]): Document {
   Globals.document = createDocument(leadminerEntities)
   Globals.browser = new BrowserMock()
 
@@ -20,7 +20,7 @@ export function setup(leadminerEntities: LeadminerEntity[]): Document {
   return Globals.document
 }
 
-function createDocument(leadminerEntities: LeadminerEntity[]): Document {
+function createDocument(leadminerEntities: LeadmineEntity[]): Document {
   const document = new JSDOM('').window.document
   document.implementation.createHTMLDocument()
   var fs = require('fs')

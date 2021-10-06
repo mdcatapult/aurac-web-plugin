@@ -10,6 +10,9 @@ import { Message } from 'src/types';
 import { SavedCard } from './types';
 import {Globals} from './globals';
 
+/**
+ * BrowserImplementation provides implementation of functions in IBroswer interface
+ */
 export class BrowserImplementation implements IBrowser {
 
   // add listener function to browser

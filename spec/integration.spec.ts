@@ -5,7 +5,7 @@ import {Card} from './../src/content-script/card'
 import {SidebarButtons} from './../src/content-script/sidebarButtons'
 import {cardClassName} from './../src/content-script/types'
 import {Globals} from './../src/content-script/globals'
-import {LeadminerEntity, setup} from './util'
+import {LeadmineEntity, setup} from './util'
 
 import * as jsdom from 'jsdom'
 const {JSDOM} = jsdom
@@ -16,7 +16,7 @@ let document: Document = new JSDOM('').window.document
 global.Node = document.defaultView.Node
 
 // simulates the entities which come back from leadminer
-const leadminerEntities: LeadminerEntity[] = [{
+const leadminerEntities: LeadmineEntity[] = [{
   text: 'entity1',
   occurrences: 10
 }]
@@ -72,11 +72,6 @@ describe('integration', () => {
     clickElementForEntity(entity)
 
     const numOfCards = Array.from(document.getElementsByClassName(cardClassName)).length
-
-    // get the card for the clicked entity
-    const card = Array.from(document.getElementsByClassName(cardClassName)).find(cardElement => {
-      return cardElement.innerHTML.includes(entity)
-    })
 
     // click remove button
     document.getElementById(`${CardButtons.baseRemoveId}-${entity}`).click()
@@ -145,7 +140,7 @@ function clickElementForEntity(entity: string): void {
 }
 
 // returns sample leadminer results for each entityText
-function getLeadminerResults(entities: LeadminerEntity[]): Object {
+function getLeadminerResults(entities: LeadmineEntity[]): Object {
   return entities.map(entity => {
     return {
       beg: 325,
