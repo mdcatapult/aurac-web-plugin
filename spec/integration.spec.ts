@@ -8,6 +8,7 @@ import {Globals} from './../src/content-script/globals'
 import {LeadmineEntity, setup} from './util'
 
 import * as jsdom from 'jsdom'
+
 const {JSDOM} = jsdom
 let document: Document = new JSDOM('').window.document
 
@@ -117,13 +118,14 @@ describe('integration', () => {
 
         const occurrence = Array.from(document.getElementsByClassName(TextHighlighter.highlightClass))[expectedHighlightIndex]
 
+        // highlight elements are wrapped in a font tag
         const font = <HTMLFontElement> occurrence.children[0]
         if (timesClicked === expectedHighlightIndex) {
           // entity that has been scrolled to should be highlighted
           expect(font.color).toBe(CardButtons.highlightColor)
-        } else {
-          // all other entities should not have the highlight color
-          expect(!font || font.color !== CardButtons.highlightColor)
+        } else if (font) {
+          // all other entities should not have the highlight color if they have a font element
+          expect(font.color !== CardButtons.highlightColor)
         }
       }
     })
