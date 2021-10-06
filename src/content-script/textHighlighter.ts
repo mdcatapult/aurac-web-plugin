@@ -95,22 +95,19 @@ export module TextHighlighter {
 
   // TODO maybe remove this when we can select via data attribute?
   // Recursively find all text nodes which match entity
-  export function allDescendants(node: HTMLElement, elements: Array<Element>, entity: string) {
-      if ((node && node.classList && node.classList.contains('aurac-sidebar')) || !allowedTagType(node)) {
+  export function allDescendants(element: HTMLElement, elements: Array<Element>, entity: string) {
+    if ((element && (element.classList && !allowedClassList(element) || !allowedTagType(element)))) {
         return;
       }
-      try {
-        node.childNodes.forEach(child => {
-          const element = child as HTMLElement;
-          if (isNodeAllowed(element) && element.nodeType === Node.TEXT_NODE) {
-            if (textContainsTerm(element.nodeValue!, entity)) {
-              elements.push(element);
+    try {
+      element.childNodes.forEach(child  => {
+        const childElement = child as HTMLElement;
+        if (isNodeAllowed(childElement) && childElement.nodeType === Node.TEXT_NODE) {
+            if (textContainsTerm(childElement.nodeValue!, entity)) {
+              elements.push(childElement);
             }
-            // tslint:disable-next-line:max-line-length
-          } else if (element.classList && !element.classList.contains('tooltipped')
-            && !element.classList.contains('tooltipped-click')
-            && element.style.display !== 'none') {
-            allDescendants(element, elements, entity);
+          } else {
+            allDescendants(childElement, elements, entity);
           }
         });
       } catch (e) {

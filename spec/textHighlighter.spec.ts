@@ -277,7 +277,7 @@ describe('allTextNodes', () => {
 })
 
 
-fdescribe('allTextNodes', () => {
+fdescribe('allDescendants', () => {
 
   let document: Document;
   let elements: Array<Element>;
@@ -295,7 +295,6 @@ fdescribe('allTextNodes', () => {
     const textElement = document.createElement('p')
     textElement.textContent = 'protein'
     parentElement.appendChild(textElement)
-
 
     TextHighlighter.allDescendants(parentElement, elements, 'protein')
 
