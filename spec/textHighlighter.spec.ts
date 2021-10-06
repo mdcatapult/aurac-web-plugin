@@ -277,7 +277,7 @@ describe('allTextNodes', () => {
 })
 
 
-fdescribe('allDescendants', () => {
+describe('allDescendants', () => {
 
   let document: Document;
   let elements: Array<Element>;
@@ -359,4 +359,20 @@ fdescribe('allDescendants', () => {
     expect(elements.length).toBe(0);
   })
 
+})
+
+fit('should remove highlight', () => {
+    let document: Document;
+    document = setup([])
+
+    let highlightElement = document.createElement('div')
+    highlightElement.className = TextHighlighter.highlightClass
+    document.body.appendChild(highlightElement)
+
+    const numberOfHighlights = Array.from(document.getElementsByClassName(TextHighlighter.highlightClass)).length
+    const numberOfElements = Array.from(document.body.children).length
+    TextHighlighter.removeHighlights()
+    const numberOfElementsAfter = Array.from(document.body.children).length
+
+    expect(numberOfElementsAfter).toBe(numberOfElements - numberOfHighlights)
 })
