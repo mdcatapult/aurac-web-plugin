@@ -94,7 +94,6 @@ export module Sidebar {
       } else { // entity is a synonym of existing sidecard
         const synonyms = SidebarButtons.entityToCard.get(entityId)!.synonyms
 
-
         const lowerCaseSynonyms = synonyms.map(syn => syn.toLowerCase());
         const lowerCaseEntityText = info.entityText.toLowerCase()
 
