@@ -101,7 +101,7 @@ describe('textContainsTerm', () => {
 )
 
 
-fdescribe('allTextNodes', () => {
+describe('allTextNodes', () => {
 
   let document: Document;
   let textNodes: Array<string>;
@@ -110,8 +110,12 @@ fdescribe('allTextNodes', () => {
     document = setup([])
   })
 
-  it('text nodes array should populate when child node has a sub tag type', () => {
+  beforeEach(() => {
     textNodes = []
+  })
+
+
+  it('text nodes array should populate when child node has a sub tag type', () => {
     const parentNodeElement = document.createElement('div');
     const subNodeElement = document.createElement('sub')
     parentNodeElement.appendChild(subNodeElement)
@@ -121,8 +125,19 @@ fdescribe('allTextNodes', () => {
     expect(textNodes.length).toBe(1)
   })
 
+
+  it('text nodes array should contain correctly reconstructed chemical formula', () => {
+    const parentNodeElement = document.createElement('div');
+    const subNodeElement = document.createElement('span')
+    subNodeElement.innerHTML = `C<sub>17</sub>H<sub>25</sub>Br<sub>2</sub>NO<sub>2</sub>`
+    parentNodeElement.appendChild(subNodeElement)
+
+    TextHighlighter.allTextNodes(parentNodeElement, textNodes)
+
+    expect(textNodes[0]).toEqual('C17H25Br2NO2\n')
+  })
+
   it('text nodes array should populate when child node has text node type', () => {
-    textNodes = []
     const parentNodeElement = document.createElement('div');
     const textNode = document.createTextNode('textNode')
     parentNodeElement.appendChild(textNode)
@@ -133,10 +148,8 @@ fdescribe('allTextNodes', () => {
   })
 
   it('text nodes array should not populate when child node has a comment node type', () => {
-    textNodes = []
     const nodeElement = document.createElement('div')
     const commentNode = document.createComment('commentNode')
-
     nodeElement.appendChild(commentNode)
 
     TextHighlighter.allTextNodes(nodeElement, textNodes)
@@ -145,14 +158,121 @@ fdescribe('allTextNodes', () => {
   })
 
   it('text nodes array should not populate when child node has a processing instruction node type', () => {
-    textNodes = []
     const parentElement = document.createElement('div')
     const processingInstructionNode = document.createProcessingInstruction('test', 'test')
-
     parentElement.appendChild(processingInstructionNode)
 
     TextHighlighter.allTextNodes(parentElement, textNodes)
 
     expect(textNodes.length).toBe(0)
   })
+
+  it('text nodes array should remain empty when passed node is a script element', () => {
+    const parentElement = document.createElement('div')
+    const scriptElement = document.createElement('script')
+    parentElement.appendChild(scriptElement)
+
+    TextHighlighter.allTextNodes(parentElement, textNodes)
+
+    expect(textNodes.length).toBe(0)
+  })
+
+  it('text nodes array should remain empty when passed node is a style element', () => {
+    const parentElement = document.createElement('div')
+    const styleElement = document.createElement('style')
+    parentElement.appendChild(styleElement)
+
+    TextHighlighter.allTextNodes(parentElement, textNodes)
+
+    expect(textNodes.length).toBe(0)
+  })
+
+  it('text nodes array should remain empty when passed node is an SVG element', () => {
+    const parentElement = document.createElement('div')
+    const svgElement = document.createElement('svg')
+    parentElement.appendChild(svgElement)
+
+    TextHighlighter.allTextNodes(parentElement, textNodes)
+
+    expect(textNodes.length).toBe(0)
+  })
+
+  it('text nodes array should remain empty when passed node is an input element', () => {
+    const parentElement = document.createElement('div')
+    const inputElement = document.createElement('input')
+    parentElement.appendChild(inputElement)
+
+    TextHighlighter.allTextNodes(parentElement, textNodes)
+
+    expect(textNodes.length).toBe(0)
+  })
+
+  it('text nodes array should remain empty when passed node is a button element', () => {
+    const parentElement = document.createElement('div')
+    const buttonElement = document.createElement('button')
+    parentElement.appendChild(buttonElement)
+
+    TextHighlighter.allTextNodes(parentElement, textNodes)
+
+    expect(textNodes.length).toBe(0)
+  })
+
+  it('text nodes array should remain empty when passed node is an anchor element', () => {
+    const parentElement = document.createElement('div')
+    const anchorElement = document.createElement('anchor')
+    parentElement.appendChild(anchorElement)
+
+    TextHighlighter.allTextNodes(parentElement, textNodes)
+
+    expect(textNodes.length).toBe(0)
+  })
+
+  it('should not populate text nodes array with sidebar element', () => {
+    const parentElement = document.createElement('div')
+    const sidebarElement = document.createElement('span')
+    sidebarElement.textContent = 'something'
+    sidebarElement.className = 'aurac-sidebar'
+    parentElement.appendChild(sidebarElement)
+
+    TextHighlighter.allTextNodes(parentElement, textNodes)
+
+    expect(textNodes.length).toBe(0)
+  })
+
+  it('should not populate text nodes array with hidden element', () => {
+    const parentElement = document.createElement('div')
+    const hiddenElement = document.createElement('p')
+    hiddenElement.textContent = 'something'
+    hiddenElement.style.display = 'none'
+    parentElement.appendChild(hiddenElement)
+
+    TextHighlighter.allTextNodes(parentElement, textNodes)
+
+    expect(textNodes.length).toBe(0)
+  })
+
+  it('should not populate text nodes array with element of tooltipped class', () => {
+    const parentElement = document.createElement('div')
+    const hiddenElement = document.createElement('p')
+    hiddenElement.textContent = 'something'
+    hiddenElement.className = 'tooltipped'
+    parentElement.appendChild(hiddenElement)
+
+    TextHighlighter.allTextNodes(parentElement, textNodes)
+
+    expect(textNodes.length).toBe(0)
+  })
+
+  it('should not populate text nodes array with element of tooltipped-click class', () => {
+    const parentElement = document.createElement('div')
+    const hiddenElement = document.createElement('p')
+    hiddenElement.textContent = 'something'
+    hiddenElement.className = 'tooltipped-click'
+    parentElement.appendChild(hiddenElement)
+
+    TextHighlighter.allTextNodes(parentElement, textNodes)
+
+    expect(textNodes.length).toBe(0)
+  })
+
 })

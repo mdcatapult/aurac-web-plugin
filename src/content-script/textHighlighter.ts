@@ -56,10 +56,7 @@ export module TextHighlighter {
         if (isNodeAllowed(element)) {
           if (element.nodeType === Node.TEXT_NODE) {
             textNodes.push(element.textContent + '\n');
-          } else if (!element.classList.contains('tooltipped') &&
-            !element.classList.contains('tooltipped-click') &&
-            !element.classList.contains('aurac-sidebar') &&
-            element.style.display !== 'none') {
+          } else if (allowedClassList(element)) {
             allTextNodes(element, textNodes);
           }
         }
@@ -69,6 +66,14 @@ export module TextHighlighter {
       // The DOM is a wild west
       console.error(e);
     }
+  }
+
+  // Returns true if classlist does not contain any forbidden classes
+  function allowedClassList(element: HTMLElement): boolean {
+    return !element.classList.contains('tooltipped') &&
+      !element.classList.contains('tooltipped-click') &&
+      !element.classList.contains('aurac-sidebar') &&
+      element.style.display !== 'none'
   }
 
   // Only allow nodes that we can traverse or add children to
