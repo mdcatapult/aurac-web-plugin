@@ -86,13 +86,20 @@ export module Sidebar {
         downloadResultsButtonElement = SidebarButtons.toggleDownloadButton(true);
 
         // @ts-ignore
-        browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity, 
-          info.entityGroup, info.recognisingDict.entityType]})
-          .catch(e => console.error(e));
-      } else { // entity is a synonym of existing sidecard
-        const synonyms = SidebarButtons.entityToCard.get(entityId)!.synonyms;
+        browser.runtime.sendMessage({
+          type: 'compound_x-refs',
+          body: [info.entityText, info.resolvedEntity, info.entityGroup, info.recognisingDict.entityType]
+        }).catch(e => console.error(e));
 
-        if (!synonyms.includes(info.entityText)) {
+      } else { // entity is a synonym of existing sidecard
+        const synonyms = SidebarButtons.entityToCard.get(entityId)!.synonyms
+
+
+        const lowerCaseSynonyms = synonyms.map(syn => syn.toLowerCase());
+        const lowerCaseEntityText = info.entityText.toLowerCase()
+
+        // prevent adding entity text to synonyms with the same characters but different case
+        if (!lowerCaseSynonyms.includes(lowerCaseEntityText)) {
           synonyms.push(info.entityText);
 
           let synonymOccurrences: Element[] = [];
@@ -104,6 +111,7 @@ export module Sidebar {
           SidebarButtons.entityToCard.get(entityId)!.div.replaceWith(Card.create(info, synonyms, listOfEntities));
         }
       }
+
       const div = SidebarButtons.entityToCard.get(info.entityText)?.div;
       if (div) {
         div.scrollIntoView({behavior: 'smooth'});
