@@ -1,5 +1,4 @@
 import {TextHighlighter} from '../src/content-script/textHighlighter';
-import * as Util from 'util';
 import {setup} from './util';
 
 describe('textContainsTerm', () => {
@@ -361,7 +360,7 @@ describe('allDescendants', () => {
 
 })
 
-fit('should remove highlight', () => {
+it('should remove highlight', () => {
     let document: Document;
     document = setup([])
 
@@ -375,4 +374,44 @@ fit('should remove highlight', () => {
     const numberOfElementsAfter = Array.from(document.body.children).length
 
     expect(numberOfElementsAfter).toBe(numberOfElements - numberOfHighlights)
+})
+
+describe('elementHasHighlightParents', () => {
+
+  let document: Document;
+  beforeAll(() => {
+    document = setup([])
+  })
+
+
+  it('should return true if direct parent of passed element is an aurac highlight', () => {
+    const parentElement = document.createElement('div')
+    parentElement.className = TextHighlighter.highlightClass
+    const childElement = document.createElement('p')
+    parentElement.appendChild(childElement)
+
+    expect(TextHighlighter.elementHasHighlightedParents(childElement)).toBe(true)
+  })
+
+  it('should return true if grandparent of passed element is an aurac highlight', () => {
+    const grandParentElement = document.createElement('div')
+    grandParentElement.className = TextHighlighter.highlightClass
+    const parentElement = document.createElement('div')
+    grandParentElement.appendChild(parentElement)
+    const childElement = document.createElement('p')
+    parentElement.appendChild(childElement)
+
+    expect(TextHighlighter.elementHasHighlightedParents(childElement)).toBe(true)
+  })
+
+  it('should return false if passed element has no aurac highlight parent', () => {
+    const grandParentElement = document.createElement('div')
+    const parentElement = document.createElement('div')
+    grandParentElement.appendChild(parentElement)
+    const childElement = document.createElement('p')
+    parentElement.appendChild(childElement)
+
+    expect(TextHighlighter.elementHasHighlightedParents(childElement)).toBe(false)
+  })
+
 })

@@ -245,7 +245,7 @@ export module TextHighlighter {
       });
   }
 
-  function elementHasHighlightedParents(entity: Element): boolean {
+  export function elementHasHighlightedParents(entity: Element): boolean {
     const parent = entity.parentElement
     const grandparent = parent?.parentElement
     return !!(parent?.classList.contains(highlightClass) || grandparent?.classList.contains(highlightClass))
