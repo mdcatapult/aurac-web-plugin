@@ -1,6 +1,7 @@
 import {cardClassName, Entity} from './types';
 import {EntityMap} from './entityMap';
 import {saveAs} from 'file-saver';
+import {Globals} from './globals'
 
 export module SidebarButtons {
 
@@ -11,10 +12,15 @@ export module SidebarButtons {
   export const entityToCard = new EntityMap<{ synonyms: string[], div: HTMLDivElement }>();
   export const collapseArrow = '&#60;';
   export const expandArrow = '&#62;';
+  export const childIDs = {
+    toggleButton: 'toggle-button',
+    clearButton: 'clear-button',
+  }
 
   export function createToggleButton(): HTMLButtonElement {
-    toggleButtonElement = document.createElement('button');
+    toggleButtonElement = Globals.document.createElement('button');
     toggleButtonElement.innerHTML = expandArrow;
+    toggleButtonElement.id = childIDs.toggleButton
     toggleButtonElement.className = 'sidebar-button';
     toggleButtonElement.className = 'aurac-transform aurac-sidebar-button aurac-sidebar-button--collapsed';
     toggleButtonElement.addEventListener('click', () => toggle());
@@ -26,7 +32,7 @@ export module SidebarButtons {
   }
 
   export function toggle(): void {
-    Array.from(document.getElementsByClassName('aurac-transform')).forEach(e => {
+    Array.from(Globals.document.getElementsByClassName('aurac-transform')).forEach(e => {
       e.className = e.className.replace(/(expanded|collapsed)/, (g) => {
         return g === 'expanded' ? 'collapsed' : 'expanded';
       });
@@ -36,19 +42,20 @@ export module SidebarButtons {
   }
 
   export function toggleNarrative(on: boolean): void {
-    document.getElementById('aurac-narrative')!.style.display = on ? 'block' : 'none';
+    Globals.document.getElementById('aurac-narrative')!.style.display = on ? 'block' : 'none';
   }
 
   export function createClearButton(listOfEntities: Entity[]): HTMLButtonElement {
-    clearButtonElement = document.createElement('button');
+    clearButtonElement = Globals.document.createElement('button');
     clearButtonElement.style.display = 'none';
     clearButtonElement.innerHTML = 'Clear';
+    clearButtonElement.id = childIDs.clearButton
     clearButtonElement.className = 'clear-button';
     clearButtonElement.addEventListener('click', () => {
 
       entityToCard.clear();
       listOfEntities.length = 0;
-      Array.from(document.getElementsByClassName(cardClassName)).forEach(card => card.parentNode!.removeChild(card));
+      Array.from(Globals.document.getElementsByClassName(cardClassName)).forEach(card => card.parentNode!.removeChild(card));
       toggleClearButton(false);
       toggleDownloadButton(false);
       toggleNarrative(false);
@@ -57,7 +64,7 @@ export module SidebarButtons {
   }
 
   export function createDownloadResultsButton(listOfEntities: Entity[]): HTMLButtonElement {
-    downloadResultsButtonElement = document.createElement('button')
+    downloadResultsButtonElement = Globals.document.createElement('button')
     downloadResultsButtonElement.style.display = 'none';
     downloadResultsButtonElement.innerHTML = 'Download Results'
     downloadResultsButtonElement.className = 'download-results-button'
