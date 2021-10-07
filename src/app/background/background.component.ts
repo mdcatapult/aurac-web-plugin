@@ -299,12 +299,13 @@ export class BackgroundComponent {
     return (entity && entity.entityText.length >= this.settings.preferences.minEntityLength);
   }
 
-  getUniqueEntities(leadmineResponse: LeadminerEntity[]): Array<LeadminerEntity> {
+  getUniqueEntities(leadmineResponse: Array<LeadminerEntity>): Array<LeadminerEntity> {
     const uniqueEntities = new Array<LeadminerEntity>();
-    leadmineResponse
-      .forEach((entity: LeadminerEntity) => {
+    leadmineResponse.forEach((entity: LeadminerEntity) => {
         if (this.shouldDisplayEntity(entity)) {
-          uniqueEntities.push(entity);
+          if (uniqueEntities.every(uniqueEntity => uniqueEntity.entityText !== entity.entityText)) {
+            uniqueEntities.push(entity);
+          }
         }
       });
     return uniqueEntities;
