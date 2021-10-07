@@ -416,14 +416,8 @@ describe('elementHasHighlightParents', () => {
   })
 })
 
-fdescribe('addHighlightAndEventListeners', () => {
-
-  let document: Document;
-  beforeAll(() => {
-    document = setup([])
-  })
-
-  it('should highlight an entity', () => {
+it('addHighlightAndEventListeners should highlight an entity', () => {
+    const document = setup([])
     const elementToBeHighlighted = document.createElement('p')
     elementToBeHighlighted.id = 'elementToBeHighlighted'
     elementToBeHighlighted.textContent = 'protein'
@@ -441,6 +435,4 @@ fdescribe('addHighlightAndEventListeners', () => {
     TextHighlighter.addHighlightAndEventListeners([elementToBeHighlighted.firstChild as HTMLElement], entity)
     expect(document.getElementsByClassName(TextHighlighter.highlightParentClass).length).toBe(1)
     expect(document.getElementsByClassName(TextHighlighter.highlightClass).length).toBe(1)
-  })
-
 })
