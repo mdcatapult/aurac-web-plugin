@@ -9,7 +9,7 @@ export module TextHighlighter {
 
   const chemicalFormulae: chemicalFormula[] = [];
   export const highlightClass = 'aurac-highlight';
-  const highlightParentClass = 'aurac-highlight-parent';
+  export const highlightParentClass = 'aurac-highlight-parent';
 
   export function wrapEntitiesWithHighlight(msg: any) {
     // get InChI, InChIKey and SMILES input elements if we are on ChEMBL
@@ -214,8 +214,8 @@ export module TextHighlighter {
     return `<span class="aurac-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative; cursor: pointer">${term}</span>`;
   };
 
-  function addHighlightAndEventListeners(selector: Element[], entity: Entity) {
-    selector.map(element => {
+  export function addHighlightAndEventListeners(selector: Element[], entity: Entity) {
+    selector.forEach(element => {
       // Try/catch for edge cases.
       try {
         // For each term, we want to replace its original HTML with a highlight colour

@@ -1,5 +1,7 @@
 import {TextHighlighter} from '../src/content-script/textHighlighter';
 import {setup} from './util';
+import {Entity} from '../src/content-script/types';
+import {Globals} from '../src/content-script/globals';
 
 describe('textContainsTerm', () => {
 
@@ -383,7 +385,6 @@ describe('elementHasHighlightParents', () => {
     document = setup([])
   })
 
-
   it('should return true if direct parent of passed element is an aurac highlight', () => {
     const parentElement = document.createElement('div')
     parentElement.className = TextHighlighter.highlightClass
@@ -412,6 +413,34 @@ describe('elementHasHighlightParents', () => {
     parentElement.appendChild(childElement)
 
     expect(TextHighlighter.elementHasHighlightedParents(childElement)).toBe(false)
+  })
+})
+
+fdescribe('addHighlightAndEventListeners', () => {
+
+  let document: Document;
+  beforeAll(() => {
+    document = setup([])
+  })
+
+  it('should highlight an entity', () => {
+    const elementToBeHighlighted = document.createElement('p')
+    elementToBeHighlighted.id = 'elementToBeHighlighted'
+    elementToBeHighlighted.textContent = 'protein'
+    document.body.appendChild(elementToBeHighlighted)
+    const entity: Entity = {
+      entityText: 'protein',
+      resolvedEntity: '',
+      entityGroup: '',
+      recognisingDict: {
+        entityType: '',
+        htmlColor: '',
+        source: ''
+      }
+    }
+    TextHighlighter.addHighlightAndEventListeners([elementToBeHighlighted.firstChild as HTMLElement], entity)
+    expect(document.getElementsByClassName(TextHighlighter.highlightParentClass).length).toBe(1)
+    expect(document.getElementsByClassName(TextHighlighter.highlightClass).length).toBe(1)
   })
 
 })
