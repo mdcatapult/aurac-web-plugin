@@ -57,5 +57,28 @@ describe('BackgroundComponent', () => {
     const result = backgroundComponent.getUniqueEntities(leadmineEntities);
     expect(result.length).toBe(2);
   });
+
+  it('should return nothing if settings min entity length is higher than entity length', () => {
+    const leadmineEntities: Array<LeadminerEntity> = ['pro', 'pro', 'some'].map(entity => {
+      const leadmineEntity =  {
+      beg: 0,
+      begInNormalizedDoc: 0,
+      end: 0,
+      endInNormalizedDoc: 0,
+      entityGroup: '',
+      entityText: entity,
+      possiblyCorrectedText: '',
+      recognisingDict: undefined,
+      resolvedEntity: '',
+      sectionType: ''
+    }
+      return leadmineEntity;
+    })
+
+    backgroundComponent.settings.preferences.minEntityLength = 5
+    const result = backgroundComponent.getUniqueEntities(leadmineEntities);
+    expect(result.length).toBe(0);
+  });
 });
+
 
