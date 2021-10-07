@@ -14,25 +14,25 @@ let document: Document = new JSDOM('').window.document
 // global Node object is not understood from within test context
 global.Node = document.defaultView.Node
 
-// simulates the entities which come back from leadminer
-const leadminerEntities: LeadmineEntity[] = [{
+// simulates the entities which come back from leadmine
+const leadmineEntities: LeadmineEntity[] = [{
   text: 'entity1',
   occurrences: 10
 }]
 
 describe('integration', () => {
   beforeAll(() => {
-    document = setup(leadminerEntities)
+    document = setup(leadmineEntities)
 
     // highlight entities - simulates 'markup_page' message
-    const leadminerResults = getLeadminerResults(leadminerEntities)
-    TextHighlighter.wrapEntitiesWithHighlight({body: leadminerResults})
+    const leadmineResults = getLeadmineResults(leadmineEntities)
+    TextHighlighter.wrapEntitiesWithHighlight({body: leadmineResults})
 
     document.body.appendChild(Sidebar.create())
   })
 
   it('text elements in leadminerResult should be highlighted', () => {
-    const hasHighlights = leadminerEntities.every(entity => {
+    const hasHighlights = leadmineEntities.every(entity => {
       const highlightedElements = Array.from(document.getElementsByClassName(TextHighlighter.highlightClass))
 
       const isExpectedHighlightedEntityText = highlightedElements.some(highlightedElement => {
@@ -54,7 +54,7 @@ describe('integration', () => {
     const cards = Array.from(Globals.document.getElementsByClassName(cardClassName))
 
     // there should be one card per entity
-    expect(cards.length).toBe(leadminerEntities.length)
+    expect(cards.length).toBe(leadmineEntities.length)
   })
 
   it('clicking clear button should remove all cards', () => {
@@ -67,7 +67,7 @@ describe('integration', () => {
   })
 
   it('clicking remove on a card should remove that card', () => {
-    const entity = leadminerEntities[0].text
+    const entity = leadmineEntities[0].text
     clickElementForEntity(entity)
 
     const numOfCards = Array.from(document.getElementsByClassName(cardClassName)).length
@@ -80,7 +80,7 @@ describe('integration', () => {
 
   describe('occurrences', () => {
     it('occurrences count', () => {
-      const entity = leadminerEntities[0]
+      const entity = leadmineEntities[0]
       clickElementForEntity(entity.text)
       const occurrencesElement = document.getElementById(`${entity.text}-occurrences`)
       expect(occurrencesElement).toBeTruthy()
@@ -90,7 +90,7 @@ describe('integration', () => {
     })
 
     it('arrow buttons', () => {
-      const entity = leadminerEntities[0]
+      const entity = leadmineEntities[0]
       clickElementForEntity(entity.text)
       const window = Globals.document.defaultView.window
       const occurrences = Array.from(document.getElementsByClassName(TextHighlighter.highlightClass))
@@ -154,8 +154,8 @@ function clickElementForEntity(entity: string): void {
   })
 }
 
-// returns sample leadminer results for each entityText
-function getLeadminerResults(entities: LeadmineEntity[]): Object {
+// returns sample leadmine results for each entityText
+function getLeadmineResults(entities: LeadmineEntity[]): Object {
   return entities.map(entity => {
     return {
       beg: 325,

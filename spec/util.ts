@@ -11,8 +11,8 @@ export type LeadmineEntity = {
   occurrences: number
 }
 
-export function setup(leadminerEntities: LeadmineEntity[]): Document {
-  Globals.document = createDocument(leadminerEntities)
+export function setup(leadmineEntities: LeadmineEntity[]): Document {
+  Globals.document = createDocument(leadmineEntities)
   Globals.browser = new BrowserMock()
 
   // scrollIntoView will not work in test context without this
@@ -20,7 +20,7 @@ export function setup(leadminerEntities: LeadmineEntity[]): Document {
   return Globals.document
 }
 
-function createDocument(leadminerEntities: LeadmineEntity[]): Document {
+function createDocument(leadmineEntities: LeadmineEntity[]): Document {
   const document = new JSDOM('').window.document
   document.implementation.createHTMLDocument()
   var fs = require('fs')
@@ -28,7 +28,7 @@ function createDocument(leadminerEntities: LeadmineEntity[]): Document {
   document.documentElement.innerHTML = html
 
   // add to document each entity in leadminerentities 'entity.occurrences' number of times
-  leadminerEntities.forEach(entity => {
+  leadmineEntities.forEach(entity => {
     for (let i = 0; i < entity.occurrences; i++) {
       const el = document.createElement('div')
       el.innerHTML = `${entity.text}`
