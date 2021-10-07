@@ -1,7 +1,6 @@
 import {TextHighlighter} from '../src/content-script/textHighlighter';
 import {setup} from './util';
 import {Entity} from '../src/content-script/types';
-import {Globals} from '../src/content-script/globals';
 
 describe('textContainsTerm', () => {
 
