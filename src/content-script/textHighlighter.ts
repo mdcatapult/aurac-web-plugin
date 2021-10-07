@@ -3,16 +3,16 @@ import {Sidebar} from './sidebar';
 import {Card} from './card';
 import {ChemblRepresentations} from './types';
 import {ChEMBL} from './chembl';
+import {Globals} from './globals'
 import {LeadminerEntity} from '../types';
 
 export module TextHighlighter {
 
   const chemicalFormulae: chemicalFormula[] = [];
-  const highlightClass = 'aurac-highlight';
+  export const highlightClass = 'aurac-highlight';
   const highlightParentClass = 'aurac-highlight-parent';
 
   export function wrapEntitiesWithHighlight(msg: any) {
-
     // get InChI, InChIKey and SMILES input elements if we are on ChEMBL
     let chemblRepresentations: ChemblRepresentations;
     if (ChEMBL.isChemblPage()) {
@@ -79,12 +79,13 @@ export module TextHighlighter {
   }
 
   function allowedTagType(element: HTMLElement): boolean {
-    return ![HTMLScriptElement,
-      HTMLStyleElement,
-      SVGElement,
-      HTMLInputElement,
-      HTMLButtonElement,
-      HTMLAnchorElement,
+    return ![
+      Globals.document.defaultView!.HTMLScriptElement,
+      Globals.document.defaultView!.HTMLStyleElement,
+      Globals.document.defaultView!.SVGElement,
+      Globals.document.defaultView!.HTMLInputElement,
+      Globals.document.defaultView!.HTMLButtonElement,
+      Globals.document.defaultView!.HTMLAnchorElement,
     ].some(tag => element instanceof tag)
   }
 
@@ -194,7 +195,7 @@ export module TextHighlighter {
       const formulaNode = formula.formulaNode;
       if (formula.formulaText === entity.entityText) {
         try {
-          const replacementNode = document.createElement('span');
+          const replacementNode = Globals.document.createElement('span');
           // the span needs a class so that it can be deleted by the removeHighlights function
           replacementNode.className = highlightClass;
           // Retrieves the specific highlight colour to use for this NER term
@@ -217,7 +218,7 @@ export module TextHighlighter {
       // Try/catch for edge cases.
       try {
         // For each term, we want to replace its original HTML with a highlight colour
-        const replacementNode = document.createElement('span');
+        const replacementNode = Globals.document.createElement('span');
         // the span needs a class so that it can be deleted by the removeHighlights function
         replacementNode.className = highlightParentClass;
         replacementNode.innerHTML = element.nodeValue!.split(entity.entityText).join(highlightTerm(entity.entityText, entity));
@@ -230,13 +231,13 @@ export module TextHighlighter {
 
   function getSelectors(entity: string): Array<Element> {
     const allElements: Array<Element> = [];
-    allDescendants(document.body, allElements, entity);
+    allDescendants(Globals.document.body, allElements, entity);
     return allElements;
   }
 
   export function removeHighlights() {
-    Array.from(document.getElementsByClassName(highlightParentClass))
-      .concat(Array.from(document.getElementsByClassName(highlightClass)))
+    Array.from(Globals.document.getElementsByClassName(highlightParentClass))
+      .concat(Array.from(Globals.document.getElementsByClassName(highlightClass)))
       .forEach(element => {
         const childNodes = Array.from(element.childNodes);
         element.replaceWith(...childNodes);

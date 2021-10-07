@@ -1,6 +1,7 @@
 import {cardClassName, Entity} from './types';
 import {ExternalLinks, Link} from './externalLinks';
 import {CardButtons} from './cardButtons';
+import {Globals} from './globals'
 
 export module Card {
 
@@ -11,7 +12,7 @@ export module Card {
   const chemical = 'Chemical';
 
   function createListOfLinks(categoryName: string, hrefList: Array<Link>): HTMLUListElement {
-    const htmlListOfLinks: HTMLUListElement = document.createElement('ul');
+    const htmlListOfLinks: HTMLUListElement = Globals.document.createElement('ul');
     htmlListOfLinks.classList.add('aurac-mdc-href-list-style');
     hrefList.forEach(element => {
       const link: string = element.createUrl(categoryName);
@@ -22,7 +23,7 @@ export module Card {
 
   // Creates a card for a given entity
   export function create(information: Entity, synonyms: string[], listOfEntities: Entity[]): HTMLDivElement {
-    const card: HTMLDivElement = document.createElement('div');
+    const card: HTMLDivElement = Globals.document.createElement('div');
     card.className = cardClassName;
     card.id = `${cardClassName}.${information.entityText}`;
     card.style.backgroundColor = information.recognisingDict.htmlColor;
@@ -56,7 +57,7 @@ export module Card {
     modalButton.insertAdjacentHTML('beforeend', `Structure`)
     modalButton.id = `aurac-modal-open-button-${compoundName}`
     modalButton.className = 'open-modal-button'
-    modalButton.addEventListener('click', () => browser.runtime.sendMessage({type: 'open_modal', body: chemblId})
+    modalButton.addEventListener('click', () => Globals.browser.sendMessage({type: 'open_modal', body: chemblId})
     .catch(e => console.error(e)));
 
     return modalButton
@@ -67,16 +68,16 @@ export module Card {
       return;
     }
     // Remove existing xrefs
-    const xrefHolder: HTMLElement = document.getElementById(xrefs[0].compoundName + '_list')!;
+    const xrefHolder: HTMLElement = Globals.document.getElementById(xrefs[0].compoundName + '_list')!;
     while (xrefHolder.firstChild) {
       xrefHolder.removeChild(xrefHolder.lastChild!);
     }
-    const xrefParent: HTMLElement = document.getElementById(xrefs[0].compoundName)!;
+    const xrefParent: HTMLElement = Globals.document.getElementById(xrefs[0].compoundName)!;
     // Show the parent div if there are any xrefs
     xrefs.length > 0 ? xrefParent.classList.remove('aurac-mdc-hidden') : '';
     // Then add the xrefs
     xrefs.forEach(xref => {
-      const htmlListElement: HTMLLIElement = document.createElement('li');
+      const htmlListElement: HTMLLIElement = Globals.document.createElement('li');
       htmlListElement.innerHTML = `<a href=${xref.url} target="_blank" title="Link to ${xref.databaseName} reference for this entity">${xref.databaseName}</a>`;
       xrefHolder.appendChild(htmlListElement);
       const splitURLList: Array<string> = xref.url.split('/')
@@ -122,15 +123,15 @@ export module Card {
 
   // Div where any cross references will be added
   export function createCrossReferences(entityText: string): HTMLDivElement {
-    const xrefHTML: HTMLDivElement = document.createElement('div');
+    const xrefHTML: HTMLDivElement = Globals.document.createElement('div');
     xrefHTML.classList.add('aurac-mdc-hidden');
     xrefHTML.title = 'Links direct to pages on external sources for this entity';
-    const htmlParagraphElement: HTMLParagraphElement = document.createElement('p');
+    const htmlParagraphElement: HTMLParagraphElement = Globals.document.createElement('p');
     htmlParagraphElement.innerHTML = 'Cross references:';
 
     xrefHTML.id = entityText;
     xrefHTML.appendChild(htmlParagraphElement);
-    const xrefHTMLList: HTMLUListElement = document.createElement('ul');
+    const xrefHTMLList: HTMLUListElement = Globals.document.createElement('ul');
     xrefHTMLList.className = 'aurac-mdc-href-list-style';
     xrefHTMLList.id = entityText + '_list';
     xrefHTML.appendChild(xrefHTMLList);
