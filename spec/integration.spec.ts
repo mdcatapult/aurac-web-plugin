@@ -83,12 +83,17 @@ describe('integration', () => {
 
   it('hovering over a highlight should add a tooltip element', () => {
 
-    // Error: Uncaught [ReferenceError: cancelAnimationFrame is not defined]
+    const event = document.createEvent('FocusEvent')
+    event.initEvent('mouseenter', true, true);
 
-    Globals.document.defaultView.cancelAnimationFrame = (handle: number) => {}
-    const hoverEvent = new document.defaultView.MouseEvent('mouseenter');
+    // Error: Uncaught [ReferenceError: cancelAnimationFrame is not defined]
+    // the following line doesn't fix it
+    // Globals.document.defaultView.cancelAnimationFrame = (handle: number) => {}
+
+    // const hoverEvent = new document.defaultView.MouseEvent('mouseenter');
     const highlightedElement = document.getElementsByClassName(TextHighlighter.highlightClass)[0] as HTMLElement
-    highlightedElement.dispatchEvent(hoverEvent);
+    // highlightedElement.dispatchEvent(hoverEvent);
+    highlightedElement.dispatchEvent(event);
 
     expect(Array.from(highlightedElement.children).some(node => node.className.startsWith('tippy'))).toBe(true)
   })
