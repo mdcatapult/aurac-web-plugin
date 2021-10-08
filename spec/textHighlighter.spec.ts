@@ -139,7 +139,7 @@ describe('allTextNodes', () => {
 
     TextHighlighter.allTextNodes(parentNodeElement, textNodes)
 
-    expect(textNodes[0]).toEqual('C17H25Br2NO2\n')
+    expect(textNodes[0]).toEqual('C17H25Br2NO2')
   })
 
   it('given text nodes array should populate when child node has text node type', () => {

@@ -23,6 +23,8 @@ export class BrowserImplementation implements IBrowser {
             // On ChEMBL, the representations (i.e. SMILES, InChI, InChIKey) are not text nodes
             // so need to be 'manually' added to the textNodes array
             const textForNER = textNodes.concat(ChEMBL.getChemblRepresentationValues());
+
+            // Leadmine needs newline separated strings to correctly identify entities
             resolve({type: 'leadmine', body: textForNER.join('\n')});
           });
         case 'markup_page':

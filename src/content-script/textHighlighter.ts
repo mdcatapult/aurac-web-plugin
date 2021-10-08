@@ -45,7 +45,7 @@ export module TextHighlighter {
       // join text by stripping out any whitespace or return characters
       const formattedText = text.replace(/[\r\n\s]+/gm, '');
       // push chemical formula to textNodes to be NER'd
-      textNodes.push(formattedText + '\n');
+      textNodes.push(formattedText);
       chemicalFormulae.push({formulaNode: node, formulaText: formattedText});
       return;
     }
