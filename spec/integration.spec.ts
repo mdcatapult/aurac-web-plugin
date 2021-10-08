@@ -78,6 +78,24 @@ describe('integration', () => {
     expect(Array.from(document.getElementsByClassName(cardClassName)).length).toBe(numOfCards - 1)
   })
 
+
+
+
+  it('hovering over a highlight should add a tooltip element', () => {
+
+    // Error: Uncaught [ReferenceError: cancelAnimationFrame is not defined]
+
+    Globals.document.defaultView.cancelAnimationFrame = (handle: number) => {}
+    const hoverEvent = new document.defaultView.MouseEvent('mouseenter');
+    const highlightedElement = document.getElementsByClassName(TextHighlighter.highlightClass)[0] as HTMLElement
+    highlightedElement.dispatchEvent(hoverEvent);
+
+    expect(Array.from(highlightedElement.children).some(node => node.className.startsWith('tippy'))).toBe(true)
+  })
+
+
+
+
   describe('occurrences', () => {
     it('occurrences count', () => {
       const entity = leadmineEntities[0]

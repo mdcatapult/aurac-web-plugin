@@ -15,7 +15,7 @@ export function setup(leadmineEntities: LeadmineEntity[]): Document {
   Globals.document = createDocument(leadmineEntities)
   Globals.browser = new BrowserMock()
 
-  // NOTHING TO SEE HERE MOVE ALONG
+  // NOTHING TO SEE HERE MOVE ALONG ¯\_(ツ)_/¯
   // global objects need to be overwritten for the benefit of third party libraries (e.g. tippyjs)
   // @ts-ignore
   global.document! = Globals.document
