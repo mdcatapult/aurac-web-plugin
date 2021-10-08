@@ -2,17 +2,17 @@ import {chemicalFormula, Entity, ChemblRepresentations} from './types';
 import {Sidebar} from './sidebar';
 import {Card} from './card';
 import {ChEMBL} from './chembl';
+import {Globals} from './globals'
 import tippy from 'tippy.js';
 import {CardButtons} from './cardButtons';
 
 export module TextHighlighter {
 
   const chemicalFormulae: chemicalFormula[] = [];
-  const highlightClass = 'aurac-highlight';
+  export const highlightClass = 'aurac-highlight';
   const highlightParentClass = 'aurac-highlight-parent';
 
   export function wrapEntitiesWithHighlight(msg: any) {
-
     // get InChI, InChIKey and SMILES input elements if we are on ChEMBL
     let chemblRepresentations: ChemblRepresentations;
     if (ChEMBL.isChemblPage()) {
@@ -28,7 +28,7 @@ export module TextHighlighter {
         wrapChemicalFormulaeWithHighlight(entity);
         addHighlightAndEventListeners(selectors, entity);
         if (ChEMBL.isChemblPage()) {
-          ChEMBL.highlightHandler(entity, chemblRepresentations);
+          ChEMBL.highlightHandler(entity, chemblRepresentations)
         }
       });
     tippy(
@@ -88,12 +88,13 @@ export module TextHighlighter {
   }
 
   function allowedTagType(element: HTMLElement): boolean {
-    return ![HTMLScriptElement,
-      HTMLStyleElement,
-      SVGElement,
-      HTMLInputElement,
-      HTMLButtonElement,
-      HTMLAnchorElement,
+    return ![
+      Globals.document.defaultView!.HTMLScriptElement,
+      Globals.document.defaultView!.HTMLStyleElement,
+      Globals.document.defaultView!.SVGElement,
+      Globals.document.defaultView!.HTMLInputElement,
+      Globals.document.defaultView!.HTMLButtonElement,
+      Globals.document.defaultView!.HTMLAnchorElement,
     ].some(tag => element instanceof tag)
   }
 
@@ -203,7 +204,7 @@ export module TextHighlighter {
       const formulaNode = formula.formulaNode;
       if (formula.formulaText === entity.entityText) {
         try {
-          const replacementNode = document.createElement('span');
+          const replacementNode = Globals.document.createElement('span');
           // the span needs a class so that it can be deleted by the removeHighlights function
           replacementNode.className = highlightClass;
           // Retrieves the specific highlight colour to use for this NER term
@@ -217,10 +218,10 @@ export module TextHighlighter {
   }
 
   function createTooltipContent(entity: string): HTMLElement {
-    const tooltipContainer = document.createElement('span');
+    const tooltipContainer = Globals.document.createElement('span');
     //   getOccurrenceCounts must be called after populateEntityToOccurrence
     const occurrenceCount = CardButtons.getOccurrenceCounts([entity]);
-    const occurrenceCountDiv = document.createElement('div');
+    const occurrenceCountDiv = Globals.document.createElement('div');
     const occurrences = occurrenceCount === 1 ? 'occurrence' : 'occurrences';
     occurrenceCountDiv.innerHTML = `<p>${occurrenceCount} ${occurrences} of ${entity} found on the current page</p>`;
 
@@ -229,7 +230,7 @@ export module TextHighlighter {
   }
 
   function addTooltips() {
-    const highlights = Array.from(document.getElementsByClassName('aurac-highlight'));
+    const highlights = Array.from(Globals.document.getElementsByClassName('aurac-highlight'));
     highlights.forEach(highlight => {
       const highlightContent = highlight.firstChild!.textContent!;
       // we need to cast the Element as an HTMLElement in order to have access to data attributes
@@ -240,10 +241,7 @@ export module TextHighlighter {
 
   // highlights a term by wrapping it an HTML span
   const highlightTerm = (term: string, entity: Entity) => {
-    return `<span class="aurac-highlight"
-                style="background-color: ${entity.recognisingDict.htmlColor};
-                position: relative;
-                cursor: pointer">${term}</span>`;
+    return `<span class="aurac-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative; cursor: pointer">${term}</span>`;
   };
 
   function addHighlightAndEventListeners(selector: Element[], entity: Entity) {
@@ -251,7 +249,7 @@ export module TextHighlighter {
       // Try/catch for edge cases.
       try {
         // For each term, we want to replace its original HTML with a highlight colour
-        const replacementNode = document.createElement('span');
+        const replacementNode = Globals.document.createElement('span');
         // the span needs a class so that it can be deleted by the removeHighlights function
         replacementNode.className = highlightParentClass;
         replacementNode.innerHTML = element.nodeValue!.split(entity.entityText).join(highlightTerm(entity.entityText, entity));
@@ -266,13 +264,13 @@ export module TextHighlighter {
 
   function getSelectors(entity: string): Array<Element> {
     const allElements: Array<Element> = [];
-    allDescendants(document.body, allElements, entity);
+    allDescendants(Globals.document.body, allElements, entity);
     return allElements;
   }
 
   export function removeHighlights() {
-    Array.from(document.getElementsByClassName(highlightParentClass))
-      .concat(Array.from(document.getElementsByClassName(highlightClass)))
+    Array.from(Globals.document.getElementsByClassName(highlightParentClass))
+      .concat(Array.from(Globals.document.getElementsByClassName(highlightClass)))
       .forEach(element => {
         const childNodes = Array.from(element.childNodes);
         element.replaceWith(...childNodes);
