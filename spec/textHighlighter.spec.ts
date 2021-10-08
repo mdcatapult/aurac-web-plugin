@@ -27,8 +27,13 @@ describe('textContainsTerm', () => {
         expect(result).toBe(false);
       });
 
-      it('returns false given there is empty text', () => {
+      it('returns false given there is a space within the text', () => {
         let result = TextHighlighter.textContainsTerm(' ', term)
+        expect(result).toBe(false);
+      });
+
+      it('returns false given there is empty text', () => {
+        let result = TextHighlighter.textContainsTerm('', term)
         expect(result).toBe(false);
       });
 
