@@ -116,7 +116,7 @@ export const defaultSettings: Settings = {
   xRefConfig: {},
   preferences: {
     minEntityLength: 2,
-    dictionary: 'proteins',
+    dictionary: 'genes and proteins',
   }
 };
 
