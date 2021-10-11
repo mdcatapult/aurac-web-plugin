@@ -313,7 +313,7 @@ export class BackgroundComponent {
     const uniqueEntities = new Array<LeadminerEntity>();
     leadmineResponse.forEach((entity: LeadminerEntity) => {
         if (this.shouldDisplayEntity(entity)) {
-          if (uniqueEntities.every(uniqueEntity => uniqueEntity.entityText !== entity.entityText)) {
+          if (!uniqueEntities.some(uniqueEntity => uniqueEntity.entityText === entity.entityText)) {
             uniqueEntities.push(entity);
           }
         }
