@@ -1,1 +1,1 @@
-export type validDict = 'genes and proteins' | 'chemical entities' | 'general' | 'diseases';
+export type validDict = 'genes and proteins' | 'chemical entities' | 'diseases';
