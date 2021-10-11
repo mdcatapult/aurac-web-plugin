@@ -3,7 +3,7 @@ import {Sidebar} from './sidebar';
 import {Card} from './card';
 import {ChemblRepresentations} from './types';
 import {ChEMBL} from './chembl';
-import {EntityTextBlacklist, EntityGroupBlacklist, AbbreviationsNotGeneNames} from "./blacklist";
+import {EntityTextBlacklist, EntityGroupBlacklist, AbbreviationsNotGeneNames} from './blacklist';
 
 export module TextHighlighter {
 
