@@ -55,13 +55,13 @@ export type LeadminerEntity = {
   endInNormalizedDoc: number;
   entityText: string;
   possiblyCorrectedText: string;
-  recognisingDict: Dictionary;
+  recognisingDict: LeadminerDictionary;
   resolvedEntity: string;
   sectionType: string;
   entityGroup: string;
 };
 
-export type Dictionary = {
+export type LeadminerDictionary = {
   enforceBracketing: boolean;
   entityType: string;
   htmlColor: string;

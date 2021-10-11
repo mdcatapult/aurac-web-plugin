@@ -20,6 +20,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {PDFSelectorComponent} from './pdfselector/pdfselector.component'
 import {PreferencesComponent} from './preferences/preferences.component';
 import {MatRadioModule, MAT_RADIO_DEFAULT_OPTIONS} from '@angular/material/radio';
+import {MatCardModule} from '@angular/material/card';
 import { CommonModule } from '@angular/common';
 import { SidebarComponent } from './sidebar/sidebar.component';
 
@@ -57,7 +58,8 @@ const routes: Routes = [
     MatIconModule,
     MatInputModule,
     MatFormFieldModule,
-    MatRadioModule
+    MatRadioModule,
+    MatCardModule
   ],
   providers: [
     {

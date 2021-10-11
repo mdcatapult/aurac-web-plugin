@@ -2,16 +2,22 @@
   color: black;
   font-family: Arial, sans-serif;
   font-size: 14px;
-  background: rgb(192,192,192);
+  background: rgb(255,255,255);
   position: fixed;
   z-index: 2147483647;
   height: 100vh;
   top: 0;
   width: 20vw;
-  border-right: 2px solid black;
-  padding: 5px;
-  overflow-wrap: break-word;
-  overflow-y: scroll;
+  box-shadow: 0px 10px 5px grey;
+  overflow: hidden;
+  display: flex;
+}
+
+.aurac-iframe {
+  flex-grow: 1;
+  border: none;
+  margin: 0;
+  padding: 10px;
 }
 
 .aurac-sidebar--collapsed {
@@ -204,8 +210,4 @@ body.aurac-modal-open {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
-}
-
-iframe {
-  border-width: 0px;
 }
