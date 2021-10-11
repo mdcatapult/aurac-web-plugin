@@ -259,16 +259,26 @@ export class BackgroundComponent {
         console.log('Sending page contents to leadmine...');
         let queryParams: HttpParams = new HttpParams()
           .set('inchikey', 'false');
-        if (dictionary === 'chemical-inchi') {
-          dictionary = 'chemical-entities';
-          queryParams = new HttpParams().set('inchikey', 'true');
+        let dictionaryPath: string
+
+        switch (dictionary) {
+          case 'genes and proteins':
+            dictionaryPath = 'proteins'
+            break
+          case 'chemical entities':
+            queryParams = new HttpParams().set('inchikey', 'true')
+            dictionaryPath = 'chemical-entities'
+            break;
+          default:
+            dictionaryPath = dictionary
         }
-        const leadmineURL = `${this.settings.urls.leadmineURL}${environment.production ? `/${dictionary}` : ''}/entities`;
+
+        const leadmineURL = `${this.settings.urls.leadmineURL}${environment.production ? `/${dictionaryPath}` : ''}/entities`;
 
         this.client.post<LeadminerResult>(
           leadmineURL,
           result.body,
-          {observe: 'response', params: queryParams})
+        {observe: 'response', params: queryParams})
           .subscribe((response) => {
             console.log('Received results from leadmine...');
             if (!response.body || !response.body.entities) {

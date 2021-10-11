@@ -10,7 +10,7 @@ export class PreferencesComponent implements OnInit {
 
   minEntityLength = [...Array(50).keys()].slice(2)
   isLoaded = false;
-  dictionaries = ['proteins', 'chemical-entities', 'diseases', 'general']
+  dictionaries = ['genes and proteins', 'chemical entities', 'diseases', 'general']
 
   @Input() preferencesForm?: FormGroup;
 
