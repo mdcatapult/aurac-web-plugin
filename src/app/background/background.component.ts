@@ -309,8 +309,8 @@ export class BackgroundComponent {
     return (entity && entity.entityText.length >= this.settings.preferences.minEntityLength);
   }
 
-  getUniqueEntities(leadmineResponse: Array<LeadminerEntity>): Array<LeadminerEntity> {
-    const uniqueEntities = new Array<LeadminerEntity>();
+  getUniqueEntities(leadmineResponse: LeadminerEntity[]): LeadminerEntity[] {
+    const uniqueEntities: LeadminerEntity[] = [];
     leadmineResponse.forEach((entity: LeadminerEntity) => {
         if (this.shouldDisplayEntity(entity)) {
           if (!uniqueEntities.some(uniqueEntity => uniqueEntity.entityText === entity.entityText)) {
