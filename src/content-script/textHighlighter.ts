@@ -3,12 +3,18 @@ import {Sidebar} from './sidebar';
 import {Card} from './card';
 import {ChemblRepresentations} from './types';
 import {ChEMBL} from './chembl';
+import {EntityTextBlacklist, EntityGroupBlacklist, AbbreviationsNotGeneNames} from "./blacklist";
 
 export module TextHighlighter {
 
   const chemicalFormulae: chemicalFormula[] = [];
   const highlightClass = 'aurac-highlight';
   const highlightParentClass = 'aurac-highlight-parent';
+
+  // It is common for Gene names to be all uppercase
+  function potentialGeneNameAnalyser(entityText: string): boolean {
+    return entityText === entityText.toUpperCase()
+  }
 
   export function wrapEntitiesWithHighlight(msg: any) {
 
@@ -23,13 +29,21 @@ export module TextHighlighter {
     msg.body.sort((a: Entity, b: Entity) => b.entityText.length - a.entityText.length)
       .map((entity: Entity) => {
 
+        // filter with blacklists and consider if entity is a potential gene name or an all uppercase abbreviation
+        const entityTextBlacklistInclusion: boolean = EntityTextBlacklist[entity.entityText.toLowerCase()]
+        const entityGroupBlacklistInclusion: boolean = EntityGroupBlacklist[entity.entityGroup.toLowerCase()]
+        const abbreviationNotGeneName: boolean = AbbreviationsNotGeneNames[entity.entityText]
+        const potentialGeneName: boolean = potentialGeneNameAnalyser(entity.entityText)
+        
+        if ((!entityGroupBlacklistInclusion && !entityTextBlacklistInclusion) || (potentialGeneName && !abbreviationNotGeneName)) {
         const selectors = getSelectors(entity.entityText);
         wrapChemicalFormulaeWithHighlight(entity);
         addHighlightAndEventListeners(selectors, entity);
         if (ChEMBL.isChemblPage()) {
           ChEMBL.highlightHandler(entity, chemblRepresentations)
         }
-      });
+      }
+    });
   }
 
   // Recursively find all text nodes which match regex
