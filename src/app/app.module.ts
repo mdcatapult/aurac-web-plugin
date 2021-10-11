@@ -21,6 +21,7 @@ import {PDFSelectorComponent} from './pdfselector/pdfselector.component'
 import {PreferencesComponent} from './preferences/preferences.component';
 import {MatRadioModule, MAT_RADIO_DEFAULT_OPTIONS} from '@angular/material/radio';
 import { CommonModule } from '@angular/common';
+import { SidebarComponent } from './sidebar/sidebar.component';
 
 
 const routes: Routes = [
@@ -39,6 +40,7 @@ const routes: Routes = [
     SettingsComponent,
     PreferencesComponent,
     PDFSelectorComponent,
+    SidebarComponent,
   ],
   imports: [
     CommonModule,

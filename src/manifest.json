@@ -33,6 +33,7 @@
     "128": "assets/head-brains.icon.128.png"
   },
   "web_accessible_resources": [
-    "assets/head-brains.png"
+    "assets/head-brains.png",
+    "index.html"
   ]
 }
