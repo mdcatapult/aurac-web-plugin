@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
-import {defaultSettings, Message, MessageType, Settings, StringMessage} from '../types';
+import {Injectable} from '@angular/core';
+import {defaultSettings, LeadmineMessage, LeadminerEntity, LeadmineResult, Message, MessageType, Settings, StringMessage} from '../types';
 import {LogService} from './popup/log.service';
 import Tab = browser.tabs.Tab;
+import {EntityCache} from '../types';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +29,7 @@ export class BrowserService {
     return browser.tabs.sendMessage<Message, StringMessage>(tabId, message);
   }
 
-  sendMessageToActiveTab(msg: Message): Promise<void | StringMessage> {
+  sendMessageToActiveTab(msg: Message): Promise<void | StringMessage | LeadmineMessage> {
     return this.getActiveTab().then(tab => this.sendMessageToTab(tab.id!, msg));
   }
 
@@ -45,4 +46,30 @@ export class BrowserService {
       (err) => this.log.Log(`error loading settings', ${JSON.stringify(err)}`)
     ) as Promise<Settings>
   }
+
+  saveEntityCache(urlToEntityMap: string): void {
+    browser.storage.local.set({urlToEntityMap}).then(
+      () => {},
+      (err) => this.log.Log(`error saving settings for URLEntityMap', ${err}`)
+    )
+  }
+
+  loadEntityCache(): Promise<EntityCache> {
+    return browser.storage.local.get('urlToEntityMap').then(
+      (storage) => {
+        function reader(key: string, value: any) {
+          if (typeof value === 'object' && value !== null) {
+            if (value.dataType === 'Map') {
+              return new Map(value.value);
+            }
+          }
+          return value;
+        }
+        const entityCache = new Map(JSON.parse(storage?.urlToEntityMap! as string, reader))
+        return Promise.resolve(entityCache)
+      },
+      (err) => this.log.Log(`error loading urlToEntityMap', ${JSON.stringify(err)}`)
+    ) as Promise<EntityCache>
+  }
 }
+

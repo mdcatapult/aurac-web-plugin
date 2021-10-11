@@ -2,36 +2,49 @@ import {Entity} from './types';
 import {Card} from './card';
 import {SidebarButtons} from './sidebarButtons';
 import {CardButtons} from './cardButtons';
+import {Globals} from './globals'
 
 export module Sidebar {
 
   const listOfEntities: Entity[] = []
-  const cardContainer = document.createElement('div');
-  const toolsContainer = document.createElement('div');
+  let cardContainer: HTMLElement
+  let toolsContainer: HTMLElement
 
   let toggleButtonElement: HTMLButtonElement;
   let clearButtonElement: HTMLButtonElement;
+  export const clearButtonId = 'aurac-clear-button'
   let downloadResultsButtonElement: HTMLButtonElement;
+
+  export const sidebarClass = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed'
+
+  export const narrativeId = 'aurac-narrative'
+  export const toolsId = 'aurac-sidebar-tools'
 
   export function create(): HTMLElement {
 
+    cardContainer = Globals.document.createElement('div');
+    cardContainer.id = 'card-container'
+    toolsContainer = Globals.document.createElement('div');
+
+
     const [logo, logoText] = createLogo();
 
-    const sidebar = document.createElement('span');
+    const sidebar = Globals.document.createElement('span');
     sidebar.appendChild(logo);
     sidebar.appendChild(logoText);
     sidebar.appendChild(toolsContainer)
-    sidebar.className = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed';
+    sidebar.className = sidebarClass
 
     toggleButtonElement = SidebarButtons.createToggleButton();
     clearButtonElement = SidebarButtons.createClearButton(listOfEntities);
+    clearButtonElement.id = clearButtonId
     downloadResultsButtonElement = SidebarButtons.createDownloadResultsButton(listOfEntities);
 
     sidebar.appendChild(toggleButtonElement);
-    sidebar.appendChild(clearButtonElement);
     sidebar.appendChild(cardContainer);
 
     toolsContainer.className = 'aurac-sidebar-tools'
+    toolsContainer.id = toolsId
     toolsContainer.appendChild(clearButtonElement);
     toolsContainer.appendChild(downloadResultsButtonElement);
 
@@ -43,15 +56,15 @@ export module Sidebar {
   }
 
   function createLogo(): [HTMLImageElement, HTMLHeadingElement] {
-    const auracLogo = document.createElement('img');
-    const logoText = document.createElement('h4');
+    const auracLogo = Globals.document.createElement('img');
+    const logoText = Globals.document.createElement('h4');
     logoText.style.color = '#b9772e';
     auracLogo.className = 'aurac-logo';
     // @ts-ignore
-    auracLogo.src = browser.runtime.getURL('assets/head-brains.png');
+    auracLogo.src = Globals.browser.getURL('assets/head-brains.png');
 
     logoText.innerText = 'Click on a highlighted entity to display further information and links below...';
-    logoText.id = 'aurac-narrative';
+    logoText.id = narrativeId;
 
     return [auracLogo, logoText];
   }
@@ -86,13 +99,19 @@ export module Sidebar {
         downloadResultsButtonElement = SidebarButtons.toggleDownloadButton(true);
 
         // @ts-ignore
-        browser.runtime.sendMessage({type: 'compound_x-refs', body: [info.entityText, info.resolvedEntity, 
-          info.entityGroup, info.recognisingDict.entityType]})
-          .catch(e => console.error(e));
-      } else { // entity is a synonym of existing sidecard
-        const synonyms = SidebarButtons.entityToCard.get(entityId)!.synonyms;
+        Globals.browser.sendMessage({
+          type: 'compound_x-refs',
+          body: [info.entityText, info.resolvedEntity, info.entityGroup, info.recognisingDict.entityType]
+        }).catch(e => console.error(e));
 
-        if (!synonyms.includes(info.entityText)) {
+      } else { // entity is a synonym of existing sidecard
+        const synonyms = SidebarButtons.entityToCard.get(entityId)!.synonyms
+
+        const lowerCaseSynonyms = synonyms.map(syn => syn.toLowerCase());
+        const lowerCaseEntityText = info.entityText.toLowerCase()
+
+        // prevent adding entity text to synonyms with the same characters but different case
+        if (!lowerCaseSynonyms.includes(lowerCaseEntityText)) {
           synonyms.push(info.entityText);
 
           let synonymOccurrences: Element[] = [];
@@ -100,10 +119,19 @@ export module Sidebar {
             synonymOccurrences = synonymOccurrences.concat(CardButtons.entityToOccurrence.get(synonym)!);
           });
           synonymOccurrences.sort((a, b) => a.getBoundingClientRect().y - b.getBoundingClientRect().y);
+
+
           CardButtons.entityToOccurrence.set(entityId, synonymOccurrences);
           SidebarButtons.entityToCard.get(entityId)!.div.replaceWith(Card.create(info, synonyms, listOfEntities));
+
+          // @ts-ignore
+          Globals.browser.sendMessage({
+            type: 'compound_x-refs',
+            body: [info.entityText, info.resolvedEntity, info.entityGroup, info.recognisingDict.entityType]
+          }).catch(e => console.error(e));
         }
       }
+
       const div = SidebarButtons.entityToCard.get(info.entityText)?.div;
       if (div) {
         div.scrollIntoView({behavior: 'smooth'});

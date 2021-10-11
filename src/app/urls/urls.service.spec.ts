@@ -23,7 +23,7 @@ describe('SettingsService', () => {
       pdfConverterURL: '/fwepij',
     };
 
-    expect(UrlsService.validURLs(invalidUrls)).toBeFalse();
+    expect(UrlsService.validURLs(invalidUrls)).toBeFalsy();
   });
 
   it('should return false given some valid and invalid URLs', () => {
@@ -34,7 +34,7 @@ describe('SettingsService', () => {
       pdfConverterURL: 'http://a-legit-url',
     };
 
-    expect(UrlsService.validURLs(validURLs)).toBeFalse();
+    expect(UrlsService.validURLs(validURLs)).toBeFalsy();
   });
 
   it('should return true given valid URLs', () => {
@@ -56,6 +56,6 @@ describe('SettingsService', () => {
 
     const urlsWithInvalidKey = JSON.parse(invalidJsonString) as DictionaryURLs;
 
-    expect(UrlsService.validURLs(urlsWithInvalidKey)).toBeFalse();
+    expect(UrlsService.validURLs(urlsWithInvalidKey)).toBeFalsy();
   });
 });

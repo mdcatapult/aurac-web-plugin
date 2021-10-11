@@ -4,12 +4,14 @@ import {Card} from './card';
 import {ChemblRepresentations} from './types';
 import {ChEMBL} from './chembl';
 import {EntityTextBlacklist, EntityGroupBlacklist, AbbreviationsNotGeneNames} from './blacklist';
+import {Globals} from './globals';
+import {LeadminerEntity} from '../types';
 
 export module TextHighlighter {
 
   const chemicalFormulae: chemicalFormula[] = [];
-  const highlightClass = 'aurac-highlight';
-  const highlightParentClass = 'aurac-highlight-parent';
+  export const highlightClass = 'aurac-highlight';
+  export const highlightParentClass = 'aurac-highlight-parent';
 
   // It is common for Gene names to be all uppercase
   function potentialGeneNameAnalyser(entityText: string): boolean {
@@ -17,7 +19,6 @@ export module TextHighlighter {
   }
 
   export function wrapEntitiesWithHighlight(msg: any) {
-
     // get InChI, InChIKey and SMILES input elements if we are on ChEMBL
     let chemblRepresentations: ChemblRepresentations;
     if (ChEMBL.isChemblPage()) {
@@ -59,7 +60,7 @@ export module TextHighlighter {
       // join text by stripping out any whitespace or return characters
       const formattedText = text.replace(/[\r\n\s]+/gm, '');
       // push chemical formula to textNodes to be NER'd
-      textNodes.push(formattedText + '\n');
+      textNodes.push(formattedText);
       chemicalFormulae.push({formulaNode: node, formulaText: formattedText});
       return;
     }
@@ -70,10 +71,7 @@ export module TextHighlighter {
         if (isNodeAllowed(element)) {
           if (element.nodeType === Node.TEXT_NODE) {
             textNodes.push(element.textContent + '\n');
-          } else if (!element.classList.contains('tooltipped') &&
-            !element.classList.contains('tooltipped-click') &&
-            !element.classList.contains('aurac-sidebar') &&
-            element.style.display !== 'none') {
+          } else if (allowedClassList(element)) {
             allTextNodes(element, textNodes);
           }
         }
@@ -85,6 +83,14 @@ export module TextHighlighter {
     }
   }
 
+  // Returns true if classlist does not contain any forbidden classes
+  function allowedClassList(element: HTMLElement): boolean {
+    return !element.classList.contains('tooltipped') &&
+      !element.classList.contains('tooltipped-click') &&
+      !element.classList.contains('aurac-sidebar') &&
+      element.style.display !== 'none'
+  }
+
   // Only allow nodes that we can traverse or add children to
   function isNodeAllowed(element: HTMLElement): boolean {
     return element.nodeType !== Node.COMMENT_NODE && element.nodeType !== Node.CDATA_SECTION_NODE
@@ -92,33 +98,31 @@ export module TextHighlighter {
   }
 
   function allowedTagType(element: HTMLElement): boolean {
-    return ![HTMLScriptElement,
-      HTMLStyleElement,
-      SVGElement,
-      HTMLInputElement,
-      HTMLButtonElement,
-      HTMLAnchorElement,
+    return ![
+      Globals.document.defaultView!.HTMLScriptElement,
+      Globals.document.defaultView!.HTMLStyleElement,
+      Globals.document.defaultView!.SVGElement,
+      Globals.document.defaultView!.HTMLInputElement,
+      Globals.document.defaultView!.HTMLButtonElement,
+      Globals.document.defaultView!.HTMLAnchorElement,
     ].some(tag => element instanceof tag)
   }
 
   // TODO maybe remove this when we can select via data attribute?
   // Recursively find all text nodes which match entity
-  function allDescendants(node: HTMLElement, elements: Array<Element>, entity: string) {
-      if ((node && node.classList && node.classList.contains('aurac-sidebar')) || !allowedTagType(node)) {
+  export function allDescendants(element: HTMLElement, elements: Array<Element>, entity: string) {
+    if ((element && (element.classList && !allowedClassList(element) || !allowedTagType(element)))) {
         return;
       }
-      try {
-        node.childNodes.forEach(child => {
-          const element = child as HTMLElement;
-          if (isNodeAllowed(element) && element.nodeType === Node.TEXT_NODE) {
-            if (textContainsTerm(element.nodeValue!, entity)) {
-              elements.push(element);
+    try {
+      element.childNodes.forEach(child  => {
+        const childElement = child as HTMLElement;
+        if (isNodeAllowed(childElement) && childElement.nodeType === Node.TEXT_NODE) {
+            if (textContainsTerm(childElement.nodeValue!, entity)) {
+              elements.push(childElement);
             }
-            // tslint:disable-next-line:max-line-length
-          } else if (element.classList && !element.classList.contains('tooltipped')
-            && !element.classList.contains('tooltipped-click')
-            && element.style.display !== 'none') {
-            allDescendants(element, elements, entity);
+          } else {
+            allDescendants(childElement, elements, entity);
           }
         });
       } catch (e) {
@@ -128,12 +132,12 @@ export module TextHighlighter {
       }
     }
 
-  const delimiters: string[] = ['(', ')', '\\n', '\"', '\'', '\\', ',', ';', '.', '!'];
+  export const delimiters: string[] = ['(', ')', '\\n', '\"', '\'', '\\', ',', ';', '.', '!'];
 
   // Returns true if a string contains at least one instance of a particular term between word boundaries, i.e. not immediately
   // followed or preceded by either a non white-space character or one of the special characters in the delimiters array.
   // Can handle non latin unicode terms which at the moment JS Regex can't.
-  function textContainsTerm(text: string, term: string): boolean {
+  export function textContainsTerm(text: string, term: string): boolean {
     const startsWithWhiteSpaceRegex = /^\s+.*/;
     const endsWithWhiteSpaceRegex = /.*\s+$/;
     let currentText = '';
@@ -207,7 +211,7 @@ export module TextHighlighter {
       const formulaNode = formula.formulaNode;
       if (formula.formulaText === entity.entityText) {
         try {
-          const replacementNode = document.createElement('span');
+          const replacementNode = Globals.document.createElement('span');
           // the span needs a class so that it can be deleted by the removeHighlights function
           replacementNode.className = highlightClass;
           // Retrieves the specific highlight colour to use for this NER term
@@ -225,12 +229,12 @@ export module TextHighlighter {
     return `<span class="aurac-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative; cursor: pointer">${term}</span>`;
   };
 
-  function addHighlightAndEventListeners(selector: Element[], entity: Entity) {
-    selector.map(element => {
+  export function addHighlightAndEventListeners(selector: Element[], entity: Entity) {
+    selector.forEach(element => {
       // Try/catch for edge cases.
       try {
         // For each term, we want to replace its original HTML with a highlight colour
-        const replacementNode = document.createElement('span');
+        const replacementNode = Globals.document.createElement('span');
         // the span needs a class so that it can be deleted by the removeHighlights function
         replacementNode.className = highlightParentClass;
         replacementNode.innerHTML = element.nodeValue!.split(entity.entityText).join(highlightTerm(entity.entityText, entity));
@@ -243,20 +247,20 @@ export module TextHighlighter {
 
   function getSelectors(entity: string): Array<Element> {
     const allElements: Array<Element> = [];
-    allDescendants(document.body, allElements, entity);
+    allDescendants(Globals.document.body, allElements, entity);
     return allElements;
   }
 
   export function removeHighlights() {
-    Array.from(document.getElementsByClassName(highlightParentClass))
-      .concat(Array.from(document.getElementsByClassName(highlightClass)))
+    Array.from(Globals.document.getElementsByClassName(highlightParentClass))
+      .concat(Array.from(Globals.document.getElementsByClassName(highlightClass)))
       .forEach(element => {
         const childNodes = Array.from(element.childNodes);
         element.replaceWith(...childNodes);
       });
   }
 
-  function elementHasHighlightedParents(entity: Element): boolean {
+  export function elementHasHighlightedParents(entity: Element): boolean {
     const parent = entity.parentElement
     const grandparent = parent?.parentElement
     return !!(parent?.classList.contains(highlightClass) || grandparent?.classList.contains(highlightClass))
