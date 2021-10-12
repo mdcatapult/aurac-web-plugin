@@ -1,0 +1,207 @@
+# Aurac architecture proposal
+
+The main aim here is to split everything down in to *tiny* services and components, each of which having a *single responsibility*. 
+
+Another big reason for this is that with iframes the sidebar and main content can no longer share data. Therefore, all data must be managed via the background page (Angular is good at this, so this is a good thing).
+
+## Conventions
+* Browser messages:
+    * Message types must be lower cased, snake cased versions of the service
+    component name and function name to which they correspond (and no logic should be performed within switch statements). For example, `SettingsService.saveSettings` would be `settings_service_save_settings`.
+    * Components/services should handle their own messages (or have a dedicated messenger service if they become too complicated).
+    * Messages to the content script should be prefixed with `content_script`, e.g. `content_script_scroll_to_id`.
+    * Message body should become strongly typed. We should know exactly the type for each message. This can be an intersection of many types.
+
+## New services
+
+* `EntityService`: This service is for managing entity data. It keeps track of which entities are on which page, which occurrences are highlighted (and where), which entities are displayed in the sidebar, etc. It is not responsible for anything else, so it doesn't listen to or send browser messages or do any fetching. 
+    * Variables:
+        ```typescript
+        // Map of page id to a map of dictionaries to a map of entityText (string) to entities. 
+        private entityMap: Map<PageID,PageEntities>;
+
+        // Subscribers to this observable can reload data or send appropiate messages if this is important to them.
+        readonly changeStream: Observable<EntityChange>;
+        ```
+    * Methods:
+        ```typescript
+        // Return the entityMap.
+        getEntities(): Map<PageID, PageEntities>;
+
+        // Get entities for a page.
+        getPageEntities(pageId: PageID): PageEntities;
+        
+        // Set entities on a page. Setters must call `this.changeStream.next` with the correct value.
+        setPageEntities(pageId: PageID, entities: PageEntities): void;
+
+        // Get entities for a dictionary on a page.
+        getDictionaryEntities(dictionaryId: DictionaryID): DictionaryEntities;
+        
+        // Set dictionary entities. Set "show" to false for any other dictionary entities we may have (unless we're highlighting multiple dictionaries in future). Setters must call `this.changeStream.next` with the correct value.
+        setDictionaryEntities(dictionaryId: DictionaryID, entities: DictionaryEntities);
+
+        // Get an entity.
+        getEntity(entityId: EntityID): Entity;
+        
+        // Set an entity. Setters must call `this.changeStream.next` with the correct value.
+        setEntity(entityId: EntityID, entity: Entity): void;
+
+        // Set occurrences. Setters must call `this.changeStream.next` with the correct value.
+        setOccurrences(entityId: EntityID, occurrences: Array<string>);
+        
+        // Add occurrence. Setters must call `this.changeStream.next` with the correct value.
+        addOccurrence(entityId: EntityID, occurrence: string);
+
+        // Set the entity show value. Setters must call `this.changeStream.next` with the correct value.
+        setEntityVisibility(entityId: EntityID, show: boolean);
+        ```
+
+* `EntityMessengerService`: This service sits between the `EntityService` and the sidebar/content script. It's job is to interpret and relay messages between the two. *This service must be injected into the background page*.
+    * Methods:
+        ```typescript
+        // This is a callback for entityService.subscribe (e.g. in the entity messenger constructor, we will do `entityService.changeStream.subscribe(this.handleEntityChanges)`). If there are changes to the entity data, this function would be responsible for forwarding any required information to the tab.
+        private handleEntityChanges(change: EntityChange): void;
+        
+        // This function is a callback for browserService.addListener (e.g. in the entity messenger constructor, we will do `browserService.addListener(this.handleRuntimeMessages)`). When the tab makes changes to the page, it should send a message to update the entities. Message types will be lowercased and snakecased versions of the entityService method names. For example, to add an entity highlight the message type should be `entity_service_add_entity_highlight` and the body will be an object containing the function arguments.
+        private handleRuntimeMessages(): void;
+        ```
+* `NERService`: This is the service we will use for calling leadmine/ner-api. When the results come back we must set their value in the `EntityService` before returning to the caller. *This service must be injected into the background page*.
+    * Methods:
+        ```typescript
+        // This is a callback for browserService.addListener. It will handle 'ner_service_process_current_page' ('ner_current_page') by calling `processCurrentPage`.
+        private handleRuntimeMessage(): void;
+
+        // Processes the given page to find entities for the given dictionary. Returns a promise of the dictionary entities.
+        private processText(text: string, dictionary: Dictionary): Promise<LeadminerResult>;
+        
+        // Returns a copy of the input based on uniqueness of the entityText.
+        private getUniqueEntities(entities: Array<LeadminerEntity>): Array<LeadminerEntity>; 
+
+        // Gets the current page id, url, and contents, and processes it with the currently configured dictionary. This function must call `entityService.setDictionaryEntities`. 
+        processCurrentPage(): void;
+        ```
+* `CSVService`: Service for all CSV logic.
+* `CrossReferenceService`: Service for cross-references.
+* `ModalService`: Handles modal logic and data (to open/close the modal a bunch of messages will need to be sent between the sidebar, modal, and background-script).
+
+## Service updates
+* `BrowserService`: This is doing some stuff with settings that it shouldn't be responsible for. We'll remove that and make it a very *very* light wrapper around the browser API for mocking purposes only.
+* `SettingsService`: This service will hold all of the settings data (and load/save it via the browser service). We will use a very useful pattern I discovered a while back (for the doclib UI):
+    ```typescript
+    private readonly _minimumEntityLength = new BehaviorSubject<number>(3);
+    
+    readonly minimumEntityLength$ = this._minimumEntityLength.asObservable();
+    
+    get minimumEntityLength(): number {
+        return this._minimumEntityLength.getValue();
+    }
+
+    set minimumEntityLength(entityLength: number): void {
+        // You can perform checks here.
+        this._minimumEntityLength.next(number);
+    }
+    ```
+    Having getters and setters combined with the behavior subject like this means that clients of the settings service (i.e. the settings component) can get the `minimumEntityLength` with `settingsService.minimumEntityLength`, and can a the new `minimumEntityLength` with `settingsService.minimumEntityLength = 4`. Subscribers can use the observable to react to changes e.g.:
+    ```typescript
+    // entity-card.component.ts
+    settingsService.minimumEntityLength$.subscribe((newEntityLength) => {
+        this.show = this.entity.leadminerEntity.entityText >= newEntityLength;
+    });
+    ```
+
+## New components
+* `SidebarComponent`: Container for sidebar with `open` and `close` methods (plus `exportCSV` etc.).
+* `SidebarHeaderComponent`: Navigation and headings for the sidebar.
+* `EntityListComponent`: Handles updates to the entities that should be shown on the page. Uses an `ngFor` to render the entity cards. 
+* `EntityCardComponent`: Nicely renders an input entity.
+* `ModalComponent`: Renders the modal based on data from the modal service.
+
+## Script updates
+The modal and sidebar can now be moved to angular. I recommend that whatever remains becomes stateless, i.e. it doesn't hold any data, it just receives messages to execute functions. Some ideas for functions:
+```typescript
+// handle all brwoser messages by delegating to other functions.
+handleTabMessages(): void;
+
+// creates the sidebar button
+createButton(): void;
+
+// Simple function scrolls to the element.
+scrollToId(id: string): void;
+
+// opens and closes the sidebar
+openSidebar(): void;
+closeSideber(): void;
+
+// Sets modal iframe visibility
+openModal(): void;
+closeModal(): void;
+
+// Calls highlightEntity with each entity. Uses returned ids to set browser events.
+// Must call `entity_service_set_occurrences` with the ids.
+highlightEntities(entities: Array<string>): void;
+
+// create and remove the spinner.
+createSpinner(): void;
+removeSpinner(): void;
+
+// returns ids of highlight spans.
+private highlightEntity(entityName: string): Array<string>;
+
+// Handles things like closing the modal when clicking/tabbing out.
+private handleDOMEvents(): void;
+```
+
+## New types
+
+```typescript
+// Entity is a wrapper for a leadminer entity with any extra functional
+// information.
+interface Entity {
+  leadminerEntity: LeadminerEntity;
+  occurrences: Array<string>; // containes the id's of highlighted spans.
+  show: boolean; // whether to show in sidebar.
+  // Other stuff should go here - e.g. cross references.
+}
+
+// Dictionary (there is already a type for this, this is here for
+// illustration).
+type Dictionary = 'gene_protein' | 'chemicals' | 'general' | 'diseases';
+
+// DictionaryEntities is a wrapper for all the entities found when running NER.
+interface DictionaryEntities {
+    show: boolean;
+    entities: Map<string, Entity>;
+}
+
+// Holds all entities on a page in valid dictionaries.
+type PageEntities = {
+    [key in Dictionary]?: DictionaryEntities;
+}
+
+// PageID uniquely identifies a page by it's tab and url.
+interface PageID {
+    tab: number;
+    url: string;
+}
+
+interface DictionaryID extends PageID {
+    dictionary: Dictionary;
+}
+
+interface EntityID extends DictionaryID {
+    entityName: string;
+}
+
+interface OccurrenceID extends EntityID {
+    occurrenceId: string;
+}
+
+type ChangeIdentifier = PageID | DictionaryID | EntityID | OccurrenceID
+
+// EntityChange describes where a change to the cache has been made and the 
+// result of the change.
+interface EntityChange {
+    identifier: ChangeIdentifier;
+    result: PageEntities | DictionaryEntities | Map<string, Entity> | Entity;
+}
+```
