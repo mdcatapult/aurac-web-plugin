@@ -2,7 +2,9 @@ import {chemicalFormula, Entity, ChemblRepresentations} from './types';
 import {Sidebar} from './sidebar';
 import {Card} from './card';
 import {ChEMBL} from './chembl';
-import {Globals} from './globals'
+import {EntityTextBlacklist, EntityGroupBlacklist, AbbreviationsNotGeneNames} from './blacklist';
+import {Globals} from './globals';
+import {LeadminerEntity} from '../types';
 import tippy, {Instance} from 'tippy.js';
 import {CardButtons} from './cardButtons';
 
@@ -11,6 +13,26 @@ export module TextHighlighter {
   const chemicalFormulae: chemicalFormula[] = [];
   export const highlightClass = 'aurac-highlight';
   export const highlightParentClass = 'aurac-highlight-parent';
+
+  function blacklistedEntityText(entityText: string): boolean {
+    return EntityTextBlacklist[entityText.toLowerCase()];
+  }
+
+  function blacklistedEntityGroup(entityGroup: string): boolean {
+    return EntityGroupBlacklist[entityGroup.toLowerCase()];
+  }
+
+  function abbrevationNotGeneName(entityText: string): boolean {
+    return AbbreviationsNotGeneNames[entityText];
+  }
+
+  // It is common for Gene names to be all uppercase
+  function isPotentialGeneName(entityText: string): boolean {
+    if (!abbrevationNotGeneName(entityText)) {
+      return entityText === entityText.toUpperCase();
+    }
+    return false;
+  }
 
   export function wrapEntitiesWithHighlight(msg: any): Instance[] {
     // get InChI, InChIKey and SMILES input elements if we are on ChEMBL
@@ -23,12 +45,22 @@ export module TextHighlighter {
     // highlighted if VPS26 has already been highlighted, because the text VPS26A is now spread across more than one node
     msg.body.sort((a: Entity, b: Entity) => b.entityText.length - a.entityText.length)
       .map((entity: Entity) => {
+        const entityText: string = entity.entityText;
+        const entityTextLowercase: string = entity.entityText.toLowerCase();
 
-        const selectors = getSelectors(entity.entityText);
-        wrapChemicalFormulaeWithHighlight(entity);
-        addHighlightAndEventListeners(selectors, entity);
-        if (ChEMBL.isChemblPage()) {
-          ChEMBL.highlightHandler(entity, chemblRepresentations)
+        // filter with blacklists and consider if entity is a potential gene name or an all uppercase abbreviation
+        const entityTextBlacklistInclusion: boolean = blacklistedEntityText(entityTextLowercase);
+        const entityGroupBlacklistInclusion: boolean = blacklistedEntityGroup(entityTextLowercase);
+        const potentialGeneName: boolean = isPotentialGeneName(entityText);
+        const geneOrProtein: boolean = entity.entityGroup === 'Gene or Protein';
+
+        if ((!entityGroupBlacklistInclusion && !entityTextBlacklistInclusion) || (potentialGeneName && geneOrProtein)) {
+          const selectors = getSelectors(entityText);
+          wrapChemicalFormulaeWithHighlight(entity);
+          addHighlightAndEventListeners(selectors, entity);
+          if (ChEMBL.isChemblPage()) {
+            ChEMBL.highlightHandler(entity, chemblRepresentations);
+          }
         }
       });
     const instance = tippy(
@@ -40,7 +72,7 @@ export module TextHighlighter {
         duration: 600,
         zIndex: 2147483647,
       });
-    return instance
+    return instance;
   }
 
   // Recursively find all text nodes which match regex
@@ -84,7 +116,7 @@ export module TextHighlighter {
     return !element.classList.contains('tooltipped') &&
       !element.classList.contains('tooltipped-click') &&
       !element.classList.contains('aurac-sidebar') &&
-      element.style.display !== 'none'
+      element.style.display !== 'none';
   }
 
   // Only allow nodes that we can traverse or add children to
@@ -101,32 +133,32 @@ export module TextHighlighter {
       Globals.document.defaultView!.HTMLInputElement,
       Globals.document.defaultView!.HTMLButtonElement,
       Globals.document.defaultView!.HTMLAnchorElement,
-    ].some(tag => element instanceof tag)
+    ].some(tag => element instanceof tag);
   }
 
   // TODO maybe remove this when we can select via data attribute?
   // Recursively find all text nodes which match entity
   export function allDescendants(element: HTMLElement, elements: Array<Element>, entity: string) {
     if ((element && (element.classList && !allowedClassList(element) || !allowedTagType(element)))) {
-        return;
-      }
+      return;
+    }
     try {
-      element.childNodes.forEach(child  => {
+      element.childNodes.forEach(child => {
         const childElement = child as HTMLElement;
         if (isNodeAllowed(childElement) && childElement.nodeType === Node.TEXT_NODE) {
-            if (textContainsTerm(childElement.nodeValue!, entity)) {
-              elements.push(childElement);
-            }
-          } else {
-            allDescendants(childElement, elements, entity);
+          if (textContainsTerm(childElement.nodeValue!, entity)) {
+            elements.push(childElement);
           }
-        });
-      } catch (e) {
-        // There are so many things that could go wrong.
-        // The DOM is a wild west
-        console.error(e);
-      }
+        } else {
+          allDescendants(childElement, elements, entity);
+        }
+      });
+    } catch (e) {
+      // There are so many things that could go wrong.
+      // The DOM is a wild west
+      console.error(e);
     }
+  }
 
   export const delimiters: string[] = ['(', ')', '\\n', '\"', '\'', '\\', ',', ';', '.', '!'];
 
@@ -194,7 +226,7 @@ export module TextHighlighter {
     const childValues = Sidebar.getAuracHighlightChildren(highlightedTerm);
     // For each highlighted element, we will add an event listener to add it to our sidebar
     childValues.filter(child => {
-      return !elementHasHighlightedParents(child)
+      return !elementHasHighlightedParents(child);
     }).forEach(childValue => {
       Card.populateEntityToOccurrences(entity.entityText, childValue);
       childValue.addEventListener('click', Sidebar.entityClickHandler(entity));
@@ -281,8 +313,8 @@ export module TextHighlighter {
   }
 
   export function elementHasHighlightedParents(entity: Element): boolean {
-    const parent = entity.parentElement
-    const grandparent = parent?.parentElement
-    return !!(parent?.classList.contains(highlightClass) || grandparent?.classList.contains(highlightClass))
+    const parent = entity.parentElement;
+    const grandparent = parent?.parentElement;
+    return !!(parent?.classList.contains(highlightClass) || grandparent?.classList.contains(highlightClass));
   }
 }
