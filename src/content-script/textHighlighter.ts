@@ -51,8 +51,9 @@ export module TextHighlighter {
         const entityTextBlacklistInclusion: boolean = blacklistedEntityText(entityTextLowercase)
         const entityGroupBlacklistInclusion: boolean = blacklistedEntityGroup(entityTextLowercase)
         const potentialGeneName: boolean = isPotentialGeneName(entityText)
+        const geneOrProtein: boolean = entity.entityGroup === 'Gene or Protein'
         
-        if ((!entityGroupBlacklistInclusion && !entityTextBlacklistInclusion) || (potentialGeneName)) {
+        if ((!entityGroupBlacklistInclusion && !entityTextBlacklistInclusion) || (potentialGeneName && geneOrProtein)) {
           const selectors = getSelectors(entityText);
           wrapChemicalFormulaeWithHighlight(entity);
           addHighlightAndEventListeners(selectors, entity);
