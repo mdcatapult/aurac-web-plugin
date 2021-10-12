@@ -25,9 +25,9 @@ export module CardButtons {
   };
 
   export function getOccurrenceCounts(synonyms: string[]): number {
-    let numOfOccurrences = 0;
-    synonyms.forEach(synonym => numOfOccurrences = numOfOccurrences + CardButtons.entityToOccurrence.get(synonym)!.length);
-    return numOfOccurrences
+    return synonyms.reduce((count: number, synonym) => {
+      return count + CardButtons.entityToOccurrence.get(synonym)!.length
+    }, 0)
   }
 
   function createOccurrenceCounts(information: Entity, synonyms: string[]): HTMLElement {

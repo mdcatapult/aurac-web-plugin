@@ -3,7 +3,7 @@ import {Sidebar} from './sidebar';
 import {Card} from './card';
 import {ChEMBL} from './chembl';
 import {Globals} from './globals'
-import tippy from 'tippy.js';
+import tippy, {Instance} from 'tippy.js';
 import {CardButtons} from './cardButtons';
 
 export module TextHighlighter {
@@ -12,7 +12,7 @@ export module TextHighlighter {
   export const highlightClass = 'aurac-highlight';
   export const highlightParentClass = 'aurac-highlight-parent';
 
-  export function wrapEntitiesWithHighlight(msg: any) {
+  export function wrapEntitiesWithHighlight(msg: any): Instance[] {
     // get InChI, InChIKey and SMILES input elements if we are on ChEMBL
     let chemblRepresentations: ChemblRepresentations;
     if (ChEMBL.isChemblPage()) {
@@ -31,7 +31,7 @@ export module TextHighlighter {
           ChEMBL.highlightHandler(entity, chemblRepresentations)
         }
       });
-    tippy(
+    const instance = tippy(
       '[data-tippy-content]',
       {
         allowHTML: true,
@@ -40,6 +40,7 @@ export module TextHighlighter {
         duration: 600,
         zIndex: 2147483647,
       });
+    return instance
   }
 
   // Recursively find all text nodes which match regex
