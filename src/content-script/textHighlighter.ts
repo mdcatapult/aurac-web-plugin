@@ -13,9 +13,24 @@ export module TextHighlighter {
   export const highlightClass = 'aurac-highlight';
   export const highlightParentClass = 'aurac-highlight-parent';
 
+  function blacklistedEntityText(entityText: string): boolean{
+    return EntityTextBlacklist[entityText.toLowerCase()]
+  }
+
+  function blacklistedEntityGroup(entityGroup: string): boolean{
+    return EntityGroupBlacklist[entityGroup.toLowerCase()]
+  }
+
+  function abbrevationNotGeneName(entityText: string): boolean{
+    return AbbreviationsNotGeneNames[entityText]
+  }
+
   // It is common for Gene names to be all uppercase
-  function potentialGeneNameAnalyser(entityText: string): boolean {
-    return entityText === entityText.toUpperCase()
+  function isPotentialGeneName(entityText: string): boolean {
+    if (!abbrevationNotGeneName(entityText)) {
+      return entityText === entityText.toUpperCase()
+    }
+    return false
   }
 
   export function wrapEntitiesWithHighlight(msg: any) {
@@ -29,19 +44,20 @@ export module TextHighlighter {
     // highlighted if VPS26 has already been highlighted, because the text VPS26A is now spread across more than one node
     msg.body.sort((a: Entity, b: Entity) => b.entityText.length - a.entityText.length)
       .map((entity: Entity) => {
+        const entityText: string = entity.entityText
+        const entityTextLowercase: string = entity.entityText.toLowerCase()
 
         // filter with blacklists and consider if entity is a potential gene name or an all uppercase abbreviation
-        const entityTextBlacklistInclusion: boolean = EntityTextBlacklist[entity.entityText.toLowerCase()]
-        const entityGroupBlacklistInclusion: boolean = EntityGroupBlacklist[entity.entityGroup.toLowerCase()]
-        const abbreviationNotGeneName: boolean = AbbreviationsNotGeneNames[entity.entityText]
-        const potentialGeneName: boolean = potentialGeneNameAnalyser(entity.entityText)
+        const entityTextBlacklistInclusion: boolean = blacklistedEntityText(entityTextLowercase)
+        const entityGroupBlacklistInclusion: boolean = blacklistedEntityGroup(entityTextLowercase)
+        const potentialGeneName: boolean = isPotentialGeneName(entityText)
         
-        if ((!entityGroupBlacklistInclusion && !entityTextBlacklistInclusion) || (potentialGeneName && !abbreviationNotGeneName)) {
-        const selectors = getSelectors(entity.entityText);
-        wrapChemicalFormulaeWithHighlight(entity);
-        addHighlightAndEventListeners(selectors, entity);
-        if (ChEMBL.isChemblPage()) {
-          ChEMBL.highlightHandler(entity, chemblRepresentations)
+        if ((!entityGroupBlacklistInclusion && !entityTextBlacklistInclusion) || (potentialGeneName)) {
+          const selectors = getSelectors(entityText);
+          wrapChemicalFormulaeWithHighlight(entity);
+          addHighlightAndEventListeners(selectors, entity);
+          if (ChEMBL.isChemblPage()) {
+            ChEMBL.highlightHandler(entity, chemblRepresentations)
         }
       }
     });
