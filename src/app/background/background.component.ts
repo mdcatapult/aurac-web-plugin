@@ -309,12 +309,13 @@ export class BackgroundComponent {
     return (entity && entity.entityText.length >= this.settings.preferences.minEntityLength);
   }
 
-  getUniqueEntities(leadmineResponse: LeadminerEntity[]): Array<LeadminerEntity> {
-    const uniqueEntities = new Array<LeadminerEntity>();
-    leadmineResponse
-      .forEach((entity: LeadminerEntity) => {
+  getUniqueEntities(leadmineResponse: LeadminerEntity[]): LeadminerEntity[] {
+    const uniqueEntities: LeadminerEntity[] = [];
+    leadmineResponse.forEach((entity: LeadminerEntity) => {
         if (this.shouldDisplayEntity(entity)) {
-          uniqueEntities.push(entity);
+          if (!uniqueEntities.some(uniqueEntity => uniqueEntity.entityText === entity.entityText)) {
+            uniqueEntities.push(entity);
+          }
         }
       });
     return uniqueEntities;
