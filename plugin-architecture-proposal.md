@@ -20,8 +20,24 @@ Another big reason for this is that with iframes the sidebar and main content ca
         // Map of page id to a map of dictionaries to a map of entityText (string) to entities. 
         private entityMap: Map<PageID,PageEntities>;
 
-        // Subscribers to this observable can reload data or send appropiate messages if this is important to them.
-        readonly changeStream: Observable<EntityChange>;
+        // Private observable (so dependants can't call .next)
+        private readonly changeStream: Observable<EntityChange>;
+
+        // Void observable stream means subscribers are notified of changes but
+        // can't call next.
+        get changeStream$(): Observable<void> {
+            return this.changeStream;
+        }
+
+        // Gets the last change (public)
+        get lastAppliedChange(): EntityChange {
+            return this.changeStream.getValue();
+        }
+
+        // Sets the lastAppliedChange (i.e. calls .next on the changeStream)
+        private set lastAppliedChange(entityChange: EntityChange): void {
+            this.changeStream.next(entityChange);
+        }
         ```
     * Methods:
         ```typescript
@@ -31,28 +47,28 @@ Another big reason for this is that with iframes the sidebar and main content ca
         // Get entities for a page.
         getPageEntities(pageId: PageID): PageEntities;
         
-        // Set entities on a page. Setters must call `this.changeStream.next` with the correct value.
+        // Set entities on a page. Setters must set `this.lastAppliedChange` with the correct value.
         setPageEntities(pageId: PageID, entities: PageEntities): void;
 
         // Get entities for a dictionary on a page.
         getDictionaryEntities(dictionaryId: DictionaryID): DictionaryEntities;
         
-        // Set dictionary entities. Set "show" to false for any other dictionary entities we may have (unless we're highlighting multiple dictionaries in future). Setters must call `this.changeStream.next` with the correct value.
+        // Set dictionary entities. Set "show" to false for any other dictionary entities we may have (unless we're highlighting multiple dictionaries in future). Setters must set `this.lastAppliedChange` with the correct value.
         setDictionaryEntities(dictionaryId: DictionaryID, entities: DictionaryEntities);
 
         // Get an entity.
         getEntity(entityId: EntityID): Entity;
         
-        // Set an entity. Setters must call `this.changeStream.next` with the correct value.
+        // Set an entity. Setters must set `this.lastAppliedChange` with the correct value.
         setEntity(entityId: EntityID, entity: Entity): void;
 
-        // Set occurrences. Setters must call `this.changeStream.next` with the correct value.
+        // Set occurrences. Setters must set `this.lastAppliedChange` with the correct value.
         setOccurrences(entityId: EntityID, occurrences: Array<string>);
         
-        // Add occurrence. Setters must call `this.changeStream.next` with the correct value.
+        // Add occurrence. Setters must set `this.lastAppliedChange` with the correct value.
         addOccurrence(entityId: EntityID, occurrence: string);
 
-        // Set the entity show value. Setters must call `this.changeStream.next` with the correct value.
+        // Set the entity show value. Setters must set `this.lastAppliedChange` with the correct value.
         setEntityVisibility(entityId: EntityID, show: boolean);
         ```
 
@@ -90,8 +106,10 @@ Another big reason for this is that with iframes the sidebar and main content ca
     ```typescript
     private readonly _minimumEntityLength = new BehaviorSubject<number>(3);
     
-    readonly minimumEntityLength$ = this._minimumEntityLength.asObservable();
-    
+    get minimumEntityLength$(): Observable<void> {
+        return this._minimumEntityLength;
+    }
+
     get minimumEntityLength(): number {
         return this._minimumEntityLength.getValue();
     }
@@ -104,8 +122,8 @@ Another big reason for this is that with iframes the sidebar and main content ca
     Having getters and setters combined with the behavior subject like this means that clients of the settings service (i.e. the settings component) can get the `minimumEntityLength` with `settingsService.minimumEntityLength`, and can a the new `minimumEntityLength` with `settingsService.minimumEntityLength = 4`. Subscribers can use the observable to react to changes e.g.:
     ```typescript
     // entity-card.component.ts
-    settingsService.minimumEntityLength$.subscribe((newEntityLength) => {
-        this.show = this.entity.leadminerEntity.entityText >= newEntityLength;
+    settingsService.minimumEntityLength$.subscribe(() => {
+        this.show = this.entity.leadminerEntity.entityText >= settingsService.minimumEntityLength;
     });
     ```
 
