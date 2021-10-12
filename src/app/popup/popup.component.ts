@@ -17,7 +17,8 @@ export class PopupComponent {
   }
 
   settingsClicked() {
-    this.mode = 'settings'
+    this.browserService.sendMessageToActiveTab({type: 'settings_clicked'})
+    // this.mode = 'settings'
   }
 
   nerCurrentPage(): void {

@@ -93,7 +93,7 @@ Another big reason for this is that with iframes the sidebar and main content ca
         // Returns a copy of the input based on uniqueness of the entityText.
         private getUniqueEntities(entities: Array<LeadminerEntity>): Array<LeadminerEntity>; 
 
-        // Gets the current page id, url, and contents, and processes it with the currently configured dictionary. This function must call `entityService.setDictionaryEntities`. 
+        // Gets the current page id, url, and contents, and processes it with the currently configured dictionary. This function must call `entityService.setDictionaryEntities`. 'ner_service_process_current_page'
         processCurrentPage(): void;
         ```
 * `CSVService`: Service for all CSV logic.
@@ -125,6 +125,13 @@ Another big reason for this is that with iframes the sidebar and main content ca
     settingsService.minimumEntityLength$.subscribe(() => {
         this.show = this.entity.leadminerEntity.entityText >= settingsService.minimumEntityLength;
     });
+    ```
+    ```html
+    <app-entity-card>
+        <div *ngIf="show">
+            {{content}}
+        </div>
+    </app-entity-card>
     ```
 
 ## New components
@@ -176,7 +183,7 @@ private handleDOMEvents(): void;
 // information.
 interface Entity {
   leadminerEntity: LeadminerEntity;
-  occurrences: Array<string>; // containes the id's of highlighted spans.
+  occurrences: Array<string>; // contains the id's of highlighted spans.
   show: boolean; // whether to show in sidebar.
   // Other stuff should go here - e.g. cross references.
 }
@@ -223,3 +230,33 @@ interface EntityChange {
     result: PageEntities | DictionaryEntities | Map<string, Entity> | Entity;
 }
 ```
+
+## NER Dataflow
+1. Popup page context: User clicks "NER" in the popup.
+2. Popup page context: Popup sends runtime message to the NERService `ner_service_process_current_page`.
+3. Background page context: NERService calls `content_script_get_page_contents`.
+4. Content script page context: Get's page contents and returns (a promise).
+5. Background page context: NERService calls backend API. 
+6. Background page context: NERService sets DictionaryEntities value in EntityService.
+7. Background page context: NERService sends message to content script to highlight the entities `content_script_highlight_entities`. 
+8. Content script page context: Entities are highlighted. Messages are sent to the background to set the id's of the highlight spans `entity_service_set_occurrences`.
+
+```js
+{
+    tabId: 2812,
+    url: "https://google.com"
+}: {
+    gene_protein: {
+        show: true,
+        entities: {
+            "Acetylcarnitine": {
+                entityText: "Acetylcarnitine",
+            }
+        }
+    }
+}
+```
+
+## Implementation
+1. Implement sidebar with dummy data. Immediately test it!
+2. Implement EntityService and EntityMessengerService with dummy data and make sure sidebar is getting updated. Immediately test it!
