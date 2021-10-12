@@ -38,7 +38,7 @@ export module TextHighlighter {
         theme: 'light-border',
         animation: 'shift-away',
         duration: 600,
-        interactive: true
+        zIndex: 2147483647,
       });
   }
 
