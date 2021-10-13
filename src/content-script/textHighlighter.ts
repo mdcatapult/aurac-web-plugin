@@ -63,6 +63,8 @@ export module TextHighlighter {
           }
         }
       });
+    // TODO tippy return is only here to help the integration tests. We need to find a better way to test the tooltips or
+    // return something useful from this method
     return tippy(
       '[data-tippy-content]',
       {
