@@ -9,6 +9,11 @@
   </div>
 
   <mat-tab-group>
+    <mat-tab label="Preferences">
+      <app-preferences
+        [preferencesForm]="settingsForm.get('preferences')"
+      ></app-preferences>
+    </mat-tab>
     <mat-tab label="URLs">
       <app-urls
         [urlsForm]="settingsForm.get('urls')"
@@ -20,11 +25,6 @@
         [settings]="settings ? settings.xRefConfig : {}"
         [unichemURL]="settings ? settings.urls.unichemURL : ''"
       ></app-x-ref-sources>
-    </mat-tab>
-    <mat-tab label="Preferences">
-      <app-preferences
-        [preferencesForm]="settingsForm.get('preferences')"
-      ></app-preferences>
     </mat-tab>
   </mat-tab-group>
 
