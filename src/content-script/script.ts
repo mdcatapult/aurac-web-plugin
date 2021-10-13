@@ -1,7 +1,7 @@
 console.log('script loaded');
 
 
-document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
+// document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
 
 const sidebar = document.createElement('div')
 sidebar.className = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed'
@@ -16,8 +16,9 @@ sidebar.appendChild(iframe)
 const buttonRoot = document.createElement('div')
 buttonRoot.style.position = 'absolute';
 buttonRoot.style.top = '0';
+buttonRoot.style.left = '100%'
 buttonRoot.style.height = '100%'
-document.body.appendChild(buttonRoot)
+sidebar.appendChild(buttonRoot)
 
 const shadowButtonRoot = buttonRoot.attachShadow({mode: 'closed'})
 
