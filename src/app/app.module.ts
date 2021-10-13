@@ -11,18 +11,22 @@ import {PopupComponent} from './popup/popup.component';
 import {RouterComponent} from './router/router.component';
 import {Routes, RouterModule} from '@angular/router';
 import {HttpClientModule} from '@angular/common/http';
-import {UrlsComponent} from './urls/urls.component';
+import {UrlsComponent} from './popup/urls/urls.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {XRefSourcesComponent} from './x-ref-sources/x-ref-sources.component';
-import {SettingsComponent} from './settings/settings.component';
+import {XRefSourcesComponent} from './popup/x-ref-sources/x-ref-sources.component';
+import {SettingsComponent} from './popup/settings/settings.component';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
-import {PDFSelectorComponent} from './pdfselector/pdfselector.component'
-import {PreferencesComponent} from './preferences/preferences.component';
+import {PDFSelectorComponent} from './popup/pdfselector/pdfselector.component'
+import {PreferencesComponent} from './popup/preferences/preferences.component';
 import {MatRadioModule, MAT_RADIO_DEFAULT_OPTIONS} from '@angular/material/radio';
 import {MatCardModule} from '@angular/material/card';
 import { CommonModule } from '@angular/common';
 import { SidebarComponent } from './sidebar/sidebar.component';
+import { SidebarHeaderComponent } from './sidebar/sidebar-header/sidebar-header.component';
+import { SidebarEntityListComponent } from './sidebar/sidebar-entity-list/sidebar-entity-list.component';
+import { SidebarEntityComponent } from './sidebar/sidebar-entity/sidebar-entity.component';
+import { SafeResourcePipe } from './safe-resource.pipe';
 
 
 const routes: Routes = [
@@ -42,6 +46,10 @@ const routes: Routes = [
     PreferencesComponent,
     PDFSelectorComponent,
     SidebarComponent,
+    SidebarHeaderComponent,
+    SidebarEntityListComponent,
+    SidebarEntityComponent,
+    SafeResourcePipe,
   ],
   imports: [
     CommonModule,

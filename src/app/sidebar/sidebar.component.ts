@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Entity } from 'src/content-script/types';
 import { BrowserService } from '../browser.service';
 
 @Component({
@@ -7,6 +8,10 @@ import { BrowserService } from '../browser.service';
   styleUrls: ['./sidebar.component.scss']
 })
 export class SidebarComponent implements OnInit {
+
+  entities: Array<Entity> = [
+    
+  ]
 
   constructor(private browserService: BrowserService) { }
 

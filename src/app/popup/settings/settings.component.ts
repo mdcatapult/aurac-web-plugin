@@ -1,8 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {defaultSettings, DictionaryURLs, Settings} from 'src/types';
-import {BrowserService} from '../browser.service';
-import {LogService} from '../popup/log.service';
+import {BrowserService} from '../../browser.service';
+import {LogService} from '../log.service';
 import {UrlsService} from '../urls/urls.service';
 import {SettingsService} from './settings.service';
 

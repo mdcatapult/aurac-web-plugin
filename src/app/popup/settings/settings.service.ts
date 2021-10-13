@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Settings, defaultSettings} from 'src/types';
-import {BrowserService} from '../browser.service';
+import {BrowserService} from '../../browser.service';
 
 @Injectable({
   providedIn: 'root'

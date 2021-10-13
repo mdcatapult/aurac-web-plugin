@@ -1,7 +1,7 @@
 import {TestBed} from '@angular/core/testing';
 
 import {UrlsService} from './urls.service';
-import {DictionaryURLs} from '../../types';
+import {DictionaryURLs} from '../../../types';
 
 describe('SettingsService', () => {
   let service: UrlsService;

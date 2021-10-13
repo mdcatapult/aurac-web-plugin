@@ -71,5 +71,9 @@ export class BrowserService {
       (err) => this.log.Log(`error loading urlToEntityMap', ${JSON.stringify(err)}`)
     ) as Promise<EntityCache>
   }
+
+  getURL(asset: string): string {
+    return browser.runtime.getURL(asset);
+  }
 }
 

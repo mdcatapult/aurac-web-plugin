@@ -2,7 +2,7 @@ import {Entity} from './../../content-script/types';
 import {Component} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {SettingsService} from '../settings/settings.service';
+import {SettingsService} from '../popup/settings/settings.service';
 import {ConverterResult, defaultSettings, LeadminerEntity, LeadminerResult, Message, Settings, StringMessage, XRef, EntityCache} from 'src/types';
 import {validDict} from './types';
 import {map, switchMap} from 'rxjs/operators';

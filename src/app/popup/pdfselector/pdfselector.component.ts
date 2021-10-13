@@ -2,8 +2,8 @@ import {HttpClient} from '@angular/common/http';
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {AbstractControl, FormControl, ValidationErrors} from '@angular/forms';
 import {defaultSettings} from 'src/types';
-import {BrowserService} from '../browser.service';
-import {LogService} from '../popup/log.service';
+import {BrowserService} from '../../browser.service';
+import {LogService} from '../log.service';
 import {UrlsService} from '../urls/urls.service'
 
 @Component({

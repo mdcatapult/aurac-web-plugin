@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SettingsComponent } from './settings.component';
-import {TestBrowserService} from './../test-browser.service';
-import {LogService} from '../popup/log.service';
+import {TestBrowserService} from '../../test-browser.service';
+import {LogService} from '../log.service';
 
 describe('SettingsComponent', () => {
   let component: SettingsComponent;

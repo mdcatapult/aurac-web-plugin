@@ -1,7 +1,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { LogService } from '../popup/log.service';
-import { TestBrowserService } from '../test-browser.service';
+import { LogService } from '../log.service';
+import { TestBrowserService } from '../../test-browser.service';
 
 import { PDFSelectorComponent } from './pdfselector.component';
 

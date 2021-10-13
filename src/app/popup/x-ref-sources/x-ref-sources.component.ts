@@ -2,8 +2,8 @@ import {HttpClient} from '@angular/common/http';
 import {Component, Input, OnChanges} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {Settings} from 'src/types'
-import { BrowserService } from '../browser.service';
-import {LogService} from '../popup/log.service';
+import { BrowserService } from '../../browser.service';
+import {LogService} from '../log.service';
 
 
 @Component({
