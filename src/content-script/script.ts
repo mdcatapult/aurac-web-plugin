@@ -30,6 +30,7 @@ sidebarButtonStyle.innerHTML = `button {
   width: 3em;
   z-index: 2147483647;
   border-radius: 0 1em 1em 0;
+  background-color: rgb(192, 192, 192);
 }`
 shadowButtonRoot.appendChild(sidebarButtonStyle)
 
