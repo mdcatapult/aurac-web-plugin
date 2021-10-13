@@ -3,7 +3,8 @@ import {Sidebar} from './sidebar';
 import {Card} from './card';
 import {ChemblRepresentations} from './types';
 import {ChEMBL} from './chembl';
-import {Globals} from './globals'
+import {EntityTextBlacklist, EntityGroupBlacklist, AbbreviationsNotGeneNames} from './blacklist';
+import {Globals} from './globals';
 import {LeadminerEntity} from '../types';
 
 export module TextHighlighter {
@@ -11,6 +12,26 @@ export module TextHighlighter {
   const chemicalFormulae: chemicalFormula[] = [];
   export const highlightClass = 'aurac-highlight';
   export const highlightParentClass = 'aurac-highlight-parent';
+
+  function blacklistedEntityText(entityText: string): boolean{
+    return EntityTextBlacklist[entityText.toLowerCase()]
+  }
+
+  function blacklistedEntityGroup(entityGroup: string): boolean{
+    return EntityGroupBlacklist[entityGroup.toLowerCase()]
+  }
+
+  function abbrevationNotGeneName(entityText: string): boolean{
+    return AbbreviationsNotGeneNames[entityText]
+  }
+
+  // It is common for Gene names to be all uppercase
+  function isPotentialGeneName(entityText: string): boolean {
+    if (!abbrevationNotGeneName(entityText)) {
+      return entityText === entityText.toUpperCase()
+    }
+    return false
+  }
 
   export function wrapEntitiesWithHighlight(msg: any) {
     // get InChI, InChIKey and SMILES input elements if we are on ChEMBL
@@ -23,14 +44,24 @@ export module TextHighlighter {
     // highlighted if VPS26 has already been highlighted, because the text VPS26A is now spread across more than one node
     msg.body.sort((a: Entity, b: Entity) => b.entityText.length - a.entityText.length)
       .map((entity: Entity) => {
+        const entityText: string = entity.entityText
+        const entityTextLowercase: string = entity.entityText.toLowerCase()
 
-        const selectors = getSelectors(entity.entityText);
-        wrapChemicalFormulaeWithHighlight(entity);
-        addHighlightAndEventListeners(selectors, entity);
-        if (ChEMBL.isChemblPage()) {
-          ChEMBL.highlightHandler(entity, chemblRepresentations)
+        // filter with blacklists and consider if entity is a potential gene name or an all uppercase abbreviation
+        const entityTextBlacklistInclusion: boolean = blacklistedEntityText(entityTextLowercase)
+        const entityGroupBlacklistInclusion: boolean = blacklistedEntityGroup(entityTextLowercase)
+        const potentialGeneName: boolean = isPotentialGeneName(entityText)
+        const geneOrProtein: boolean = entity.entityGroup === 'Gene or Protein'
+        
+        if ((!entityGroupBlacklistInclusion && !entityTextBlacklistInclusion) || (potentialGeneName && geneOrProtein)) {
+          const selectors = getSelectors(entityText);
+          wrapChemicalFormulaeWithHighlight(entity);
+          addHighlightAndEventListeners(selectors, entity);
+          if (ChEMBL.isChemblPage()) {
+            ChEMBL.highlightHandler(entity, chemblRepresentations)
         }
-      });
+      }
+    });
   }
 
   // Recursively find all text nodes which match regex
