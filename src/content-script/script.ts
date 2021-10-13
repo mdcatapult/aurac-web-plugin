@@ -32,6 +32,10 @@ sidebarButtonStyle.innerHTML = `button {
   z-index: 2147483647;
   border-radius: 0 1em 1em 0;
   background-color: rgb(192, 192, 192);
+}
+
+button:hover {
+  border: 1px solid black;
 }`
 shadowButtonRoot.appendChild(sidebarButtonStyle)
 
@@ -39,7 +43,7 @@ const sidebarButton = document.createElement('button')
 shadowButtonRoot.appendChild(sidebarButton);
 
 const sidebarButtonLogo = document.createElement('img')
-sidebarButtonLogo.src = browser.runtime.getURL('assets/head-brains.icon.48.png')
+sidebarButtonLogo.src = browser.runtime.getURL('assets/head-brains.icon.128.png')
 sidebarButtonLogo.style.width = "80%"
 sidebarButton.appendChild(sidebarButtonLogo)
 
