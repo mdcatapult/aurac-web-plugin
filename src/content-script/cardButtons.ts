@@ -26,7 +26,7 @@ export module CardButtons {
 
   export function getOccurrenceCounts(synonyms: string[]): number {
     return synonyms.reduce((count: number, synonym) => {
-      return count + CardButtons.entityToOccurrence.get(synonym)!.length
+      return CardButtons.entityToOccurrence.get(synonym) ? count + CardButtons.entityToOccurrence.get(synonym)!.length : count
     }, 0)
   }
 
