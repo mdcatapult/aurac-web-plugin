@@ -23,7 +23,6 @@ describe('synonyms', () => {
   const leadmineEntities: TestLeadmineEntity[] = [
     {text: entity1Text, occurrences: 1, resolvedEntity: resolvedEntity},
     {text: entity2Text, occurrences: 1, resolvedEntity: resolvedEntity},
-    {text: 'fddddddddddddd', occurrences: 1, resolvedEntity: resolvedEntity},
     {text: 'this should be on a different card', occurrences: 1, resolvedEntity: 'something else'}
   ]
 
@@ -51,8 +50,6 @@ describe('synonyms', () => {
 
   it('should add up occurrences for all instances of the same resolved entity', () => {
     const occurrencesText = document.getElementById(`${resolvedEntity}-occurrences`)
-    CardButtons.entityToOccurrence.get(resolvedEntity).forEach(occ => console.log(occ.innerHTML))
-
     const numOfOccurrences = CardButtons.entityToOccurrence.get(resolvedEntity).length
 
     expect(occurrencesText.innerText.includes(numOfOccurrences.toString())).toBeTrue()
