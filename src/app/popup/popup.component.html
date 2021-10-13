@@ -3,7 +3,7 @@
   <img src="./assets/head-brains.icon.128.png" alt="logo" class="aurac-logo">
 
     <div class="ner-button-container">
-    <button mat-raised-button (click)="nerCurrentPage()">
+    <button mat-raised-button (click)="nerCurrentPage()" title="Highlight interesting things in the page">
       <mat-icon inline="true" class="ner-icon">manage_search</mat-icon>
       Highlight
     </button>
@@ -11,23 +11,19 @@
   <br>
 
   <div class="settings-button-container">
-    <button mat-raised-button color="black" (click)="settingsClicked()" id="aurac-settings-button">
+    <button mat-raised-button color="black" (click)="settingsClicked()" id="aurac-settings-button" title="Change settings like the type of things to highlight">
       <mat-icon inline="true">settings_suggest</mat-icon>
       Settings
     </button>
-    <button
-      mat-raised-button
-      color="black"
-      (click)="pdfClicked()"
-    >
+    <button mat-raised-button color="black" (click)="pdfClicked()" title="Convert a PDF from a web address into a page you can highlight">
       <mat-icon inline="true">picture_as_pdf</mat-icon>
       PDF conversion
     </button>
-    <button mat-raised-button color="black" (click)="toggleSidebar()">
+    <button mat-raised-button color="black" (click)="toggleSidebar()" title="Close or open the Aurac sidebar">
       <mat-icon inline="true">auto_stories</mat-icon>
       Toggle Sidebar
     </button>
-    <button mat-raised-button color="black" (click)="exportResults()">
+    <button mat-raised-button color="black" (click)="exportResults()" title="Save all the results found by Aurac when highlighting as a CSV download">
       <mat-icon inline="true">auto_stories</mat-icon>
       Export Results
     </button>
