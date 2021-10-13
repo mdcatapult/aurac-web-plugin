@@ -18,7 +18,7 @@ Another big reason for this is that with iframes the sidebar and main content ca
     * Variables:
         ```typescript
         // Map of page id to a map of dictionaries to a map of entityText (string) to entities. 
-        private entityMap: Map<PageID,PageEntities>;
+        private entityMap: Map<number,TabEntities>;
 
         // Private observable (so dependants can't call .next)
         private readonly changeStream: Observable<EntityChange>;
@@ -42,13 +42,13 @@ Another big reason for this is that with iframes the sidebar and main content ca
     * Methods:
         ```typescript
         // Return the entityMap.
-        getEntities(): Map<PageID, PageEntities>;
+        getEntities(): Map<number, TabEntities>;
 
         // Get entities for a page.
-        getPageEntities(pageId: PageID): PageEntities;
+        getTabEntities(tab: number): TabEntities;
         
         // Set entities on a page. Setters must set `this.lastAppliedChange` with the correct value.
-        setPageEntities(pageId: PageID, entities: PageEntities): void;
+        setTabEntities(tab: number, entities: TabEntities): void;
 
         // Get entities for a dictionary on a page.
         getDictionaryEntities(dictionaryId: DictionaryID): DictionaryEntities;
@@ -199,35 +199,34 @@ interface DictionaryEntities {
 }
 
 // Holds all entities on a page in valid dictionaries.
-type PageEntities = {
+type TabEntities = {
     [key in Dictionary]?: DictionaryEntities;
 }
 
-// PageID uniquely identifies a page by it's tab and url.
-interface PageID {
+interface DictionaryID {
     tab: number;
-    url: string;
-}
-
-interface DictionaryID extends PageID {
     dictionary: Dictionary;
 }
 
 interface EntityID extends DictionaryID {
-    entityName: string;
+    identifier: string;
+}
+
+interface SynonymID extends EntityID {
+    synonym: string;
 }
 
 interface OccurrenceID extends EntityID {
-    occurrenceId: string;
+    occurrence: string;
 }
 
-type ChangeIdentifier = PageID | DictionaryID | EntityID | OccurrenceID
+type ChangeIdentifier = number | DictionaryID | EntityID | SynonymID | OccurrenceID
 
 // EntityChange describes where a change to the cache has been made and the 
 // result of the change.
 interface EntityChange {
     identifier: ChangeIdentifier;
-    result: PageEntities | DictionaryEntities | Map<string, Entity> | Entity;
+    result: TabEntities | DictionaryEntities | Entity | Map<string,LeadminerEntity>;
 }
 ```
 
@@ -243,15 +242,32 @@ interface EntityChange {
 
 ```js
 {
-    tabId: 2812,
-    url: "https://google.com"
-}: {
-    gene_protein: {
-        show: true,
-        entities: {
-            "Acetylcarnitine": {
-                entityText: "Acetylcarnitine",
+    2812: {
+        gene_protein: {
+            show: true,
+            entities: {
+                "RDHQFKQIGNGIED-MRVPVSSYSA-N": {
+                    show: true,
+                    synonyms: [
+                        "Acetylcarnitine",
+                        "Acetyl-L-carnitine"
+                    ],
+                    occurences: [
+                        45,
+                        52,
+                        63
+                    ],
+                    metadata: {
+                        recognisingDict: "some chemical dict",
+                        sectionType: "what is this?",
+                        entityGroup: "chemicals"
+                    }
+                }
             }
+        },
+        diseases: {
+            show: false,
+            entities: {}
         }
     }
 }
