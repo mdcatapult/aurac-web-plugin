@@ -90,6 +90,8 @@ Then you only have to accept the cert first time. Any future reboot will have th
 ### Debugging with chrome
 If you set `export WEB_EXT_TARGET=chromium` then `npm start` will boot it into chromium. You can also use `export WEB_EXT_CHROMIUM_PROFILE=/a/dir` but you need to create the directory first (unlike with Firefox & `export WEB_EXT_PROFILE_CREATE_IF_MISSING`).
 
+You might find it easier to use the Aurac code created with `npm run unopt` when debugging in a browser.
+
 ### Firefox Promises & sendMessage
 Due to how Firefox uses [web extension polyfills](https://github.com/mozilla/webextension-polyfill/issues/172) the following [bug](https://bugzilla.mozilla.org/show_bug.cgi?id=1456531) means that Firefox needs to use a vanilla Promise object rather than the polyfill it is given. You can `Promise.resolve("A value")` ok but not as an inner function like
 ```js
@@ -126,5 +128,7 @@ There are various convenience scripts inside the `package.json` that can be run 
 * weblint - lint the code using web-ext
 * build - build the plugin
 * mocha - tests the popup via [mocha](https://mochajs.org/) & [puppeteer](https://github.com/puppeteer/puppeteer) in a headless chrome browser. Tests and setup are in `mocha-test.js`. Uses the compiled plugin code so needs a recent `npm run build` first.
+* unopt - builds unoptimized/unminified version of the app. Makes it easier to debug in the browser
+
 ### Credits
 Designed using elements from Heroicon and Vecteezy.com.
