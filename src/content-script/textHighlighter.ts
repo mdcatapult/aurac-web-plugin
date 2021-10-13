@@ -7,6 +7,8 @@ import {Globals} from './globals';
 import tippy, {Instance} from 'tippy.js';
 import {CardButtons} from './cardButtons';
 
+type TooltipInstance = Instance
+
 export module TextHighlighter {
 
   const chemicalFormulae: chemicalFormula[] = [];
@@ -37,7 +39,7 @@ export module TextHighlighter {
     return entity.entityGroup === 'Gene or Protein';
   }
 
-  export function wrapEntitiesWithHighlight(msg: any): Instance[] {
+  export function wrapEntitiesWithHighlight(msg: any): TooltipInstance[] {
     // get InChI, InChIKey and SMILES input elements if we are on ChEMBL
     let chemblRepresentations: ChemblRepresentations;
     if (ChEMBL.isChemblPage()) {
