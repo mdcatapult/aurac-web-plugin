@@ -56,6 +56,27 @@ describe('synonyms', () => {
     expect(numOfOccurrences).toBe(2)
   })
 
+  // TODO fix code to work for more than 2 synonyms
+  xit('should work for more than 2 synonyms', () => {
+    const entity3Text = 'entity3'
+    const entities = leadmineEntities.concat([
+      {text: entity3Text, occurrences: 1, resolvedEntity: resolvedEntity},
+    ])
+
+    document = setup(leadmineEntities)
+    document.body.appendChild(Sidebar.create())
+
+    // highlight entities - simulates 'markup_page' message
+    const leadmineResults = getLeadmineResults(leadmineEntities)
+    TextHighlighter.wrapEntitiesWithHighlight({body: leadmineResults})
+
+    // triggers event handler, added by text highlighter, which should add cards to sidebar
+    leadmineEntities.forEach(entity => clickElementForEntity(entity.text))
+
+    const entityText = document.getElementById(Card.getEntityClass(resolvedEntity))
+    expect(entityText.textContent).toBe([entity1Text, entity2Text, entity3Text].toString())
+  })
+
 
 })
 
