@@ -4,7 +4,6 @@ import {Card} from './card';
 import {ChEMBL} from './chembl';
 import {EntityTextBlacklist, EntityGroupBlacklist, AbbreviationsNotGeneNames} from './blacklist';
 import {Globals} from './globals';
-import {LeadminerEntity} from '../types';
 import tippy, {Instance} from 'tippy.js';
 import {CardButtons} from './cardButtons';
 
@@ -34,6 +33,10 @@ export module TextHighlighter {
     return false;
   }
 
+  function geneOrProtein(entity: Entity): boolean {
+    return entity.entityGroup === 'Gene or Protein';
+  }
+
   export function wrapEntitiesWithHighlight(msg: any): Instance[] {
     // get InChI, InChIKey and SMILES input elements if we are on ChEMBL
     let chemblRepresentations: ChemblRepresentations;
@@ -45,16 +48,11 @@ export module TextHighlighter {
     // highlighted if VPS26 has already been highlighted, because the text VPS26A is now spread across more than one node
     msg.body.sort((a: Entity, b: Entity) => b.entityText.length - a.entityText.length)
       .map((entity: Entity) => {
-        const entityText: string = entity.entityText;
-        const entityTextLowercase: string = entity.entityText.toLowerCase();
+        const entityText: string = entity.entityText
+        const entityTextLowercase: string = entity.entityText.toLowerCase()
 
-        // filter with blacklists and consider if entity is a potential gene name or an all uppercase abbreviation
-        const entityTextBlacklistInclusion: boolean = blacklistedEntityText(entityTextLowercase);
-        const entityGroupBlacklistInclusion: boolean = blacklistedEntityGroup(entityTextLowercase);
-        const potentialGeneName: boolean = isPotentialGeneName(entityText);
-        const geneOrProtein: boolean = entity.entityGroup === 'Gene or Protein';
-
-        if ((!entityGroupBlacklistInclusion && !entityTextBlacklistInclusion) || (potentialGeneName && geneOrProtein)) {
+        if ((!blacklistedEntityGroup(entityTextLowercase) && !blacklistedEntityText(entityTextLowercase))
+          || (geneOrProtein(entity) && isPotentialGeneName(entityText) )) {
           const selectors = getSelectors(entityText);
           wrapChemicalFormulaeWithHighlight(entity);
           addHighlightAndEventListeners(selectors, entity);
@@ -63,7 +61,7 @@ export module TextHighlighter {
           }
         }
       });
-    const instance = tippy(
+    return tippy(
       '[data-tippy-content]',
       {
         allowHTML: true,
@@ -72,7 +70,6 @@ export module TextHighlighter {
         duration: 600,
         zIndex: 2147483647,
       });
-    return instance;
   }
 
   // Recursively find all text nodes which match regex
@@ -116,7 +113,7 @@ export module TextHighlighter {
     return !element.classList.contains('tooltipped') &&
       !element.classList.contains('tooltipped-click') &&
       !element.classList.contains('aurac-sidebar') &&
-      element.style.display !== 'none';
+      element.style.display !== 'none'
   }
 
   // Only allow nodes that we can traverse or add children to
@@ -133,7 +130,7 @@ export module TextHighlighter {
       Globals.document.defaultView!.HTMLInputElement,
       Globals.document.defaultView!.HTMLButtonElement,
       Globals.document.defaultView!.HTMLAnchorElement,
-    ].some(tag => element instanceof tag);
+    ].some(tag => element instanceof tag)
   }
 
   // TODO maybe remove this when we can select via data attribute?
@@ -226,7 +223,7 @@ export module TextHighlighter {
     const childValues = Sidebar.getAuracHighlightChildren(highlightedTerm);
     // For each highlighted element, we will add an event listener to add it to our sidebar
     childValues.filter(child => {
-      return !elementHasHighlightedParents(child);
+      return !elementHasHighlightedParents(child)
     }).forEach(childValue => {
       Card.populateEntityToOccurrences(entity.entityText, childValue);
       childValue.addEventListener('click', Sidebar.entityClickHandler(entity));
@@ -313,8 +310,8 @@ export module TextHighlighter {
   }
 
   export function elementHasHighlightedParents(entity: Element): boolean {
-    const parent = entity.parentElement;
-    const grandparent = parent?.parentElement;
-    return !!(parent?.classList.contains(highlightClass) || grandparent?.classList.contains(highlightClass));
+    const parent = entity.parentElement
+    const grandparent = parent?.parentElement
+    return !!(parent?.classList.contains(highlightClass) || grandparent?.classList.contains(highlightClass))
   }
 }
