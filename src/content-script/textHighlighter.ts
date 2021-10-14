@@ -257,7 +257,6 @@ export module TextHighlighter {
     const tooltipContainer = Globals.document.createElement('span');
     //   getOccurrenceCounts must be called after populateEntityToOccurrence
     const occurrenceCount = CardButtons.getOccurrenceCounts([entity]);
-    console.log(entity, 'entity')
     const occurrenceCountDiv = Globals.document.createElement('div');
     const occurrences = occurrenceCount === 1 ? 'occurrence' : 'occurrences';
     occurrenceCountDiv.innerHTML = `<p>${occurrenceCount} ${occurrences} of ${entity} found on the current page</p>`;
@@ -277,7 +276,7 @@ export module TextHighlighter {
     });
   }
 
-  function getHighlightContent(highlight: Element): string {
+  export function getHighlightContent(highlight: Element): string {
     // the firstChild of a highlighted Chembl representation is an HTML Input Element and has no textContent
     const textNode = 3
     if (highlight.firstChild!.nodeType !== textNode && highlight.firstElementChild!.tagName == 'INPUT') {
