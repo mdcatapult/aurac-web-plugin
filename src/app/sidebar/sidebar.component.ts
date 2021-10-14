@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Entity } from 'src/content-script/types';
 import { BrowserService } from '../browser.service';
+import { SidebarEntity } from './types';
 
 @Component({
   selector: 'app-sidebar',
@@ -9,8 +9,20 @@ import { BrowserService } from '../browser.service';
 })
 export class SidebarComponent implements OnInit {
 
-  entities: Array<Entity> = [
-    
+  entities: Array<SidebarEntity> = [
+    {
+      identifiers: [
+        {
+          type: "inchikey",
+          value: "RDHQFKQIGNGIED-MRVPVSSYSA-N"
+        }
+      ],
+      synonyms: [
+        "Acetylcarnitine",
+        "Acetyl-L-carnitine"
+      ],
+      occurrences: ["RDHQFKQIGNGIED-MRVPVSSYSA-N#0", "RDHQFKQIGNGIED-MRVPVSSYSA-N#1"],
+    }
   ]
 
   constructor(private browserService: BrowserService) { }

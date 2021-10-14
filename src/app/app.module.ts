@@ -27,7 +27,7 @@ import { SidebarHeaderComponent } from './sidebar/sidebar-header/sidebar-header.
 import { SidebarEntityListComponent } from './sidebar/sidebar-entity-list/sidebar-entity-list.component';
 import { SidebarEntityComponent } from './sidebar/sidebar-entity/sidebar-entity.component';
 import { SafeResourcePipe } from './safe-resource.pipe';
-
+import { MatTableModule } from '@angular/material/table';
 
 const routes: Routes = [
   {path: '**', component: RouterComponent}
@@ -67,7 +67,8 @@ const routes: Routes = [
     MatInputModule,
     MatFormFieldModule,
     MatRadioModule,
-    MatCardModule
+    MatCardModule,
+    MatTableModule
   ],
   providers: [
     {

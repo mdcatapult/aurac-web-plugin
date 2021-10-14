@@ -4,14 +4,13 @@ console.log('script loaded');
 // document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
 
 const sidebar = document.createElement('div')
+sidebar.id = "aurac-sidebar"
 sidebar.className = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed'
-document.body.appendChild(sidebar)
 
 const iframe = document.createElement('iframe')
 iframe.className = "aurac-iframe"
 iframe.src = browser.runtime.getURL('index.html?page=sidebar')
 sidebar.appendChild(iframe)
-
 
 const buttonRoot = document.createElement('div')
 buttonRoot.style.position = 'absolute';
@@ -47,14 +46,41 @@ sidebarButtonLogo.src = browser.runtime.getURL('assets/head-brains.icon.128.png'
 sidebarButtonLogo.style.width = "80%"
 sidebarButton.appendChild(sidebarButtonLogo)
 
+const injectSidebar = () => {
+  document.body.appendChild(sidebar);
+}
+
 const toggleSidebar = () => {
+  if (!!document.getElementsByClassName('aurac-sidebar--expanded').length) {
+    closeSidebar();
+  } else {
+    openSidebar();
+  }
+}
+
+const openSidebar = () => {
+  if (!document.getElementById("aurac-sidebar")) {
+    injectSidebar()
+  }
+
   Array.from(document.getElementsByClassName('aurac-transform')).forEach(e => {
-    e.className = e.className.replace(/(expanded|collapsed)/, (g) => {
-      return g === 'expanded' ? 'collapsed' : 'expanded';
-    });
+    e.className = e.className.replace('collapsed', 'expanded');
+  });
+}
+
+const closeSidebar = () => {
+  Array.from(document.getElementsByClassName('aurac-transform')).forEach(e => {
+    e.className = e.className.replace('expanded', 'collapsed');
   });
 }
 
 sidebarButton.addEventListener('click', toggleSidebar)
-
-// browser.runtime.onMessage.addListener(console.log)
+// @ts-ignore
+browser.runtime.onMessage.addListener((msg) => {
+  switch (msg.type) {
+    case 'toggle_sidebar':
+      toggleSidebar();
+    default:
+      console.log(msg);
+  }
+})

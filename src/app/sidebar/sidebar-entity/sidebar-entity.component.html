@@ -1,1 +1,21 @@
-<p>sidebar-entity works!</p>
+<article>
+    <mat-card>
+        <mat-card-title>{{ entity.synonyms[0] }}</mat-card-title>
+        <mat-card-subtitle>{{ entity.synonyms.join(', ') }}.</mat-card-subtitle>
+        <mat-card-content>
+            <table mat-table [dataSource]="entity.identifiers">
+                <ng-container matColumnDef="type">
+                    <th mat-header-cell *matHeaderCellDef>Type</th>
+                    <td mat-cell *matCellDef="let element">{{ element.type }}</td>
+                </ng-container>
+                <ng-container matColumnDef="value">
+                    <th mat-header-cell *matHeaderCellDef>Value</th>
+                    <td mat-cell *matCellDef="let element">{{ element.value }}</td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="['type', 'value']"></tr>
+                <tr mat-row *matRowDef="let row; columns: ['type', 'value']"></tr>
+            </table>
+        </mat-card-content>
+    </mat-card>
+</article>
+<br>

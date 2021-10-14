@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-
+import { Component, Input, OnInit } from '@angular/core';
+import { SidebarEntity } from '../types';
 @Component({
   selector: 'app-sidebar-entity-list',
   templateUrl: './sidebar-entity-list.component.html',
@@ -7,6 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SidebarEntityListComponent implements OnInit {
 
+  @Input() entities: Array<SidebarEntity> = [];
   constructor() { }
 
   ngOnInit(): void {

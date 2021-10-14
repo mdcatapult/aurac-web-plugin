@@ -248,14 +248,17 @@ interface EntityChange {
             entities: {
                 "RDHQFKQIGNGIED-MRVPVSSYSA-N": {
                     show: true,
+                    identifiers: {
+                        "inchikey": "RDHQFKQIGNGIED-MRVPVSSYSA-N",
+                    },
                     synonyms: [
                         "Acetylcarnitine",
                         "Acetyl-L-carnitine"
                     ],
                     occurences: [
-                        45,
-                        52,
-                        63
+                        "RDHQFKQIGNGIED-MRVPVSSYSA-N#0",
+                        "RDHQFKQIGNGIED-MRVPVSSYSA-N#1",
+                        "RDHQFKQIGNGIED-MRVPVSSYSA-N#2"
                     ],
                     metadata: {
                         recognisingDict: "some chemical dict",
