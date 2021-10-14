@@ -268,13 +268,8 @@ export module TextHighlighter {
 
   function addTooltips() {
     const highlights = Array.from(Globals.document.getElementsByClassName('aurac-highlight'));
-
     highlights.forEach(highlight => {
       const highlightContent = getHighlightContent(highlight)
-      if (highlightContent === undefined) {
-        console.log(highlight, 'highlight')
-      }
-      console.log(highlightContent, 'highlightContent')
       // we need to cast the Element as an HTMLElement in order to have access to data attributes
       const highlightHTML = highlight as HTMLElement;
      // update the data attribute
@@ -283,28 +278,14 @@ export module TextHighlighter {
   }
 
   function getHighlightContent(highlight: Element): string {
-    // the firstChild of a highlight element will always be a textNode except for Chembl representations, where the firstChild is an HTML
-    // Input Element, i.e. an elementNode
-    // const textNode = 3
-    // if (highlight.firstChild!.nodeType === textNode) {
-    //   return highlight.firstChild!.textContent!;
-    // } else {
-    //   console.log(highlight.firstElementChild!.tagName, 'tagName')
-    //   // TODO: what about nested highlights???
-    //   const inputElement = highlight.firstElementChild! as HTMLInputElement
-    //   return inputElement.value
-    // }
-    const elementNode = 1
+    // the firstChild of a highlighted Chembl representation is an HTML Input Element and has no textContent
     const textNode = 3
-    if (highlight.firstChild!.nodeType === elementNode && highlight.firstElementChild!.tagName == 'SPAN') {
+    if (highlight.firstChild!.nodeType !== textNode && highlight.firstElementChild!.tagName == 'INPUT') {
       const inputElement = highlight.firstElementChild! as HTMLInputElement
       return inputElement.value
-    } else if (highlight.firstChild!.nodeType === textNode) {
-      return highlight.firstChild!.textContent!;
     } else {
-      return '';
+      return highlight.firstChild!.textContent!;
     }
-
   }
 
   // highlights a term by wrapping it an HTML span
