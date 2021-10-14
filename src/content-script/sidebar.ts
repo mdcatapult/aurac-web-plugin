@@ -81,7 +81,7 @@ export module Sidebar {
   }
 
   // returns an event listener which creates a new element with passed info and appends it to the passed element
-  export function entityClickHandler(info: Entity, element: Element): (event: Event) => void {
+  export function entityClickHandler(info: Entity): (event: Event) => void {
     return (event: Event) => {
       if (event.type !== 'click') {
         return;

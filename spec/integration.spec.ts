@@ -6,9 +6,11 @@ import {Globals} from './../src/content-script/globals'
 import {clickElementForEntity, getLeadmineResults, TestLeadmineEntity, setup} from './util'
 
 import * as jsdom from 'jsdom'
+import {Instance} from 'tippy.js'
 
 const {JSDOM} = jsdom
 let document: Document = new JSDOM('').window.document
+let toolTips: Instance[]
 
 // sets global Node object to default value from JSDOM. Without this, the
 // global Node object is not understood from within test context
@@ -27,7 +29,7 @@ describe('integration', () => {
 
     // highlight entities - simulates 'markup_page' message
     const leadmineResults = getLeadmineResults(leadmineEntities)
-    TextHighlighter.wrapEntitiesWithHighlight({body: leadmineResults})
+    toolTips = TextHighlighter.wrapEntitiesWithHighlight({body: leadmineResults})
 
     document.body.appendChild(Sidebar.create())
   })
@@ -143,5 +145,15 @@ describe('integration', () => {
         })
       }
     })
+
+    it('data-tippy-content data attribute should be updated with occurrence count', () => {
+      const auracHighlight = Array.from(document.getElementsByClassName('aurac-highlight'))[0] as HTMLElement
+      expect(auracHighlight.dataset.tippyContent.includes(`${leadmineEntities[0].occurrences} occurrences`)).toBeTrue()
+    })
+
+    it('a single tooltip should be added for each aurac highlight', () => {
+      expect(toolTips.length).toEqual(document.getElementsByClassName('aurac-highlight').length)
+    })
+
   })
 })

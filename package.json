@@ -14,7 +14,8 @@
     "e2e": "ng e2e",
     "build:prod": "cross-env NODE_ENV=production ng build --configuration production",
     "weblint": "cd dist/browser-plugin && web-ext lint",
-    "version": "VERSION=$(jq -r '.version' package.json) && jq --arg v $VERSION '.version = $v' src/manifest.json > tmp.json && mv tmp.json src/manifest.json && git add src/manifest.json"
+    "version": "VERSION=$(jq -r '.version' package.json) && jq --arg v $VERSION '.version = $v' src/manifest.json > tmp.json && mv tmp.json src/manifest.json && git add src/manifest.json",
+    "unopt" : "ng build --configuration production --optimization=false && webpack"
   },
   "private": true,
   "dependencies": {
@@ -32,6 +33,7 @@
     "@material/typography": "^11.0.0",
     "file-saver": "^2.0.5",
     "rxjs": "~6.5.4",
+    "tippy.js": "^6.3.1",
     "tslib": "^2.0.0",
     "zone.js": "~0.11.4",
     "puppeteer": "^1.14.0",

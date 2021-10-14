@@ -66,7 +66,7 @@ export module ChEMBL {
 
         // add listener
         Card.populateEntityToOccurrences(entity.entityText, auracHighlightSpan);
-        auracHighlightSpan.addEventListener('click', Sidebar.entityClickHandler(entity, auracHighlightSpan));
+        auracHighlightSpan.addEventListener('click', Sidebar.entityClickHandler(entity));
       } catch (e) {
         console.error(e);
       }

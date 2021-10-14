@@ -17,6 +17,7 @@ import {XRefSourcesComponent} from './x-ref-sources/x-ref-sources.component';
 import {SettingsComponent} from './settings/settings.component';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import {PDFSelectorComponent} from './pdfselector/pdfselector.component'
 import {PreferencesComponent} from './preferences/preferences.component';
 import {MatRadioModule, MAT_RADIO_DEFAULT_OPTIONS} from '@angular/material/radio';
@@ -55,7 +56,8 @@ const routes: Routes = [
     MatIconModule,
     MatInputModule,
     MatFormFieldModule,
-    MatRadioModule
+    MatRadioModule,
+    MatTooltipModule
   ],
   providers: [
     {

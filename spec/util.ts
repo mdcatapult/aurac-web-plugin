@@ -22,6 +22,13 @@ export function setup(leadmineEntities: TestLeadmineEntity[]): Document {
   Globals.document = createDocument(leadmineEntities)
   Globals.browser = new BrowserMock()
 
+  // NOTHING TO SEE HERE MOVE ALONG ¯\_(ツ)_/¯
+  // global objects need to be overwritten for the benefit of third party libraries (e.g. tippyjs)
+  // @ts-ignore
+  global.document! = Globals.document
+  // @ts-ignore
+  global.window! = global.document.defaultView!
+
   // scrollIntoView will not work in test context without this
   Globals.document.defaultView.HTMLElement.prototype.scrollIntoView = () => {}
 
