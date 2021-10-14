@@ -58,9 +58,10 @@ const toggleSidebar = () => {
   }
 }
 
-const openSidebar = () => {
+async function openSidebar() {
   if (!document.getElementById("aurac-sidebar")) {
     injectSidebar()
+    await new Promise(r => setTimeout(r, 100));
   }
 
   Array.from(document.getElementsByClassName('aurac-transform')).forEach(e => {

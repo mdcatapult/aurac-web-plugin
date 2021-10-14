@@ -16,4 +16,12 @@ export class SidebarHeaderComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  exportCSV() {
+    alert("not yet implemented")
+  }
+
+  closeSidebar() {
+    this.browserService.sendMessageToActiveTab({type: 'toggle_sidebar'})
+  }
+
 }
