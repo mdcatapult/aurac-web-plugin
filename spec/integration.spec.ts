@@ -91,44 +91,61 @@ describe('integration', () => {
     })
 
     it('arrow buttons', () => {
-      const entity = leadmineEntities[0]
-      clickElementForEntity(entity.text)
-      const window = Globals.document.defaultView.window
-      const occurrences = Array.from(document.getElementsByClassName(TextHighlighter.highlightClass))
 
-      // scroll forwards through the occurrences
-      const rightArrow = document.getElementById(`right-${CardButtons.baseArrowId}-${entity.text}`)
-      for (let timesClicked = 0; timesClicked < entity.occurrences; timesClicked++) {
-        const oldScrollPos = window.scrollY
+      const leadmineEntitiesWithSynonym: TestLeadmineEntity[] = [
+        {
+          text: 'entity1',
+          occurrences: 10,
+          resolvedEntity: "resolved"
+        }, {
+          text: 'entity2',
+          occurrences: 10,
+          resolvedEntity: "resolved"
+        },
+      ]
 
-        rightArrow.click()
+      const leadmineEntitySets = [leadmineEntities, leadmineEntitiesWithSynonym]
 
-        const newScrollPos = window.scrollY
-        expect(newScrollPos !== oldScrollPos)
+      leadmineEntitySets.forEach(leadmineEntitySet => {
+        const entity = leadmineEntities[0]
+        clickElementForEntity(entity.text)
+        const window = Globals.document.defaultView.window
+        const occurrences = Array.from(document.getElementsByClassName(TextHighlighter.highlightClass))
 
-        const expectedHighlightIndex = timesClicked
-        assertHighlighting(occurrences, expectedHighlightIndex)
-      }
+        // scroll forwards through the occurrences
+        const rightArrow = document.getElementById(`right-${CardButtons.baseArrowId}-${entity.text}`)
+        for (let timesClicked = 0; timesClicked < entity.occurrences; timesClicked++) {
+          const oldScrollPos = window.scrollY
 
-      // scroll backwards through the occurrences
-      const leftArrow = document.getElementById(`left-${CardButtons.baseArrowId}-${entity.text}`)
-      for (let timesClicked = 0; timesClicked < entity.occurrences; timesClicked++) {
-        const oldScrollPos = window.scrollY
+          rightArrow.click()
 
-        leftArrow.click()
+          const newScrollPos = window.scrollY
+          expect(newScrollPos !== oldScrollPos)
 
-        const newScrollPos = window.scrollY
-        expect(newScrollPos !== oldScrollPos)
+          const expectedHighlightIndex = timesClicked
+          assertHighlighting(occurrences, expectedHighlightIndex)
+        }
 
-        const expectedHighlightIndex = entity.occurrences - timesClicked - 1
-        assertHighlighting(occurrences, expectedHighlightIndex)
-      }
+        // scroll backwards through the occurrences
+        const leftArrow = document.getElementById(`left-${CardButtons.baseArrowId}-${entity.text}`)
+        for (let timesClicked = 0; timesClicked < entity.occurrences; timesClicked++) {
+          const oldScrollPos = window.scrollY
+
+          leftArrow.click()
+
+          const newScrollPos = window.scrollY
+          expect(newScrollPos !== oldScrollPos)
+
+          const expectedHighlightIndex = entity.occurrences - timesClicked - 1
+          assertHighlighting(occurrences, expectedHighlightIndex)
+        }
+      })
 
       function assertHighlighting(occurrences: Element[], expectedHighlightIndex: number): void {
 
         occurrences.forEach((occurrence, occurrenceNumber) => {
           // highlight elements are wrapped in a font tag
-          const font = <HTMLFontElement> occurrence.getElementsByTagName('font')[0]
+          const font = <HTMLFontElement>occurrence.getElementsByTagName('font')[0]
           if (!font) {
             return
           }
