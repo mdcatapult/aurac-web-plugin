@@ -31,9 +31,6 @@ export function setup(leadmineEntities: TestLeadmineEntity[]): Document {
 function createDocument(leadmineEntities: TestLeadmineEntity[]): Document {
   const document = new JSDOM('').window.document
   document.implementation.createHTMLDocument()
-  // var fs = require('fs')
-  // const html = fs.readFileSync('src/ner-edge-case-tests.html')
-  // document.documentElement.innerHTML = html
 
   // add to document each entity in leadmine entities 'entity.occurrences' number of times
   leadmineEntities.forEach(entity => {
