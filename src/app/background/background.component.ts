@@ -10,6 +10,7 @@ import {Observable, of} from 'rxjs';
 import {BrowserService} from '../browser.service';
 import {saveAs} from 'file-saver';
 import {EntityGroupColours} from '../../content-script/types';
+import { EntityMessengerService } from './entity-messenger.service';
 
 @Component({
   selector: 'app-background',
@@ -22,7 +23,10 @@ export class BackgroundComponent {
   dictionary?: validDict;
   entityCache: EntityCache = new Map()
 
-  constructor(private client: HttpClient, private browserService: BrowserService) {
+  constructor(
+    private client: HttpClient, 
+    private browserService: BrowserService,
+    private entityMessengerService: EntityMessengerService) {
 
     SettingsService.loadSettings(this.browserService, (settings) => {
       this.settings = settings || defaultSettings;
@@ -35,11 +39,14 @@ export class BackgroundComponent {
       console.log('Received message from popup...', msg);
       switch (msg.type) {
         case 'ner_current_page': {
-          this.dictionary = msg.body;
-          this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
-            .then(() => {
-              this.nerCurrentPage(this.dictionary!);
-            })
+          this.browserService.sendMessageToActiveTab({type: 'content_script_open_sidebar'}).then(() =>
+            this.entityMessengerService.setSidebarEntities()
+          )
+          // this.dictionary = msg.body;
+          // this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
+          //   .then(() => {
+          //     this.nerCurrentPage(this.dictionary!);
+          //   })
           break;
         }
         case 'compound_x-refs' : {

@@ -30,7 +30,7 @@ export class PopupComponent {
   }
 
   toggleSidebar(): void {
-    this.browserService.sendMessageToActiveTab({type: 'toggle_sidebar'})
+    this.browserService.sendMessageToActiveTab({type: 'content_script_toggle_sidebar'})
       .catch(e => this.log.Error(`Couldn't send message of type 'toggle_sidebar' : ${JSON.stringify(e)}`));
   }
 

@@ -79,8 +79,21 @@ sidebarButton.addEventListener('click', toggleSidebar)
 // @ts-ignore
 browser.runtime.onMessage.addListener((msg) => {
   switch (msg.type) {
-    case 'toggle_sidebar':
-      toggleSidebar();
+    case 'content_script_toggle_sidebar':
+      return new Promise<void>(resolve => {
+        toggleSidebar();
+        resolve();
+      })
+    case 'content_script_open_sidebar':
+      return new Promise<void>(resolve => {
+        openSidebar();
+        resolve();
+      })
+    case 'content_script_close_sidebar':
+      return new Promise<void>(resolve => {
+        closeSidebar();
+        resolve();
+      })
     default:
       console.log(msg);
   }

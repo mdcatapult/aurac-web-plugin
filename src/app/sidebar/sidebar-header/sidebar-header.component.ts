@@ -21,7 +21,7 @@ export class SidebarHeaderComponent implements OnInit {
   }
 
   closeSidebar() {
-    this.browserService.sendMessageToActiveTab({type: 'toggle_sidebar'})
+    this.browserService.sendMessageToActiveTab({type: 'content_script_close_sidebar'})
   }
 
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { BrowserService } from '../browser.service';
 import { SidebarEntity } from './types';
 
@@ -9,30 +9,24 @@ import { SidebarEntity } from './types';
 })
 export class SidebarComponent implements OnInit {
 
-  entities: Array<SidebarEntity> = [
-    {
-      identifiers: [
-        {
-          type: "inchikey",
-          value: "RDHQFKQIGNGIED-MRVPVSSYSA-N"
-        }
-      ],
-      synonyms: [
-        "Acetylcarnitine",
-        "Acetyl-L-carnitine"
-      ],
-      occurrences: ["RDHQFKQIGNGIED-MRVPVSSYSA-N#0", "RDHQFKQIGNGIED-MRVPVSSYSA-N#1"],
-    }
-  ]
+  entities: Array<SidebarEntity> = []
 
-  constructor(private browserService: BrowserService) { }
-
-  ngOnInit(): void {
-    this.browserService.addListener((msg) => {
-      console.log(msg.type)
-      this.browserService.sendMessage('log', {msg: "Hello, World!"})
-      // this.browserService.sendMessageToActiveTab({type: 'log', body: "Hello, World!"})
+  constructor(private browserService: BrowserService, private changeDetector: ChangeDetectorRef) {
+    this.browserService.addListener((msg: any) => {
+      switch (msg.type) {
+        case 'sidebar_component_set_entities':
+          console.log(msg.body)
+          this.setEntities(msg.body as SidebarEntity[]);
+      }
     })
   }
 
+  ngOnInit(): void {
+    this.browserService.sendMessage('readiness_service_sidebar_ready')
+  }
+
+  private setEntities(entities: SidebarEntity[]): void {
+    this.entities = entities
+    this.changeDetector.detectChanges()
+  }
 }

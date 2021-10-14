@@ -9,7 +9,9 @@ export type MessageType =
   | 'x-ref_result'
   | 'settings-changed'
   | 'log'
-  | 'toggle_sidebar'
+  | 'content_script_toggle_sidebar'
+  | 'content_script_open_sidebar'
+  | 'content_script_close_sidebar'
   | 'sidebar_rendered'
   | 'ner_lookup_performed'
   | 'awaiting_response'
@@ -17,7 +19,9 @@ export type MessageType =
   | 'min-entity-length-changed'
   | 'export_csv'
   | 'open_modal'
-  | 'settings_clicked';
+  | 'settings_clicked'
+  | 'sidebar_component_set_entities'
+  | 'readiness_service_sidebar_ready';
 
 export interface Message {
   type: MessageType;
