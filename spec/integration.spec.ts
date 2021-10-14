@@ -1,9 +1,9 @@
-import {TextHighlighter} from '../src/content-script/textHighlighter'
-import {Sidebar} from '../src/content-script/sidebar'
-import {CardButtons} from '../src/content-script/cardButtons'
-import {cardClassName} from '../src/content-script/types'
-import {Globals} from '../src/content-script/globals'
-import {LeadmineEntity, setup} from './util'
+import {TextHighlighter} from './../src/content-script/textHighlighter'
+import {Sidebar} from './../src/content-script/sidebar'
+import {CardButtons} from './../src/content-script/cardButtons'
+import {cardClassName} from './../src/content-script/types'
+import {Globals} from './../src/content-script/globals'
+import {clickElementForEntity, getLeadmineResults, TestLeadmineEntity, setup} from './util'
 
 import * as jsdom from 'jsdom'
 import {Instance} from 'tippy.js'
@@ -17,9 +17,10 @@ let toolTips: Instance[]
 global.Node = document.defaultView.Node
 
 // simulates the entities which come back from leadmine
-const leadmineEntities: LeadmineEntity[] = [{
+const leadmineEntities: TestLeadmineEntity[] = [{
   text: 'entity1',
-  occurrences: 10
+  occurrences: 10,
+  resolvedEntity: undefined
 }]
 
 describe('integration', () => {
@@ -33,7 +34,7 @@ describe('integration', () => {
     document.body.appendChild(Sidebar.create())
   })
 
-  it('text elements in leadminerResult should be highlighted', () => {
+  it('text elements in leadmineResult should be highlighted', () => {
     const hasHighlights = leadmineEntities.every(entity => {
       const highlightedElements = Array.from(document.getElementsByClassName(TextHighlighter.highlightClass))
 
@@ -156,37 +157,3 @@ describe('integration', () => {
 
   })
 })
-
-function clickElementForEntity(entity: string): void {
-  Array.from(document.getElementsByClassName(TextHighlighter.highlightClass)).forEach((element: HTMLElement) => {
-    if (element.textContent === entity) {
-      element.click()
-      return
-    }
-  })
-}
-
-// returns sample leadmine results for each entityText
-function getLeadmineResults(entities: LeadmineEntity[]): Object {
-  return entities.map(entity => {
-    return {
-      beg: 325,
-      begInNormalizedDoc: 325,
-      end: 355,
-      endInNormalizedDoc: 355,
-      entityGroup: 'Gene or Protein',
-      entityText: entity.text,
-      possiblyCorrectedText: entity.text,
-      recognisingDict: {
-        enforceBracketing: false,
-        entityType: 'GeneOrProtein',
-        htmlColor: 'pink',
-        maxCorrectionDistance: 0,
-        minimumCorrectedEntityLength: 9,
-        minimumEntityLength: 0,
-        source: '/srv/config/common/leadmine/2018-11-06/dictionary/CFDictGeneAndProtein.cfx',
-      },
-      resolvedEntity: null,
-    }
-  })
-}
