@@ -1,6 +1,18 @@
 /* To learn more about this file see: https://angular.io/config/tsconfig. */
 {
   "compileOnSave": false,
+  "ts-node": {
+    // these options are overrides used only by ts-node
+    // same as our --compilerOptions flag and our TS_NODE_COMPILER_OPTIONS environment variable
+    "compilerOptions": {
+      "module": "commonjs",
+      "types": [
+        "node",
+        "jasmine"
+      ]
+    }
+  },
+
   "compilerOptions": {
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
@@ -15,6 +27,9 @@
     "lib": [
       "es2018",
       "dom"
-    ]
-  }
+    ],
+  },
+  "exclude": [
+    "node_modules"
+  ]
 }

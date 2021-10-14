@@ -3,7 +3,7 @@ import {Component} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {SettingsService} from '../settings/settings.service';
-import {ConverterResult, defaultSettings, LeadminerEntity, LeadminerResult, Message, Settings, StringMessage, XRef} from 'src/types';
+import {ConverterResult, defaultSettings, LeadminerEntity, LeadminerResult, Message, Settings, StringMessage, XRef, EntityCache} from 'src/types';
 import {validDict} from './types';
 import {map, switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
@@ -20,8 +20,7 @@ export class BackgroundComponent {
 
   settings: Settings = defaultSettings;
   dictionary?: validDict;
-  leadmineResult?: LeadminerResult;
-  private currentResults: Array<LeadminerEntity> = []
+  entityCache: EntityCache = new Map()
 
   constructor(private client: HttpClient, private browserService: BrowserService) {
 
@@ -37,7 +36,10 @@ export class BackgroundComponent {
       switch (msg.type) {
         case 'ner_current_page': {
           this.dictionary = msg.body;
-          this.nerCurrentPage(this.dictionary!);
+          this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
+            .then(() => {
+              this.nerCurrentPage(this.dictionary!);
+            })
           break;
         }
         case 'compound_x-refs' : {
@@ -48,43 +50,90 @@ export class BackgroundComponent {
           this.settings = msg.body;
           break;
         }
-        case 'preferences-changed': {
-          if (!this.leadmineResult) {
-            break;
-          }
-          this.refreshHighlights();
+        case 'min-entity-length-changed': {
+          this.refreshHighlights(this.dictionary!);
           break;
         }
         case 'export_csv': {
-          this.exportCSV()
+          this.retrieveNERFromPage(this.dictionary!)
           break;
         }
         case 'open_modal': {
           this.openModal(msg.body)
           break;
         }
-
       }
     }
   }
 
-  private refreshHighlights(): void {
-    this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
-      .catch(console.error)
-      .then(() => {
-        const uniqueEntities = this.getUniqueEntities(this.leadmineResult!);
-        this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
-          .catch(console.error);
-      });
+  private saveURLToEntityMapper(dictionary: validDict, entities: Array<LeadminerEntity>): void {
+    this.browserService.getActiveTab()
+      .then(tabResponse => {
+        const currentURL = this.sanitiseURL(tabResponse.url!)
+        const dictionaryToEntities = this.entityCache.has(currentURL) ?
+          this.entityCache.get(currentURL) : new Map<validDict, Array<LeadminerEntity>>()
+        dictionaryToEntities!.set(dictionary, entities)
+
+        this.entityCache.set(currentURL, dictionaryToEntities!)
+
+        const entityCacheToJson = JSON.stringify(this.entityCache, (key: string, value: any) => {
+          if (value instanceof Map) {
+            return {
+              dataType: 'Map',
+              value: Array.from(value.entries()),
+            };
+          } else {
+            return value;
+          }
+        });
+        this.browserService.saveEntityCache(entityCacheToJson)
+      })
+  }
+
+  private refreshHighlights(dictionary: validDict): void {
+    Promise.all([
+      this.browserService.getActiveTab(),
+      this.browserService.loadEntityCache(),
+    ])
+      .then(([tabResponse, urlToEntityMap]) => {
+        const currentURL = this.sanitiseURL(tabResponse.url!)
+        const entities = urlToEntityMap.get(currentURL)!.get(dictionary)!
+        if (entities.length === 0) {
+          return;
+        }
+        this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
+          .then(() => {
+            const uniqueEntities = this.getUniqueEntities(entities)
+            this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntities})
+              .catch(console.error);
+          }
+        )
+      })
   }
 
   private openModal(chemblId: string): void {
     this.browserService.sendMessageToActiveTab({type: 'open_modal', body: chemblId})
   }
 
+  private sanitiseURL(url: string): string {
+    return url!.replace(/^(https?|http):\/\//, '').split('#')[0]
+  }
 
-  private exportCSV(): void {
-    if (this.currentResults.length === 0) {
+  private retrieveNERFromPage(dictionary: validDict): void {
+    Promise.all([
+      this.browserService.getActiveTab(),
+      this.browserService.loadEntityCache()
+    ])
+      .then(([tabResponse, urlToEntityMap]) => {
+        const currentURL = this.sanitiseURL(tabResponse.url!)
+        const entities = urlToEntityMap.get(currentURL)!.get(dictionary)!
+        this.exportResultsToCSV(this.getUniqueEntities(entities), currentURL)
+      })
+      .catch(e => console.error(`Error: ' : ${JSON.stringify(e)}`));
+  }
+
+  private exportResultsToCSV(currentResults: Array<LeadminerEntity>, currentURL: string): void {
+    if (currentResults.length === 0) {
       return;
     }
     const headings = ['beg',
@@ -104,12 +153,12 @@ export class BackgroundComponent {
       'minimumEntityLength',
       'source']
     let text = headings.join(',') + '\n'
-    this.currentResults.forEach(entity => {
+    currentResults.forEach(entity => {
       text = text + entity.beg + ','
         + entity.begInNormalizedDoc + ','
         + entity.end + ','
         + entity.endInNormalizedDoc + ','
-        + entity.entityText + ','
+        + `"${entity.entityText}"` + ','
         + entity.possiblyCorrectedText + ','
         + entity.resolvedEntity + ','
         + entity.sectionType + ','
@@ -122,8 +171,12 @@ export class BackgroundComponent {
         + entity.recognisingDict.minimumEntityLength + ','
         + entity.recognisingDict.source + '\n'
     })
+    this.exportToCSV(text, currentURL)
+  }
+
+  private exportToCSV(text: string, currentURL: string): void {
     const blob = new Blob([text], {type: 'text/csv;charset=utf-8'})
-    saveAs(blob, 'export.csv')
+    saveAs(blob, 'aurac_all_results_' + currentURL + '.csv')
   }
 
   private smilesToInChIToUnichemPlus([entityText, smilesText]: [string, string]): Observable<XRef[]> {
@@ -206,32 +259,40 @@ export class BackgroundComponent {
         console.log('Sending page contents to leadmine...');
         let queryParams: HttpParams = new HttpParams()
           .set('inchikey', 'false');
-        if (dictionary === 'chemical-inchi') {
-          dictionary = 'chemical-entities';
-          queryParams = new HttpParams().set('inchikey', 'true');
+        let dictionaryPath: string
+
+        switch (dictionary) {
+          case 'genes and proteins':
+            dictionaryPath = 'proteins'
+            break
+          case 'chemical entities':
+            queryParams = new HttpParams().set('inchikey', 'true')
+            dictionaryPath = 'chemical-entities'
+            break;
+          default:
+            dictionaryPath = dictionary
         }
-        const leadmineURL = `${this.settings.urls.leadmineURL}${environment.production ? `/${dictionary}` : ''}/entities`;
+
+        const leadmineURL = `${this.settings.urls.leadmineURL}${environment.production ? `/${dictionaryPath}` : ''}/entities`;
 
         this.client.post<LeadminerResult>(
           leadmineURL,
           result.body,
-          {observe: 'response', params: queryParams})
+        {observe: 'response', params: queryParams})
           .subscribe((response) => {
-              console.log('Received results from leadmine...');
-              if (!response.body || !response.body.entities) {
-                this.browserService.sendMessageToActiveTab({type: 'awaiting_response', body: false})
-                  .catch(console.error);
-                return;
-              }
-              this.leadmineResult = response.body;
-
-              const uniqueEntitiesWithAmendedHtmlColour =
-                this.getUniqueEntities(this.leadmineResult!).map(this.amendEntityHtmlColor);
-
-              this.currentResults = uniqueEntitiesWithAmendedHtmlColour;
-
-              this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntitiesWithAmendedHtmlColour})
+            console.log('Received results from leadmine...');
+            if (!response.body || !response.body.entities) {
+              this.browserService.sendMessageToActiveTab({type: 'awaiting_response', body: false})
                 .catch(console.error);
+              return;
+            }
+            const leadminerResult = response.body;
+            this.saveURLToEntityMapper(dictionary, leadminerResult.entities!)
+            const uniqueEntitiesWithAmendedHtmlColour =
+              this.getUniqueEntities(leadminerResult.entities!).map(this.amendEntityHtmlColor);
+
+            this.browserService.sendMessageToActiveTab({type: 'markup_page', body: uniqueEntitiesWithAmendedHtmlColour})
+              .catch(console.error);
             },
             () => {
               this.browserService.sendMessageToActiveTab({type: 'awaiting_response', body: false})
@@ -248,13 +309,13 @@ export class BackgroundComponent {
     return (entity && entity.entityText.length >= this.settings.preferences.minEntityLength);
   }
 
-
-  getUniqueEntities(leadmineResponse: LeadminerResult): Array<LeadminerEntity> {
-    const uniqueEntities = new Array<LeadminerEntity>();
-    leadmineResponse.entities
-      .forEach((entity: LeadminerEntity) => {
+  getUniqueEntities(leadmineResponse: LeadminerEntity[]): LeadminerEntity[] {
+    const uniqueEntities: LeadminerEntity[] = [];
+    leadmineResponse.forEach((entity: LeadminerEntity) => {
         if (this.shouldDisplayEntity(entity)) {
-          uniqueEntities.push(entity);
+          if (!uniqueEntities.some(uniqueEntity => uniqueEntity.entityText === entity.entityText)) {
+            uniqueEntities.push(entity);
+          }
         }
       });
     return uniqueEntities;

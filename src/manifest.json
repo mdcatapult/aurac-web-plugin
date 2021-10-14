@@ -20,7 +20,10 @@
         "content.js"
       ],
       "css": [
-        "assets/styles.css"
+        "assets/styles.css",
+        "assets/tippy.css",
+        "assets/tippy-light-border.css",
+        "assets/tippy-shift-away.css"
       ]
     }
   ],

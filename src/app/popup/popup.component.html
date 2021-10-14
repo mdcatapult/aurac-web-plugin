@@ -3,31 +3,33 @@
   <img src="./assets/head-brains.icon.128.png" alt="logo" class="aurac-logo">
 
     <div class="ner-button-container">
-    <button mat-raised-button (click)="nerCurrentPage()">
+    <button mat-raised-button (click)="nerCurrentPage()" matTooltip="Ask Aurac to highlight interesting things in the page"
+            matTooltipPosition="above" aria-label="Button that highlights things of interest in the current page">
       <mat-icon inline="true" class="ner-icon">manage_search</mat-icon>
-      NER
+      Highlight
     </button>
   </div>
   <br>
 
   <div class="settings-button-container">
-    <button mat-raised-button color="black" (click)="settingsClicked()" id="aurac-settings-button">
+    <button mat-raised-button color="black" (click)="settingsClicked()" id="aurac-settings-button"
+            matTooltip="Change settings like the type of things to highlight" matTooltipPosition="above"
+            aria-label="Button that selects the settings page where you can change the type of entities to be highlighted, the length of highlighted entities to be displayed the cross reference sources to be displayed and the URLs where Aurac gets its information from">
       <mat-icon inline="true">settings_suggest</mat-icon>
       Settings
     </button>
-    <button
-      mat-raised-button
-      color="black"
-      (click)="pdfClicked()"
-    >
+    <button mat-raised-button color="black" (click)="pdfClicked()" matTooltip="Convert a PDF from a web address into a page you can highlight"
+            matTooltipPosition="above" aria-label="Button which displays an input field where you can enter a URL to fetch a PDF and convert it into a web page for highlighting">
       <mat-icon inline="true">picture_as_pdf</mat-icon>
       PDF conversion
     </button>
-    <button mat-raised-button color="black" (click)="toggleSidebar()">
+    <button mat-raised-button color="black" (click)="toggleSidebar()" matTooltip="Close or open the Aurac sidebar"
+            matTooltipPosition="above" aria-label="Button which closes or opens the Aurac sidebar where entities are displayed when you click on them">
       <mat-icon inline="true">auto_stories</mat-icon>
       Toggle Sidebar
     </button>
-    <button mat-raised-button color="black" (click)="exportResults()">
+    <button mat-raised-button color="black" (click)="exportResults()" matTooltip="Save all the results found by Aurac when highlighting as a CSV download"
+            matTooltipPosition="above" aria-label="Button which allows you to save the entities found by Aurac as a CSV file">
       <mat-icon inline="true">auto_stories</mat-icon>
       Export Results
     </button>

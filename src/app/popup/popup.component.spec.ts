@@ -5,10 +5,7 @@ import { TestBrowserService } from '../test-browser.service';
 
 describe('PopupComponent', () => {
   let component: TestBrowserService;
-  // ComponentFixtures enable you to debug your tests. This does not currently work with our TestBrowserService as we get IVY compiler
-  // errors https://redmine.mdcatapult.io/issues/2278
 
-  // let fixture: ComponentFixture<TestBrowserService>;
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [

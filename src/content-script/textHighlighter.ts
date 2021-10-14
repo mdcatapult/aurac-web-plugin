@@ -1,17 +1,45 @@
-import {chemicalFormula, Entity} from './types';
+import {chemicalFormula, Entity, ChemblRepresentations} from './types';
 import {Sidebar} from './sidebar';
 import {Card} from './card';
-import {ChemblRepresentations} from './types';
 import {ChEMBL} from './chembl';
+import {EntityTextBlacklist, EntityGroupBlacklist, AbbreviationsNotGeneNames} from './blacklist';
+import {Globals} from './globals';
+import tippy, {Instance} from 'tippy.js';
+import {CardButtons} from './cardButtons';
+
+type TooltipInstance = Instance
 
 export module TextHighlighter {
 
   const chemicalFormulae: chemicalFormula[] = [];
-  const highlightClass = 'aurac-highlight';
-  const highlightParentClass = 'aurac-highlight-parent';
+  export const highlightClass = 'aurac-highlight';
+  export const highlightParentClass = 'aurac-highlight-parent';
 
-  export function wrapEntitiesWithHighlight(msg: any) {
+  function blacklistedEntityText(entityText: string): boolean {
+    return EntityTextBlacklist[entityText.toLowerCase()];
+  }
 
+  function blacklistedEntityGroup(entityGroup: string): boolean {
+    return EntityGroupBlacklist[entityGroup.toLowerCase()];
+  }
+
+  function abbrevationNotGeneName(entityText: string): boolean {
+    return AbbreviationsNotGeneNames[entityText];
+  }
+
+  // It is common for Gene names to be all uppercase
+  function isPotentialGeneName(entityText: string): boolean {
+    if (!abbrevationNotGeneName(entityText)) {
+      return entityText === entityText.toUpperCase();
+    }
+    return false;
+  }
+
+  function geneOrProtein(entity: Entity): boolean {
+    return entity.entityGroup === 'Gene or Protein';
+  }
+
+  export function wrapEntitiesWithHighlight(msg: any): TooltipInstance[] {
     // get InChI, InChIKey and SMILES input elements if we are on ChEMBL
     let chemblRepresentations: ChemblRepresentations;
     if (ChEMBL.isChemblPage()) {
@@ -22,13 +50,29 @@ export module TextHighlighter {
     // highlighted if VPS26 has already been highlighted, because the text VPS26A is now spread across more than one node
     msg.body.sort((a: Entity, b: Entity) => b.entityText.length - a.entityText.length)
       .map((entity: Entity) => {
+        const entityText: string = entity.entityText
+        const entityTextLowercase: string = entity.entityText.toLowerCase()
 
-        const selectors = getSelectors(entity.entityText);
-        wrapChemicalFormulaeWithHighlight(entity);
-        addHighlightAndEventListeners(selectors, entity);
-        if (ChEMBL.isChemblPage()) {
-          ChEMBL.highlightHandler(entity, chemblRepresentations)
+        if ((!blacklistedEntityGroup(entityTextLowercase) && !blacklistedEntityText(entityTextLowercase))
+          || (geneOrProtein(entity) && isPotentialGeneName(entityText) )) {
+          const selectors = getSelectors(entityText);
+          wrapChemicalFormulaeWithHighlight(entity);
+          addHighlightAndEventListeners(selectors, entity);
+          if (ChEMBL.isChemblPage()) {
+            ChEMBL.highlightHandler(entity, chemblRepresentations);
+          }
         }
+      });
+    // TODO tippy return is only here to help the integration tests. We need to find a better way to test the tooltips or
+    // return something useful from this method
+    return tippy(
+      '[data-tippy-content]',
+      {
+        allowHTML: true,
+        theme: 'light-border',
+        animation: 'shift-away',
+        duration: 600,
+        zIndex: 2147483647,
       });
   }
 
@@ -45,7 +89,7 @@ export module TextHighlighter {
       // join text by stripping out any whitespace or return characters
       const formattedText = text.replace(/[\r\n\s]+/gm, '');
       // push chemical formula to textNodes to be NER'd
-      textNodes.push(formattedText + '\n');
+      textNodes.push(formattedText);
       chemicalFormulae.push({formulaNode: node, formulaText: formattedText});
       return;
     }
@@ -56,10 +100,7 @@ export module TextHighlighter {
         if (isNodeAllowed(element)) {
           if (element.nodeType === Node.TEXT_NODE) {
             textNodes.push(element.textContent + '\n');
-          } else if (!element.classList.contains('tooltipped') &&
-            !element.classList.contains('tooltipped-click') &&
-            !element.classList.contains('aurac-sidebar') &&
-            element.style.display !== 'none') {
+          } else if (allowedClassList(element)) {
             allTextNodes(element, textNodes);
           }
         }
@@ -71,6 +112,14 @@ export module TextHighlighter {
     }
   }
 
+  // Returns true if classlist does not contain any forbidden classes
+  function allowedClassList(element: HTMLElement): boolean {
+    return !element.classList.contains('tooltipped') &&
+      !element.classList.contains('tooltipped-click') &&
+      !element.classList.contains('aurac-sidebar') &&
+      element.style.display !== 'none'
+  }
+
   // Only allow nodes that we can traverse or add children to
   function isNodeAllowed(element: HTMLElement): boolean {
     return element.nodeType !== Node.COMMENT_NODE && element.nodeType !== Node.CDATA_SECTION_NODE
@@ -78,48 +127,46 @@ export module TextHighlighter {
   }
 
   function allowedTagType(element: HTMLElement): boolean {
-    return ![HTMLScriptElement,
-      HTMLStyleElement,
-      SVGElement,
-      HTMLInputElement,
-      HTMLButtonElement,
-      HTMLAnchorElement,
+    return ![
+      Globals.document.defaultView!.HTMLScriptElement,
+      Globals.document.defaultView!.HTMLStyleElement,
+      Globals.document.defaultView!.SVGElement,
+      Globals.document.defaultView!.HTMLInputElement,
+      Globals.document.defaultView!.HTMLButtonElement,
+      Globals.document.defaultView!.HTMLAnchorElement,
     ].some(tag => element instanceof tag)
   }
 
   // TODO maybe remove this when we can select via data attribute?
   // Recursively find all text nodes which match entity
-  function allDescendants(node: HTMLElement, elements: Array<Element>, entity: string) {
-      if ((node && node.classList && node.classList.contains('aurac-sidebar')) || !allowedTagType(node)) {
-        return;
-      }
-      try {
-        node.childNodes.forEach(child => {
-          const element = child as HTMLElement;
-          if (isNodeAllowed(element) && element.nodeType === Node.TEXT_NODE) {
-            if (textContainsTerm(element.nodeValue!, entity)) {
-              elements.push(element);
-            }
-            // tslint:disable-next-line:max-line-length
-          } else if (element.classList && !element.classList.contains('tooltipped')
-            && !element.classList.contains('tooltipped-click')
-            && element.style.display !== 'none') {
-            allDescendants(element, elements, entity);
-          }
-        });
-      } catch (e) {
-        // There are so many things that could go wrong.
-        // The DOM is a wild west
-        console.error(e);
-      }
+  export function allDescendants(element: HTMLElement, elements: Array<Element>, entity: string) {
+    if ((element && (element.classList && !allowedClassList(element) || !allowedTagType(element)))) {
+      return;
     }
+    try {
+      element.childNodes.forEach(child => {
+        const childElement = child as HTMLElement;
+        if (isNodeAllowed(childElement) && childElement.nodeType === Node.TEXT_NODE) {
+          if (textContainsTerm(childElement.nodeValue!, entity)) {
+            elements.push(childElement);
+          }
+        } else {
+          allDescendants(childElement, elements, entity);
+        }
+      });
+    } catch (e) {
+      // There are so many things that could go wrong.
+      // The DOM is a wild west
+      console.error(e);
+    }
+  }
 
-  const delimiters: string[] = ['(', ')', '\\n', '\"', '\'', '\\', ',', ';', '.', '!'];
+  export const delimiters: string[] = ['(', ')', '\\n', '\"', '\'', '\\', ',', ';', '.', '!'];
 
   // Returns true if a string contains at least one instance of a particular term between word boundaries, i.e. not immediately
   // followed or preceded by either a non white-space character or one of the special characters in the delimiters array.
   // Can handle non latin unicode terms which at the moment JS Regex can't.
-  function textContainsTerm(text: string, term: string): boolean {
+  export function textContainsTerm(text: string, term: string): boolean {
     const startsWithWhiteSpaceRegex = /^\s+.*/;
     const endsWithWhiteSpaceRegex = /.*\s+$/;
     let currentText = '';
@@ -183,7 +230,7 @@ export module TextHighlighter {
       return !elementHasHighlightedParents(child)
     }).forEach(childValue => {
       Card.populateEntityToOccurrences(entity.entityText, childValue);
-      childValue.addEventListener('click', Sidebar.entityClickHandler(entity, highlightedTerm));
+      childValue.addEventListener('click', Sidebar.entityClickHandler(entity));
     });
   }
 
@@ -193,7 +240,7 @@ export module TextHighlighter {
       const formulaNode = formula.formulaNode;
       if (formula.formulaText === entity.entityText) {
         try {
-          const replacementNode = document.createElement('span');
+          const replacementNode = Globals.document.createElement('span');
           // the span needs a class so that it can be deleted by the removeHighlights function
           replacementNode.className = highlightClass;
           // Retrieves the specific highlight colour to use for this NER term
@@ -206,17 +253,51 @@ export module TextHighlighter {
     }
   }
 
+  function createTooltipContent(entity: string): HTMLElement {
+    const tooltipContainer = Globals.document.createElement('span');
+    //   getOccurrenceCounts must be called after populateEntityToOccurrence
+    const occurrenceCount = CardButtons.getOccurrenceCounts([entity]);
+    const occurrenceCountDiv = Globals.document.createElement('div');
+    const occurrences = occurrenceCount === 1 ? 'occurrence' : 'occurrences';
+    occurrenceCountDiv.innerHTML = `<p>${occurrenceCount} ${occurrences} of ${entity} found on the current page</p>`;
+
+    tooltipContainer.appendChild(occurrenceCountDiv);
+    return tooltipContainer;
+  }
+
+  function addTooltips() {
+    const highlights = Array.from(Globals.document.getElementsByClassName('aurac-highlight'));
+    highlights.forEach(highlight => {
+      const highlightContent = getHighlightContent(highlight)
+      // we need to cast the Element as an HTMLElement in order to have access to data attributes
+      const highlightHTML = highlight as HTMLElement;
+     // update the data attribute
+      highlightHTML.dataset.tippyContent = createTooltipContent(highlightContent).outerHTML;
+    });
+  }
+
+  export function getHighlightContent(highlight: Element): string {
+    // the firstChild of a highlighted Chembl representation is an HTML Input Element and has no textContent
+    const textNode = 3
+    if (highlight.firstChild!.nodeType !== textNode && highlight.firstElementChild!.tagName == 'INPUT') {
+      const inputElement = highlight.firstElementChild! as HTMLInputElement
+      return inputElement.value
+    } else {
+      return highlight.firstChild!.textContent!;
+    }
+  }
+
   // highlights a term by wrapping it an HTML span
   const highlightTerm = (term: string, entity: Entity) => {
     return `<span class="aurac-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative; cursor: pointer">${term}</span>`;
   };
 
-  function addHighlightAndEventListeners(selector: Element[], entity: Entity) {
-    selector.map(element => {
+  export function addHighlightAndEventListeners(selector: Element[], entity: Entity) {
+    selector.forEach(element => {
       // Try/catch for edge cases.
       try {
         // For each term, we want to replace its original HTML with a highlight colour
-        const replacementNode = document.createElement('span');
+        const replacementNode = Globals.document.createElement('span');
         // the span needs a class so that it can be deleted by the removeHighlights function
         replacementNode.className = highlightParentClass;
         replacementNode.innerHTML = element.nodeValue!.split(entity.entityText).join(highlightTerm(entity.entityText, entity));
@@ -225,24 +306,26 @@ export module TextHighlighter {
         console.error(e);
       }
     });
+    // addTooltips must be called after all highlighting has been completed in order for occurrence counts to include synonyms
+    addTooltips();
   }
 
   function getSelectors(entity: string): Array<Element> {
     const allElements: Array<Element> = [];
-    allDescendants(document.body, allElements, entity);
+    allDescendants(Globals.document.body, allElements, entity);
     return allElements;
   }
 
   export function removeHighlights() {
-    Array.from(document.getElementsByClassName(highlightParentClass))
-      .concat(Array.from(document.getElementsByClassName(highlightClass)))
+    Array.from(Globals.document.getElementsByClassName(highlightParentClass))
+      .concat(Array.from(Globals.document.getElementsByClassName(highlightClass)))
       .forEach(element => {
         const childNodes = Array.from(element.childNodes);
         element.replaceWith(...childNodes);
       });
   }
 
-  function elementHasHighlightedParents(entity: Element): boolean {
+  export function elementHasHighlightedParents(entity: Element): boolean {
     const parent = entity.parentElement
     const grandparent = parent?.parentElement
     return !!(parent?.classList.contains(highlightClass) || grandparent?.classList.contains(highlightClass))
