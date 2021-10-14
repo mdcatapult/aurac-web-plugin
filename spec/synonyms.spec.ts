@@ -10,10 +10,6 @@ import { CardButtons } from './../src/content-script/cardButtons'
 const {JSDOM} = jsdom
 let document: Document = new JSDOM('').window.document
 
-// sets global Node object to default value from JSDOM. Without this, the
-// global Node object is not understood from within test context
-global.Node = document.defaultView.Node
-
 describe('synonyms', () => {
 
   const entity1Text = 'entity1'
