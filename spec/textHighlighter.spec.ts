@@ -112,7 +112,7 @@ describe('allTextNodes', () => {
   let textNodes: Array<string>;
 
   beforeAll(() => {
-    document =  setup([])
+    document = setup([])
   })
 
   beforeEach(() => {
@@ -288,7 +288,7 @@ describe('allDescendants', () => {
   let elements: Array<Element>;
 
   beforeAll(() => {
-    document =  setup([])
+    document = setup([])
   })
 
   beforeEach(() => {
@@ -378,7 +378,7 @@ describe('allDescendants', () => {
 
 it('should remove highlights when we call removeHighlights method', () => {
     let document: Document;
-    document =  setup([])
+    document = setup([])
 
     let highlightElement = document.createElement('div')
     highlightElement.className = TextHighlighter.highlightClass
@@ -396,7 +396,7 @@ describe('elementHasHighlightParents', () => {
 
   let document: Document;
   beforeAll(() => {
-    document =  setup([])
+    document = setup([])
   })
 
   it('returns true if direct parent of passed element is an aurac highlight', () => {
@@ -431,7 +431,7 @@ describe('elementHasHighlightParents', () => {
 })
 
 it('should highlight an entity when we call addHighlightAndEventListeners method', () => {
-    const document =  setup([])
+    const document = setup([])
     const elementToBeHighlighted = document.createElement('p')
     elementToBeHighlighted.id = 'elementToBeHighlighted'
     elementToBeHighlighted.textContent = 'protein'
