@@ -1,6 +1,6 @@
 {
   "name": "browser-plugin",
-  "version": "0.12.0",
+  "version": "0.12.1",
   "scripts": {
     "ng": "ng",
     "start": "web-ext run --verbose --source-dir=dist/browser-plugin",
@@ -15,7 +15,7 @@
     "build:prod": "cross-env NODE_ENV=production ng build --configuration production",
     "weblint": "cd dist/browser-plugin && web-ext lint",
     "version": "VERSION=$(jq -r '.version' package.json) && jq --arg v $VERSION '.version = $v' src/manifest.json > tmp.json && mv tmp.json src/manifest.json && git add src/manifest.json",
-    "unopt" : "ng build --configuration production --optimization=false && webpack"
+    "unopt": "ng build --configuration production --optimization=false && webpack"
   },
   "private": true,
   "dependencies": {
