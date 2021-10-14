@@ -257,6 +257,7 @@ export module TextHighlighter {
     const tooltipContainer = Globals.document.createElement('span');
     //   getOccurrenceCounts must be called after populateEntityToOccurrence
     const occurrenceCount = CardButtons.getOccurrenceCounts([entity]);
+    console.log(entity, 'entity')
     const occurrenceCountDiv = Globals.document.createElement('div');
     const occurrences = occurrenceCount === 1 ? 'occurrence' : 'occurrences';
     occurrenceCountDiv.innerHTML = `<p>${occurrenceCount} ${occurrences} of ${entity} found on the current page</p>`;
@@ -267,12 +268,43 @@ export module TextHighlighter {
 
   function addTooltips() {
     const highlights = Array.from(Globals.document.getElementsByClassName('aurac-highlight'));
+
     highlights.forEach(highlight => {
-      const highlightContent = highlight.firstChild!.textContent!;
+      const highlightContent = getHighlightContent(highlight)
+      if (highlightContent === undefined) {
+        console.log(highlight, 'highlight')
+      }
+      console.log(highlightContent, 'highlightContent')
       // we need to cast the Element as an HTMLElement in order to have access to data attributes
       const highlightHTML = highlight as HTMLElement;
+     // update the data attribute
       highlightHTML.dataset.tippyContent = createTooltipContent(highlightContent).outerHTML;
     });
+  }
+
+  function getHighlightContent(highlight: Element): string {
+    // the firstChild of a highlight element will always be a textNode except for Chembl representations, where the firstChild is an HTML
+    // Input Element, i.e. an elementNode
+    // const textNode = 3
+    // if (highlight.firstChild!.nodeType === textNode) {
+    //   return highlight.firstChild!.textContent!;
+    // } else {
+    //   console.log(highlight.firstElementChild!.tagName, 'tagName')
+    //   // TODO: what about nested highlights???
+    //   const inputElement = highlight.firstElementChild! as HTMLInputElement
+    //   return inputElement.value
+    // }
+    const elementNode = 1
+    const textNode = 3
+    if (highlight.firstChild!.nodeType === elementNode && highlight.firstElementChild!.tagName == 'SPAN') {
+      const inputElement = highlight.firstElementChild! as HTMLInputElement
+      return inputElement.value
+    } else if (highlight.firstChild!.nodeType === textNode) {
+      return highlight.firstChild!.textContent!;
+    } else {
+      return '';
+    }
+
   }
 
   // highlights a term by wrapping it an HTML span
