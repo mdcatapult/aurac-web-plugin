@@ -450,3 +450,27 @@ it('should highlight an entity when we call addHighlightAndEventListeners method
     expect(document.getElementsByClassName(TextHighlighter.highlightParentClass).length).toBe(1)
     expect(document.getElementsByClassName(TextHighlighter.highlightClass).length).toBe(1)
 })
+
+describe('getHighlightContent', () => {
+
+  it('should return textContent of an aurac highlight', () => {
+    const auracHighlightElement = document.createElement('span')
+    auracHighlightElement.className = 'aurac-highlight'
+    auracHighlightElement.textContent =  'Salicylic Acid Acetate'
+
+    expect(TextHighlighter.getHighlightContent(auracHighlightElement)).toBe('Salicylic Acid Acetate')
+  })
+
+  it('should return the value of a highlighted HTML input element', () => {
+    const auracHighlightElement = document.createElement('span')
+    auracHighlightElement.className = 'aurac-highlight'
+
+    const inputElement = document.createElement('input')
+    inputElement.value = 'CC(=O)Oc1ccccc1C(=O)O'
+
+    auracHighlightElement.appendChild(inputElement)
+
+    expect(TextHighlighter.getHighlightContent(auracHighlightElement)).toBe('CC(=O)Oc1ccccc1C(=O)O')
+  })
+
+})
