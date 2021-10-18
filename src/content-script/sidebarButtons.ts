@@ -1,4 +1,4 @@
-import {cardClassName, Entity} from './types';
+import {cardClassName, Entity, auracNarrativeElement} from './types';
 import {EntityMap} from './entityMap';
 import {saveAs} from 'file-saver';
 import {Globals} from './globals'
@@ -42,7 +42,7 @@ export module SidebarButtons {
   }
 
   export function toggleNarrative(on: boolean): void {
-    Globals.document.getElementById('aurac-narrative')!.style.display = on ? 'block' : 'none';
+    Globals.document.getElementById(auracNarrativeElement)!.style.display = on ? 'block' : 'none';
   }
 
   export function createClearButton(listOfEntities: Entity[]): HTMLButtonElement {

@@ -1,7 +1,7 @@
 import {TextHighlighter} from '../src/content-script/textHighlighter'
 import {Sidebar} from '../src/content-script/sidebar'
 import {CardButtons} from '../src/content-script/cardButtons'
-import {cardClassName} from '../src/content-script/types'
+import {cardClassName, auracNarrativeElement} from '../src/content-script/types';
 import {Globals} from '../src/content-script/globals'
 import {clickElementForEntity, getLeadmineResults, TestLeadmineEntity, setup} from './util'
 
@@ -72,10 +72,10 @@ describe('integration', () => {
   it('sidebar text should reappear when sidebar is emptied from the remove all cards button', () => {
     const entity = leadmineEntities[0].text
     clickElementForEntity(entity)
-    expect(document.getElementById('aurac-narrative').style.display).toBe('none')
+    expect(document.getElementById(auracNarrativeElement).style.display).toBe('none')
 
     document.getElementById(Sidebar.clearButtonId).click()
-    expect(document.getElementById('aurac-narrative').style.display).toBe('block')
+    expect(document.getElementById(auracNarrativeElement).style.display).toBe('block')
   })
 
   it('clicking remove on a card should remove that card', () => {
