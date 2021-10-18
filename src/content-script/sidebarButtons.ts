@@ -58,7 +58,7 @@ export module SidebarButtons {
       Array.from(Globals.document.getElementsByClassName(cardClassName)).forEach(card => card.parentNode!.removeChild(card));
       toggleClearButton(false);
       toggleDownloadButton(false);
-      toggleNarrative(false);
+      toggleNarrative(true);
     });
     return clearButtonElement;
   }

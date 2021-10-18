@@ -1,8 +1,8 @@
-import {TextHighlighter} from './../src/content-script/textHighlighter'
-import {Sidebar} from './../src/content-script/sidebar'
-import {CardButtons} from './../src/content-script/cardButtons'
-import {cardClassName} from './../src/content-script/types'
-import {Globals} from './../src/content-script/globals'
+import {TextHighlighter} from '../src/content-script/textHighlighter'
+import {Sidebar} from '../src/content-script/sidebar'
+import {CardButtons} from '../src/content-script/cardButtons'
+import {cardClassName} from '../src/content-script/types'
+import {Globals} from '../src/content-script/globals'
 import {clickElementForEntity, getLeadmineResults, TestLeadmineEntity, setup} from './util'
 
 import * as jsdom from 'jsdom'
@@ -69,6 +69,15 @@ describe('integration', () => {
     expect(Array.from(document.getElementsByClassName(cardClassName)).length).toBe(0)
   })
 
+  it('sidebar text should reappear when sidebar is emptied from the remove all cards button', () => {
+    const entity = leadmineEntities[0].text
+    clickElementForEntity(entity)
+    expect(document.getElementById('aurac-narrative').style.display).toBe('none')
+
+    document.getElementById(Sidebar.clearButtonId).click()
+    expect(document.getElementById('aurac-narrative').style.display).toBe('block')
+  })
+
   it('clicking remove on a card should remove that card', () => {
     const entity = leadmineEntities[0].text
     clickElementForEntity(entity)
@@ -79,6 +88,14 @@ describe('integration', () => {
     document.getElementById(`${CardButtons.baseRemoveId}-${entity}`).click()
 
     expect(Array.from(document.getElementsByClassName(cardClassName)).length).toBe(numOfCards - 1)
+  })
+
+  it('sidebar text should reappear when sidebar is emptied by removing individual cards', () => {
+    const entity = leadmineEntities[0].text
+    clickElementForEntity(entity)
+    expect(document.getElementById('aurac-narrative').style.display).toBe('none')
+    document.getElementById(`${CardButtons.baseRemoveId}-${entity}`).click()
+    expect(document.getElementById('aurac-narrative').style.display).toBe('block')
   })
 
   describe('occurrences', () => {
