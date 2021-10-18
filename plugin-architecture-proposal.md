@@ -279,3 +279,23 @@ interface EntityChange {
 ## Implementation
 1. Implement sidebar with dummy data. Immediately test it!
 2. Implement EntityService and EntityMessengerService with dummy data and make sure sidebar is getting updated. Immediately test it!
+
+
+## Service and component heirarchy
+
+### Sidebar
+* SidebarComponent
+    * BrowserService
+    * SidebarHeaderComponent
+    * SidebarEntityListComponent
+        * SidebarEntityCardComponent
+
+### Background
+* BackgroundComponent
+    * ReadinessService
+    * EntityService
+    * EntityMessengerService
+        * BrowserService
+    * NERService
+    * CrossReferenceService
+    * CompoundConverterService

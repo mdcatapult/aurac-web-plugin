@@ -1,3 +1,6 @@
+import { TextHighlighter } from './textHighlighter';
+import { Globals } from './globals';
+import { ChEMBL } from './chembl';
 console.log('script loaded');
 
 
@@ -69,13 +72,27 @@ async function openSidebar() {
   });
 }
 
-const closeSidebar = () => {
+const closeSidebar: () => void = () => {
   Array.from(document.getElementsByClassName('aurac-transform')).forEach(e => {
     e.className = e.className.replace('expanded', 'collapsed');
   });
 }
 
+const getPageContents: () => string = () => {
+  const textNodes = TextHighlighter.allTextNodes(Globals.document.body);
+  
+  // On ChEMBL, the representations (i.e. SMILES, InChI, InChIKey) are not text nodes
+  // so need to be 'manually' added to the textNodes array
+  if (ChEMBL.isChemblPage()) {
+    textNodes.push(...ChEMBL.getChemblRepresentationValues())
+  }
+
+  // Leadmine needs newline separated strings to correctly identify entities
+  return textNodes.join('\n');
+}
+
 sidebarButton.addEventListener('click', toggleSidebar)
+
 // @ts-ignore
 browser.runtime.onMessage.addListener((msg) => {
   switch (msg.type) {
@@ -93,6 +110,10 @@ browser.runtime.onMessage.addListener((msg) => {
       return new Promise<void>(resolve => {
         closeSidebar();
         resolve();
+      })
+    case 'content_script_get_page_contents':
+      return new Promise<string>(resolve => {
+        resolve(getPageContents())
       })
     default:
       console.log(msg);

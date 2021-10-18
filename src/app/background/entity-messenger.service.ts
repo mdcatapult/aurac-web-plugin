@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ReadinessService } from 'src/readiness.service';
+import { ReadinessService } from '../readiness.service';
 import { BrowserService } from '../browser.service';
 import { SidebarEntity } from '../sidebar/types';
 import { first } from 'rxjs/operators';
@@ -28,13 +28,6 @@ export class EntityMessengerService {
 
   setSidebarEntities() {
     const send = () => this.browserService.sendMessageToActiveTab({type: 'sidebar_component_set_entities', body: this.entities})
-    
-    if (!this.readinessService.sidebarIsReady) {
-      this.readinessService.sidebarIsReady$.subscribe(send)
-    } else {
-      send()
-    }
+    this.readinessService.sidebarIsReady ? send() : this.readinessService.sidebarIsReady$.pipe(first()).subscribe(send)
   }
-
-
 }

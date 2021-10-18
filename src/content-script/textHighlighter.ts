@@ -65,9 +65,11 @@ export module TextHighlighter {
   }
 
   // Recursively find all text nodes which match regex
-  export function allTextNodes(node: HTMLElement, textNodes: Array<string>) {
+  export function allTextNodes(node: HTMLElement): Array<string> {
+    const textNodes: string[] = []
+    
     if (!allowedTagType(node) || node.classList && node.classList.contains('aurac-sidebar')) {
-      return;
+      return textNodes;
     }
 
     // if the node contains any <sub> children concatenate the text content of its child nodes
@@ -79,7 +81,7 @@ export module TextHighlighter {
       // push chemical formula to textNodes to be NER'd
       textNodes.push(formattedText);
       chemicalFormulae.push({formulaNode: node, formulaText: formattedText});
-      return;
+      return textNodes;
     }
 
     try {
@@ -89,7 +91,7 @@ export module TextHighlighter {
           if (element.nodeType === Node.TEXT_NODE) {
             textNodes.push(element.textContent + '\n');
           } else if (allowedClassList(element)) {
-            allTextNodes(element, textNodes);
+            textNodes.push(...allTextNodes(element));
           }
         }
       });
@@ -98,6 +100,8 @@ export module TextHighlighter {
       // The DOM is a wild west
       console.error(e);
     }
+
+    return textNodes;
   }
 
   // Returns true if classlist does not contain any forbidden classes

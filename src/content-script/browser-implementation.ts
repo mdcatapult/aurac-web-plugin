@@ -22,8 +22,7 @@ export class BrowserImplementation implements IBrowser {
       switch (msg.type) {
         case 'get_page_contents':
           return new Promise(resolve => {
-            const textNodes: Array<string> = [];
-            TextHighlighter.allTextNodes(Globals.document.body, textNodes);
+            const textNodes = TextHighlighter.allTextNodes(Globals.document.body);
             // On ChEMBL, the representations (i.e. SMILES, InChI, InChIKey) are not text nodes
             // so need to be 'manually' added to the textNodes array
             const textForNER = textNodes.concat(ChEMBL.getChemblRepresentationValues());

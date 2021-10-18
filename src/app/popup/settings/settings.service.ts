@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
-import {Settings, defaultSettings} from 'src/types';
+import { BehaviorSubject } from 'rxjs';
+import {Settings, defaultSettings, DictionaryURLs} from 'src/types';
 import {BrowserService} from '../../browser.service';
 
 @Injectable({

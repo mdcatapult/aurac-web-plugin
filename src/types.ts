@@ -21,7 +21,9 @@ export type MessageType =
   | 'open_modal'
   | 'settings_clicked'
   | 'sidebar_component_set_entities'
-  | 'readiness_service_sidebar_ready';
+  | 'readiness_service_sidebar_ready'
+  | 'ner_service_process_current_page'
+  | 'content_script_get_page_contents';
 
 export interface Message {
   type: MessageType;
