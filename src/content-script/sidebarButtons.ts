@@ -67,7 +67,7 @@ export module SidebarButtons {
     downloadResultsButtonElement = Globals.document.createElement('button')
     downloadResultsButtonElement.style.display = 'none';
     downloadResultsButtonElement.innerHTML = 'Download Results'
-    downloadResultsButtonElement.className = 'download-results-button'
+    downloadResultsButtonElement.id = 'download-results-button'
 
     downloadResultsButtonElement.addEventListener('click', () => {
       exportEntityToCSV(listOfEntities)
