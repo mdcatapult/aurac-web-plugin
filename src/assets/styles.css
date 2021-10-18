@@ -168,14 +168,14 @@ body.aurac-modal-open {
   overflow: hidden;
 }
 
-.download-results-button {
+#download-results-button {
   background-color: rgb(226, 152, 71);
   color: rgb(250, 249, 249);
   border: 1px solid black;
   margin: 2px;
 }
 
-.download-results-button:hover {
+#download-results-button:hover {
   background-color: rgb(250, 249, 249);
   color: black;
 }
