@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { first } from 'rxjs/operators';
 import { BrowserService } from './browser.service';
 
 @Injectable({
@@ -7,15 +8,17 @@ import { BrowserService } from './browser.service';
 })
 export class ReadinessService {
   
-  constructor(private browserService: BrowserService) { }
-  
   sidebarIsReady = false
-  sidebarIsReady$: Observable<boolean> = new Observable((subscription) => {
+  sidebarIsReady$: Subject<boolean> = new Subject();
+  
+  constructor(private browserService: BrowserService) {
     this.browserService.addListener((msg) => {
       if (msg.type === 'readiness_service_sidebar_ready') {
-        this.sidebarIsReady = true;
-        subscription.next(this.sidebarIsReady);
+        this.sidebarIsReady$.next(true);
       };
     });
-  });
+
+    this.sidebarIsReady$.pipe(first()).subscribe(readiness => this.sidebarIsReady = readiness);
+  }
+  
 }

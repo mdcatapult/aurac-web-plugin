@@ -49,22 +49,22 @@ sidebarButtonLogo.src = browser.runtime.getURL('assets/head-brains.icon.128.png'
 sidebarButtonLogo.style.width = "80%"
 sidebarButton.appendChild(sidebarButtonLogo)
 
-const injectSidebar = () => {
+async function injectSidebar() {
   document.body.appendChild(sidebar);
+  await new Promise(r => setTimeout(r, 100));
 }
 
-const toggleSidebar = () => {
+async function toggleSidebar() {
   if (!!document.getElementsByClassName('aurac-sidebar--expanded').length) {
     closeSidebar();
   } else {
-    openSidebar();
+    await openSidebar();
   }
 }
 
 async function openSidebar() {
   if (!document.getElementById("aurac-sidebar")) {
-    injectSidebar()
-    await new Promise(r => setTimeout(r, 100));
+    await injectSidebar()
   }
 
   Array.from(document.getElementsByClassName('aurac-transform')).forEach(e => {
@@ -97,15 +97,9 @@ sidebarButton.addEventListener('click', toggleSidebar)
 browser.runtime.onMessage.addListener((msg) => {
   switch (msg.type) {
     case 'content_script_toggle_sidebar':
-      return new Promise<void>(resolve => {
-        toggleSidebar();
-        resolve();
-      })
+      return toggleSidebar();
     case 'content_script_open_sidebar':
-      return new Promise<void>(resolve => {
-        openSidebar();
-        resolve();
-      })
+      return openSidebar();
     case 'content_script_close_sidebar':
       return new Promise<void>(resolve => {
         closeSidebar();
