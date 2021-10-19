@@ -23,7 +23,7 @@ export class SidebarComponent implements OnInit {
 
   ngOnInit(): void {
     console.log("notifying sidebar readiness")
-    this.browserService.sendMessage('readiness_service_sidebar_ready')
+    this.browserService.sendMessageToActiveTab({ type: 'content_script_set_sidebar_ready' })
   }
 
   private setEntities(entities: SidebarEntity[]): void {

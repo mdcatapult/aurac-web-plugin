@@ -21,7 +21,8 @@ export type MessageType =
   | 'open_modal'
   | 'settings_clicked'
   | 'sidebar_component_set_entities'
-  | 'readiness_service_sidebar_ready'
+  | 'content_script_set_sidebar_ready'
+  | 'content_script_await_sidebar_readiness'
   | 'ner_service_process_current_page'
   | 'content_script_get_page_contents';
 

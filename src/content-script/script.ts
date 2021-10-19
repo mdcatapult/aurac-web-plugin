@@ -1,8 +1,11 @@
 import { TextHighlighter } from './textHighlighter';
 import { Globals } from './globals';
 import { ChEMBL } from './chembl';
+import { Message } from 'src/types';
 console.log('script loaded');
 
+
+let SIDEBAR_IS_READY = false;
 
 // document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
 
@@ -93,10 +96,21 @@ const getPageContents: () => string = () => {
   return textNodes.join('\n');
 }
 
+async function sidebarIsReady(): Promise<boolean> {
+  return SIDEBAR_IS_READY;
+}
+
+async function awaitSidebarReadiness(): Promise<void> {
+  while (!SIDEBAR_IS_READY) {
+    await new Promise(r => setTimeout(r, 100));
+  }
+  return;
+}
+
 sidebarButton.addEventListener('click', toggleSidebar)
 
 // @ts-ignore
-browser.runtime.onMessage.addListener((msg) => {
+browser.runtime.onMessage.addListener((msg: Message) => {
   switch (msg.type) {
     case 'content_script_toggle_sidebar':
       return toggleSidebar();
@@ -111,6 +125,13 @@ browser.runtime.onMessage.addListener((msg) => {
       return new Promise<string>(resolve => {
         resolve(getPageContents())
       })
+    case 'content_script_set_sidebar_ready':
+      return new Promise<void>(resolve => {
+        SIDEBAR_IS_READY = true;
+        resolve();
+      })
+    case 'content_script_await_sidebar_readiness':
+      return awaitSidebarReadiness();
     default:
       console.log(msg);
   }
