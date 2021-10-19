@@ -11,8 +11,16 @@ export class BrowserService {
 
   constructor(private log: LogService) { }
 
-  sendMessage(msg: MessageType, msgBody?: any): Promise<any> {
-    return browser.runtime.sendMessage<Message>({type: msg, body: msgBody})
+  private makeValidMessage(msg: Message | MessageType): Message {
+    let message: Message = msg as Message
+    if (!message.type) {
+      message = {type: msg as MessageType}
+    }
+    return message;
+  }
+
+  sendMessage(msg: Message | MessageType): Promise<any> {
+    return browser.runtime.sendMessage<Message>(this.makeValidMessage(msg))
       .catch((e: any) => this.log.Error(`Failed to send ${msg}: ${e}`));
   }
 
@@ -25,11 +33,11 @@ export class BrowserService {
       .then(tabs => tabs[0]);
   }
 
-  sendMessageToTab(tabId: number, message: Message): Promise<void | StringMessage> {
-    return browser.tabs.sendMessage<Message, StringMessage>(tabId, message);
+  sendMessageToTab(tabId: number, msg: Message | MessageType): Promise<any> {
+    return browser.tabs.sendMessage<Message, StringMessage>(tabId, this.makeValidMessage(msg));
   }
 
-  sendMessageToActiveTab(msg: Message): Promise<void | StringMessage | LeadmineMessage> {
+  sendMessageToActiveTab(msg: Message| MessageType): Promise<any> {
     return this.getActiveTab().then(tab => this.sendMessageToTab(tab.id!, msg));
   }
 

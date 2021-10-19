@@ -25,8 +25,8 @@ export class EntityMessengerService {
   constructor(private browserService: BrowserService) {}
 
   setSidebarEntities() {
-    console.log("setting sidebar entities")
-    const send = () => this.browserService.sendMessageToActiveTab({type: 'sidebar_component_set_entities', body: this.entities})
-    this.browserService.sendMessageToActiveTab({type: 'content_script_await_sidebar_readiness'}).then(() => send())
+    this.browserService.sendMessageToActiveTab('content_script_await_sidebar_readiness').then(() => {
+      this.browserService.sendMessageToActiveTab({type: 'sidebar_component_set_entities', body: this.entities});
+    });
   }
 }

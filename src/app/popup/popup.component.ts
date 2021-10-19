@@ -24,7 +24,7 @@ export class PopupComponent {
   nerCurrentPage(): void {
     this.browserService.loadSettings().then(settings => {
       this.log.Log('Sending message to background page...');
-      this.browserService.sendMessage('ner_current_page', settings.preferences.dictionary)
+      this.browserService.sendMessage({ type: 'ner_current_page', body: settings.preferences.dictionary })
         .catch(e => this.log.Error(`Couldn't send message to background page: ${JSON.stringify(e)}`));
     })
   }
