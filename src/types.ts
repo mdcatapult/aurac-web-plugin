@@ -1,5 +1,4 @@
 import {environment} from './environments/environment';
-import {validDict} from './app/background/types';
 
 export type MessageType =
   'ner_current_page'
@@ -96,9 +95,11 @@ export type XRef = {
   url: string,
 };
 
+export type DictionaryPath = 'proteins' | 'chemical-entities' | 'diseases'
+
 export type Preferences = {
   minEntityLength: number,
-  dictionary: string,
+  dictionary: DictionaryPath
 }
 
 export type Settings = {
@@ -124,7 +125,7 @@ export const defaultSettings: Settings = {
   xRefConfig: {},
   preferences: {
     minEntityLength: 2,
-    dictionary: 'genes and proteins',
+    dictionary: 'proteins'
   }
 };
 
@@ -136,4 +137,4 @@ export const DictionaryURLKeys = {
 };
 
 type url = string
-export type EntityCache = Map<url, Map<validDict, Array<LeadminerEntity>>>;
+export type EntityCache = Map<url, Map<DictionaryPath, Array<LeadminerEntity>>>;

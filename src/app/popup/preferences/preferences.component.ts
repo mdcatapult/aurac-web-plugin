@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormGroup} from '@angular/forms';
+import { DictionaryPath } from '../../../types';
 
 @Component({
   selector: 'app-preferences',
@@ -10,7 +11,7 @@ export class PreferencesComponent implements OnInit {
 
   minEntityLength = [...Array(50).keys()].slice(2)
   isLoaded = false;
-  dictionaries = ['genes and proteins', 'chemical entities', 'diseases']
+  dictionaries: DictionaryPath[] = ['proteins', 'chemical-entities', 'diseases']
 
   @Input() preferencesForm?: FormGroup;
 

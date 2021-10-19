@@ -1,6 +1,5 @@
 import {Component} from '@angular/core';
 import {LogService} from './log.service';
-import {validDict} from '../background/types';
 import {BrowserService} from '../browser.service';
 import { TitleCasePipe } from '@angular/common';
 
@@ -17,8 +16,7 @@ export class PopupComponent {
   }
 
   settingsClicked() {
-    this.browserService.sendMessageToActiveTab({type: 'settings_clicked'})
-    // this.mode = 'settings'
+    this.mode = 'settings'
   }
 
   nerCurrentPage(): void {

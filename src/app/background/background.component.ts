@@ -3,8 +3,7 @@ import {Component} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {SettingsService} from '../popup/settings/settings.service';
-import {ConverterResult, defaultSettings, LeadminerEntity, LeadminerResult, Message, Settings, StringMessage, XRef, EntityCache} from 'src/types';
-import {validDict} from './types';
+import {ConverterResult, defaultSettings, LeadminerEntity, LeadminerResult, Message, Settings, StringMessage, XRef, EntityCache, DictionaryPath} from 'src/types';
 import {map, switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {BrowserService} from '../browser.service';
@@ -20,7 +19,7 @@ import { EntityMessengerService } from './entity-messenger.service';
 export class BackgroundComponent {
 
   settings: Settings = defaultSettings;
-  dictionary?: validDict;
+  dictionary?: DictionaryPath;
   entityCache: EntityCache = new Map()
 
   constructor(
@@ -74,12 +73,12 @@ export class BackgroundComponent {
     }
   }
 
-  private saveURLToEntityMapper(dictionary: validDict, entities: Array<LeadminerEntity>): void {
+  private saveURLToEntityMapper(dictionary: DictionaryPath, entities: Array<LeadminerEntity>): void {
     this.browserService.getActiveTab()
       .then(tabResponse => {
         const currentURL = this.sanitiseURL(tabResponse.url!)
         const dictionaryToEntities = this.entityCache.has(currentURL) ?
-          this.entityCache.get(currentURL) : new Map<validDict, Array<LeadminerEntity>>()
+          this.entityCache.get(currentURL) : new Map<DictionaryPath, Array<LeadminerEntity>>()
         dictionaryToEntities!.set(dictionary, entities)
 
         this.entityCache.set(currentURL, dictionaryToEntities!)
@@ -98,7 +97,7 @@ export class BackgroundComponent {
       })
   }
 
-  private refreshHighlights(dictionary: validDict): void {
+  private refreshHighlights(dictionary: DictionaryPath): void {
     Promise.all([
       this.browserService.getActiveTab(),
       this.browserService.loadEntityCache(),
@@ -127,7 +126,7 @@ export class BackgroundComponent {
     return url!.replace(/^(https?|http):\/\//, '').split('#')[0]
   }
 
-  private retrieveNERFromPage(dictionary: validDict): void {
+  private retrieveNERFromPage(dictionary: DictionaryPath): void {
     Promise.all([
       this.browserService.getActiveTab(),
       this.browserService.loadEntityCache()
@@ -254,7 +253,7 @@ export class BackgroundComponent {
     return xref;
   }))
 
-  private nerCurrentPage(dictionary: validDict): void {
+  private nerCurrentPage(dictionary: DictionaryPath): void {
     console.log('Getting content of active tab...');
     this.browserService.sendMessageToActiveTab({type: 'get_page_contents'})
       .catch(console.error)
@@ -270,13 +269,8 @@ export class BackgroundComponent {
         let dictionaryPath: string
 
         switch (dictionary) {
-          case 'genes and proteins':
-            dictionaryPath = 'proteins'
-            break
-          case 'chemical entities':
+          case 'chemical-entities':
             queryParams = new HttpParams().set('inchikey', 'true')
-            dictionaryPath = 'chemical-entities'
-            break;
           default:
             dictionaryPath = dictionary
         }

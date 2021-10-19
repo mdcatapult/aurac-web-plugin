@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {BrowserService} from './browser.service';
-import {Message, DictionaryURLs, StringMessage, Settings} from '../types';
+import {Message, StringMessage, Settings} from '../types';
 import Tab = browser.tabs.Tab;
 import MessageSender = browser.runtime.MessageSender;
 
