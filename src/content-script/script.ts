@@ -50,6 +50,7 @@ sidebarButtonLogo.style.width = "80%"
 sidebarButton.appendChild(sidebarButtonLogo)
 
 async function injectSidebar() {
+  console.log("injecting sidebar")
   document.body.appendChild(sidebar);
   await new Promise(r => setTimeout(r, 100));
 }
@@ -66,7 +67,8 @@ async function openSidebar() {
   if (!document.getElementById("aurac-sidebar")) {
     await injectSidebar()
   }
-
+  
+  console.log("opening sidebar")
   Array.from(document.getElementsByClassName('aurac-transform')).forEach(e => {
     e.className = e.className.replace('collapsed', 'expanded');
   });

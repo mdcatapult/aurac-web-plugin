@@ -14,6 +14,7 @@ export class ReadinessService {
   constructor(private browserService: BrowserService) {
     this.browserService.addListener((msg) => {
       if (msg.type === 'readiness_service_sidebar_ready') {
+        console.log("setting sidebar readiness")
         this.sidebarIsReady$.next(true);
       };
     });

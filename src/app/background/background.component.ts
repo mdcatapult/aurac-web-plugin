@@ -39,8 +39,10 @@ export class BackgroundComponent {
       console.log('Received message from popup...', msg);
       switch (msg.type) {
         case 'ner_current_page': {
+          console.log("received highlight message")
           this.browserService.sendMessageToActiveTab({type: 'content_script_open_sidebar'})
-            .then(this.entityMessengerService.setSidebarEntities)
+            .then(() => this.entityMessengerService.setSidebarEntities())
+            .catch(console.log)
           // this.dictionary = msg.body;
           // this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
           //   .then(() => {
