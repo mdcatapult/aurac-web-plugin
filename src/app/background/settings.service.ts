@@ -35,6 +35,7 @@ export class SettingsService {
   constructor(private browserService: BrowserService, private httpClient: HttpClient) {
     this.browserService.addListener(msg => this.handleMessages(msg))
     this.loadFromBrowserStorage().then(settings => {
+      console.log("loading...", settings)
       this.setAll(settings);
       this.refreshXRefSources(this.APIURLs.unichemURL);
     })
@@ -51,14 +52,24 @@ export class SettingsService {
           })
         })
       case 'settings_service_set_settings':
-        return Promise.resolve(this.setAll(msg.body))
+        return new Promise(resolve => {
+          this.setAll(msg.body)
+          this.saveToBrowserStorage(this.getAll())
+          resolve(null)
+        })
       case 'settings_service_refresh_xref_sources':
         return this.refreshXRefSources(msg.body).then(() => {
+          this.saveToBrowserStorage(this.getAll())
+        }).then(() => {
           return this.xRefSources
         })
       default:
         return Promise.resolve(console.log(msg))
     }
+  }
+
+  getAll(): Settings {
+    return {xRefSources: this.xRefSources, urls: this.APIURLs, preferences: this.preferences}
   }
 
   private setAll(settings: Settings): void {
@@ -95,8 +106,13 @@ export class SettingsService {
  */
   private loadFromBrowserStorage(): Promise<Settings> {
     return this.browserService.load('settings').then(settingsObj => {
-    const settings = (settingsObj as Settings)
+    const settings = (settingsObj as browser.storage.StorageObject)?.settings as Settings
       return _.merge(settings, defaultSettings)
     })
+  }
+
+  private saveToBrowserStorage(settings: Settings): Promise<void> {
+    console.log("saving...", settings)
+    return this.browserService.save({settings})
   }
 }

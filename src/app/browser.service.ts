@@ -41,8 +41,8 @@ export class BrowserService {
     return this.getActiveTab().then(tab => this.sendMessageToTab(tab.id!, msg));
   }
 
-  save(obj: browser.storage.StorageObject): void {
-    browser.storage.local.set(obj)
+  save(obj: browser.storage.StorageObject): Promise<void> {
+    return browser.storage.local.set(obj)
   }
 
   load(key: string): Promise<void | browser.storage.StorageObject> {
