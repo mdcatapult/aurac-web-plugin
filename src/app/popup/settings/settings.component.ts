@@ -18,8 +18,7 @@ export class SettingsComponent implements OnInit {
   @Output() closed = new EventEmitter<boolean>();
 
   private fb = new FormBuilder()
-  settings?: Settings
-  @Input() urlsForm?: FormGroup
+  xRefSources?: Record<string,boolean>
 
 
   constructor(private log: LogService, private browserService: BrowserService) {
@@ -57,17 +56,12 @@ export class SettingsComponent implements OnInit {
   ngOnInit(): void {
     this.browserService.sendMessage('settings_service_get_settings').then(settingsObj => {
       const settings = settingsObj as Settings
-      this.settings = settings
+      this.xRefSources = settings.xRefSources
       this.settingsForm.reset(settings);
-      
-      Object.entries(settings.xRefSources).map(([key,value]) => {
-        (this.settingsForm.get('xRefSources') as FormGroup).addControl(key, new FormControl(value));
-      })
 
       this.settingsForm.valueChanges.pipe(debounce(() => timer(500))).subscribe(() => {
         this.log.Info("settings value changed")
         if (this.valid()) {
-          this.settings!.urls = settings.urls;
           this.save();
         }
       });
@@ -85,7 +79,7 @@ export class SettingsComponent implements OnInit {
       this.settingsForm.get('urls')?.get('unichemURL')!.valueChanges.pipe(debounce(() => timer(500))).subscribe((url) => {
         if (this.valid()) {
           this.browserService.sendMessage({type: 'settings_service_refresh_xref_sources', body: url}).then((resp) => {
-            this.settings!.xRefSources = resp as Record<string,boolean> 
+            this.xRefSources = resp as Record<string,boolean> 
           });
         }
       })
