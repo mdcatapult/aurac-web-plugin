@@ -23,7 +23,9 @@ export type MessageType =
   | 'content_script_set_sidebar_ready'
   | 'content_script_await_sidebar_readiness'
   | 'ner_service_process_current_page'
-  | 'content_script_get_page_contents';
+  | 'content_script_get_page_contents'
+  | 'settings_service_get_settings'
+  | 'settings_service_set_settings';
 
 export interface Message {
   type: MessageType;
@@ -102,9 +104,11 @@ export type Preferences = {
   dictionary: DictionaryPath
 }
 
+export type XRefSources = {[key: string]: boolean}
+
 export type Settings = {
   urls: DictionaryURLs,
-  xRefConfig: {[key: string]: boolean},
+  xRefSources: XRefSources,
   preferences: Preferences
 }
 
@@ -122,7 +126,7 @@ export const defaultSettings: Settings = {
     unichemURL: environment.unichemURL,
     pdfConverterURL: environment.pdfConverterURL,
   },
-  xRefConfig: {},
+  xRefSources: {},
   preferences: {
     minEntityLength: 2,
     dictionary: 'proteins'

@@ -41,10 +41,14 @@ export class BrowserService {
     return this.getActiveTab().then(tab => this.sendMessageToTab(tab.id!, msg));
   }
 
-  saveSettings(settings: Settings): void {
-    browser.storage.local.set({settings}).then(
-      () => {},
-      (err) => this.log.Log(`error saving settings', ${err}`)
+  save(obj: browser.storage.StorageObject): void {
+    browser.storage.local.set(obj)
+  }
+
+  load(key: string): Promise<void | browser.storage.StorageObject> {
+    return browser.storage.local.get(key).then(
+      (thing) => Promise.resolve(thing),
+      (err) => this.log.Log(`error loading settings', ${JSON.stringify(err)}`),
     )
   }
 

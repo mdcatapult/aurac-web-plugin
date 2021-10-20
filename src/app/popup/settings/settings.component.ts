@@ -3,8 +3,7 @@ import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {defaultSettings, DictionaryURLs, Settings} from 'src/types';
 import {BrowserService} from '../../browser.service';
 import {LogService} from '../log.service';
-import {UrlsService} from '../urls/urls.service';
-import {SettingsService} from './settings.service';
+import {UrlsService} from './urls/urls.service';
 
 @Component({
   selector: 'app-settings',
@@ -43,7 +42,7 @@ export class SettingsComponent implements OnInit {
         Validators.compose([Validators.required, UrlsService.validator])
       )
     }),
-    xRefConfig: new FormGroup({}),
+    xRefSources: new FormGroup({}),
     preferences: this.fb.group({
       minEntityLength: new FormControl(
         defaultSettings.preferences.minEntityLength,
@@ -54,11 +53,14 @@ export class SettingsComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    SettingsService.loadSettings(this.browserService, (settings) => {
-      this.settings = settings || defaultSettings;
-      this.settingsForm.reset(this.settings);
-    }).then(() => {
-      this.settingsForm.valueChanges.subscribe(settings => {
+    this.browserService.sendMessage('settings_service_get_settings').then(settingsObj => {
+      const settings = settingsObj as Settings
+      this.settings = settings
+      this.settingsForm.reset(settings);
+      Object.entries(settings.xRefSources).map(([key,value]) => {
+        (this.settingsForm.get('xRefSources') as FormGroup).addControl(key, new FormControl(value));
+      })
+      this.settingsForm.valueChanges.subscribe(() => {
         if (this.valid()) {
           this.settings!.urls = settings.urls;
           this.save();
@@ -86,9 +88,8 @@ export class SettingsComponent implements OnInit {
 
   save(): void {
     if (this.valid()) {
-      this.browserService.saveSettings(this.settingsForm.value);
-      this.browserService.sendMessage({ type: 'settings-changed', body: this.settingsForm.value })
-        .catch(console.error);
+      this.browserService.sendMessage({type: 'settings_service_set_settings', body: this.settingsForm.value})
+        .catch(msg => this.log.Error(msg));
     }
   }
 

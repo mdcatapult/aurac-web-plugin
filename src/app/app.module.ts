@@ -11,14 +11,14 @@ import {PopupComponent} from './popup/popup.component';
 import {RouterComponent} from './router/router.component';
 import {Routes, RouterModule} from '@angular/router';
 import {HttpClientModule} from '@angular/common/http';
-import {UrlsComponent} from './popup/urls/urls.component';
+import {UrlsComponent} from './popup/settings/urls/urls.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {XRefSourcesComponent} from './popup/x-ref-sources/x-ref-sources.component';
+import {XRefSourcesComponent} from './popup/settings/x-ref-sources/x-ref-sources.component';
 import {SettingsComponent} from './popup/settings/settings.component';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import {PDFSelectorComponent} from './popup/pdfselector/pdfselector.component'
-import {PreferencesComponent} from './popup/preferences/preferences.component';
+import {PreferencesComponent} from './popup/settings/preferences/preferences.component';
 import {MatRadioModule, MAT_RADIO_DEFAULT_OPTIONS} from '@angular/material/radio';
 import {MatCardModule} from '@angular/material/card';
 import { CommonModule } from '@angular/common';
@@ -28,7 +28,7 @@ import { SidebarEntityListComponent } from './sidebar/sidebar-entity-list/sideba
 import { SidebarEntityComponent } from './sidebar/sidebar-entity/sidebar-entity.component';
 import { SafeResourcePipe } from './safe-resource.pipe';
 import { MatTableModule } from '@angular/material/table';
-import { DictionaryNamePipe } from './popup/dictionary-name.pipe';
+import { DictionaryNamePipe } from './popup/settings/dictionary-name.pipe';
 
 const routes: Routes = [
   {path: '**', component: RouterComponent}

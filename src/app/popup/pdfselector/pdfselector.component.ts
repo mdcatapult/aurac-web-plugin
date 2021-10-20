@@ -4,7 +4,7 @@ import {AbstractControl, FormControl, ValidationErrors} from '@angular/forms';
 import {defaultSettings} from 'src/types';
 import {BrowserService} from '../../browser.service';
 import {LogService} from '../log.service';
-import {UrlsService} from '../urls/urls.service'
+import {UrlsService} from '../settings/urls/urls.service'
 
 @Component({
   selector: 'app-pdfselector',

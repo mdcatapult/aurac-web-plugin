@@ -2,7 +2,6 @@ import {Entity} from './../../content-script/types';
 import {Component} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {SettingsService} from '../popup/settings/settings.service';
 import {ConverterResult, defaultSettings, LeadminerEntity, LeadminerResult, Message, Settings, StringMessage, XRef, EntityCache, DictionaryPath} from 'src/types';
 import {map, switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
@@ -10,6 +9,7 @@ import {BrowserService} from '../browser.service';
 import {saveAs} from 'file-saver';
 import {EntityGroupColours} from '../../content-script/types';
 import { EntityMessengerService } from './entity-messenger.service';
+import { SettingsService } from './settings.service';
 
 @Component({
   selector: 'app-background',
@@ -18,19 +18,16 @@ import { EntityMessengerService } from './entity-messenger.service';
 
 export class BackgroundComponent {
 
-  settings: Settings = defaultSettings;
   dictionary?: DictionaryPath;
   entityCache: EntityCache = new Map()
 
-  constructor(
+  constructor (
     private client: HttpClient, 
     private browserService: BrowserService,
-    private entityMessengerService: EntityMessengerService) {
-
-    SettingsService.loadSettings(this.browserService, (settings) => {
-      this.settings = settings || defaultSettings;
-      this.browserService.addListener(this.getBrowserListenerFn());
-    });
+    private entityMessengerService: EntityMessengerService,
+    private settingsService: SettingsService
+  ) {
+    this.browserService.addListener(this.getBrowserListenerFn());
   }
 
   private getBrowserListenerFn(): (msg: Partial<Message>) => void {
@@ -51,10 +48,6 @@ export class BackgroundComponent {
         }
         case 'compound_x-refs' : {
           this.loadXRefs(msg.body);
-          break;
-        }
-        case 'settings-changed': {
-          this.settings = msg.body;
           break;
         }
         case 'min-entity-length-changed': {
@@ -188,13 +181,13 @@ export class BackgroundComponent {
 
   private smilesToInChIToUnichemPlus([entityText, smilesText]: [string, string]): Observable<XRef[]> {
     const encodedEntity = encodeURIComponent(smilesText);
-    const xRefObservable = this.client.get(`${this.settings.urls.compoundConverterURL}/${encodedEntity}?from=SMILES&to=inchikey`).pipe(
+    const xRefObservable = this.client.get(`${this.settingsService.APIURLs.compoundConverterURL}/${encodedEntity}?from=SMILES&to=inchikey`).pipe(
       // @ts-ignore
       switchMap((converterResult: ConverterResult) => {
         return converterResult ?
           this.client.post(
-            `${this.settings.urls.unichemURL}/x-ref/${converterResult.output}`,
-            this.getTrueKeys(this.settings.xRefConfig)
+            `${this.settingsService.APIURLs.unichemURL}/x-ref/${converterResult.output}`,
+            this.getTrueKeys(this.settingsService.xRefSources)
           ) : of({});
       }),
       this.addCompoundNameToXRefObject(entityText)
@@ -204,8 +197,8 @@ export class BackgroundComponent {
 
   private postToUnichemPlus([entityText, inchiKeyText]: [string, string]): Observable<XRef[]> {
     const xRefObservable = this.client.post(
-      `${this.settings.urls.unichemURL}/x-ref/${inchiKeyText}`,
-      this.getTrueKeys(this.settings.xRefConfig)).pipe(
+      `${this.settingsService.APIURLs.unichemURL}/x-ref/${inchiKeyText}`,
+      this.getTrueKeys(this.settingsService.xRefSources)).pipe(
       // @ts-ignore
       this.addCompoundNameToXRefObject(entityText)
     );
@@ -275,7 +268,7 @@ export class BackgroundComponent {
             dictionaryPath = dictionary
         }
 
-        const leadmineURL = `${this.settings.urls.leadmineURL}${environment.production ? `/${dictionaryPath}` : ''}/entities`;
+        const leadmineURL = `${this.settingsService.APIURLs.leadmineURL}${environment.production ? `/${dictionaryPath}` : ''}/entities`;
 
         this.client.post<LeadminerResult>(
           leadmineURL,
@@ -308,7 +301,7 @@ export class BackgroundComponent {
 
   shouldDisplayEntity(entity: LeadminerEntity): boolean {
     // Entity length must be at least minimum entity length.
-    return (entity && entity.entityText.length >= this.settings.preferences.minEntityLength);
+    return (entity && entity.entityText.length >= this.settingsService.preferences.minEntityLength);
   }
 
   getUniqueEntities(leadmineResponse: LeadminerEntity[]): LeadminerEntity[] {

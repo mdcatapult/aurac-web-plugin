@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { DictionaryPath } from '../../types';
+import { DictionaryPath } from '../../../types';
 
 @Pipe({
   name: 'dictionaryName'

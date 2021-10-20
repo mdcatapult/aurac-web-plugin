@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormGroup} from '@angular/forms';
-import { DictionaryPath } from '../../../types';
+import { DictionaryPath } from '../../../../types';
 
 @Component({
   selector: 'app-preferences',
