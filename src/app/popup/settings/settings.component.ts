@@ -1,5 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import { timer } from 'rxjs';
+import { debounce } from 'rxjs/operators';
 import {defaultSettings, DictionaryURLs, Settings} from 'src/types';
 import {BrowserService} from '../../browser.service';
 import {LogService} from '../log.service';
@@ -57,16 +59,21 @@ export class SettingsComponent implements OnInit {
       const settings = settingsObj as Settings
       this.settings = settings
       this.settingsForm.reset(settings);
+      
       Object.entries(settings.xRefSources).map(([key,value]) => {
         (this.settingsForm.get('xRefSources') as FormGroup).addControl(key, new FormControl(value));
       })
-      this.settingsForm.valueChanges.subscribe(() => {
+
+      this.settingsForm.valueChanges.pipe(debounce(() => timer(500))).subscribe(() => {
+        this.log.Info("settings value changed")
         if (this.valid()) {
           this.settings!.urls = settings.urls;
           this.save();
         }
       });
 
+      // TODO: This is creating a race condition. How do we know that the new minimum entity length
+      // setting has been changed before this message is sent?
       this.settingsForm.get('preferences')?.get('minEntityLength')!.valueChanges.subscribe(() => {
           if (this.valid()) {
             this.browserService.sendMessage('min-entity-length-changed')
@@ -74,6 +81,14 @@ export class SettingsComponent implements OnInit {
           }
         }
       );
+
+      this.settingsForm.get('urls')?.get('unichemURL')!.valueChanges.pipe(debounce(() => timer(500))).subscribe((url) => {
+        if (this.valid()) {
+          this.browserService.sendMessage({type: 'settings_service_refresh_xref_sources', body: url}).then((resp) => {
+            this.settings!.xRefSources = resp as Record<string,boolean> 
+          });
+        }
+      })
     });
   }
 

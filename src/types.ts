@@ -25,7 +25,8 @@ export type MessageType =
   | 'ner_service_process_current_page'
   | 'content_script_get_page_contents'
   | 'settings_service_get_settings'
-  | 'settings_service_set_settings';
+  | 'settings_service_set_settings'
+  | 'settings_service_refresh_xref_sources';
 
 export interface Message {
   type: MessageType;

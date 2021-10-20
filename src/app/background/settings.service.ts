@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { XRefSources, Preferences, defaultSettings, DictionaryURLs, Settings, Message } from '../../types'
 import { BrowserService } from '../browser.service';
 
@@ -36,7 +36,7 @@ export class SettingsService {
     this.browserService.addListener(msg => this.handleMessages(msg))
     this.loadFromBrowserStorage().then(settings => {
       this.setAll(settings);
-      this.refreshCrossReferences();
+      this.refreshXRefSources(this.APIURLs.unichemURL);
     })
   }
 
@@ -52,6 +52,10 @@ export class SettingsService {
         })
       case 'settings_service_set_settings':
         return Promise.resolve(this.setAll(msg.body))
+      case 'settings_service_refresh_xref_sources':
+        return this.refreshXRefSources(msg.body).then(() => {
+          return this.xRefSources
+        })
       default:
         return Promise.resolve(console.log(msg))
     }
@@ -63,8 +67,8 @@ export class SettingsService {
     this._APIURLs.next(settings.urls);
   }
 
-  private refreshCrossReferences(): void {
-    this.httpClient.get<string[]>(`${this.APIURLs.unichemURL}/sources`).subscribe(sources => {
+  private refreshXRefSources(unichemURL: string): Promise<void> {
+    return this.httpClient.get<string[]>(`${unichemURL}/sources`).toPromise().then(sources => {
       // console.log(sources)
       const xRefSources: Record<string,boolean> = {}
       sources.forEach(source => {
@@ -73,8 +77,14 @@ export class SettingsService {
         // console.log(xRefSources)
       })
       this._xRefSources.next(xRefSources)
-      console.log("xRefSources", this.xRefSources)
-    }, console.error)
+    }, (error) => {
+      console.log(error)
+      this._xRefSources.next({})
+    })
+  }
+
+  static getXRefSources(httpClient: HttpClient, unichemURL: string): Observable<string[]> {
+    return httpClient.get<string[]>(`${unichemURL}/sources`)
   }
 
   /**
