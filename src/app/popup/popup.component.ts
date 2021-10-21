@@ -1,7 +1,6 @@
 import {Component} from '@angular/core';
-import {LogService} from './log.service';
+import {Logger} from '../logger';
 import {BrowserService} from '../browser.service';
-import { TitleCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-popup',
@@ -12,7 +11,7 @@ export class PopupComponent {
 
   mode: 'menu' | 'settings' | 'pdf' = 'menu'
 
-  constructor(private log: LogService, private browserService: BrowserService) {
+  constructor(private browserService: BrowserService) {
   }
 
   settingsClicked() {
@@ -21,15 +20,14 @@ export class PopupComponent {
 
   nerCurrentPage(): void {
     this.browserService.loadSettings().then(settings => {
-      this.log.Log('Sending message to background page...');
       this.browserService.sendMessage({ type: 'ner_current_page', body: settings.preferences.dictionary })
-        .catch(e => this.log.Error(`Couldn't send message to background page: ${JSON.stringify(e)}`));
+        .catch(Logger.error);
     })
   }
 
   toggleSidebar(): void {
     this.browserService.sendMessageToActiveTab({type: 'content_script_toggle_sidebar'})
-      .catch(e => this.log.Error(`Couldn't send message of type 'toggle_sidebar' : ${JSON.stringify(e)}`));
+      .catch(Logger.error);
   }
 
   pdfClicked(): void {

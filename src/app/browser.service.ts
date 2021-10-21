@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {defaultSettings, LeadmineMessage, LeadminerEntity, LeadmineResult, Message, MessageType, Settings, StringMessage} from '../types';
-import {LogService} from './popup/log.service';
+import {Logger} from './logger';
 import Tab = browser.tabs.Tab;
 import {EntityCache} from '../types';
 
@@ -9,7 +9,7 @@ import {EntityCache} from '../types';
 })
 export class BrowserService {
 
-  constructor(private log: LogService) { }
+  constructor() { }
 
   private makeValidMessage(msg: Message | MessageType): Message {
     let message: Message = msg as Message
@@ -21,7 +21,7 @@ export class BrowserService {
 
   sendMessage(msg: Message | MessageType): Promise<any> {
     return browser.runtime.sendMessage<Message>(this.makeValidMessage(msg))
-      .catch((e: any) => this.log.Error(`Failed to send ${msg}: ${e}`));
+      .catch((e: any) => Logger.error(`Failed to send ${msg}: ${e}`));
   }
 
   addListener(f: (msg: Partial<Message>) => void): void  {
@@ -48,21 +48,21 @@ export class BrowserService {
   load(key: string): Promise<void | browser.storage.StorageObject> {
     return browser.storage.local.get(key).then(
       (thing) => Promise.resolve(thing),
-      (err) => this.log.Log(`error loading settings', ${JSON.stringify(err)}`),
+      (err) => Logger.error(`error loading settings', ${JSON.stringify(err)}`),
     )
   }
 
   loadSettings(): Promise<Settings> {
     return browser.storage.local.get('settings').then(
       (settings) => Promise.resolve(settings?.settings || defaultSettings),
-      (err) => this.log.Log(`error loading settings', ${JSON.stringify(err)}`)
+      (err) => Logger.error(`error loading settings', ${JSON.stringify(err)}`)
     ) as Promise<Settings>
   }
 
   saveEntityCache(urlToEntityMap: string): void {
     browser.storage.local.set({urlToEntityMap}).then(
       () => {},
-      (err) => this.log.Log(`error saving settings for URLEntityMap', ${err}`)
+      (err) => Logger.error(`error saving settings for URLEntityMap', ${err}`)
     )
   }
 
@@ -80,7 +80,7 @@ export class BrowserService {
         const entityCache = new Map(JSON.parse(storage?.urlToEntityMap! as string, reader))
         return Promise.resolve(entityCache)
       },
-      (err) => this.log.Log(`error loading urlToEntityMap', ${JSON.stringify(err)}`)
+      (err) => Logger.error(`error loading urlToEntityMap', ${JSON.stringify(err)}`)
     ) as Promise<EntityCache>
   }
 

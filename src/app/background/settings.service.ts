@@ -35,13 +35,12 @@ export class SettingsService {
   constructor(private browserService: BrowserService, private httpClient: HttpClient) {
     this.browserService.addListener(msg => this.handleMessages(msg))
     this.loadFromBrowserStorage().then(settings => {
-      console.log("loading...", settings)
       this.setAll(settings);
       this.refreshXRefSources(this.APIURLs.unichemURL);
     })
   }
 
-  private handleMessages(msg: Partial<Message>): Promise<any> {
+  private handleMessages(msg: Partial<Message>): Promise<any> | void {
     switch (msg.type) {
       case 'settings_service_get_settings':
         return new Promise<Settings>((resolve) => {
@@ -63,8 +62,6 @@ export class SettingsService {
         }).then(() => {
           return this.xRefSources
         })
-      default:
-        return Promise.resolve(console.log(msg))
     }
   }
 
@@ -80,16 +77,14 @@ export class SettingsService {
 
   private refreshXRefSources(unichemURL: string): Promise<void> {
     return this.httpClient.get<string[]>(`${unichemURL}/sources`).toPromise().then(sources => {
-      // console.log(sources)
       const xRefSources: Record<string,boolean> = {}
       sources.forEach(source => {
         // Left hand side must be null or undefined (not false). See "nullish coallescing operator".
         xRefSources[source] = this.xRefSources[source] ?? true
-        // console.log(xRefSources)
       })
       this._xRefSources.next(xRefSources)
     }, (error) => {
-      console.log(error)
+      console.error(error)
       this._xRefSources.next({})
     })
   }
@@ -112,7 +107,6 @@ export class SettingsService {
   }
 
   private saveToBrowserStorage(settings: Settings): Promise<void> {
-    console.log("saving...", settings)
     return this.browserService.save({settings})
   }
 }

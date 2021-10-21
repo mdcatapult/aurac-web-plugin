@@ -1,8 +1,6 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { LogService } from '../log.service';
+import { TestBed } from '@angular/core/testing';
 import { TestBrowserService } from '../../test-browser.service';
-
 import { PDFSelectorComponent } from './pdfselector.component';
 
 describe('PDFSelectorComponent', () => {
@@ -18,7 +16,7 @@ describe('PDFSelectorComponent', () => {
 
   beforeEach(() => {
     const httpMock = TestBed.get(HttpClientTestingModule)
-    component = new PDFSelectorComponent(new LogService(), httpMock, new TestBrowserService(new LogService()))
+    component = new PDFSelectorComponent(httpMock, new TestBrowserService())
   });
 
   it('should create', () => {

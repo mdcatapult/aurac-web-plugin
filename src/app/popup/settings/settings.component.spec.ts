@@ -2,7 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SettingsComponent } from './settings.component';
 import {TestBrowserService} from '../../test-browser.service';
-import {LogService} from '../log.service';
+import {Logger} from '../../logger';
+import { UrlValidator } from './urls/url-validator';
 
 describe('SettingsComponent', () => {
   let component: SettingsComponent;
@@ -15,7 +16,7 @@ describe('SettingsComponent', () => {
   });
 
   beforeEach(() => {
-    component = new SettingsComponent(new LogService(), new TestBrowserService(new LogService()))
+    component = new SettingsComponent(new TestBrowserService())
   });
 
   it('should create', () => {

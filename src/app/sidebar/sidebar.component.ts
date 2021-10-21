@@ -15,14 +15,12 @@ export class SidebarComponent implements OnInit {
     this.browserService.addListener((msg: any) => {
       switch (msg.type) {
         case 'sidebar_component_set_entities':
-          console.log(msg.body)
           this.setEntities(msg.body as SidebarEntity[]);
       }
     })
   }
 
   ngOnInit(): void {
-    console.log("notifying sidebar readiness")
     this.browserService.sendMessageToActiveTab({ type: 'content_script_set_sidebar_ready' })
   }
 

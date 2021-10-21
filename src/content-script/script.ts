@@ -2,7 +2,6 @@ import { TextHighlighter } from './textHighlighter';
 import { Globals } from './globals';
 import { ChEMBL } from './chembl';
 import { Message } from 'src/types';
-console.log('script loaded');
 
 
 let SIDEBAR_IS_READY = false;
@@ -53,7 +52,6 @@ sidebarButtonLogo.style.width = "80%"
 sidebarButton.appendChild(sidebarButtonLogo)
 
 async function injectSidebar() {
-  console.log("injecting sidebar")
   document.body.appendChild(sidebar);
   await new Promise(r => setTimeout(r, 100));
 }
@@ -71,7 +69,6 @@ async function openSidebar() {
     await injectSidebar()
   }
   
-  console.log("opening sidebar")
   Array.from(document.getElementsByClassName('aurac-transform')).forEach(e => {
     e.className = e.className.replace('collapsed', 'expanded');
   });
@@ -132,7 +129,5 @@ browser.runtime.onMessage.addListener((msg: Message) => {
       })
     case 'content_script_await_sidebar_readiness':
       return awaitSidebarReadiness();
-    default:
-      console.log(msg);
   }
 })

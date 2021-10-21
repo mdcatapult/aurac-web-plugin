@@ -1,18 +1,11 @@
 import {TestBed} from '@angular/core/testing';
-
-import {UrlsService} from './urls.service';
+import {UrlValidator} from './url-validator';
 import {DictionaryURLs} from '../../../../types';
 
 describe('SettingsService', () => {
-  let service: UrlsService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(UrlsService);
-  });
-
-  it('should be created', () => {
-    expect(service).toBeTruthy();
   });
 
   it('should return false when given invalid URLs', () => {
@@ -23,7 +16,7 @@ describe('SettingsService', () => {
       pdfConverterURL: '/fwepij',
     };
 
-    expect(UrlsService.validURLs(invalidUrls)).toBeFalsy();
+    expect(UrlValidator.validURLs(invalidUrls)).toBeFalsy();
   });
 
   it('should return false given some valid and invalid URLs', () => {
@@ -34,7 +27,7 @@ describe('SettingsService', () => {
       pdfConverterURL: 'http://a-legit-url',
     };
 
-    expect(UrlsService.validURLs(validURLs)).toBeFalsy();
+    expect(UrlValidator.validURLs(validURLs)).toBeFalsy();
   });
 
   it('should return true given valid URLs', () => {
@@ -45,7 +38,7 @@ describe('SettingsService', () => {
       pdfConverterURL: 'http://a-legit-url',
     };
 
-    expect(UrlsService.validURLs(validURLs)).toBeTruthy();
+    expect(UrlValidator.validURLs(validURLs)).toBeTruthy();
   });
 
   it('should return false given invalid dictionary URL keys', () => {
@@ -56,6 +49,6 @@ describe('SettingsService', () => {
 
     const urlsWithInvalidKey = JSON.parse(invalidJsonString) as DictionaryURLs;
 
-    expect(UrlsService.validURLs(urlsWithInvalidKey)).toBeFalsy();
+    expect(UrlValidator.validURLs(urlsWithInvalidKey)).toBeFalsy();
   });
 });

@@ -4,8 +4,8 @@ import { timer } from 'rxjs';
 import { debounce } from 'rxjs/operators';
 import {defaultSettings, DictionaryURLs, Settings} from 'src/types';
 import {BrowserService} from '../../browser.service';
-import {LogService} from '../log.service';
-import {UrlsService} from './urls/urls.service';
+import {Logger} from '../../logger';
+import {UrlValidator} from './urls/url-validator';
 
 @Component({
   selector: 'app-settings',
@@ -21,26 +21,28 @@ export class SettingsComponent implements OnInit {
   xRefSources?: Record<string,boolean>
 
 
-  constructor(private log: LogService, private browserService: BrowserService) {
+  constructor(
+    private browserService: BrowserService,
+  ) {
   }
 
   settingsForm = this.fb.group({
     urls: this.fb.group({
       leadmineURL: new FormControl(
         defaultSettings.urls.leadmineURL,
-        Validators.compose([Validators.required, UrlsService.validator])
+        Validators.compose([Validators.required, UrlValidator.validator])
       ),
       compoundConverterURL: new FormControl(
         defaultSettings.urls.compoundConverterURL,
-        Validators.compose([Validators.required, UrlsService.validator])
+        Validators.compose([Validators.required, UrlValidator.validator])
       ),
       unichemURL: new FormControl(
         defaultSettings.urls.unichemURL,
-        Validators.compose([Validators.required, UrlsService.validator])
+        Validators.compose([Validators.required, UrlValidator.validator])
       ),
       pdfConverterURL: new FormControl(
         defaultSettings.urls.pdfConverterURL,
-        Validators.compose([Validators.required, UrlsService.validator])
+        Validators.compose([Validators.required, UrlValidator.validator])
       )
     }),
     xRefSources: new FormGroup({}),
@@ -60,7 +62,6 @@ export class SettingsComponent implements OnInit {
       this.settingsForm.reset(settings);
 
       this.settingsForm.valueChanges.pipe(debounce(() => timer(500))).subscribe(() => {
-        this.log.Info("settings value changed")
         if (this.valid()) {
           this.save();
         }
@@ -71,7 +72,7 @@ export class SettingsComponent implements OnInit {
       this.settingsForm.get('preferences')?.get('minEntityLength')!.valueChanges.subscribe(() => {
           if (this.valid()) {
             this.browserService.sendMessage('min-entity-length-changed')
-              .catch(console.error);
+              .catch(Logger.error);
           }
         }
       );
@@ -89,7 +90,7 @@ export class SettingsComponent implements OnInit {
   valid(): boolean {
     Object.keys(this.settingsForm.controls).forEach(key => {
       if (this.settingsForm.get(key)!.invalid) {
-        this.log.Error(`invalid settings: ${key}`)
+        Logger.error(`invalid settings: ${key}`)
       }
     })
     return this.settingsForm.valid;
@@ -98,7 +99,7 @@ export class SettingsComponent implements OnInit {
   save(): void {
     if (this.valid()) {
       this.browserService.sendMessage({type: 'settings_service_set_settings', body: this.settingsForm.value})
-        .catch(msg => this.log.Error(msg));
+        .catch(Logger.error);
     }
   }
 

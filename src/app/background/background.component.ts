@@ -32,13 +32,11 @@ export class BackgroundComponent {
 
   private getBrowserListenerFn(): (msg: Partial<Message>) => void {
     return (msg: Partial<Message>) => {
-      console.log('Received message from popup...', msg);
       switch (msg.type) {
         case 'ner_current_page': {
-          console.log("received highlight message")
           this.browserService.sendMessageToActiveTab({type: 'content_script_open_sidebar'})
             .then(() => this.entityMessengerService.setSidebarEntities())
-            .catch(console.log)
+            .catch(console.error)
           // this.dictionary = msg.body;
           // this.browserService.sendMessageToActiveTab({type: 'remove_highlights', body: []})
           //   .then(() => {
@@ -247,16 +245,14 @@ export class BackgroundComponent {
   }))
 
   private nerCurrentPage(dictionary: DictionaryPath): void {
-    console.log('Getting content of active tab...');
     this.browserService.sendMessageToActiveTab({type: 'get_page_contents'})
       .catch(console.error)
       .then(result => {
         if (!result || !result.body) {
-          console.log('No content');
+          console.error('No content');
           return;
         }
         result = result as StringMessage;
-        console.log('Sending page contents to leadmine...');
         let queryParams: HttpParams = new HttpParams()
           .set('inchikey', 'false');
         let dictionaryPath: string
@@ -275,7 +271,6 @@ export class BackgroundComponent {
           result.body,
         {observe: 'response', params: queryParams})
           .subscribe((response) => {
-            console.log('Received results from leadmine...');
             if (!response.body || !response.body.entities) {
               this.browserService.sendMessageToActiveTab({type: 'awaiting_response', body: false})
                 .catch(console.error);
