@@ -72,7 +72,7 @@ export class SettingsComponent implements OnInit {
       this.settingsForm.get('preferences')?.get('minEntityLength')!.valueChanges.subscribe(() => {
           if (this.valid()) {
             this.browserService.sendMessage('min-entity-length-changed')
-              .catch(Logger.error);
+              .catch((error) => Logger.error("couldn't send message 'min-entity-length-changed'", error));
           }
         }
       );
@@ -99,7 +99,7 @@ export class SettingsComponent implements OnInit {
   save(): void {
     if (this.valid()) {
       this.browserService.sendMessage({type: 'settings_service_set_settings', body: this.settingsForm.value})
-        .catch(Logger.error);
+        .catch(error => Logger.error("couldn't send message 'settings_service_set_settings'", error));
     }
   }
 

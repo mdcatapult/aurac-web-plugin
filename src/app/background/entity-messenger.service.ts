@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BrowserService } from '../browser.service';
 import { SidebarEntity } from '../sidebar/types';
+import { EntitiesService } from './entities.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,9 @@ export class EntityMessengerService {
     }
   ]
 
-  constructor(private browserService: BrowserService) {}
+  constructor(private browserService: BrowserService, private entitiesService: EntitiesService) {
+    this.entitiesService.changeStream$.subscribe(console.log)
+  }
 
   setSidebarEntities() {
     this.browserService.sendMessageToActiveTab('content_script_await_sidebar_readiness').then(() => {

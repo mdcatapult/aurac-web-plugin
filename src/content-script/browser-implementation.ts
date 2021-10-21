@@ -22,7 +22,8 @@ export class BrowserImplementation implements IBrowser {
       switch (msg.type) {
         case 'get_page_contents':
           return new Promise(resolve => {
-            const textNodes = TextHighlighter.allTextNodes(Globals.document.body);
+            const textNodes: string[] = []
+            TextHighlighter.allTextNodes(Globals.document.body, textNodes);
             // On ChEMBL, the representations (i.e. SMILES, InChI, InChIKey) are not text nodes
             // so need to be 'manually' added to the textNodes array
             const textForNER = textNodes.concat(ChEMBL.getChemblRepresentationValues());
@@ -31,7 +32,7 @@ export class BrowserImplementation implements IBrowser {
             resolve({type: 'leadmine', body: textForNER.join('\n')});
           });
         case 'markup_page':
-          UserExperience.toggleLoadingIcon(false);
+          UserExperience.showLoadingIcon(false);
           TextHighlighter.wrapEntitiesWithHighlight(msg);
           SidebarButtons.open()
           break;
@@ -42,7 +43,7 @@ export class BrowserImplementation implements IBrowser {
           SidebarButtons.toggle()
           break;
         case 'awaiting_response':
-          UserExperience.toggleLoadingIcon(msg.body as boolean);
+          UserExperience.showLoadingIcon(msg.body as boolean);
           break;
         case 'remove_highlights':
           TextHighlighter.removeHighlights();

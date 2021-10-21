@@ -26,7 +26,9 @@ export type MessageType =
   | 'content_script_get_page_contents'
   | 'settings_service_get_settings'
   | 'settings_service_set_settings'
-  | 'settings_service_refresh_xref_sources';
+  | 'settings_service_refresh_xref_sources'
+  | 'content_script_open_loading_icon'
+  | 'content_script_close_loading_icon';
 
 export interface Message {
   type: MessageType;
@@ -143,3 +145,51 @@ export const DictionaryURLKeys = {
 
 type url = string
 export type EntityCache = Map<url, Map<DictionaryPath, Array<LeadminerEntity>>>;
+
+
+// Entity is a wrapper for a leadminer entity with any extra functional
+// information.
+export interface Entity {
+  synonyms: Set<string>
+  identifiers?: Map<string,string>;
+  occurrences?: Array<string>; // contains the id's of highlighted spans.
+  metadata?: Object
+  // Other stuff should go here - e.g. cross references.
+}
+
+// DictionaryEntities is a wrapper for all the entities found when running NER.
+export interface DictionaryEntities {
+    show: boolean;
+    entities: Map<string, Entity>;
+}
+
+// Holds all entities on a page in valid dictionaries.
+export type TabEntities = {
+    [key in DictionaryPath]?: DictionaryEntities;
+}
+
+export interface DictionaryID {
+    tab: number;
+    dictionary: DictionaryPath;
+}
+
+export interface EntityID extends DictionaryID {
+    identifier: string;
+}
+
+export interface SynonymID extends EntityID {
+    synonym: string;
+}
+
+export interface OccurrenceID extends EntityID {
+    occurrence: string;
+}
+
+export type ChangeIdentifier = number | DictionaryID | EntityID | SynonymID | OccurrenceID
+
+// EntityChange describes where a change to the cache has been made and the 
+// result of the change.
+export interface EntityChange {
+    identifier: ChangeIdentifier;
+    result: TabEntities | DictionaryEntities | Entity | Map<string,LeadminerEntity>;
+}

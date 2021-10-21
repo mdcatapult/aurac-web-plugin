@@ -19,15 +19,13 @@ export class PopupComponent {
   }
 
   nerCurrentPage(): void {
-    this.browserService.loadSettings().then(settings => {
-      this.browserService.sendMessage({ type: 'ner_current_page', body: settings.preferences.dictionary })
-        .catch(Logger.error);
-    })
+    this.browserService.sendMessage('ner_service_process_current_page')
+      .catch((error) => Logger.error("couldn't send message 'ner_service_process_current_page'", error));
   }
 
   toggleSidebar(): void {
     this.browserService.sendMessageToActiveTab({type: 'content_script_toggle_sidebar'})
-      .catch(Logger.error);
+      .catch((error) => Logger.error("couldn't send message 'content_script_toggle_sidebar'", error));
   }
 
   pdfClicked(): void {

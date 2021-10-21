@@ -1,7 +1,8 @@
+// import { Globals } from './globals';
 import { TextHighlighter } from './textHighlighter';
-import { Globals } from './globals';
 import { ChEMBL } from './chembl';
 import { Message } from 'src/types';
+import { UserExperience } from './userExperience';
 
 
 let SIDEBAR_IS_READY = false;
@@ -51,6 +52,8 @@ sidebarButtonLogo.src = browser.runtime.getURL('assets/head-brains.icon.128.png'
 sidebarButtonLogo.style.width = "80%"
 sidebarButton.appendChild(sidebarButtonLogo)
 
+UserExperience.create()
+
 async function injectSidebar() {
   document.body.appendChild(sidebar);
   await new Promise(r => setTimeout(r, 100));
@@ -81,7 +84,8 @@ const closeSidebar: () => void = () => {
 }
 
 const getPageContents: () => string = () => {
-  const textNodes = TextHighlighter.allTextNodes(Globals.document.body);
+  const textNodes: string[] = []
+  TextHighlighter.allTextNodes(document.body, textNodes);
   
   // On ChEMBL, the representations (i.e. SMILES, InChI, InChIKey) are not text nodes
   // so need to be 'manually' added to the textNodes array
@@ -90,7 +94,8 @@ const getPageContents: () => string = () => {
   }
 
   // Leadmine needs newline separated strings to correctly identify entities
-  return textNodes.join('\n');
+  const contents = textNodes.join('\n');
+  return contents;
 }
 
 async function sidebarIsReady(): Promise<boolean> {
@@ -119,9 +124,7 @@ browser.runtime.onMessage.addListener((msg: Message) => {
         resolve();
       })
     case 'content_script_get_page_contents':
-      return new Promise<string>(resolve => {
-        resolve(getPageContents())
-      })
+      return Promise.resolve(getPageContents());
     case 'content_script_set_sidebar_ready':
       return new Promise<void>(resolve => {
         SIDEBAR_IS_READY = true;
@@ -129,5 +132,9 @@ browser.runtime.onMessage.addListener((msg: Message) => {
       })
     case 'content_script_await_sidebar_readiness':
       return awaitSidebarReadiness();
+    case 'content_script_open_loading_icon':
+      return Promise.resolve(UserExperience.showLoadingIcon(true))
+    case 'content_script_close_loading_icon':
+      return Promise.resolve(UserExperience.showLoadingIcon(false))
   }
 })

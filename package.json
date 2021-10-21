@@ -13,6 +13,7 @@
     "lint": "ng lint && tslint -p .",
     "e2e": "ng e2e",
     "build:prod": "cross-env NODE_ENV=production ng build --configuration production",
+    "unopt": "ng build --configuration production --optimization=false && webpack",
     "weblint": "cd dist/browser-plugin && web-ext lint",
     "version": "VERSION=$(jq -r '.version' package.json) && jq --arg v $VERSION '.version = $v' src/manifest.json > tmp.json && mv tmp.json src/manifest.json && git add src/manifest.json"
   },

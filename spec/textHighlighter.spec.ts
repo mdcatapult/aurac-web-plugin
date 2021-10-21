@@ -115,12 +115,17 @@ describe('allTextNodes', () => {
     document = setup([])
   })
 
+  beforeEach(() => {
+    textNodes = []
+  })
+
+
   it('given text nodes array should populate when child node has a sub tag type', () => {
     const parentNodeElement = document.createElement('div');
     const subNodeElement = document.createElement('sub')
     parentNodeElement.appendChild(subNodeElement)
 
-    textNodes = TextHighlighter.allTextNodes(parentNodeElement)
+    TextHighlighter.allTextNodes(parentNodeElement, textNodes)
 
     expect(textNodes.length).toBe(1)
   })
@@ -132,7 +137,7 @@ describe('allTextNodes', () => {
     subNodeElement.innerHTML = `C<sub>17</sub>H<sub>25</sub>Br<sub>2</sub>NO<sub>2</sub>`
     parentNodeElement.appendChild(subNodeElement)
 
-    textNodes = TextHighlighter.allTextNodes(parentNodeElement)
+    TextHighlighter.allTextNodes(parentNodeElement, textNodes)
 
     expect(textNodes[0]).toEqual('C17H25Br2NO2')
   })
@@ -142,7 +147,7 @@ describe('allTextNodes', () => {
     const textNode = document.createTextNode('textNode')
     parentNodeElement.appendChild(textNode)
 
-    textNodes = TextHighlighter.allTextNodes(parentNodeElement)
+    TextHighlighter.allTextNodes(parentNodeElement, textNodes)
 
     expect(textNodes.length).toBe(1)
   })
@@ -152,7 +157,7 @@ describe('allTextNodes', () => {
     const commentNode = document.createComment('commentNode')
     nodeElement.appendChild(commentNode)
 
-    textNodes = TextHighlighter.allTextNodes(nodeElement)
+    TextHighlighter.allTextNodes(nodeElement, textNodes)
 
     expect(textNodes.length).toBe(0)
   })
@@ -162,7 +167,7 @@ describe('allTextNodes', () => {
     const processingInstructionNode = document.createProcessingInstruction('test', 'test')
     parentElement.appendChild(processingInstructionNode)
 
-    textNodes = TextHighlighter.allTextNodes(parentElement)
+    TextHighlighter.allTextNodes(parentElement, textNodes)
 
     expect(textNodes.length).toBe(0)
   })
@@ -172,7 +177,7 @@ describe('allTextNodes', () => {
     const scriptElement = document.createElement('script')
     parentElement.appendChild(scriptElement)
 
-    textNodes = TextHighlighter.allTextNodes(parentElement)
+    TextHighlighter.allTextNodes(parentElement, textNodes)
 
     expect(textNodes.length).toBe(0)
   })
@@ -182,7 +187,7 @@ describe('allTextNodes', () => {
     const styleElement = document.createElement('style')
     parentElement.appendChild(styleElement)
 
-    textNodes = TextHighlighter.allTextNodes(parentElement)
+    TextHighlighter.allTextNodes(parentElement, textNodes)
 
     expect(textNodes.length).toBe(0)
   })
@@ -192,7 +197,7 @@ describe('allTextNodes', () => {
     const svgElement = document.createElement('svg')
     parentElement.appendChild(svgElement)
 
-    textNodes = TextHighlighter.allTextNodes(parentElement)
+    TextHighlighter.allTextNodes(parentElement, textNodes)
 
     expect(textNodes.length).toBe(0)
   })
@@ -202,7 +207,7 @@ describe('allTextNodes', () => {
     const inputElement = document.createElement('input')
     parentElement.appendChild(inputElement)
 
-    textNodes = TextHighlighter.allTextNodes(parentElement)
+    TextHighlighter.allTextNodes(parentElement, textNodes)
 
     expect(textNodes.length).toBe(0)
   })
@@ -212,7 +217,7 @@ describe('allTextNodes', () => {
     const buttonElement = document.createElement('button')
     parentElement.appendChild(buttonElement)
 
-    textNodes = TextHighlighter.allTextNodes(parentElement)
+    TextHighlighter.allTextNodes(parentElement, textNodes)
 
     expect(textNodes.length).toBe(0)
   })
@@ -222,7 +227,7 @@ describe('allTextNodes', () => {
     const anchorElement = document.createElement('anchor')
     parentElement.appendChild(anchorElement)
 
-    textNodes = TextHighlighter.allTextNodes(parentElement)
+    TextHighlighter.allTextNodes(parentElement, textNodes)
 
     expect(textNodes.length).toBe(0)
   })
@@ -234,7 +239,7 @@ describe('allTextNodes', () => {
     sidebarElement.className = 'aurac-sidebar'
     parentElement.appendChild(sidebarElement)
 
-    textNodes = TextHighlighter.allTextNodes(parentElement)
+    TextHighlighter.allTextNodes(parentElement, textNodes)
 
     expect(textNodes.length).toBe(0)
   })
@@ -246,7 +251,7 @@ describe('allTextNodes', () => {
     hiddenElement.style.display = 'none'
     parentElement.appendChild(hiddenElement)
 
-    textNodes = TextHighlighter.allTextNodes(parentElement)
+    TextHighlighter.allTextNodes(parentElement, textNodes)
 
     expect(textNodes.length).toBe(0)
   })
@@ -258,7 +263,7 @@ describe('allTextNodes', () => {
     hiddenElement.className = 'tooltipped'
     parentElement.appendChild(hiddenElement)
 
-    textNodes = TextHighlighter.allTextNodes(parentElement)
+    TextHighlighter.allTextNodes(parentElement, textNodes)
 
     expect(textNodes.length).toBe(0)
   })
@@ -270,7 +275,7 @@ describe('allTextNodes', () => {
     hiddenElement.className = 'tooltipped-click'
     parentElement.appendChild(hiddenElement)
 
-    textNodes = TextHighlighter.allTextNodes(parentElement)
+    TextHighlighter.allTextNodes(parentElement, textNodes)
 
     expect(textNodes.length).toBe(0)
   })

@@ -299,3 +299,18 @@ interface EntityChange {
     * NERService
     * CrossReferenceService
     * CompoundConverterService
+
+
+### Highlight workflow
+1. Popup sends message to ner service: `ner_service_process_current_page`.
+2. NER service sends message to content script: `content_script_open_loading_icon`.
+3. NER service sends message to content script: `content_script_get_page_contents`.
+4. NER service calls leadmine.
+    * Leadmine is broken.
+        1. NER service sends message to content script: `content_script_close_loading_icon`.
+    * Leadmine doesn't find anything.
+        1. NER service sends message to content script: `content_script_close_loading_icon`.
+    * Leadmine finds stuff.
+        1. NER service sends message to content script: `content_script_highlight_text`.
+        2. Content script calls `closeLoadingIcon`.
+        3. Content script returns id's of highlighted span.

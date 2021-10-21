@@ -20,11 +20,12 @@ export class UrlValidator {
 
   static isValidURL(url: string): boolean {
     try {
-      // tslint:disable-next-line
       new URL(url);
       return true;
     } catch (e) {
-      Logger.error(e);
+      // TODO: This is throwing with seemingly valid urls when we open the sidebar. 
+      // Are they temporarily empty? Investigate.
+      Logger.error("invalid url", e);
       return false;
     }
   }

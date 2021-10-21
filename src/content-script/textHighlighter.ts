@@ -4,7 +4,7 @@ import {Card} from './card';
 import {ChemblRepresentations} from './types';
 import {ChEMBL} from './chembl';
 import {EntityTextBlacklist, EntityGroupBlacklist, AbbreviationsNotGeneNames} from './blacklist';
-import {Globals} from './globals';
+// import {Globals} from './globals';
 import {LeadminerEntity} from '../types';
 
 export module TextHighlighter {
@@ -65,11 +65,9 @@ export module TextHighlighter {
   }
 
   // Recursively find all text nodes which match regex
-  export function allTextNodes(node: HTMLElement): Array<string> {
-    const textNodes: string[] = []
-    
+  export function allTextNodes(node: HTMLElement, textNodes: Array<string>) {
     if (!allowedTagType(node) || node.classList && node.classList.contains('aurac-sidebar')) {
-      return textNodes;
+      return;
     }
 
     // if the node contains any <sub> children concatenate the text content of its child nodes
@@ -81,7 +79,7 @@ export module TextHighlighter {
       // push chemical formula to textNodes to be NER'd
       textNodes.push(formattedText);
       chemicalFormulae.push({formulaNode: node, formulaText: formattedText});
-      return textNodes;
+      return;
     }
 
     try {
@@ -91,7 +89,7 @@ export module TextHighlighter {
           if (element.nodeType === Node.TEXT_NODE) {
             textNodes.push(element.textContent + '\n');
           } else if (allowedClassList(element)) {
-            textNodes.push(...allTextNodes(element));
+            allTextNodes(element, textNodes);
           }
         }
       });
@@ -100,8 +98,6 @@ export module TextHighlighter {
       // The DOM is a wild west
       console.error(e);
     }
-
-    return textNodes;
   }
 
   // Returns true if classlist does not contain any forbidden classes
@@ -120,12 +116,12 @@ export module TextHighlighter {
 
   function allowedTagType(element: HTMLElement): boolean {
     return ![
-      Globals.document.defaultView!.HTMLScriptElement,
-      Globals.document.defaultView!.HTMLStyleElement,
-      Globals.document.defaultView!.SVGElement,
-      Globals.document.defaultView!.HTMLInputElement,
-      Globals.document.defaultView!.HTMLButtonElement,
-      Globals.document.defaultView!.HTMLAnchorElement,
+      document.defaultView!.HTMLScriptElement,
+      document.defaultView!.HTMLStyleElement,
+      document.defaultView!.SVGElement,
+      document.defaultView!.HTMLInputElement,
+      document.defaultView!.HTMLButtonElement,
+      document.defaultView!.HTMLAnchorElement,
     ].some(tag => element instanceof tag)
   }
 
@@ -232,7 +228,7 @@ export module TextHighlighter {
       const formulaNode = formula.formulaNode;
       if (formula.formulaText === entity.entityText) {
         try {
-          const replacementNode = Globals.document.createElement('span');
+          const replacementNode = document.createElement('span');
           // the span needs a class so that it can be deleted by the removeHighlights function
           replacementNode.className = highlightClass;
           // Retrieves the specific highlight colour to use for this NER term
@@ -255,7 +251,7 @@ export module TextHighlighter {
       // Try/catch for edge cases.
       try {
         // For each term, we want to replace its original HTML with a highlight colour
-        const replacementNode = Globals.document.createElement('span');
+        const replacementNode = document.createElement('span');
         // the span needs a class so that it can be deleted by the removeHighlights function
         replacementNode.className = highlightParentClass;
         replacementNode.innerHTML = element.nodeValue!.split(entity.entityText).join(highlightTerm(entity.entityText, entity));
@@ -268,13 +264,13 @@ export module TextHighlighter {
 
   function getSelectors(entity: string): Array<Element> {
     const allElements: Array<Element> = [];
-    allDescendants(Globals.document.body, allElements, entity);
+    allDescendants(document.body, allElements, entity);
     return allElements;
   }
 
   export function removeHighlights() {
-    Array.from(Globals.document.getElementsByClassName(highlightParentClass))
-      .concat(Array.from(Globals.document.getElementsByClassName(highlightClass)))
+    Array.from(document.getElementsByClassName(highlightParentClass))
+      .concat(Array.from(document.getElementsByClassName(highlightClass)))
       .forEach(element => {
         const childNodes = Array.from(element.childNodes);
         element.replaceWith(...childNodes);

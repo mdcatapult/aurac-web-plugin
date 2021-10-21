@@ -13,19 +13,20 @@ import {Logger} from '../../../logger';
 })
 export class XRefSourcesComponent implements OnChanges {
 
-  @Input() sourcesForm?: FormGroup
+  @Input() sourcesForm: FormGroup = new FormGroup({})
   @Input() xRefSources: {[key: string]: boolean} = {}
 
   constructor() { }
 
   ngOnChanges() {
-    this.sourcesForm!.controls = {}
+    if (!this.xRefSources) return;
+    this.sourcesForm.controls = {}
     Object.entries(this.xRefSources).map(([key,value]) => {
-      this.sourcesForm!.addControl(key, new FormControl(value));
+      this.sourcesForm.addControl(key, new FormControl(value));
     })
   }
 
   hasXRefs(): boolean {
-    return Object.keys(this.xRefSources).length > 0
+    return this.xRefSources && Object.keys(this.xRefSources).length > 0
   }
 }

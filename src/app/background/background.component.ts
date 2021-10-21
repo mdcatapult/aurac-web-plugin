@@ -10,6 +10,7 @@ import {saveAs} from 'file-saver';
 import {EntityGroupColours} from '../../content-script/types';
 import { EntityMessengerService } from './entity-messenger.service';
 import { SettingsService } from './settings.service';
+import { NerService } from './ner.service';
 
 @Component({
   selector: 'app-background',
@@ -25,7 +26,8 @@ export class BackgroundComponent {
     private client: HttpClient, 
     private browserService: BrowserService,
     private entityMessengerService: EntityMessengerService,
-    private settingsService: SettingsService
+    private settingsService: SettingsService,
+    private nerService: NerService
   ) {
     this.browserService.addListener(this.getBrowserListenerFn());
   }
