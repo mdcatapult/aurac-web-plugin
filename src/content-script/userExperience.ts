@@ -1,3 +1,4 @@
+import { Globals } from './globals'
 
 export module UserExperience {
 
@@ -6,13 +7,13 @@ export module UserExperience {
   }
 
   function createLoadingIcon(): void {
-    const loadingIcon = document.createElement('div');
+    const loadingIcon = Globals.document.createElement('div');
     loadingIcon.id = 'aurac-loading-icon'
-    document.body.appendChild(loadingIcon);
+    Globals.document.body.appendChild(loadingIcon);
   }
 
   export function showLoadingIcon(on: boolean): void {
-    let loadingIcon = document.getElementById('aurac-loading-icon');
+    let loadingIcon = Globals.document.getElementById('aurac-loading-icon');
     loadingIcon!.style.display = on ? 'block' : 'none'
   }
 }

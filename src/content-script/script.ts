@@ -1,24 +1,30 @@
 // import { Globals } from './globals';
 import { TextHighlighter } from './textHighlighter';
 import { ChEMBL } from './chembl';
-import { Message } from 'src/types';
+import { Message, TabEntities } from 'src/types';
 import { UserExperience } from './userExperience';
+import { Entity } from './types'
+import { Globals } from './globals';
+import { BrowserImplementation } from './browser-implementation';
 
+
+Globals.document = document
+Globals.browser = new BrowserImplementation()
 
 let SIDEBAR_IS_READY = false;
 
 // document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
 
-const sidebar = document.createElement('div')
+const sidebar = Globals.document.createElement('div')
 sidebar.id = "aurac-sidebar"
 sidebar.className = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed'
 
-const iframe = document.createElement('iframe')
+const iframe = Globals.document.createElement('iframe')
 iframe.className = "aurac-iframe"
 iframe.src = browser.runtime.getURL('index.html?page=sidebar')
 sidebar.appendChild(iframe)
 
-const buttonRoot = document.createElement('div')
+const buttonRoot = Globals.document.createElement('div')
 buttonRoot.style.position = 'absolute';
 buttonRoot.style.top = '0';
 buttonRoot.style.left = '100%'
@@ -27,7 +33,7 @@ sidebar.appendChild(buttonRoot)
 
 const shadowButtonRoot = buttonRoot.attachShadow({mode: 'closed'})
 
-const sidebarButtonStyle = document.createElement('style')
+const sidebarButtonStyle = Globals.document.createElement('style')
 sidebarButtonStyle.innerHTML = `button {
   border: none;
   position: fixed;
@@ -44,10 +50,10 @@ button:hover {
 }`
 shadowButtonRoot.appendChild(sidebarButtonStyle)
 
-const sidebarButton = document.createElement('button')
+const sidebarButton = Globals.document.createElement('button')
 shadowButtonRoot.appendChild(sidebarButton);
 
-const sidebarButtonLogo = document.createElement('img')
+const sidebarButtonLogo = Globals.document.createElement('img')
 sidebarButtonLogo.src = browser.runtime.getURL('assets/head-brains.icon.128.png')
 sidebarButtonLogo.style.width = "80%"
 sidebarButton.appendChild(sidebarButtonLogo)
@@ -55,7 +61,7 @@ sidebarButton.appendChild(sidebarButtonLogo)
 UserExperience.create()
 
 async function injectSidebar() {
-  document.body.appendChild(sidebar);
+  Globals.document.body.appendChild(sidebar);
   await new Promise(r => setTimeout(r, 100));
 }
 
@@ -116,25 +122,53 @@ browser.runtime.onMessage.addListener((msg: Message) => {
   switch (msg.type) {
     case 'content_script_toggle_sidebar':
       return toggleSidebar();
+
     case 'content_script_open_sidebar':
       return openSidebar();
+
     case 'content_script_close_sidebar':
-      return new Promise<void>(resolve => {
-        closeSidebar();
-        resolve();
-      })
+      return Promise.resolve(closeSidebar())
+
     case 'content_script_get_page_contents':
       return Promise.resolve(getPageContents());
+
     case 'content_script_set_sidebar_ready':
-      return new Promise<void>(resolve => {
-        SIDEBAR_IS_READY = true;
-        resolve();
-      })
+      return Promise.resolve(SIDEBAR_IS_READY = true)
+
     case 'content_script_await_sidebar_readiness':
       return awaitSidebarReadiness();
+
     case 'content_script_open_loading_icon':
       return Promise.resolve(UserExperience.showLoadingIcon(true))
+
     case 'content_script_close_loading_icon':
       return Promise.resolve(UserExperience.showLoadingIcon(false))
+
+    case 'content_script_highlight_entities':
+      return new Promise((resolve, reject) => {
+        try {
+          console.log(msg.body)
+          const tabEntities = msg.body as TabEntities
+          const oldFormatEntities: Entity[] = []
+          Object.entries(tabEntities).forEach(([path, dict]) => {
+            if (dict!.show) {
+              Array.from(dict!.entities).forEach(([identifier, entity]) => {
+                entity.synonyms.forEach(synonym => oldFormatEntities.push({
+                  entityText: synonym,
+                  resolvedEntity: identifier === synonym ? "" : identifier,
+                  entityGroup: entity.metadata?.entityGroup,
+                  recognisingDict: entity.metadata?.recognisingDict
+                }))
+              })
+            }
+          })
+          console.log(oldFormatEntities)
+          TextHighlighter.wrapEntitiesWithHighlight(oldFormatEntities)
+          UserExperience.showLoadingIcon(false)
+          resolve(null)
+        } catch (e) {
+          reject(e)
+        }
+      })
   }
 })

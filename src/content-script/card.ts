@@ -53,7 +53,7 @@ export module Card {
   }
 
   export function  createModalOpeningButton(chemblId: string, compoundName: string): HTMLElement {
-    const modalButton = document.createElement('button')
+    const modalButton = Globals.document.createElement('button')
     modalButton.insertAdjacentHTML('beforeend', `Structure`)
     modalButton.id = `aurac-modal-open-button-${compoundName}`
     modalButton.className = 'open-modal-button'
@@ -84,7 +84,7 @@ export module Card {
       const identifier: string = splitURLList[splitURLList.length - 1]
       const regex = /^CHEMBL/
       if (identifier.match(regex)){
-        const locationForButton = document.getElementById(`${xrefs[0].compoundName}`)
+        const locationForButton = Globals.document.getElementById(`${xrefs[0].compoundName}`)
         const modalButton = createModalOpeningButton(identifier, xrefs[0].compoundName)
         locationForButton!.append(modalButton)
       }

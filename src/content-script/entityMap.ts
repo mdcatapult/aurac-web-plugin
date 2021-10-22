@@ -1,3 +1,4 @@
+import { Globals } from './globals'
 // provides a wrapper around Map<string, T>() to ensure key formatting
 export class EntityMap<T> {
   private m = new Map<string, T>();
@@ -25,7 +26,7 @@ export class EntityMap<T> {
   delete(entityText: string, document: Document): void {
     this.m.delete(entityText.toLowerCase());
     if (this.m.size === 0) {
-      document.getElementById('aurac-narrative')!.style.display = 'block';
+      Globals.document.getElementById('aurac-narrative')!.style.display = 'block';
     }
   }
 }

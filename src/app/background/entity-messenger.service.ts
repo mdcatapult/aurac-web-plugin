@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { isNumber } from 'lodash';
 import { BrowserService } from '../browser.service';
 import { SidebarEntity } from '../sidebar/types';
 import { EntitiesService } from './entities.service';
@@ -24,7 +25,10 @@ export class EntityMessengerService {
   ]
 
   constructor(private browserService: BrowserService, private entitiesService: EntitiesService) {
-    this.entitiesService.changeStream$.subscribe(console.log)
+    this.entitiesService.changeStream$.subscribe(change => {
+      console.log(change.result)
+      this.browserService.sendMessageToTab(change.identifier as number, {type: 'content_script_highlight_entities', body: change.result})
+    })
   }
 
   setSidebarEntities() {

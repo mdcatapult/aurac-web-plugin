@@ -34,7 +34,7 @@ export class BrowserService {
   }
 
   sendMessageToTab(tabId: number, msg: Message | MessageType): Promise<any> {
-    return browser.tabs.sendMessage<Message, StringMessage>(tabId, this.makeValidMessage(msg));
+    return browser.tabs.sendMessage<Message>(tabId, this.makeValidMessage(msg));
   }
 
   sendMessageToActiveTab(msg: Message| MessageType): Promise<any> {

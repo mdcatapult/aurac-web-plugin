@@ -76,6 +76,7 @@ export class NerService {
   }
 
   private transformLeadminerResult(leadminerResult: LeadminerResult): DictionaryEntities {
+    console.log(leadminerResult)
     let dictionaryEntities: DictionaryEntities = {
       show: true,
       entities: new Map<string,Entity>()

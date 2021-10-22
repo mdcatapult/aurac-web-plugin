@@ -32,13 +32,16 @@ export class EntitiesService {
     const tabEntities = this._entityMap.get(id.tab)
     
     if (!tabEntities) { 
-      this._entityMap.set(id.tab, {[id.dictionary]: entities})
+      const newTabEntities: TabEntities = {}
+      newTabEntities[id.dictionary] = entities
+      console.log(newTabEntities)
+      this._entityMap.set(id.tab, newTabEntities)
+      this.updateStream(id.tab, newTabEntities)
     } else {
       tabEntities[id.dictionary] = entities
       this._entityMap.set(id.tab, tabEntities)
+      this.updateStream(id, entities)
     }
-  
-    this.updateStream(id, entities)
   }
 
   private updateStream(identifier: ChangeIdentifier, result: TabEntities | DictionaryEntities | Entity | Map<string,LeadminerEntity>): void {

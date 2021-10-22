@@ -28,7 +28,8 @@ export type MessageType =
   | 'settings_service_set_settings'
   | 'settings_service_refresh_xref_sources'
   | 'content_script_open_loading_icon'
-  | 'content_script_close_loading_icon';
+  | 'content_script_close_loading_icon'
+  | 'content_script_highlight_entities';
 
 export interface Message {
   type: MessageType;
@@ -153,7 +154,7 @@ export interface Entity {
   synonyms: Set<string>
   identifiers?: Map<string,string>;
   occurrences?: Array<string>; // contains the id's of highlighted spans.
-  metadata?: Object
+  metadata?: any;
   // Other stuff should go here - e.g. cross references.
 }
 

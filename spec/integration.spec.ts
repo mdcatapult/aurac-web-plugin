@@ -1,7 +1,7 @@
 import {TextHighlighter} from './../src/content-script/textHighlighter'
 import {Sidebar} from './../src/content-script/sidebar'
 import {CardButtons} from './../src/content-script/cardButtons'
-import {cardClassName} from './../src/content-script/types'
+import {cardClassName, Entity} from './../src/content-script/types'
 import {Globals} from './../src/content-script/globals'
 import {LeadmineEntity, setup} from './util'
 
@@ -26,7 +26,7 @@ describe('integration', () => {
 
     // highlight entities - simulates 'markup_page' message
     const leadmineResults = getLeadmineResults(leadmineEntities)
-    TextHighlighter.wrapEntitiesWithHighlight({body: leadmineResults})
+    TextHighlighter.wrapEntitiesWithHighlight(leadmineResults)
 
     document.body.appendChild(Sidebar.create())
   })
@@ -155,7 +155,7 @@ function clickElementForEntity(entity: string): void {
 }
 
 // returns sample leadmine results for each entityText
-function getLeadmineResults(entities: LeadmineEntity[]): Object {
+function getLeadmineResults(entities: LeadmineEntity[]): Entity[] {
   return entities.map(entity => {
     return {
       beg: 325,
