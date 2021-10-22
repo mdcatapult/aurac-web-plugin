@@ -44,7 +44,7 @@ export class EntitiesService {
     }
   }
 
-  private updateStream(identifier: ChangeIdentifier, result: TabEntities | DictionaryEntities | Entity | Map<string,LeadminerEntity>): void {
+  private updateStream(identifier: ChangeIdentifier, result: TabEntities | DictionaryEntities | Entity | Map<string,Entity>): void {
     this._changeStream.next({identifier, result})
   }
 }

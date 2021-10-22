@@ -6,6 +6,7 @@ import { UserExperience } from './userExperience';
 import { Entity } from './types'
 import { Globals } from './globals';
 import { BrowserImplementation } from './browser-implementation';
+import { parse } from '../json';
 
 
 Globals.document = document
@@ -147,10 +148,9 @@ browser.runtime.onMessage.addListener((msg: Message) => {
     case 'content_script_highlight_entities':
       return new Promise((resolve, reject) => {
         try {
-          console.log(msg.body)
-          const tabEntities = msg.body as TabEntities
+          const tabEntities = parse(msg.body) as TabEntities
           const oldFormatEntities: Entity[] = []
-          Object.entries(tabEntities).forEach(([path, dict]) => {
+          Object.entries(tabEntities).forEach(([, dict]) => {
             if (dict!.show) {
               Array.from(dict!.entities).forEach(([identifier, entity]) => {
                 entity.synonyms.forEach(synonym => oldFormatEntities.push({
@@ -162,7 +162,6 @@ browser.runtime.onMessage.addListener((msg: Message) => {
               })
             }
           })
-          console.log(oldFormatEntities)
           TextHighlighter.wrapEntitiesWithHighlight(oldFormatEntities)
           UserExperience.showLoadingIcon(false)
           resolve(null)

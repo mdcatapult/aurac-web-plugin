@@ -1,0 +1,878 @@
+{
+    "proteins": {
+        "show": true,
+        "entities": {
+            "dataType": "Map",
+            "value": [
+                [
+                    "HGNC:8784",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "PDE5A",
+                                "cGMP-specific 3',5'-cyclic phosphodiesterase",
+                                "cGMP-binding cGMP-specific phosphodiesterase",
+                                "CGB-PDE",
+                                "PDE5"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProtein",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/leadmine/2018-11-06/dictionary/CFDictGeneAndProtein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "HGNC:6204",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "Jun"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProteinMDC",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "Protein",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "Protein"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProteinClass",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/leadmine/2018-11-06/dictionary/CFDictGeneAndProteinClasses.cfx"
+                            },
+                            "entityGroup": "Gene or Protein Class"
+                        }
+                    }
+                ],
+                [
+                    "phosphodiesterase",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "phosphodiesterase"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProteinClass",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/leadmine/2018-11-06/dictionary/CFDictGeneAndProteinClasses.cfx"
+                            },
+                            "entityGroup": "Gene or Protein Class"
+                        }
+                    }
+                ],
+                [
+                    "HGNC:8022",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "GMP"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProteinMDC",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "HGNC:9753",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "EC"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProteinMDC",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "HGNC:7043",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "Mg"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProteinMDC",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "protein",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "protein"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProteinClass",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/leadmine/2018-11-06/dictionary/CFDictGeneAndProteinClasses.cfx"
+                            },
+                            "entityGroup": "Gene or Protein Class"
+                        }
+                    }
+                ],
+                [
+                    "HGNC:9657",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "step"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProteinMDC",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "proteins",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "proteins"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProteinClass",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/leadmine/2018-11-06/dictionary/CFDictGeneAndProteinClasses.cfx"
+                            },
+                            "entityGroup": "Gene or Protein Class"
+                        }
+                    }
+                ],
+                [
+                    "HGNC:10738",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "via"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProteinMDC",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "HGNC:11610",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "tele"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProteinMDC",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "HGNC:2716",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "Alternative name"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProteinMDC",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "HGNC:9414",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "PRKG1"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProtein",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/leadmine/2018-11-06/dictionary/CFDictGeneAndProtein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "PTM",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "PTM"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProtein",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/leadmine/2018-11-06/dictionary/CFDictGeneAndProteinCs.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "HGNC:6853",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "HS"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProteinMDC",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "Golgi apparatus",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "Golgi apparatus"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProtein",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/leadmine/2018-11-06/dictionary/CFDictGeneAndProtein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "HGNC:6923",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "Exp"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProteinMDC",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "HGNC:9774",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "ray"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProteinMDC",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "HGNC:9561",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "AF"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProteinMDC",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "HGNC:3687",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "GAF"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProteinMDC",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "PDEase",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "PDEase"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProtein",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/leadmine/2018-11-06/dictionary/CFDictGeneAndProtein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "HGNC:4855",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "HDc"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProteinMDC",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "HGNC:11190",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "dom"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProteinMDC",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "HGNC:6344",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "sf"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProteinMDC",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "HGNC:4851",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "HD"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProteinMDC",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "HGNC:2422",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "CS"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProteinMDC",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "PDEASE",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "PDEASE"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProtein",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/leadmine/2018-11-06/dictionary/CFDictGeneAndProtein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "HGNC:3603",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "Mass"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProteinMDC",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "HGNC:1683",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "BLAST"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProteinMDC",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "HGNC:8941",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "pI"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProteinMDC",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "Phosphodiesterase",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "Phosphodiesterase"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProteinClass",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/leadmine/2018-11-06/dictionary/CFDictGeneAndProteinClasses.cfx"
+                            },
+                            "entityGroup": "Gene or Protein Class"
+                        }
+                    }
+                ],
+                [
+                    "HGNC:1886",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "hCG"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProteinMDC",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "cGMP-specific",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "cGMP-specific"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProtein",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/leadmine/2018-11-06/dictionary/CFDictGeneAndProtein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "HGNC:11054",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "Prot"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProteinMDC",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ],
+                [
+                    "HGNC:20443",
+                    {
+                        "synonyms": {
+                            "dataType": "Set",
+                            "value": [
+                                "MIM"
+                            ]
+                        },
+                        "occurrences": [],
+                        "metadata": {
+                            "recognisingDict": {
+                                "enforceBracketing": false,
+                                "entityType": "GeneOrProteinMDC",
+                                "htmlColor": "pink",
+                                "maxCorrectionDistance": 0,
+                                "minimumCorrectedEntityLength": 9,
+                                "minimumEntityLength": 0,
+                                "source": "/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx"
+                            },
+                            "entityGroup": "Gene or Protein"
+                        }
+                    }
+                ]
+            ]
+        }
+    }
+}

@@ -32,7 +32,7 @@ export module TextHighlighter {
     return false
   }
 
-  export function wrapEntitiesWithHighlight(msgBody: Entity[]) {
+  export function wrapEntitiesWithHighlight(entityList: Entity[]) {
     // get InChI, InChIKey and SMILES input elements if we are on ChEMBL
     let chemblRepresentations: ChemblRepresentations;
     if (ChEMBL.isChemblPage()) {
@@ -41,7 +41,7 @@ export module TextHighlighter {
 
     // sort entities by length of entityText (descending) - this will ensure that we can capture e.g. VPS26A, which would not be
     // highlighted if VPS26 has already been highlighted, because the text VPS26A is now spread across more than one node
-    msgBody.sort((a: Entity, b: Entity) => b.entityText.length - a.entityText.length)
+    entityList.sort((a: Entity, b: Entity) => b.entityText.length - a.entityText.length)
       .map((entity: Entity) => {
         const entityText: string = entity.entityText
         const entityTextLowercase: string = entity.entityText.toLowerCase()
@@ -263,13 +263,13 @@ export module TextHighlighter {
 
   function getSelectors(entity: string): Array<Element> {
     const allElements: Array<Element> = [];
-    allDescendants(document.body, allElements, entity);
+    allDescendants(Globals.document.body, allElements, entity);
     return allElements;
   }
 
   export function removeHighlights() {
-    Array.from(document.getElementsByClassName(highlightParentClass))
-      .concat(Array.from(document.getElementsByClassName(highlightClass)))
+    Array.from(Globals.document.getElementsByClassName(highlightParentClass))
+      .concat(Array.from(Globals.document.getElementsByClassName(highlightClass)))
       .forEach(element => {
         const childNodes = Array.from(element.childNodes);
         element.replaceWith(...childNodes);

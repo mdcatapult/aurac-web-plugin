@@ -192,5 +192,5 @@ export type ChangeIdentifier = number | DictionaryID | EntityID | SynonymID | Oc
 // result of the change.
 export interface EntityChange {
     identifier: ChangeIdentifier;
-    result: TabEntities | DictionaryEntities | Entity | Map<string,LeadminerEntity>;
+    result: TabEntities | DictionaryEntities | Entity | Map<string,Entity>;
 }

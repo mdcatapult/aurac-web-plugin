@@ -4,6 +4,7 @@ import { SettingsService } from './settings.service';
 
 describe('SettingsService', () => {
   let service: SettingsService;
+  let testBrowserService: 
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
