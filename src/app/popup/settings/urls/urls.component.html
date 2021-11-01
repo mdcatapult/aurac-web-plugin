@@ -2,14 +2,14 @@
   <form [formGroup]="urlsForm">
 
     <mat-form-field appearance="outline">
-      <mat-label>Leadmine URL</mat-label>
+      <mat-label>NER URL</mat-label>
       <input
         type="text"
-        name="{{urlKeys.leadmineURL}}"
-        formControlName="{{urlKeys.leadmineURL}}"
-        id="{{urlKeys.leadmineURL}}"
-        matInput placeholder="Enter Leadmine URL here">
-      <mat-error *ngIf="urlsForm!.get(urlKeys.leadmineURL)!.invalid">Please enter a valid URL</mat-error>
+        name="{{urlKeys.nerURL}}"
+        formControlName="{{urlKeys.nerURL}}"
+        id="{{urlKeys.nerURL}}"
+        matInput placeholder="Enter NER URL here">
+      <mat-error *ngIf="urlsForm!.get(urlKeys.nerURL)!.invalid">Please enter a valid URL</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline">

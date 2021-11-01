@@ -1,10 +1,20 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from 'src/environments/environment';
-import { DictionaryEntities, Entity, LeadminerEntity, LeadminerResult } from 'src/types';
+import { Recogniser, RecogniserEntities, Entity } from 'src/types';
 import { BrowserService } from '../browser.service';
 import { EntitiesService } from './entities.service';
 import { SettingsService } from './settings.service';
+
+type RecognisedEntity = {
+  entity: string;
+  position: number;
+  xpath: string;
+  recogniser: Recogniser;
+  identifiers?: any;
+  metadata?: string;
+}
+
+type APIResponse = RecognisedEntity[]
 
 @Injectable({
   providedIn: 'root'
@@ -29,10 +39,10 @@ export class NerService {
     this.browserService.getActiveTab().then(tab => {
       this.openLoadingIcon(tab.id!)
       .then(() => this.getPageContents(tab.id!), e => {throw e})
-      .then(contents => this.callLeadmine(contents), error => this.handleLeadmineError(tab.id!, error))
-      .then(leadminerResult => {
-        const dictionaryEntities = this.transformLeadminerResult(leadminerResult as LeadminerResult)
-        this.entitiesService.setDictionaryEntities({tab: tab.id!, dictionary: this.settingsService.preferences.dictionary}, dictionaryEntities)
+      .then(contents => this.callAPI(contents), error => this.handleAPIError(tab.id!, error))
+      .then(response => {
+        const recogniserEntities = this.transformAPIResponse(response as APIResponse)
+        this.entitiesService.setRecogniserEntities({tab: tab.id!, recogniser: this.settingsService.preferences.recogniser}, recogniserEntities)
       })
     })
   }
@@ -49,63 +59,111 @@ export class NerService {
     return this.browserService.sendMessageToTab(tab, 'content_script_get_page_contents')
   }
 
-  private callLeadmine(body: string): Promise<LeadminerResult | void> {
-    const [url, params] = this.constructLeadmineURL()
-    return this.httpClient.post<LeadminerResult>(url, body, {observe: 'response', params})
+  private callAPI(body: string): Promise<APIResponse | void> {
+    const [params, headers] = this.constructRequestParametersAndHeaders()
+    return this.httpClient.post<APIResponse>(`${this.settingsService.APIURLs.nerURL}/html/entities`, body, {observe: 'response', params, headers})
       .toPromise()
       .then(response => {
-        if (!response?.body?.entities) {
-          throw new Error("leadmine response has no entities")
+        if (response?.status !== 200) {
+          throw new Error("api request failed")
         }
+
+        if (!response?.body) {
+          throw new Error("api response has no contents")
+        }
+
         return response.body!
       })
   }
 
-  private handleLeadmineError(tabId: number, error: Error) {
+  private handleAPIError(tabId: number, error: Error) {
     this.closeLoadingIcon(tabId)
     throw error
   }
 
-  private constructLeadmineURL(): [string, HttpParams] {
-    const params = new HttpParams()
-    this.settingsService.preferences.dictionary === 'chemical-entities'
-      ? params.set('inchikey', 'true')
-      : params.set('inchikey', 'false')
+  private constructRequestParametersAndHeaders(): [HttpParams, HttpHeaders] {
+    // HttpParams.set returns a copy but the original is unmodified - so be careful!
+    const params = new HttpParams().set('recogniser', this.settingsService.preferences.recogniser)
 
-    return [`${this.settingsService.APIURLs.leadmineURL}${environment.production ? `/${this.settingsService.preferences.dictionary}` : ''}/entities`, params];
+    const headers = new HttpHeaders()
+    if (this.settingsService.preferences.recogniser === 'leadmine-chemical-entities') {
+      // Recognition API expects a base64 encoded, json encoded "RecogniserOptions" object.
+      // Currently there is only one key "queryParameters", which tells the api how to 
+      // construct a url when forwarding a request. This key takes a Map<string,string[]>
+      // in order to allow multiple values per key.
+      const leadmineRecogniserOptions = {'queryParameters': {'inchi': ['true']}}
+      const leadmineRecogniserOptionsJSON = JSON.stringify(leadmineRecogniserOptions)
+      const base64leadmineRecogniserOptionsJSON = btoa(leadmineRecogniserOptionsJSON)
+
+      headers.set('x-leadmine-chemical-entities', base64leadmineRecogniserOptionsJSON)
+    }
+
+    return [params, headers];
   }
 
-  private transformLeadminerResult(leadminerResult: LeadminerResult): DictionaryEntities {
-    console.log(leadminerResult)
-    let dictionaryEntities: DictionaryEntities = {
+  private transformAPIResponse(response: APIResponse): RecogniserEntities {
+    let recogniserEntities: RecogniserEntities = {
       show: true,
       entities: new Map<string,Entity>()
     }
 
-    const set = (key: string, entity: LeadminerEntity) => {
-      dictionaryEntities.entities.set(key, {
-        synonyms: new Set([entity.entityText]),
-        occurrences: [],
-        metadata: {
-          recognisingDict: entity.recognisingDict,
-          entityGroup: entity.entityGroup
-        }
+    const setEntities = (key: string, recognisedEntity: RecognisedEntity) => {
+      // API returns metadata as a base64 encoded json blob (because grpc has problems dealing with "any").
+      // Convert it and parse it to get something useful.
+      const metadata = recognisedEntity.metadata ? JSON.parse(atob(recognisedEntity.metadata!)) : null
+
+      recogniserEntities.entities.set(key, {
+        synonyms: new Map([[recognisedEntity.entity, {xpaths: new Set([recognisedEntity.xpath])}]]),
+        identifiers: new Map(Object.entries(recognisedEntity.identifiers)),
+        metadata: metadata
       })
     }
 
-    leadminerResult.entities.forEach(leadmineEntity => {
-      if (leadmineEntity.resolvedEntity) {
-        if (dictionaryEntities.entities.has(leadmineEntity.resolvedEntity)) {
-          const entity = dictionaryEntities.entities.get(leadmineEntity.resolvedEntity)
-          entity!.synonyms.add(leadmineEntity.entityText)
-        } else {
-          set(leadmineEntity.resolvedEntity, leadmineEntity)
-        }
-      } else {
-        set(leadmineEntity.entityText, leadmineEntity)
+    response.forEach(recognisedEntity => {
+
+      switch (recognisedEntity.recogniser) {
+        case 'leadmine-chemical-entities':
+        case 'leadmine-diseases':
+        case 'leadmine-proteins':
+          // For all leadmine dictionaries, we will use the resolved entity
+          // to determine whether two entities are synonyms of each other.
+          const resolvedEntity: string = recognisedEntity.identifiers?.resolvedEntity
+
+          if (resolvedEntity) {
+            if (recogniserEntities.entities.has(resolvedEntity)) {
+              const entity = recogniserEntities.entities.get(resolvedEntity)!
+
+              if (entity.synonyms.has(recognisedEntity.entity)) {
+                const synonym = entity.synonyms.get(recognisedEntity.entity)!
+                synonym.xpaths.add(recognisedEntity.xpath)
+              } else {
+                entity.synonyms.set(recognisedEntity.entity, {xpaths: new Set([recognisedEntity.xpath])})
+              }
+
+              
+            } else {
+              setEntities(resolvedEntity, recognisedEntity)
+            }
+          } else {
+            if (recogniserEntities.entities.has(recognisedEntity.entity.toLowerCase())) {
+              const entity = recogniserEntities.entities.get(recognisedEntity.entity.toLowerCase())!
+
+              if (entity.synonyms.has(recognisedEntity.entity)) {
+                const synonym = entity.synonyms.get(recognisedEntity.entity)!
+                synonym.xpaths.add(recognisedEntity.xpath)
+              } else {
+                entity.synonyms.set(recognisedEntity.entity, {xpaths: new Set([recognisedEntity.xpath])})
+              }
+
+            } else {
+              setEntities(recognisedEntity.entity.toLowerCase(), recognisedEntity)
+            }
+          }
+
+          break;
       }
     })
 
-    return dictionaryEntities
+    return recogniserEntities
   }
 }

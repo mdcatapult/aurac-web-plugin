@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import { timer } from 'rxjs';
 import { debounce } from 'rxjs/operators';
-import {defaultSettings, DictionaryURLs, Settings} from 'src/types';
+import {defaultSettings, APIURLs, Settings} from 'src/types';
 import {BrowserService} from '../../browser.service';
 import {Logger} from '../../logger';
 import {UrlValidator} from './urls/url-validator';
@@ -14,7 +14,7 @@ import {UrlValidator} from './urls/url-validator';
 })
 export class SettingsComponent implements OnInit {
 
-  @Output() saved = new EventEmitter<DictionaryURLs>();
+  @Output() saved = new EventEmitter<APIURLs>();
   @Output() closed = new EventEmitter<boolean>();
 
   private fb = new FormBuilder()
@@ -28,8 +28,8 @@ export class SettingsComponent implements OnInit {
 
   settingsForm = this.fb.group({
     urls: this.fb.group({
-      leadmineURL: new FormControl(
-        defaultSettings.urls.leadmineURL,
+      nerURL: new FormControl(
+        defaultSettings.urls.nerURL,
         Validators.compose([Validators.required, UrlValidator.validator])
       ),
       compoundConverterURL: new FormControl(
@@ -51,7 +51,7 @@ export class SettingsComponent implements OnInit {
         defaultSettings.preferences.minEntityLength,
         Validators.required
       ),
-      dictionary: new FormControl(defaultSettings.preferences.dictionary)
+      recogniser: new FormControl(defaultSettings.preferences.recogniser)
     })
   });
 

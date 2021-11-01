@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {FormGroup} from '@angular/forms';
-import {DictionaryURLKeys} from '../../../../types';
+import {APIURLs} from '../../../../types';
 
 @Component({
   selector: 'app-urls',
@@ -11,6 +11,14 @@ export class UrlsComponent {
 
   @Input() urlsForm?: FormGroup
 
-  readonly urlKeys = DictionaryURLKeys;
+  // The values associated with these keys MUST EQUAL the form group names 
+  // defined in the parent settings component. We should move the urls form 
+  // down into this component to remove this complexity.
+  readonly urlKeys: APIURLs = {
+    nerURL: "nerURL",
+    compoundConverterURL: "compoundConverterURL",
+    unichemURL: "unichemURL",
+    pdfConverterURL: "pdfConverterURL"
+  };
 
 }

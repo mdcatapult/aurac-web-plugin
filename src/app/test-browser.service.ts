@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {BrowserService} from './browser.service';
-import {Message, StringMessage, Settings, MessageType, EntityCache} from '../types';
+import {Message, StringMessage, Settings, MessageType} from '../types';
 import Tab = browser.tabs.Tab;
 import MessageSender = browser.runtime.MessageSender;
 
@@ -47,7 +47,7 @@ export class TestBrowserService extends BrowserService {
 
   saveEntityCache(urlToEntityMap: string): void {}
 
-  loadEntityCache(): Promise<EntityCache> {
-    return Promise.resolve(new Map())
-  }
+  // loadEntityCache(): Promise<EntityCache> {
+  //   return Promise.resolve(new Map())
+  // }
 }

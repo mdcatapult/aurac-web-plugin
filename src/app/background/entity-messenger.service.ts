@@ -26,7 +26,6 @@ export class EntityMessengerService {
 
   constructor(private browserService: BrowserService, private entitiesService: EntitiesService) {
     this.entitiesService.changeStream$.subscribe(change => {
-      console.log(change.result)
       this.browserService.sendMessageToTab(change.identifier as number, {type: 'content_script_highlight_entities', body: stringify(change.result)})
     })
   }

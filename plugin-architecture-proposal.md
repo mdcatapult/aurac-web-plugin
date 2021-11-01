@@ -314,3 +314,11 @@ interface EntityChange {
         1. NER service sends message to content script: `content_script_highlight_text`.
         2. Content script calls `closeLoadingIcon`.
         3. Content script returns id's of highlighted span.
+
+
+## Finding synonyms
+* Recognition API needs to send back the dictionary that the entity was found in.
+    * Recognition API must return the unadulterated token.
+* Leadmine dictionaries need to set the resolved entity as an identifier.
+* When we receive the response we can collect synonyms based on the dictionary and an identifier associated with that dictionary.
+* We can look at overlapping synonym sets at the end and merge them.

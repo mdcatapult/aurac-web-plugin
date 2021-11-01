@@ -28,7 +28,7 @@ import { SidebarEntityListComponent } from './sidebar/sidebar-entity-list/sideba
 import { SidebarEntityComponent } from './sidebar/sidebar-entity/sidebar-entity.component';
 import { SafeResourcePipe } from './safe-resource.pipe';
 import { MatTableModule } from '@angular/material/table';
-import { DictionaryNamePipe } from './popup/settings/dictionary-name.pipe';
+import { RecogniserNamePipe } from './popup/settings/recogniser-name.pipe';
 
 const routes: Routes = [
   {path: '**', component: RouterComponent}
@@ -51,7 +51,7 @@ const routes: Routes = [
     SidebarEntityListComponent,
     SidebarEntityComponent,
     SafeResourcePipe,
-    DictionaryNamePipe,
+    RecogniserNamePipe,
   ],
   imports: [
     CommonModule,

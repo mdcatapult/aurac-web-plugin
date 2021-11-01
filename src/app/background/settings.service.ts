@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { XRefSources, Preferences, defaultSettings, DictionaryURLs, Settings, Message } from '../../types'
+import { XRefSources, Preferences, defaultSettings, APIURLs, Settings, Message } from '../../types'
 import { BrowserService } from '../browser.service';
 
 @Injectable({
@@ -13,7 +13,7 @@ export class SettingsService {
   // Private behaviour subjects form the basis of the class attributes.
   private readonly _xRefSources: BehaviorSubject<XRefSources> = new BehaviorSubject({})
   private readonly _preferences: BehaviorSubject<Preferences> = new BehaviorSubject(defaultSettings.preferences);
-  private readonly _APIURLs: BehaviorSubject<DictionaryURLs> = new BehaviorSubject(defaultSettings.urls)
+  private readonly _APIURLs: BehaviorSubject<APIURLs> = new BehaviorSubject(defaultSettings.urls)
 
   // Observables allow dependants to subscribe to changes without the ability to set values. Readonly means the 
   // reference cannot be modified by a dependant.
@@ -28,7 +28,7 @@ export class SettingsService {
   get preferences(): Preferences {
     return this._preferences.getValue()
   }
-  get APIURLs(): DictionaryURLs {
+  get APIURLs(): APIURLs {
     return this._APIURLs.getValue()
   }
 
@@ -62,6 +62,8 @@ export class SettingsService {
         }).then(() => {
           return this.xRefSources
         })
+      case 'settings_service_get_current_recogniser':
+        return Promise.resolve(this.preferences.recogniser)
     }
   }
 

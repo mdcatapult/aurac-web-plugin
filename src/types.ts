@@ -29,7 +29,8 @@ export type MessageType =
   | 'settings_service_refresh_xref_sources'
   | 'content_script_open_loading_icon'
   | 'content_script_close_loading_icon'
-  | 'content_script_highlight_entities';
+  | 'content_script_highlight_entities'
+  | 'settings_service_get_current_recogniser';
 
 export interface Message {
   type: MessageType;
@@ -43,10 +44,6 @@ export interface StringMessage extends Message {
   body: string;
 }
 
-export interface LeadmineMessage extends Message {
-  body: Array<LeadminerEntity>;
-}
-
 export interface XRefMessage extends Message {
   body: Array<XRef>;
 }
@@ -55,40 +52,6 @@ export interface LogMessage extends Message {
   level: MessageLevel;
   message: any;
 }
-
-export type LeadminerResult = {
-  created: string;
-  entities: LeadminerEntity[];
-};
-
-export type LeadminerEntity = {
-  beg: number;
-  begInNormalizedDoc: number;
-  end: number;
-  endInNormalizedDoc: number;
-  entityText: string;
-  possiblyCorrectedText: string;
-  recognisingDict: LeadminerDictionary;
-  resolvedEntity: string;
-  sectionType: string;
-  entityGroup: string;
-};
-
-export type LeadminerDictionary = {
-  enforceBracketing: boolean;
-  entityType: string;
-  htmlColor: string;
-  maxCorrectionDistance: number;
-  minimumCorrectedEntityLength: number;
-  minimumEntityLength: number;
-  source: string;
-};
-
-export type LeadmineResult = {
-  entities: {
-    resolvedEntity: string,
-  }[],
-};
 
 export type ConverterResult = {
   input: string,
@@ -101,80 +64,100 @@ export type XRef = {
   url: string,
 };
 
-export type DictionaryPath = 'proteins' | 'chemical-entities' | 'diseases'
+export function allRecognisers(): Recogniser[] {
+  return ALL_RECOGNISERS.map(e => e)
+} 
+
+const ALL_RECOGNISERS = [
+  'leadmine-proteins', 
+  'leadmine-chemical-entities', 
+  'leadmine-diseases'
+] as const;
+type RecognisersTuple = typeof ALL_RECOGNISERS;
+export type Recogniser = RecognisersTuple[number]; 
 
 export type Preferences = {
   minEntityLength: number,
-  dictionary: DictionaryPath
+  recogniser: Recogniser
 }
 
 export type XRefSources = {[key: string]: boolean}
 
 export type Settings = {
-  urls: DictionaryURLs,
+  urls: APIURLs,
   xRefSources: XRefSources,
   preferences: Preferences
 }
 
-export type DictionaryURLs = {
-  leadmineURL: string,
+export type APIURLs = {
+  nerURL: string,
   compoundConverterURL: string,
   unichemURL: string,
   pdfConverterURL: string,
 };
 
+const devAPIURLs: APIURLs = {
+  nerURL: 'http://localhost:8081',
+  compoundConverterURL: 'http://localhost:8082/convert',
+  unichemURL: 'http://localhost:8080',
+  pdfConverterURL: 'http://localhost:8083/html'
+}
+
+const productionAPIURLs: APIURLs = {
+  nerURL: 'https://ner-api.wopr.inf.mdc',
+  compoundConverterURL: 'https://compound-converter.wopr.inf.mdc/convert',
+  unichemURL: 'https://unichem-plus.wopr.inf.mdc',
+  pdfConverterURL: 'https://pdf.wopr.inf.mdc/html',
+}
+
 export const defaultSettings: Settings = {
-  urls: {
-    leadmineURL: environment.leadmineURL,
-    compoundConverterURL: environment.compoundConverterURL,
-    unichemURL: environment.unichemURL,
-    pdfConverterURL: environment.pdfConverterURL,
-  },
+  urls: environment.production ? productionAPIURLs : devAPIURLs,
   xRefSources: {},
   preferences: {
     minEntityLength: 2,
-    dictionary: 'proteins'
+    recogniser: 'leadmine-proteins'
   }
 };
 
-export const DictionaryURLKeys = {
-  leadmineURL : 'leadmineURL',
-  compoundConverterURL : 'compoundConverterURL',
-  unichemURL : 'unichemURL',
-  pdfConverterURL : 'pdfConverterURL'
-};
+export interface Occurrences {
+  count: number,
+  id?: string[];
+}
 
-type url = string
-export type EntityCache = Map<url, Map<DictionaryPath, Array<LeadminerEntity>>>;
+export type XPath = string
+export type SynonymText = string
 
+interface SynonymData {
+  xpaths: Set<XPath>;
+}
 
 // Entity is a wrapper for a leadminer entity with any extra functional
 // information.
 export interface Entity {
-  synonyms: Set<string>
+  synonyms: Map<SynonymText, SynonymData>
   identifiers?: Map<string,string>;
-  occurrences?: Array<string>; // contains the id's of highlighted spans.
   metadata?: any;
+  htmlTagIDs?: Array<string>;
   // Other stuff should go here - e.g. cross references.
 }
 
-// DictionaryEntities is a wrapper for all the entities found when running NER.
-export interface DictionaryEntities {
+// RecogniserEntities is a wrapper for all the entities found when running NER.
+export interface RecogniserEntities {
     show: boolean;
     entities: Map<string, Entity>;
 }
 
 // Holds all entities on a page in valid dictionaries.
 export type TabEntities = {
-    [key in DictionaryPath]?: DictionaryEntities;
+    [key in Recogniser]?: RecogniserEntities;
 }
 
-export interface DictionaryID {
+export interface RecogniserID {
     tab: number;
-    dictionary: DictionaryPath;
+    recogniser: Recogniser;
 }
 
-export interface EntityID extends DictionaryID {
+export interface EntityID extends RecogniserID {
     identifier: string;
 }
 
@@ -186,11 +169,11 @@ export interface OccurrenceID extends EntityID {
     occurrence: string;
 }
 
-export type ChangeIdentifier = number | DictionaryID | EntityID | SynonymID | OccurrenceID
+export type ChangeIdentifier = number | RecogniserID | EntityID | SynonymID | OccurrenceID
 
 // EntityChange describes where a change to the cache has been made and the 
 // result of the change.
 export interface EntityChange {
     identifier: ChangeIdentifier;
-    result: TabEntities | DictionaryEntities | Entity | Map<string,Entity>;
+    result: TabEntities | RecogniserEntities | Entity | Map<string,Entity>;
 }

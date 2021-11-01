@@ -6,13 +6,13 @@
       <mat-radio-group
         aria-labelledby="radio-group-label"
         class="radio-group"
-        formControlName="dictionary">
-        <div *ngFor="let dictionary of dictionaries">
+        formControlName="recogniser">
+        <div *ngFor="let recogniser of recognisers">
           <mat-radio-button
             class="radio-button"
-            [value]="dictionary"
+            [value]="recogniser"
           >
-            {{dictionary | dictionaryName}}
+            {{recogniser | recogniserName }}
           </mat-radio-button>
           <br>
         </div>

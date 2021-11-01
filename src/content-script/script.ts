@@ -1,7 +1,7 @@
 // import { Globals } from './globals';
 import { TextHighlighter } from './textHighlighter';
 import { ChEMBL } from './chembl';
-import { Message, TabEntities } from 'src/types';
+import { Message, Recogniser, TabEntities } from 'src/types';
 import { UserExperience } from './userExperience';
 import { Entity } from './types'
 import { Globals } from './globals';
@@ -91,18 +91,7 @@ const closeSidebar: () => void = () => {
 }
 
 const getPageContents: () => string = () => {
-  const textNodes: string[] = []
-  TextHighlighter.allTextNodes(document.body, textNodes);
-  
-  // On ChEMBL, the representations (i.e. SMILES, InChI, InChIKey) are not text nodes
-  // so need to be 'manually' added to the textNodes array
-  if (ChEMBL.isChemblPage()) {
-    textNodes.push(...ChEMBL.getChemblRepresentationValues())
-  }
-
-  // Leadmine needs newline separated strings to correctly identify entities
-  const contents = textNodes.join('\n');
-  return contents;
+  return document.documentElement.outerHTML
 }
 
 async function sidebarIsReady(): Promise<boolean> {
@@ -147,27 +136,40 @@ browser.runtime.onMessage.addListener((msg: Message) => {
 
     case 'content_script_highlight_entities':
       return new Promise((resolve, reject) => {
-        try {
-          const tabEntities = parse(msg.body) as TabEntities
-          const oldFormatEntities: Entity[] = []
-          Object.entries(tabEntities).forEach(([, dict]) => {
-            if (dict!.show) {
-              Array.from(dict!.entities).forEach(([identifier, entity]) => {
-                entity.synonyms.forEach(synonym => oldFormatEntities.push({
-                  entityText: synonym,
-                  resolvedEntity: identifier === synonym ? "" : identifier,
-                  entityGroup: entity.metadata?.entityGroup,
-                  recognisingDict: entity.metadata?.recognisingDict
-                }))
-              })
-            }
+        const tabEntities: TabEntities = parse(msg.body)  
+        console.log(tabEntities)
+
+        Globals.browser.sendMessage({type: 'settings_service_get_current_recogniser'})
+          .then((recogniser: Recogniser) => {
+            tabEntities[recogniser]!.entities.forEach((entity, key, m) => {
+
+            })
           })
-          TextHighlighter.wrapEntitiesWithHighlight(oldFormatEntities)
-          UserExperience.showLoadingIcon(false)
-          resolve(null)
-        } catch (e) {
-          reject(e)
-        }
+
+        resolve(null)
       })
+      // return new Promise((resolve, reject) => {
+      //   try {
+      //     const tabEntities = parse(msg.body) as TabEntities
+      //     const oldFormatEntities: Entity[] = []
+      //     Object.entries(tabEntities).forEach(([, dict]) => {
+      //       if (dict!.show) {
+      //         Array.from(dict!.entities).forEach(([identifier, entity]) => {
+      //           entity.synonyms.forEach(synonym => oldFormatEntities.push({
+      //             entityText: synonym,
+      //             resolvedEntity: identifier === synonym ? "" : identifier,
+      //             entityGroup: entity.metadata?.entityGroup,
+      //             recognisingDict: entity.metadata?.recognisingDict
+      //           }))
+      //         })
+      //       }
+      //     })
+      //     TextHighlighter.wrapEntitiesWithHighlight(oldFormatEntities)
+      //     UserExperience.showLoadingIcon(false)
+      //     resolve(null)
+      //   } catch (e) {
+      //     reject(e)
+      //   }
+      // })
   }
 })

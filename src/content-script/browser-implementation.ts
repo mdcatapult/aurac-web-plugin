@@ -3,7 +3,7 @@ import {Card} from './card'
 import {UserExperience} from './userExperience';
 import {ChEMBL} from './chembl';
 import {SidebarButtons} from './sidebarButtons';
-import {LeadminerEntity} from '../types';
+// import {LeadminerEntity} from '../types';
 import {Modal} from './modal';
 
 import { IBrowser } from './IBrowser';

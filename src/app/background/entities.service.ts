@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { ChangeIdentifier, DictionaryEntities, DictionaryID, Entity, EntityChange, LeadminerEntity, TabEntities } from '../../types'
+import { ChangeIdentifier, RecogniserEntities, RecogniserID, Entity, EntityChange, TabEntities } from '../../types'
 
 @Injectable({
   providedIn: 'root'
@@ -23,28 +23,27 @@ export class EntitiesService {
     this.updateStream(tab, entities)
   }
 
-  getDictionaryEntities(id: DictionaryID): DictionaryEntities | undefined {
+  getRecogniserEntities(id: RecogniserID): RecogniserEntities | undefined {
     const dictEntities = this._entityMap.get(id.tab)
-    return dictEntities ? dictEntities[id.dictionary] : undefined
+    return dictEntities ? dictEntities[id.recogniser] : undefined
   }
 
-  setDictionaryEntities(id: DictionaryID, entities: DictionaryEntities): void {
+  setRecogniserEntities(id: RecogniserID, entities: RecogniserEntities): void {
     const tabEntities = this._entityMap.get(id.tab)
     
     if (!tabEntities) { 
       const newTabEntities: TabEntities = {}
-      newTabEntities[id.dictionary] = entities
-      console.log(newTabEntities)
+      newTabEntities[id.recogniser] = entities
       this._entityMap.set(id.tab, newTabEntities)
       this.updateStream(id.tab, newTabEntities)
     } else {
-      tabEntities[id.dictionary] = entities
+      tabEntities[id.recogniser] = entities
       this._entityMap.set(id.tab, tabEntities)
       this.updateStream(id, entities)
     }
   }
 
-  private updateStream(identifier: ChangeIdentifier, result: TabEntities | DictionaryEntities | Entity | Map<string,Entity>): void {
+  private updateStream(identifier: ChangeIdentifier, result: TabEntities | RecogniserEntities | Entity | Map<string,Entity>): void {
     this._changeStream.next({identifier, result})
   }
 }

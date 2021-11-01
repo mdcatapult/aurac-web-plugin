@@ -1,6 +1,6 @@
 import {TestBed} from '@angular/core/testing';
 import {UrlValidator} from './url-validator';
-import {DictionaryURLs} from '../../../../types';
+import {APIURLs} from '../../../../types';
 
 describe('SettingsService', () => {
 
@@ -9,8 +9,8 @@ describe('SettingsService', () => {
   });
 
   it('should return false when given invalid URLs', () => {
-    const invalidUrls: DictionaryURLs = {
-      leadmineURL: 'dhfjdhrks',
+    const invalidUrls: APIURLs = {
+      nerURL: 'dhfjdhrks',
       compoundConverterURL: 'asdfsdaf',
       unichemURL: '/dfdsf/asd???=asdf',
       pdfConverterURL: '/fwepij',
@@ -20,8 +20,8 @@ describe('SettingsService', () => {
   });
 
   it('should return false given some valid and invalid URLs', () => {
-    const validURLs: DictionaryURLs = {
-      leadmineURL: '',
+    const validURLs: APIURLs = {
+      nerURL: '',
       compoundConverterURL: 'https://compound-converter.wopr.inf.mdc/convert',
       unichemURL: 'http://unichem-plus.wopr.inf.mdc/x-ref',
       pdfConverterURL: 'http://a-legit-url',
@@ -31,8 +31,8 @@ describe('SettingsService', () => {
   });
 
   it('should return true given valid URLs', () => {
-    const validURLs: DictionaryURLs = {
-      leadmineURL: 'https://leadmine.wopr.inf.mdc',
+    const validURLs: APIURLs = {
+      nerURL: 'https://leadmine.wopr.inf.mdc',
       compoundConverterURL: 'https://compound-converter.wopr.inf.mdc/convert',
       unichemURL: 'http://unichem-plus.wopr.inf.mdc/x-ref',
       pdfConverterURL: 'http://a-legit-url',
@@ -41,13 +41,13 @@ describe('SettingsService', () => {
     expect(UrlValidator.validURLs(validURLs)).toBeTruthy();
   });
 
-  it('should return false given invalid dictionary URL keys', () => {
+  it('should return false given invalid recogniser URL keys', () => {
     /* tslint:disable */
     const invalidJsonString = "{\"leadmineURL\": \"https://leadmine.wopr.inf.mdc\", " +
       "\"compoundConverterUrL\": \"https://compound-converter.wopr.inf.mdc/convert\"," +
       "\"unichemURL\": \"http://unichem-plus.wopr.inf.mdc/x-ref\"}";
 
-    const urlsWithInvalidKey = JSON.parse(invalidJsonString) as DictionaryURLs;
+    const urlsWithInvalidKey = JSON.parse(invalidJsonString) as APIURLs;
 
     expect(UrlValidator.validURLs(urlsWithInvalidKey)).toBeFalsy();
   });

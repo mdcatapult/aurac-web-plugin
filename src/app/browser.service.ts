@@ -1,8 +1,7 @@
 import {Injectable} from '@angular/core';
-import {defaultSettings, LeadmineMessage, LeadminerEntity, LeadmineResult, Message, MessageType, Settings, StringMessage} from '../types';
+import {defaultSettings, Message, MessageType, Settings, StringMessage} from '../types';
 import {Logger} from './logger';
 import Tab = browser.tabs.Tab;
-import {EntityCache} from '../types';
 
 @Injectable({
   providedIn: 'root'
@@ -66,23 +65,23 @@ export class BrowserService {
     )
   }
 
-  loadEntityCache(): Promise<EntityCache> {
-    return browser.storage.local.get('urlToEntityMap').then(
-      (storage) => {
-        function reader(key: string, value: any) {
-          if (typeof value === 'object' && value !== null) {
-            if (value.dataType === 'Map') {
-              return new Map(value.value);
-            }
-          }
-          return value;
-        }
-        const entityCache = new Map(JSON.parse(storage?.urlToEntityMap! as string, reader))
-        return Promise.resolve(entityCache)
-      },
-      (err) => Logger.error(`error loading urlToEntityMap', ${JSON.stringify(err)}`)
-    ) as Promise<EntityCache>
-  }
+  // loadEntityCache(): Promise<EntityCache> {
+  //   return browser.storage.local.get('urlToEntityMap').then(
+  //     (storage) => {
+  //       function reader(key: string, value: any) {
+  //         if (typeof value === 'object' && value !== null) {
+  //           if (value.dataType === 'Map') {
+  //             return new Map(value.value);
+  //           }
+  //         }
+  //         return value;
+  //       }
+  //       const entityCache = new Map(JSON.parse(storage?.urlToEntityMap! as string, reader))
+  //       return Promise.resolve(entityCache)
+  //     },
+  //     (err) => Logger.error(`error loading urlToEntityMap', ${JSON.stringify(err)}`)
+  //   ) as Promise<EntityCache>
+  // }
 
   getURL(asset: string): string {
     return browser.runtime.getURL(asset);

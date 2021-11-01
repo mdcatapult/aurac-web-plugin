@@ -1,4 +1,4 @@
-import {DictionaryURLs} from '../../../../types';
+import {APIURLs} from '../../../../types';
 import {AbstractControl} from '@angular/forms';
 import { Logger } from '../../../logger';
 
@@ -6,15 +6,15 @@ export class UrlValidator {
 
   constructor() { }
 
-  static validURLs(urls: DictionaryURLs): boolean {
+  static validURLs(urls: APIURLs): boolean {
 
     // checks if values exists while implicitly checking correct keys exist from loaded JSON
-    if (!urls.leadmineURL || !urls.unichemURL || !urls.compoundConverterURL) {
+    if (!urls.nerURL || !urls.unichemURL || !urls.compoundConverterURL) {
       return false;
     }
 
     return Object.keys(urls).every(key =>
-      UrlValidator.isValidURL(urls[key as keyof DictionaryURLs])
+      UrlValidator.isValidURL(urls[key as keyof APIURLs])
     );
   }
 

@@ -1,10 +1,11 @@
 import { TestBed } from '@angular/core/testing';
+import { TestBrowserService } from '../test-browser.service';
 
 import { SettingsService } from './settings.service';
 
 describe('SettingsService', () => {
   let service: SettingsService;
-  let testBrowserService: 
+  let testBrowserService: TestBrowserService
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
