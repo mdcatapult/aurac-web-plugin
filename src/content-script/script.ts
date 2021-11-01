@@ -139,14 +139,58 @@ browser.runtime.onMessage.addListener((msg: Message) => {
         const tabEntities: TabEntities = parse(msg.body)  
         console.log(tabEntities)
 
+        // Get the current recogniser from settings
         Globals.browser.sendMessage({type: 'settings_service_get_current_recogniser'})
           .then((recogniser: Recogniser) => {
-            tabEntities[recogniser]!.entities.forEach((entity, key, m) => {
 
+            // iterate over the entities for the tab
+            tabEntities[recogniser]!.entities.forEach((entity, key) => {
+
+              // iterate through the synonyms for the entity
+              entity.synonyms.forEach((synonymData, synonymName) => {
+
+                // iterate over each xpath
+                synonymData.xpaths.forEach(xpath => {
+
+                try {
+                    // Get the node that the xpath is pointing to
+                    const xpathNode = Globals.document.evaluate(xpath, Globals.document, null, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue
+                    let targetNode: Node
+
+                    // recurse through the tree (under the xpath) to find the node which contains the synonym.
+                    // TODO: Check that the term has not already been highlighted.
+                    // TODO: Return as soon as we find a match (currently just keeps recursing).
+                    allDescendants(xpathNode, (element) => {
+                      if (element?.nodeValue && TextHighlighter.textContainsTerm(element.nodeValue, synonymName)) {
+                        targetNode = element;
+                      }
+                    })
+
+                    if (targetNode) {
+                      // This is the same as the old logic.
+                      // TODO: Investigate why we need to have the parent element.
+                      const replacementNode = Globals.document.createElement('span');
+                      // the span needs a class so that it can be deleted by the removeHighlights function
+                      replacementNode.className = 'aurac-highlight-parent';
+                      
+                      replacementNode.innerHTML = targetNode.nodeValue!
+                        .split(synonymName)
+                        .join(`<span class="aurac-highlight" style="background-color: yellow;position: relative; cursor: pointer">${synonymName}</span>`);
+                      
+                      targetNode.parentNode!.insertBefore(replacementNode, targetNode);
+                      targetNode.parentNode!.removeChild(targetNode);
+                    }
+                              
+                  } catch (e) {
+                    reject(e)
+                  }
+                })
+              })
             })
+            UserExperience.showLoadingIcon(false)
+            resolve(null)
           })
 
-        resolve(null)
       })
       // return new Promise((resolve, reject) => {
       //   try {
@@ -173,3 +217,12 @@ browser.runtime.onMessage.addListener((msg: Message) => {
       // })
   }
 })
+
+function allDescendants (node: Node, callback: (node : Node) => void): void {
+
+  for (var i = 0; i < node.childNodes.length; i++) {
+    var child = node.childNodes[i] as Node;
+    allDescendants(child, callback);
+    callback(child);
+  }
+}

@@ -128,7 +128,7 @@ export type XPath = string
 export type SynonymText = string
 
 interface SynonymData {
-  xpaths: Set<XPath>;
+  xpaths: Array<XPath>;
 }
 
 // Entity is a wrapper for a leadminer entity with any extra functional

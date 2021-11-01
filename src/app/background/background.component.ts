@@ -111,13 +111,13 @@ export class BackgroundComponent {
   //     })
   // }
 
-  private openModal(chemblId: string): void {
-    this.browserService.sendMessageToActiveTab({type: 'open_modal', body: chemblId})
-  }
+  // private openModal(chemblId: string): void {
+  //   this.browserService.sendMessageToActiveTab({type: 'open_modal', body: chemblId})
+  // }
 
-  private sanitiseURL(url: string): string {
-    return url!.replace(/^(https?|http):\/\//, '').split('#')[0]
-  }
+  // private sanitiseURL(url: string): string {
+  //   return url!.replace(/^(https?|http):\/\//, '').split('#')[0]
+  // }
 
   // private retrieveNERFromPage(dictionary: Recogniser): void {
   //   Promise.all([

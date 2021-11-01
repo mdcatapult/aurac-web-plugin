@@ -113,7 +113,7 @@ export class NerService {
       const metadata = recognisedEntity.metadata ? JSON.parse(atob(recognisedEntity.metadata!)) : null
 
       recogniserEntities.entities.set(key, {
-        synonyms: new Map([[recognisedEntity.entity, {xpaths: new Set([recognisedEntity.xpath])}]]),
+        synonyms: new Map([[recognisedEntity.entity, {xpaths: [recognisedEntity.xpath]}]]),
         identifiers: new Map(Object.entries(recognisedEntity.identifiers)),
         metadata: metadata
       })
@@ -135,9 +135,9 @@ export class NerService {
 
               if (entity.synonyms.has(recognisedEntity.entity)) {
                 const synonym = entity.synonyms.get(recognisedEntity.entity)!
-                synonym.xpaths.add(recognisedEntity.xpath)
+                synonym.xpaths.push(recognisedEntity.xpath)
               } else {
-                entity.synonyms.set(recognisedEntity.entity, {xpaths: new Set([recognisedEntity.xpath])})
+                entity.synonyms.set(recognisedEntity.entity, {xpaths: [recognisedEntity.xpath]})
               }
 
               
@@ -150,9 +150,9 @@ export class NerService {
 
               if (entity.synonyms.has(recognisedEntity.entity)) {
                 const synonym = entity.synonyms.get(recognisedEntity.entity)!
-                synonym.xpaths.add(recognisedEntity.xpath)
+                synonym.xpaths.push(recognisedEntity.xpath)
               } else {
-                entity.synonyms.set(recognisedEntity.entity, {xpaths: new Set([recognisedEntity.xpath])})
+                entity.synonyms.set(recognisedEntity.entity, {xpaths: [recognisedEntity.xpath]})
               }
 
             } else {
