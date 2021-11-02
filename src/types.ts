@@ -68,15 +68,15 @@ export type XRef = {
 
 export function allRecognisers(): Recogniser[] {
   return ALL_RECOGNISERS.map(e => e)
-} 
+}
 
 const ALL_RECOGNISERS = [
-  'leadmine-proteins', 
-  'leadmine-chemical-entities', 
+  'leadmine-proteins',
+  'leadmine-chemical-entities',
   'leadmine-diseases'
 ] as const;
 type RecognisersTuple = typeof ALL_RECOGNISERS;
-export type Recogniser = RecognisersTuple[number]; 
+export type Recogniser = RecognisersTuple[number];
 
 export type Preferences = {
   minEntityLength: number,
@@ -137,7 +137,7 @@ interface SynonymData {
 // information.
 export interface Entity {
   synonyms: Map<SynonymText, SynonymData>
-  identifiers?: Map<string,string>;
+  identifiers?: Map<string, string>;
   metadata?: any;
   htmlTagIDs?: Array<string>;
   // Other stuff should go here - e.g. cross references.
@@ -173,7 +173,7 @@ export interface OccurrenceID extends EntityID {
 
 export type ChangeIdentifier = number | RecogniserID | EntityID | SynonymID | OccurrenceID
 
-// EntityChange describes where a change to the cache has been made and the 
+// EntityChange describes where a change to the cache has been made and the
 // result of the change.
 export interface EntityChange {
     identifier: ChangeIdentifier;
@@ -181,7 +181,7 @@ export interface EntityChange {
     setterInfo?: SetterInfo
 }
 
-// Sometimes we need to pass in extra information so that the setter doesn't get in a pickle! 
+// Sometimes we need to pass in extra information so that the setter doesn't get in a pickle!
 export type SetterInfo = 'noPropagate'
 
 export const HIGHLIGHTED_ELEMENT_ID_DELIMITER = '@@'
@@ -196,8 +196,9 @@ export function parseHighlightID(id: string): [entityName: string, entityOccurre
 }
 
 export type InspectedHighlightData = {
+  entityName: string;
   entity: Entity;
-  entityOccurence: number;
+  entityOccurrence: number;
   synonym: string;
   synonymOccurrence: number;
 }

@@ -8,11 +8,8 @@ import { SidebarEntity } from '../types';
 })
 export class SidebarEntityComponent implements OnInit {
 
-  @Input() entity: SidebarEntity = {
-    identifiers: [],
-    synonyms: [],
-    occurrences: []
-  };
+
+  @Input() entity: SidebarEntity = {} as SidebarEntity
   constructor() { }
 
   ngOnInit(): void {

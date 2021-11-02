@@ -31,16 +31,24 @@ export class EntityMessengerService {
         case 'entity_messenger_service_highlight_clicked':
           return new Promise((resolve, reject) => {
             try {
-              const [entityName, entityOccurence, synonym, synonymOccurrence] = parseHighlightID(msg.body)
+              const [entityName, entityOccurrence, synonym, synonymOccurrence] = parseHighlightID(msg.body)
               this.browserService.getActiveTab().then(tab => {
-                const entity = this.entitiesService.getEntity({tab: tab.id!, recogniser: this.settingsService.preferences.recogniser, identifier: entityName})!
-                this.browserService.sendMessageToTab(tab.id!, {type: 'sidebar_component_inspect_highlight', body: {
+                const entity = this.entitiesService.getEntity({
+                  tab: tab.id!,
+                  recogniser: this.settingsService.preferences.recogniser,
+                  identifier: entityName
+                })!
+
+                const inspectedHighlightData: InspectedHighlightData = {
                   entity,
                   entityName,
-                  entityOccurence,
+                  entityOccurrence,
                   synonym,
                   synonymOccurrence
-                } as InspectedHighlightData})
+                }
+
+                this.browserService.sendMessageToTab(tab.id!, {type: 'sidebar_component_inspect_highlight',
+                  body: stringifyWithTypes(inspectedHighlightData)})
               }).then(() => resolve(null))
             } catch (e) {
               reject(e)

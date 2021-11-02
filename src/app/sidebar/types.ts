@@ -1,13 +1,13 @@
-import { Entity } from "../../types"
-
-export type InspectedHighlightData = {
-    entity: Entity;
-    entityOccurence: number;
-    synonym: string;
-    synonymOccurrence: number;
-}
-
-
 export interface SidebarEntity {
     // populate
+  title: string
+  entityName: string,
+  identifiers: Array<Identifier>,
+  synonyms: Array<string>,
+  occurrences: Array<string>
+}
+
+export interface Identifier {
+  type: string
+  value: string
 }

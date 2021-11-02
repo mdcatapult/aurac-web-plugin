@@ -1,6 +1,6 @@
 <article>
     <mat-card>
-        <mat-card-title>{{ entity.synonyms[0] }}</mat-card-title>
+        <mat-card-title>{{ entity.title }}</mat-card-title>
         <mat-card-subtitle>{{ entity.synonyms.join(', ') }}.</mat-card-subtitle>
         <mat-card-content>
             <table mat-table [dataSource]="entity.identifiers">
