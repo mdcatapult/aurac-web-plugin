@@ -30,7 +30,9 @@ export type MessageType =
   | 'content_script_open_loading_icon'
   | 'content_script_close_loading_icon'
   | 'content_script_highlight_entities'
-  | 'settings_service_get_current_recogniser';
+  | 'settings_service_get_current_recogniser'
+  | 'entity_messenger_service_highlight_clicked'
+  | 'sidebar_component_inspect_highlight';
 
 export interface Message {
   type: MessageType;
@@ -176,4 +178,26 @@ export type ChangeIdentifier = number | RecogniserID | EntityID | SynonymID | Oc
 export interface EntityChange {
     identifier: ChangeIdentifier;
     result: TabEntities | RecogniserEntities | Entity | Map<string,Entity>;
+    setterInfo?: SetterInfo
+}
+
+// Sometimes we need to pass in extra information so that the setter doesn't get in a pickle! 
+export type SetterInfo = 'noPropagate'
+
+export const HIGHLIGHTED_ELEMENT_ID_DELIMITER = '@@'
+
+export function highlightID(entityName: string, entityOccurrences: number, synonymName: string, xpathIndex: number): string {
+  return [entityName, entityOccurrences, synonymName, xpathIndex].join(HIGHLIGHTED_ELEMENT_ID_DELIMITER)
+}
+
+export function parseHighlightID(id: string): [entityName: string, entityOccurrences: number, synonymName: string, xpathIndex: number] {
+  const [entityName, entityOccurrences, synonymName, xpathIndex] = id.split(HIGHLIGHTED_ELEMENT_ID_DELIMITER)
+  return [entityName, parseInt(entityOccurrences), synonymName, parseInt(xpathIndex)]
+}
+
+export type InspectedHighlightData = {
+  entity: Entity;
+  entityOccurence: number;
+  synonym: string;
+  synonymOccurrence: number;
 }

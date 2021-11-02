@@ -1,13 +1,9 @@
-// import { Globals } from './globals';
-import { TextHighlighter } from './textHighlighter';
-import { ChEMBL } from './chembl';
-import { Message, Recogniser, TabEntities } from 'src/types';
+import { Entity, highlightID, Message, Recogniser, TabEntities } from '../types';
 import { UserExperience } from './userExperience';
-import { Entity } from './types'
 import { Globals } from './globals';
 import { BrowserImplementation } from './browser-implementation';
-import { parse } from '../json';
-
+import { parseWithTypes, stringifyWithTypes } from '../json';
+import * as Mark from 'mark.js';
 
 Globals.document = document
 Globals.browser = new BrowserImplementation()
@@ -107,6 +103,74 @@ async function awaitSidebarReadiness(): Promise<void> {
 
 sidebarButton.addEventListener('click', toggleSidebar)
 
+function highlightEntites(tabEntities: TabEntities): Promise<string> {
+  return new Promise((resolve, reject) => {
+    Globals.browser.sendMessage({type: 'settings_service_get_current_recogniser'})
+      .then((recogniser: Recogniser) => {
+        
+        tabEntities[recogniser]!.entities.forEach((entity, entityName) => {
+          
+          entity.synonyms.forEach((synonymData, synonymName) => {
+            
+            let entityOccurrence = 0
+              synonymData.xpaths.forEach((xpath, synonymOccurrence) => {
+
+              try {
+                  const xpathNode = Globals.document.evaluate(xpath, Globals.document, null, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue
+
+                  if (xpathNode) {
+                    const highlightElementCallback = newHighlightElementCallback(entity, entityName, entityOccurrence, synonymName, synonymOccurrence)
+                    const success = highlightText(xpathNode, synonymName, highlightElementCallback);
+                    if (success) {
+                      entityOccurrence++
+                    }
+                  }
+                            
+                } catch (e) {
+                  reject(e)
+                }
+              })
+            })
+          })
+          UserExperience.showLoadingIcon(false)
+          resolve(stringifyWithTypes(tabEntities))
+      })
+
+  })
+}
+
+function highlightText(contextNode: Node, text: string, callback: (element: HTMLElement) => void): boolean {
+  let success = true;
+  let highlighter = new Mark(contextNode as HTMLElement);
+  highlighter.mark(text, {
+    element: 'span',
+    className: 'aurac-highlight',
+    accuracy: 'exactly',
+    acrossElements: true,
+    separateWordSearch: false,
+    exclude: [
+      'a',
+      '.tooltipped',
+      '.tooltipped-click',
+      '.aurac-highlight'
+    ],
+    filter: (_node, _term, countAtCall, _totalCount): boolean => countAtCall < 1,
+    each: callback,
+    noMatch: (_term: string) => {success = false}
+  });
+  return success
+}
+
+function newHighlightElementCallback(entity: Entity, entityName: string, entityOccurrence: number, synonymName: string, synonymOccurrence: number): (element: HTMLElement) => void {
+  return (element: HTMLElement): void => {
+    element.id = highlightID(entityName, entityOccurrence, synonymName, synonymOccurrence);
+    entity.htmlTagIDs = entity.htmlTagIDs ? entity.htmlTagIDs.concat([element.id]) : [element.id];
+    element.addEventListener('click', (_event: Event): void => {
+      Globals.browser.sendMessage({ type: 'entity_messenger_service_highlight_clicked', body: element.id }).catch(console.log);
+    });
+  }
+}
+
 // @ts-ignore
 browser.runtime.onMessage.addListener((msg: Message) => {
   switch (msg.type) {
@@ -135,94 +199,7 @@ browser.runtime.onMessage.addListener((msg: Message) => {
       return Promise.resolve(UserExperience.showLoadingIcon(false))
 
     case 'content_script_highlight_entities':
-      return new Promise((resolve, reject) => {
-        const tabEntities: TabEntities = parse(msg.body)  
-        console.log(tabEntities)
-
-        // Get the current recogniser from settings
-        Globals.browser.sendMessage({type: 'settings_service_get_current_recogniser'})
-          .then((recogniser: Recogniser) => {
-
-            // iterate over the entities for the tab
-            tabEntities[recogniser]!.entities.forEach((entity, key) => {
-
-              // iterate through the synonyms for the entity
-              entity.synonyms.forEach((synonymData, synonymName) => {
-
-                // iterate over each xpath
-                synonymData.xpaths.forEach(xpath => {
-
-                try {
-                    // Get the node that the xpath is pointing to
-                    const xpathNode = Globals.document.evaluate(xpath, Globals.document, null, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue
-                    let targetNode: Node
-
-                    // recurse through the tree (under the xpath) to find the node which contains the synonym.
-                    // TODO: Check that the term has not already been highlighted.
-                    // TODO: Return as soon as we find a match (currently just keeps recursing).
-                    allDescendants(xpathNode, (element) => {
-                      if (element?.nodeValue && TextHighlighter.textContainsTerm(element.nodeValue, synonymName)) {
-                        targetNode = element;
-                      }
-                    })
-
-                    if (targetNode) {
-                      // This is the same as the old logic.
-                      // TODO: Investigate why we need to have the parent element.
-                      const replacementNode = Globals.document.createElement('span');
-                      // the span needs a class so that it can be deleted by the removeHighlights function
-                      replacementNode.className = 'aurac-highlight-parent';
-                      
-                      replacementNode.innerHTML = targetNode.nodeValue!
-                        .split(synonymName)
-                        .join(`<span class="aurac-highlight" style="background-color: yellow;position: relative; cursor: pointer">${synonymName}</span>`);
-                      
-                      targetNode.parentNode!.insertBefore(replacementNode, targetNode);
-                      targetNode.parentNode!.removeChild(targetNode);
-                    }
-                              
-                  } catch (e) {
-                    reject(e)
-                  }
-                })
-              })
-            })
-            UserExperience.showLoadingIcon(false)
-            resolve(null)
-          })
-
-      })
-      // return new Promise((resolve, reject) => {
-      //   try {
-      //     const tabEntities = parse(msg.body) as TabEntities
-      //     const oldFormatEntities: Entity[] = []
-      //     Object.entries(tabEntities).forEach(([, dict]) => {
-      //       if (dict!.show) {
-      //         Array.from(dict!.entities).forEach(([identifier, entity]) => {
-      //           entity.synonyms.forEach(synonym => oldFormatEntities.push({
-      //             entityText: synonym,
-      //             resolvedEntity: identifier === synonym ? "" : identifier,
-      //             entityGroup: entity.metadata?.entityGroup,
-      //             recognisingDict: entity.metadata?.recognisingDict
-      //           }))
-      //         })
-      //       }
-      //     })
-      //     TextHighlighter.wrapEntitiesWithHighlight(oldFormatEntities)
-      //     UserExperience.showLoadingIcon(false)
-      //     resolve(null)
-      //   } catch (e) {
-      //     reject(e)
-      //   }
-      // })
+      const tabEntities: TabEntities = parseWithTypes(msg.body)
+      return highlightEntites(tabEntities)
   }
 })
-
-function allDescendants (node: Node, callback: (node : Node) => void): void {
-
-  for (var i = 0; i < node.childNodes.length; i++) {
-    var child = node.childNodes[i] as Node;
-    allDescendants(child, callback);
-    callback(child);
-  }
-}

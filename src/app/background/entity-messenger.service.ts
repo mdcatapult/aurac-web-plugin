@@ -1,38 +1,53 @@
 import { Injectable } from '@angular/core';
-import { stringify } from '../../json';
+import { InspectedHighlightData, parseHighlightID } from 'src/types';
+import { parseWithTypes, stringifyWithTypes } from '../../json';
 import { BrowserService } from '../browser.service';
-import { SidebarEntity } from '../sidebar/types';
 import { EntitiesService } from './entities.service';
+import { SettingsService } from './settings.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EntityMessengerService {
-  entities: Array<SidebarEntity> = [
-    {
-      identifiers: [
-        {
-          type: "inchikey",
-          value: "RDHQFKQIGNGIED-MRVPVSSYSA-N"
-        }
-      ],
-      synonyms: [
-        "Acetylcarnitine",
-        "Acetyl-L-carnitine"
-      ],
-      occurrences: ["RDHQFKQIGNGIED-MRVPVSSYSA-N#0", "RDHQFKQIGNGIED-MRVPVSSYSA-N#1"],
-    }
-  ]
 
-  constructor(private browserService: BrowserService, private entitiesService: EntitiesService) {
+  constructor(private browserService: BrowserService, private entitiesService: EntitiesService, private settingsService: SettingsService) {
     this.entitiesService.changeStream$.subscribe(change => {
-      this.browserService.sendMessageToTab(change.identifier as number, {type: 'content_script_highlight_entities', body: stringify(change.result)})
-    })
-  }
+      if (change.setterInfo === 'noPropagate') {
+        return
+      }
 
-  setSidebarEntities() {
-    this.browserService.sendMessageToActiveTab('content_script_await_sidebar_readiness').then(() => {
-      this.browserService.sendMessageToActiveTab({type: 'sidebar_component_set_entities', body: this.entities});
-    });
+      this.browserService.sendMessageToTab(change.identifier as number, {type: 'content_script_highlight_entities', body: stringifyWithTypes(change.result)})
+        .then((stringifiedTabEntities) => {
+          const tabEntities = parseWithTypes(stringifiedTabEntities)
+
+          // Use 'noPropagate' setter info so that we don't get into an infinite loop.
+          this.entitiesService.setTabEntities(change.identifier as number, tabEntities, 'noPropagate')
+          this.browserService.sendMessageToTab(change.identifier as number, 'content_script_open_sidebar')
+        })
+    })
+
+    this.browserService.addListener(msg => {
+      switch (msg.type) {
+        case 'entity_messenger_service_highlight_clicked':
+          return new Promise((resolve, reject) => {
+            try {
+              const [entityName, entityOccurence, synonym, synonymOccurrence] = parseHighlightID(msg.body)
+              this.browserService.getActiveTab().then(tab => {
+                const entity = this.entitiesService.getEntity({tab: tab.id!, recogniser: this.settingsService.preferences.recogniser, identifier: entityName})!
+                this.browserService.sendMessageToTab(tab.id!, {type: 'sidebar_component_inspect_highlight', body: {
+                  entity,
+                  entityName,
+                  entityOccurence,
+                  synonym,
+                  synonymOccurrence
+                } as InspectedHighlightData})
+              }).then(() => resolve(null))
+            } catch (e) {
+              reject(e)
+            }
+          })
+        default:
+      }
+    })
   }
 }

@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { InspectedHighlightData, MessageType } from 'src/types';
 import { BrowserService } from '../browser.service';
 import { SidebarEntity } from './types';
 
@@ -13,19 +14,23 @@ export class SidebarComponent implements OnInit {
 
   constructor(private browserService: BrowserService, private changeDetector: ChangeDetectorRef) {
     this.browserService.addListener((msg: any) => {
-      switch (msg.type) {
-        case 'sidebar_component_set_entities':
-          this.setEntities(msg.body as SidebarEntity[]);
+      switch (msg.type as MessageType) {
+        case 'sidebar_component_inspect_highlight':
+          const highlightData = msg.body as InspectedHighlightData
+          this.inspectHighlight(highlightData)
+        
+          this.changeDetector.detectChanges()
       }
     })
+  }
+
+  private inspectHighlight(inspectedHighlightData: InspectedHighlightData): void {
+    // convert inspected highlight data into sidebar entity (check if it's already in the array etc.)
+    // and manipulate the entities array to render the cards
   }
 
   ngOnInit(): void {
     this.browserService.sendMessageToActiveTab({ type: 'content_script_set_sidebar_ready' })
   }
 
-  private setEntities(entities: SidebarEntity[]): void {
-    this.entities = entities
-    this.changeDetector.detectChanges()
-  }
 }

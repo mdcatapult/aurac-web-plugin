@@ -210,3 +210,13 @@ body.aurac-modal-open {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+.aurac-highlight {
+  background: plum;
+  color: black;
+  cursor: pointer;
+}
+
+.aurac-highlight:focus {
+  background: lightblue;
+}

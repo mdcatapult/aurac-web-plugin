@@ -37,10 +37,10 @@ function reviver(key: any, value: any) {
   return value;
 }
 
-export function stringify(thing: any): string {
+export function stringifyWithTypes(thing: any): string {
   return JSON.stringify(thing, replacer)
 }
 
-export function parse(thing: string): any {
+export function parseWithTypes(thing: string): any {
   return JSON.parse(thing, reviver)
 }
