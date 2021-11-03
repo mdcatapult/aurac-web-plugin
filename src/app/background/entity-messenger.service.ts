@@ -47,8 +47,10 @@ export class EntityMessengerService {
                   synonymOccurrence
                 }
 
-                this.browserService.sendMessageToTab(tab.id!, {type: 'sidebar_component_inspect_highlight',
-                  body: stringifyWithTypes(inspectedHighlightData)})
+                this.browserService.sendMessageToTab(tab.id!, {
+                  type: 'sidebar_data_service_inspect_highlight',
+                  body: stringifyWithTypes(inspectedHighlightData)
+                })
               }).then(() => resolve(null))
             } catch (e) {
               reject(e)

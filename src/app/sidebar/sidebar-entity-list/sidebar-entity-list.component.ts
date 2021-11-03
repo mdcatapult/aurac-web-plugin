@@ -1,16 +1,22 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DoCheck, OnChanges, OnInit } from '@angular/core';
+import { SidebarDataService } from '../sidebar-data.service';
 import { SidebarEntity } from '../types';
+
 @Component({
   selector: 'app-sidebar-entity-list',
   templateUrl: './sidebar-entity-list.component.html',
   styleUrls: ['./sidebar-entity-list.component.scss']
 })
-export class SidebarEntityListComponent implements OnInit {
+export class SidebarEntityListComponent {
 
-  @Input() entities: Array<SidebarEntity> = [];
-  constructor() { }
+  entities: Array<SidebarEntity> = [];
 
-  ngOnInit(): void {
+  constructor(
+    private sidebarDataService: SidebarDataService,
+  ) {
+
+    this.sidebarDataService.entities$.subscribe(entities => {
+      this.entities = entities
+    })
   }
-
 }
