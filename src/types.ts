@@ -196,9 +196,9 @@ export function parseHighlightID(id: string): [entityName: string, entityOccurre
 }
 
 export type InspectedHighlightData = {
-  entityName: string;
+  entityName: string; // key for entity map
   entity: Entity;
   entityOccurrence: number;
-  synonym: string;
-  synonymOccurrence: number;
+  clickedSynonymName: string;
+  synonymOccurrence: number; 
 }

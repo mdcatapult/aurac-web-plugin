@@ -41,7 +41,7 @@ export class SidebarComponent implements OnInit {
       }
 
       this.entities.push({
-          title: inspectedHighlightData.synonym,
+          title: inspectedHighlightData.clickedSynonymName,
           entityName: inspectedHighlightData.entityName,
           identifiers,
           synonyms: Array.from(inspectedHighlightData.entity.synonyms.keys()),

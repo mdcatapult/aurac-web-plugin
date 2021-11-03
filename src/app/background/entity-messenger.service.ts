@@ -43,7 +43,7 @@ export class EntityMessengerService {
                   entity,
                   entityName,
                   entityOccurrence,
-                  synonym,
+                  clickedSynonymName: synonym,
                   synonymOccurrence
                 }
 

@@ -1,10 +1,9 @@
 export interface SidebarEntity {
-    // populate
   title: string
   entityName: string,
   identifiers: Array<Identifier>,
   synonyms: Array<string>,
-  occurrences: Array<string>
+  occurrences: Array<string> // HTML element IDs 
 }
 
 export interface Identifier {
