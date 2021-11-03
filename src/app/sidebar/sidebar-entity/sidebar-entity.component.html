@@ -3,7 +3,7 @@
         <mat-card-title>{{ entity.title }}</mat-card-title>
         <mat-card-subtitle>{{ entity.synonyms.join(', ') }}.</mat-card-subtitle>
         <mat-card-content>
-            <table mat-table [dataSource]="entity.identifiers">
+            <table mat-table [dataSource]="filterIdentifiers(entity.identifiers)">
                 <ng-container matColumnDef="type">
                     <th mat-header-cell *matHeaderCellDef>Type</th>
                     <td mat-cell *matCellDef="let element">{{ element.type }}</td>

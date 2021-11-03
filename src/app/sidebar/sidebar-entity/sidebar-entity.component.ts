@@ -1,5 +1,6 @@
+import { Identifiers } from '@angular/compiler/src/render3/r3_identifiers';
 import { Component, Input, OnInit } from '@angular/core';
-import { SidebarEntity } from '../types';
+import { Identifier, SidebarEntity } from '../types';
 
 @Component({
   selector: 'app-sidebar-entity',
@@ -14,5 +15,9 @@ export class SidebarEntityComponent implements OnInit {
 
   ngOnInit(): void {
   }
+
+  filterIdentifiers(arr: Identifier[]): Identifier[] {
+    return arr.filter(v => v.value)
+  } 
 
 }
