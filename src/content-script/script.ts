@@ -171,6 +171,10 @@ function newHighlightElementCallback(entity: Entity, entityName: string, entityO
   }
 }
 
+function scrollToHighlight(id: string): void {
+  Globals.document.getElementById(id)!.scrollIntoView({behavior: 'smooth', block: 'center'})
+}
+
 // @ts-ignore
 browser.runtime.onMessage.addListener((msg: Message) => {
   switch (msg.type) {
@@ -201,5 +205,8 @@ browser.runtime.onMessage.addListener((msg: Message) => {
     case 'content_script_highlight_entities':
       const tabEntities: TabEntities = parseWithTypes(msg.body)
       return highlightEntites(tabEntities)
+
+    case 'content_script_scroll_to_highlight':
+      return Promise.resolve(scrollToHighlight(msg.body))
   }
 })

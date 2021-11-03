@@ -32,7 +32,8 @@ export type MessageType =
   | 'content_script_highlight_entities'
   | 'settings_service_get_current_recogniser'
   | 'entity_messenger_service_highlight_clicked'
-  | 'sidebar_component_inspect_highlight';
+  | 'sidebar_component_inspect_highlight'
+  | 'content_script_scroll_to_highlight';
 
 export interface Message {
   type: MessageType;

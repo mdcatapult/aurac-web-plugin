@@ -1,5 +1,5 @@
-import { Identifiers } from '@angular/compiler/src/render3/r3_identifiers';
 import { Component, Input, OnInit } from '@angular/core';
+import { BrowserService } from 'src/app/browser.service';
 import { Identifier, SidebarEntity } from '../types';
 
 @Component({
@@ -9,15 +9,28 @@ import { Identifier, SidebarEntity } from '../types';
 })
 export class SidebarEntityComponent implements OnInit {
 
-
   @Input() entity: SidebarEntity = {} as SidebarEntity
-  constructor() { }
+  
+  scrollIndex = 0
+  constructor(private browserService: BrowserService) { }
 
   ngOnInit(): void {
+    console.log(this.entity.occurrences)
   }
 
   filterIdentifiers(arr: Identifier[]): Identifier[] {
     return arr.filter(v => v.value)
   } 
+
+  arrowClicked(direction: 'left' | 'right'): void {
+    direction === 'left' ? this.scrollIndex-- : this.scrollIndex++   
+    
+    this.scrollIndex = 
+    (this.scrollIndex % this.entity.occurrences.length + this.entity.occurrences.length)
+     % this.entity.occurrences.length
+
+     this.browserService.sendMessageToActiveTab({type: 'content_script_scroll_to_highlight', body: this.entity.occurrences[this.scrollIndex]})
+  }
+
 
 }

@@ -1,7 +1,9 @@
 <article>
     <mat-card>
-        <mat-card-title>{{ entity.title }}</mat-card-title>
+        <mat-card-title>{{ entity.title }} ({{ scrollIndex }} / {{ entity.occurrences.length }} occurrences)</mat-card-title>
         <mat-card-subtitle>{{ entity.synonyms.join(', ') }}.</mat-card-subtitle>
+        <button (click)="arrowClicked('left')">Left</button>
+        <button (click)="arrowClicked('right')">Right</button>
         <mat-card-content *ngIf="filterIdentifiers(entity.identifiers).length">
             <table mat-table [dataSource]="filterIdentifiers(entity.identifiers)">
                 <ng-container matColumnDef="type">
