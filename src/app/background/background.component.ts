@@ -11,6 +11,7 @@ import {saveAs} from 'file-saver';
 import { EntityMessengerService } from './entity-messenger.service';
 import { SettingsService } from './settings.service';
 import { NerService } from './ner.service';
+import {CsvExporterService} from './csv-exporter.service';
 
 @Component({
   selector: 'app-background',
@@ -27,7 +28,8 @@ export class BackgroundComponent {
     private browserService: BrowserService,
     private entityMessengerService: EntityMessengerService,
     private settingsService: SettingsService,
-    private nerService: NerService
+    private nerService: NerService,
+    private csvExporterService: CsvExporterService
   ) {
     // this.browserService.addListener(this.getBrowserListenerFn());
   }

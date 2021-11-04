@@ -34,7 +34,7 @@ export type MessageType =
   | 'entity_messenger_service_highlight_clicked'
   | 'sidebar_component_inspect_highlight'
   | 'content_script_scroll_to_highlight'
-  | 'csv_exporter_export_csv';
+  | 'csv_exporter_service_export_csv';
 
 export interface Message {
   type: MessageType;
