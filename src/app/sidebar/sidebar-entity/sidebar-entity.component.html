@@ -4,6 +4,7 @@
         <mat-card-subtitle>{{ entity.synonyms.join(', ') }}.</mat-card-subtitle>
         <button (click)="arrowClicked('left')">Left</button>
         <button (click)="arrowClicked('right')">Right</button>
+        <button (click)="remove()">Remove</button>
         <mat-card-content *ngIf="filterIdentifiers(entity.identifiers).length">
             <table mat-table [dataSource]="filterIdentifiers(entity.identifiers)">
                 <ng-container matColumnDef="type">

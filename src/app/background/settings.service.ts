@@ -11,25 +11,25 @@ import { BrowserService } from '../browser.service';
 export class SettingsService {
 
   // Private behaviour subjects form the basis of the class attributes.
-  private readonly _xRefSources: BehaviorSubject<XRefSources> = new BehaviorSubject({})
-  private readonly _preferences: BehaviorSubject<Preferences> = new BehaviorSubject(defaultSettings.preferences);
-  private readonly _APIURLs: BehaviorSubject<APIURLs> = new BehaviorSubject(defaultSettings.urls)
+  private readonly xRefSourcesBehaviorSubject: BehaviorSubject<XRefSources> = new BehaviorSubject({})
+  private readonly preferencesBehaviorSubject: BehaviorSubject<Preferences> = new BehaviorSubject(defaultSettings.preferences);
+  private readonly APIURLsBehaviorSubject: BehaviorSubject<APIURLs> = new BehaviorSubject(defaultSettings.urls)
 
   // Observables allow dependants to subscribe to changes without the ability to set values. Readonly means the 
   // reference cannot be modified by a dependant.
-  readonly xRefSources$ = this._xRefSources.asObservable()
-  readonly preferences$ = this._preferences.asObservable();
-  readonly APIURLs$ = this._APIURLs.asObservable()
+  readonly xRefSourcesObservable = this.xRefSourcesBehaviorSubject.asObservable()
+  readonly preferencesObservable = this.preferencesBehaviorSubject.asObservable();
+  readonly APIURLsObservable = this.APIURLsBehaviorSubject.asObservable()
 
   // Getters allow simple access to current values.
   get xRefSources(): XRefSources {
-    return this._xRefSources.getValue()
+    return this.xRefSourcesBehaviorSubject.getValue()
   }
   get preferences(): Preferences {
-    return this._preferences.getValue()
+    return this.preferencesBehaviorSubject.getValue()
   }
   get APIURLs(): APIURLs {
-    return this._APIURLs.getValue()
+    return this.APIURLsBehaviorSubject.getValue()
   }
 
   constructor(private browserService: BrowserService, private httpClient: HttpClient) {
@@ -76,9 +76,9 @@ export class SettingsService {
   }
 
   private setAll(settings: Settings): void {
-    this._xRefSources.next(settings.xRefSources);
-    this._preferences.next(settings.preferences);
-    this._APIURLs.next(settings.urls);
+    this.xRefSourcesBehaviorSubject.next(settings.xRefSources);
+    this.preferencesBehaviorSubject.next(settings.preferences);
+    this.APIURLsBehaviorSubject.next(settings.urls);
   }
 
   private refreshXRefSources(unichemURL: string): Promise<void> {
@@ -88,10 +88,10 @@ export class SettingsService {
         // Left hand side must be null or undefined (not false). See "nullish coallescing operator".
         xRefSources[source] = this.xRefSources[source] ?? true
       })
-      this._xRefSources.next(xRefSources)
+      this.xRefSourcesBehaviorSubject.next(xRefSources)
     }, (error) => {
       console.error(error)
-      this._xRefSources.next({})
+      this.xRefSourcesBehaviorSubject.next({})
     })
   }
 
