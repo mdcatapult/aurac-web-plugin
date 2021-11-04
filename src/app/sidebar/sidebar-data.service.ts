@@ -10,13 +10,13 @@ import { Identifier, SidebarEntity } from './types';
 })
 export class SidebarDataService {
 
-  private _entities: BehaviorSubject<Array<SidebarEntity>> = new BehaviorSubject(new Array<SidebarEntity>())
-  readonly entities$: Observable<Array<SidebarEntity>> = this._entities.asObservable()
+  private entitiesBehaviorSubject: BehaviorSubject<Array<SidebarEntity>> = new BehaviorSubject(new Array<SidebarEntity>())
+  readonly entitiesObservable: Observable<Array<SidebarEntity>> = this.entitiesBehaviorSubject.asObservable()
   get entities(): Array<SidebarEntity> {
-    return this._entities.getValue()
+    return this.entitiesBehaviorSubject.getValue()
   }
-  set entities(entities: Array<SidebarEntity>) {
-    this._entities.next(entities)
+  setEntities(entities: Array<SidebarEntity>) {
+    this.entitiesBehaviorSubject.next(entities)
   }
 
 
@@ -43,19 +43,15 @@ export class SidebarDataService {
         })
       }
 
-      // entities is a copy
-      const entities = this.entities
-      
-      entities.push({
-          title: inspectedHighlightData.clickedSynonymName,
-          entityName: inspectedHighlightData.entityName,
-          identifiers,
-          synonyms: Array.from(inspectedHighlightData.entity.synonyms.keys()),
-          occurrences: inspectedHighlightData.entity.htmlTagIDs!
-      })
-      
-      // this calls next on entities via the setter
-      this.entities = entities
+      const newSidebarEntity = {
+        title: inspectedHighlightData.clickedSynonymName,
+        entityName: inspectedHighlightData.entityName,
+        identifiers,
+        synonyms: Array.from(inspectedHighlightData.entity.synonyms.keys()),
+        occurrences: inspectedHighlightData.entity.htmlTagIDs!
+      }
+
+      this.setEntities(this.entities.concat([newSidebarEntity]))
     }
   }
 

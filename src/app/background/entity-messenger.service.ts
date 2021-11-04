@@ -11,7 +11,7 @@ import { SettingsService } from './settings.service';
 export class EntityMessengerService {
 
   constructor(private browserService: BrowserService, private entitiesService: EntitiesService, private settingsService: SettingsService) {
-    this.entitiesService.changeStream$.subscribe(change => {
+    this.entitiesService.entityChangeObservable.subscribe(change => {
       if (change.setterInfo === 'noPropagate') {
         return
       }
