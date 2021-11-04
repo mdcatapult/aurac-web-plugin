@@ -23,7 +23,7 @@ export class BackgroundComponent {
   // entityCache: EntityCache = new Map()
 
   constructor (
-    private client: HttpClient, 
+    private client: HttpClient,
     private browserService: BrowserService,
     private entityMessengerService: EntityMessengerService,
     private settingsService: SettingsService,
