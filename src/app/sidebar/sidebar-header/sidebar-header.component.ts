@@ -26,7 +26,7 @@ export class SidebarHeaderComponent implements OnInit {
   }
 
   clearCards() {
-    this.sidebarDataService.entities = []
+    this.sidebarDataService.setEntities([])
   }
 
 }
