@@ -12,7 +12,7 @@ export class XRefService {
 
   constructor(private client: HttpClient, private settingsService: SettingsService) { }
 
-  get(entity: Entity, synonym: string): Promise<XRef[]> {
+  get(entity: Entity): Promise<XRef[]> {
     
     const identifier = entity.identifiers!.get('resolvedEntity')! // TODO remove !
     const encodedEntity = encodeURIComponent(identifier);
@@ -24,11 +24,6 @@ export class XRefService {
             this.getTrueKeys(this.settingsService.xRefSources)
           ).toPromise() : Promise.resolve([]);
       })
-    .then((xRefs: XRef[]) => {
-      return xRefs.map(xRef => {
-        return {...xRef, compoundName: synonym}
-      })
-    })
   }
 
   private getTrueKeys(v: { [_: string]: boolean }): string[] {

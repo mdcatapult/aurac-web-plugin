@@ -46,7 +46,7 @@ export class EntityMessengerService {
                   identifier: entityName
                 })!
 
-                const getXrefs = entity.xRefs.length ? Promise.resolve(entity.xRefs) : this.xRefService.get(entity, synonym)
+                const getXrefs = entity.xRefs.length ? Promise.resolve(entity.xRefs) : this.xRefService.get(entity)
                
                 getXrefs.then(xRefs => {
                   entity.xRefs = xRefs
