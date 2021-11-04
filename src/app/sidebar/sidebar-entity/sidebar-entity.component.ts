@@ -27,6 +27,4 @@ export class SidebarEntityComponent {
 
      this.browserService.sendMessageToActiveTab({type: 'content_script_scroll_to_highlight', body: this.entity.occurrences[this.scrollIndex]})
   }
-
-
 }
