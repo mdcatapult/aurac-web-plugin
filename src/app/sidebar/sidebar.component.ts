@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { BrowserService } from '../browser.service';
+
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
