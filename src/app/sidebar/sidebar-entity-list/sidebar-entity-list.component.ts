@@ -15,7 +15,7 @@ export class SidebarEntityListComponent {
     private sidebarDataService: SidebarDataService,
   ) {
 
-    this.sidebarDataService.entities$.subscribe(entities => {
+    this.sidebarDataService.entitiesObservable.subscribe(entities => {
       this.entities = entities
     })
   }

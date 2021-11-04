@@ -34,7 +34,7 @@ export class SidebarEntityComponent implements OnInit {
   }
 
   remove() {
-    this.sidebarDataService.entities = this.sidebarDataService.entities.filter(entity => entity.entityName !== this.entity.entityName)
+    this.sidebarDataService.setEntities(this.sidebarDataService.entities.filter(entity => entity.entityName !== this.entity.entityName))
   }
 
 }
