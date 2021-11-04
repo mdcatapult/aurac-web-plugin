@@ -4,7 +4,7 @@
   font-size: 14px;
   background: rgb(255,255,255);
   position: fixed;
-  z-index: 2147483647;
+  z-index: 2147483646;
   height: 100vh;
   top: 0;
   width: 20vw;
@@ -173,14 +173,14 @@ body.aurac-modal-open {
   overflow: hidden;
 }
 
-.download-results-button {
+#download-results-button {
   background-color: rgb(226, 152, 71);
   color: rgb(250, 249, 249);
   border: 1px solid black;
   margin: 2px;
 }
 
-.download-results-button:hover {
+#download-results-button:hover {
   background-color: rgb(250, 249, 249);
   color: black;
 }

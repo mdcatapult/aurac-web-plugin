@@ -1,6 +1,7 @@
-import {Sidebar} from './../src/content-script/sidebar'
-import {Globals} from './../src/content-script/globals'
+import {Sidebar} from '../src/content-script/sidebar'
+import {Globals} from '../src/content-script/globals'
 import {setup} from './util'
+import {auracNarrativeElement} from '../src/content-script/types';
 
 let sidebar: HTMLElement
 
@@ -19,7 +20,7 @@ it('sidebar should be added to DOM', () => {
 
 it('sidebar children should be added to DOM', () => {
   const sidebarChildren = Array.from(sidebar.children)
-  const expectedIds = [Sidebar.toolsId, Sidebar.narrativeId]
+  const expectedIds = [Sidebar.toolsId, auracNarrativeElement]
   expectedIds.forEach(expectedId => {
     expect(sidebarChildren.some(v => v.id === expectedId)).toBe(true)
   })

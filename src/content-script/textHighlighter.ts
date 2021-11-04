@@ -1,10 +1,13 @@
-import {chemicalFormula, Entity} from './types';
+import {chemicalFormula, Entity, ChemblRepresentations} from './types';
 import {Sidebar} from './sidebar';
 import {Card} from './card';
-import {ChemblRepresentations} from './types';
 import {ChEMBL} from './chembl';
 import {EntityTextBlacklist, EntityGroupBlacklist, AbbreviationsNotGeneNames} from './blacklist';
 import {Globals} from './globals';
+import tippy, {Instance} from 'tippy.js';
+import {CardButtons} from './cardButtons';
+
+type TooltipInstance = Instance
 
 export module TextHighlighter {
 
@@ -12,27 +15,31 @@ export module TextHighlighter {
   export const highlightClass = 'aurac-highlight';
   export const highlightParentClass = 'aurac-highlight-parent';
 
-  function blacklistedEntityText(entityText: string): boolean{
-    return EntityTextBlacklist[entityText.toLowerCase()]
+  function blacklistedEntityText(entityText: string): boolean {
+    return EntityTextBlacklist[entityText.toLowerCase()];
   }
 
-  function blacklistedEntityGroup(entityGroup: string): boolean{
-    return EntityGroupBlacklist[entityGroup.toLowerCase()]
+  function blacklistedEntityGroup(entityGroup: string): boolean {
+    return EntityGroupBlacklist[entityGroup.toLowerCase()];
   }
 
-  function abbrevationNotGeneName(entityText: string): boolean{
-    return AbbreviationsNotGeneNames[entityText]
+  function abbrevationNotGeneName(entityText: string): boolean {
+    return AbbreviationsNotGeneNames[entityText];
   }
 
   // It is common for Gene names to be all uppercase
   function isPotentialGeneName(entityText: string): boolean {
     if (!abbrevationNotGeneName(entityText)) {
-      return entityText === entityText.toUpperCase()
+      return entityText === entityText.toUpperCase();
     }
-    return false
+    return false;
   }
 
-  export function wrapEntitiesWithHighlight(entityList: Entity[]) {
+  function geneOrProtein(entity: Entity): boolean {
+    return entity.entityGroup === 'Gene or Protein';
+  }
+
+  export function wrapEntitiesWithHighlight(msg: any): TooltipInstance[] {
     // get InChI, InChIKey and SMILES input elements if we are on ChEMBL
     let chemblRepresentations: ChemblRepresentations;
     if (ChEMBL.isChemblPage()) {
@@ -41,26 +48,32 @@ export module TextHighlighter {
 
     // sort entities by length of entityText (descending) - this will ensure that we can capture e.g. VPS26A, which would not be
     // highlighted if VPS26 has already been highlighted, because the text VPS26A is now spread across more than one node
-    entityList.sort((a: Entity, b: Entity) => b.entityText.length - a.entityText.length)
+    msg.body.sort((a: Entity, b: Entity) => b.entityText.length - a.entityText.length)
       .map((entity: Entity) => {
         const entityText: string = entity.entityText
         const entityTextLowercase: string = entity.entityText.toLowerCase()
 
-        // filter with blacklists and consider if entity is a potential gene name or an all uppercase abbreviation
-        const entityTextBlacklistInclusion: boolean = blacklistedEntityText(entityTextLowercase)
-        const entityGroupBlacklistInclusion: boolean = blacklistedEntityGroup(entityTextLowercase)
-        const potentialGeneName: boolean = isPotentialGeneName(entityText)
-        const geneOrProtein: boolean = entity.entityGroup === 'Gene or Protein'
-        
-        if ((!entityGroupBlacklistInclusion && !entityTextBlacklistInclusion) || (potentialGeneName && geneOrProtein)) {
+        if ((!blacklistedEntityGroup(entityTextLowercase) && !blacklistedEntityText(entityTextLowercase))
+          || (geneOrProtein(entity) && isPotentialGeneName(entityText) )) {
           const selectors = getSelectors(entityText);
           wrapChemicalFormulaeWithHighlight(entity);
           addHighlightAndEventListeners(selectors, entity);
           if (ChEMBL.isChemblPage()) {
-            ChEMBL.highlightHandler(entity, chemblRepresentations)
+            ChEMBL.highlightHandler(entity, chemblRepresentations);
+          }
         }
-      }
-    });
+      });
+    // TODO tippy return is only here to help the integration tests. We need to find a better way to test the tooltips or
+    // return something useful from this method
+    return tippy(
+      '[data-tippy-content]',
+      {
+        allowHTML: true,
+        theme: 'light-border',
+        animation: 'shift-away',
+        duration: 600,
+        zIndex: 2147483647,
+      });
   }
 
   // Recursively find all text nodes which match regex
@@ -128,25 +141,25 @@ export module TextHighlighter {
   // Recursively find all text nodes which match entity
   export function allDescendants(element: HTMLElement, elements: Array<Element>, entity: string) {
     if ((element && (element.classList && !allowedClassList(element) || !allowedTagType(element)))) {
-        return;
-      }
+      return;
+    }
     try {
-      element.childNodes.forEach(child  => {
+      element.childNodes.forEach(child => {
         const childElement = child as HTMLElement;
         if (isNodeAllowed(childElement) && childElement.nodeType === Node.TEXT_NODE) {
-            if (textContainsTerm(childElement.nodeValue!, entity)) {
-              elements.push(childElement);
-            }
-          } else {
-            allDescendants(childElement, elements, entity);
+          if (textContainsTerm(childElement.nodeValue!, entity)) {
+            elements.push(childElement);
           }
-        });
-      } catch (e) {
-        // There are so many things that could go wrong.
-        // The DOM is a wild west
-        console.error(e);
-      }
+        } else {
+          allDescendants(childElement, elements, entity);
+        }
+      });
+    } catch (e) {
+      // There are so many things that could go wrong.
+      // The DOM is a wild west
+      console.error(e);
     }
+  }
 
   export const delimiters: string[] = ['(', ')', '\\n', '\"', '\'', '\\', ',', ';', '.', '!'];
 
@@ -217,7 +230,7 @@ export module TextHighlighter {
       return !elementHasHighlightedParents(child)
     }).forEach(childValue => {
       Card.populateEntityToOccurrences(entity.entityText, childValue);
-      childValue.addEventListener('click', Sidebar.entityClickHandler(entity, highlightedTerm));
+      childValue.addEventListener('click', Sidebar.entityClickHandler(entity));
     });
   }
 
@@ -240,6 +253,40 @@ export module TextHighlighter {
     }
   }
 
+  function createTooltipContent(entity: string): HTMLElement {
+    const tooltipContainer = Globals.document.createElement('span');
+    //   getOccurrenceCounts must be called after populateEntityToOccurrence
+    const occurrenceCount = CardButtons.getOccurrenceCounts([entity]);
+    const occurrenceCountDiv = Globals.document.createElement('div');
+    const occurrences = occurrenceCount === 1 ? 'occurrence' : 'occurrences';
+    occurrenceCountDiv.innerHTML = `<p>${occurrenceCount} ${occurrences} of ${entity} found on the current page</p>`;
+
+    tooltipContainer.appendChild(occurrenceCountDiv);
+    return tooltipContainer;
+  }
+
+  function addTooltips() {
+    const highlights = Array.from(Globals.document.getElementsByClassName('aurac-highlight'));
+    highlights.forEach(highlight => {
+      const highlightContent = getHighlightContent(highlight)
+      // we need to cast the Element as an HTMLElement in order to have access to data attributes
+      const highlightHTML = highlight as HTMLElement;
+     // update the data attribute
+      highlightHTML.dataset.tippyContent = createTooltipContent(highlightContent).outerHTML;
+    });
+  }
+
+  export function getHighlightContent(highlight: Element): string {
+    // the firstChild of a highlighted Chembl representation is an HTML Input Element and has no textContent
+    const textNode = 3
+    if (highlight.firstChild!.nodeType !== textNode && highlight.firstElementChild!.tagName == 'INPUT') {
+      const inputElement = highlight.firstElementChild! as HTMLInputElement
+      return inputElement.value
+    } else {
+      return highlight.firstChild!.textContent!;
+    }
+  }
+
   // highlights a term by wrapping it an HTML span
   const highlightTerm = (term: string, entity: Entity) => {
     return `<span class="aurac-highlight" style="background-color: ${entity.recognisingDict.htmlColor};position: relative; cursor: pointer">${term}</span>`;
@@ -259,6 +306,8 @@ export module TextHighlighter {
         console.error(e);
       }
     });
+    // addTooltips must be called after all highlighting has been completed in order for occurrence counts to include synonyms
+    addTooltips();
   }
 
   function getSelectors(entity: string): Array<Element> {

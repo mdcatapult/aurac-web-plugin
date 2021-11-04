@@ -1,6 +1,6 @@
 <div class="settings">
 
-  <button mat-button class="close-button" (click)="closeSettings()">
+  <button mat-button class="close-button" (click)="closeSettings()" aria-label="Button that closes the settings page">
     <mat-icon inline="true" style="font-size: x-large">highlight_off</mat-icon>
   </button>
 
@@ -9,27 +9,37 @@
   </div>
 
   <mat-tab-group>
-    <mat-tab label="URLs">
-      <app-urls
-        [urlsForm]="settingsForm.get('urls')"
-      ></app-urls>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <span matTooltip="Select the type and length of entities to highlight" matTooltipPosition="above" aria-label="Tab which contains settings for the type and length of entities to highlight">Preferences</span>
+      </ng-template>
+      <app-preferences
+        [preferencesForm]="settingsForm.get('preferences')"
+      ></app-preferences>
     </mat-tab>
-    <mat-tab label="Sources">
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <span matTooltip="Select the cross reference sources to show in an entity card" matTooltipPosition="above"
+              aria-label="Tab which contains the type of cross reference sources to show in the sidebar card for an entity">Sources</span>
+      </ng-template>
       <app-x-ref-sources
         [sourcesForm]="settingsForm.get('xRefSources')"
         [xRefSources]="xRefSources"
       ></app-x-ref-sources>
     </mat-tab>
-    <mat-tab label="Preferences">
-      <app-preferences
-        [preferencesForm]="settingsForm.get('preferences')"
-      ></app-preferences>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <span matTooltip="Change where Aurac gets its information from" matTooltipPosition="above" aria-label="Tab which contains input fields for the URLs that Aurac fetches its information from">URLs</span>
+      </ng-template>
+      <app-urls
+        [urlsForm]="settingsForm.get('urls')"
+      ></app-urls>
     </mat-tab>
   </mat-tab-group>
 
   <div class="restore-defaults-button-container">
   <button mat-raised-button color="primary"
-      (click)="reset()">
+      (click)="reset()" aria-label="Button that resets all the settings back to their default values">
       Restore defaults
     </button>
   </div>

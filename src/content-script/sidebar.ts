@@ -1,4 +1,4 @@
-import {Entity} from './types';
+import {Entity, auracNarrativeElement} from './types';
 import {Card} from './card';
 import {SidebarButtons} from './sidebarButtons';
 import {CardButtons} from './cardButtons';
@@ -17,7 +17,6 @@ export module Sidebar {
 
   export const sidebarClass = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed'
 
-  export const narrativeId = 'aurac-narrative'
   export const toolsId = 'aurac-sidebar-tools'
 
   export function create(): HTMLElement {
@@ -64,7 +63,7 @@ export module Sidebar {
     auracLogo.src = Globals.browser.getURL('assets/head-brains.png');
 
     logoText.innerText = 'Click on a highlighted entity to display further information and links below...';
-    logoText.id = narrativeId;
+    logoText.id = auracNarrativeElement;
 
     return [auracLogo, logoText];
   }
@@ -81,7 +80,7 @@ export module Sidebar {
   }
 
   // returns an event listener which creates a new element with passed info and appends it to the passed element
-  export function entityClickHandler(info: Entity, element: Element): (event: Event) => void {
+  export function entityClickHandler(info: Entity): (event: Event) => void {
     return (event: Event) => {
       if (event.type !== 'click') {
         return;

@@ -1,23 +1,35 @@
+<<<<<<< HEAD
 import {TextHighlighter} from './../src/content-script/textHighlighter'
 import {Sidebar} from './../src/content-script/sidebar'
 import {CardButtons} from './../src/content-script/cardButtons'
 import {cardClassName, Entity} from './../src/content-script/types'
 import {Globals} from './../src/content-script/globals'
 import {LeadmineEntity, setup} from './util'
+=======
+import {TextHighlighter} from '../src/content-script/textHighlighter'
+import {Sidebar} from '../src/content-script/sidebar'
+import {CardButtons} from '../src/content-script/cardButtons'
+import {cardClassName, auracNarrativeElement} from '../src/content-script/types';
+import {Globals} from '../src/content-script/globals'
+import {clickElementForEntity, getLeadmineResults, TestLeadmineEntity, setup} from './util'
+>>>>>>> 5cde9490b52f65891e9beb683b8dcdee1f72c49c
 
 import * as jsdom from 'jsdom'
+import {Instance} from 'tippy.js'
 
 const {JSDOM} = jsdom
 let document: Document = new JSDOM('').window.document
+let toolTips: Instance[]
 
 // sets global Node object to default value from JSDOM. Without this, the
 // global Node object is not understood from within test context
 global.Node = document.defaultView.Node
 
 // simulates the entities which come back from leadmine
-const leadmineEntities: LeadmineEntity[] = [{
+const leadmineEntities: TestLeadmineEntity[] = [{
   text: 'entity1',
-  occurrences: 10
+  occurrences: 10,
+  resolvedEntity: undefined
 }]
 
 describe('integration', () => {
@@ -26,12 +38,16 @@ describe('integration', () => {
 
     // highlight entities - simulates 'markup_page' message
     const leadmineResults = getLeadmineResults(leadmineEntities)
+<<<<<<< HEAD
     TextHighlighter.wrapEntitiesWithHighlight(leadmineResults)
+=======
+    toolTips = TextHighlighter.wrapEntitiesWithHighlight({body: leadmineResults})
+>>>>>>> 5cde9490b52f65891e9beb683b8dcdee1f72c49c
 
     document.body.appendChild(Sidebar.create())
   })
 
-  it('text elements in leadminerResult should be highlighted', () => {
+  it('text elements in leadmineResult should be highlighted', () => {
     const hasHighlights = leadmineEntities.every(entity => {
       const highlightedElements = Array.from(document.getElementsByClassName(TextHighlighter.highlightClass))
 
@@ -66,6 +82,15 @@ describe('integration', () => {
     expect(Array.from(document.getElementsByClassName(cardClassName)).length).toBe(0)
   })
 
+  it('sidebar text should reappear when sidebar is emptied from the remove all cards button', () => {
+    const entity = leadmineEntities[0].text
+    clickElementForEntity(entity)
+    expect(document.getElementById(auracNarrativeElement).style.display).toBe('none')
+
+    document.getElementById(Sidebar.clearButtonId).click()
+    expect(document.getElementById(auracNarrativeElement).style.display).toBe('block')
+  })
+
   it('clicking remove on a card should remove that card', () => {
     const entity = leadmineEntities[0].text
     clickElementForEntity(entity)
@@ -76,6 +101,14 @@ describe('integration', () => {
     document.getElementById(`${CardButtons.baseRemoveId}-${entity}`).click()
 
     expect(Array.from(document.getElementsByClassName(cardClassName)).length).toBe(numOfCards - 1)
+  })
+
+  it('sidebar text should reappear when sidebar is emptied by removing individual cards', () => {
+    const entity = leadmineEntities[0].text
+    clickElementForEntity(entity)
+    expect(document.getElementById('aurac-narrative').style.display).toBe('none')
+    document.getElementById(`${CardButtons.baseRemoveId}-${entity}`).click()
+    expect(document.getElementById('aurac-narrative').style.display).toBe('block')
   })
 
   describe('occurrences', () => {
@@ -142,9 +175,8 @@ describe('integration', () => {
         })
       }
     })
-  })
-})
 
+<<<<<<< HEAD
 function clickElementForEntity(entity: string): void {
   Array.from(document.getElementsByClassName(TextHighlighter.highlightClass)).forEach((element: HTMLElement) => {
     if (element.textContent === entity) {
@@ -176,5 +208,16 @@ function getLeadmineResults(entities: LeadmineEntity[]): Entity[] {
       },
       resolvedEntity: null,
     }
+=======
+    it('data-tippy-content data attribute should be updated with occurrence count', () => {
+      const auracHighlight = Array.from(document.getElementsByClassName('aurac-highlight'))[0] as HTMLElement
+      expect(auracHighlight.dataset.tippyContent.includes(`${leadmineEntities[0].occurrences} occurrences`)).toBeTrue()
+    })
+
+    it('a single tooltip should be added for each aurac highlight', () => {
+      expect(toolTips.length).toEqual(document.getElementsByClassName('aurac-highlight').length)
+    })
+
+>>>>>>> 5cde9490b52f65891e9beb683b8dcdee1f72c49c
   })
-}
+})
