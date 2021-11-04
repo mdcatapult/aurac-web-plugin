@@ -16,22 +16,19 @@ export class XRefService {
     
     const identifier = entity.identifiers!.get('resolvedEntity')! // TODO remove !
     const encodedEntity = encodeURIComponent(identifier);
-    const xRefObservable = this.client.get<ConverterResult>(`${this.settingsService.APIURLs.compoundConverterURL}/${encodedEntity}?from=SMILES&to=inchikey`).pipe(
-
-      switchMap((converterResult: ConverterResult) => {
-        return converterResult ?
+    return this.client.get<ConverterResult>(`${this.settingsService.APIURLs.compoundConverterURL}/${encodedEntity}?from=SMILES&to=inchikey`).toPromise()
+    .then(converterResult => {
+      return converterResult ?
           this.client.post<XRef[]>(
             `${this.settingsService.APIURLs.unichemURL}/x-ref/${converterResult.output}`,
             this.getTrueKeys(this.settingsService.xRefSources)
-          ) : of([]);
-      }),
-      map((xRefs: XRef[]) => {
-        return xRefs.map(xRef => {
-          return {...xRef, compoundName: synonym}
-        })
+          ).toPromise() : Promise.resolve([]);
       })
-    );
-    return xRefObservable.toPromise();
+    .then((xRefs: XRef[]) => {
+      return xRefs.map(xRef => {
+        return {...xRef, compoundName: synonym}
+      })
+    })
   }
 
   private getTrueKeys(v: { [_: string]: boolean }): string[] {
