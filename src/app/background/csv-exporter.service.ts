@@ -51,7 +51,7 @@ export class CsvExporterService {
       });
   }
 
-  private leadmineToCSV(entities: Map<string, Entity>): string {
+  public leadmineToCSV(entities: Map<string, Entity>): string {
     const headings = [
       'Synonym',
       'Resolved Entity',
@@ -63,7 +63,7 @@ export class CsvExporterService {
       'Minimum Corrected Entity Length',
       'Minimum Entity Length',
       'Source'];
-
+    console.log(entities)
     let text = headings.join(',') + '\n';
     entities.forEach(entity => {
       entity.synonyms.forEach((synonymData, synonymName) => {
