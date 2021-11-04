@@ -115,7 +115,8 @@ export class NerService {
       recogniserEntities.entities.set(key, {
         synonyms: new Map([[recognisedEntity.entity, {xpaths: [recognisedEntity.xpath]}]]),
         identifiers: new Map(Object.entries(recognisedEntity.identifiers)),
-        metadata: metadata
+        metadata: metadata,
+        xRefs: []
       })
     }
 

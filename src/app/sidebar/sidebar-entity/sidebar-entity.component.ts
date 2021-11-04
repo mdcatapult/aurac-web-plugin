@@ -15,7 +15,7 @@ export class SidebarEntityComponent implements OnInit {
   constructor(private browserService: BrowserService) { }
 
   ngOnInit(): void {
-    console.log(this.entity.occurrences)
+    console.log('CARD ENTITY: ', this.entity)
   }
 
   filterIdentifiers(arr: Identifier[]): Identifier[] {

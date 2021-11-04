@@ -45,7 +45,8 @@ export class SidebarComponent implements OnInit {
           entityName: inspectedHighlightData.entityName,
           identifiers,
           synonyms: Array.from(inspectedHighlightData.entity.synonyms.keys()),
-          occurrences: inspectedHighlightData.entity.htmlTagIDs!
+          occurrences: inspectedHighlightData.entity.htmlTagIDs!,
+          xrefs: inspectedHighlightData.entity.xRefs
     })
     }
   }

@@ -4,13 +4,20 @@ import { parseWithTypes, stringifyWithTypes } from '../../json';
 import { BrowserService } from '../browser.service';
 import { EntitiesService } from './entities.service';
 import { SettingsService } from './settings.service';
+import { XRefService } from './x-ref.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EntityMessengerService {
 
-  constructor(private browserService: BrowserService, private entitiesService: EntitiesService, private settingsService: SettingsService) {
+  constructor(
+    private browserService: BrowserService,
+    private entitiesService: EntitiesService,
+    private settingsService: SettingsService,
+    private xRefService: XRefService
+    ) {
+
     this.entitiesService.changeStream$.subscribe(change => {
       if (change.setterInfo === 'noPropagate') {
         return
@@ -39,16 +46,21 @@ export class EntityMessengerService {
                   identifier: entityName
                 })!
 
-                const inspectedHighlightData: InspectedHighlightData = {
-                  entity,
-                  entityName,
-                  entityOccurrence,
-                  clickedSynonymName: synonym,
-                  synonymOccurrence
-                }
+                const getXrefs = entity.xRefs.length ? Promise.resolve(entity.xRefs) : this.xRefService.get(entity, synonym)
+               
+                getXrefs.then(xRefs => {
+                  entity.xRefs = xRefs
+                    const inspectedHighlightData: InspectedHighlightData = {
+                      entity,
+                      entityName,
+                      entityOccurrence,
+                      clickedSynonymName: synonym,
+                      synonymOccurrence
+                    }
 
-                this.browserService.sendMessageToTab(tab.id!, {type: 'sidebar_component_inspect_highlight',
-                  body: stringifyWithTypes(inspectedHighlightData)})
+                    this.browserService.sendMessageToTab(tab.id!, {type: 'sidebar_component_inspect_highlight',
+                      body: stringifyWithTypes(inspectedHighlightData)})
+                })
               }).then(() => resolve(null))
             } catch (e) {
               reject(e)
@@ -57,5 +69,5 @@ export class EntityMessengerService {
         default:
       }
     })
-  }
+  } 
 }

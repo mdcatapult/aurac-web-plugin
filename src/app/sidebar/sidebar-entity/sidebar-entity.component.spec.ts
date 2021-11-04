@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { identity } from 'rxjs';
 import { SidebarEntity } from '../types';
 
 import { SidebarEntityComponent } from './sidebar-entity.component';
@@ -12,7 +11,8 @@ describe('SidebarEntityComponent', () => {
     entityName: '',
     identifiers: [],
     synonyms: ['a-synonym'],
-    occurrences: ['occ1', 'occ2', 'occ3']
+    occurrences: ['occ1', 'occ2', 'occ3'],
+    xrefs: []
   }
 
   beforeEach(async () => {
