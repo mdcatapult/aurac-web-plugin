@@ -16,19 +16,20 @@ export class XRefService {
     
     const identifier = entity.identifiers!.get('resolvedEntity')! // TODO remove !
     const encodedEntity = encodeURIComponent(identifier);
+
     return this.client.get<ConverterResult>(`${this.settingsService.APIURLs.compoundConverterURL}/${encodedEntity}?from=SMILES&to=inchikey`).toPromise()
     .then(converterResult => {
-      return converterResult ?
-          this.client.post<XRef[]>(
-            `${this.settingsService.APIURLs.unichemURL}/x-ref/${converterResult.output}`,
-            this.getTrueKeys(this.settingsService.xRefSources)
-          ).toPromise() : Promise.resolve([]);
-      })
-  }
 
-  private getTrueKeys(v: { [_: string]: boolean }): string[] {
-    return Object.keys(v).filter(k => v[k] === true);
-  }
+      if (!converterResult) {
+       return Promise.resolve([])
+      }
 
+      const xRefURL = `${this.settingsService.APIURLs.unichemURL}/x-ref/${converterResult.output}`
+      return this.client.post<XRef[]>(
+        xRefURL,
+        this.settingsService.getEnabledXrefs(this.settingsService.xRefSources)
+      ).toPromise()
+    })
+  }
 
 }

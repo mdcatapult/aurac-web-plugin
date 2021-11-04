@@ -71,6 +71,10 @@ export class SettingsService {
     return {xRefSources: this.xRefSources, urls: this.APIURLs, preferences: this.preferences}
   }
 
+  getEnabledXrefs(xRefs: { [_: string]: boolean }): string[] {
+    return Object.keys(xRefs).filter(xRef => xRefs[xRef] === true);
+  }
+
   private setAll(settings: Settings): void {
     this._xRefSources.next(settings.xRefSources);
     this._preferences.next(settings.preferences);

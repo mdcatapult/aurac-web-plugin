@@ -142,7 +142,7 @@ export interface Entity {
   identifiers?: Map<string, string>;
   metadata?: any;
   htmlTagIDs?: Array<string>;
-  xRefs: Array<XRef>
+  xRefs?: Array<XRef>
 }
 
 // RecogniserEntities is a wrapper for all the entities found when running NER.

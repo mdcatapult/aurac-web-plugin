@@ -6,7 +6,7 @@ export interface SidebarEntity {
   identifiers: Array<Identifier>,
   synonyms: Array<string>,
   occurrences: Array<string> // HTML element IDs 
-  xrefs: Array<XRef>
+  xrefs?: Array<XRef>
 }
 
 export interface Identifier {

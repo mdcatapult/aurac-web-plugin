@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { InspectedHighlightData, parseHighlightID } from 'src/types';
+import { InspectedHighlightData, parseHighlightID, XRef } from 'src/types';
 import { parseWithTypes, stringifyWithTypes } from '../../json';
 import { BrowserService } from '../browser.service';
 import { EntitiesService } from './entities.service';
@@ -46,11 +46,11 @@ export class EntityMessengerService {
                   identifier: entityName
                 })!
 
-                const getXrefs = entity.xRefs.length ? Promise.resolve(entity.xRefs) : this.xRefService.get(entity)
+                const getXrefs: Promise<XRef[]> = entity.xRefs ? Promise.resolve(entity.xRefs) : this.xRefService.get(entity)
                
                 getXrefs.then(xRefs => {
                   entity.xRefs = xRefs
-                    const inspectedHighlightData: InspectedHighlightData = {
+                  const inspectedHighlightData: InspectedHighlightData = {
                       entity,
                       entityName,
                       entityOccurrence,
