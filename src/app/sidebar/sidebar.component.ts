@@ -17,37 +17,6 @@ export class SidebarComponent implements OnInit {
     }, 50)
   }
 
-<<<<<<< HEAD
-  private inspectHighlight(inspectedHighlightData: InspectedHighlightData): void {
-    // convert inspected highlight data into sidebar entity (check if it's already in the array etc.)
-    // and manipulate the entities array to render the cards
-
-    console.log(inspectedHighlightData.entity.synonyms)
-    if (!this.entities.some(entity => entity.entityName === inspectedHighlightData.entityName)) {
-      const identifiersMap = inspectedHighlightData.entity.identifiers
-      let identifiers: Array<Identifier> = []
-
-      if (identifiersMap) {
-        identifiers = Array.from(identifiersMap.entries()).map(([type, value]) => {
-          return {type, value}
-        })
-      }
-
-      this.entities.push({
-          title: inspectedHighlightData.clickedSynonymName,
-          entityName: inspectedHighlightData.entityName,
-          identifiers,
-          synonyms: Array.from(inspectedHighlightData.entity.synonyms.keys()),
-          occurrences: inspectedHighlightData.entity.htmlTagIDs!,
-          xrefs: inspectedHighlightData.entity.xRefs
-    })
-    }
-  }
-
-
-
-=======
->>>>>>> breaking-changes/angular-sidebar-refactor
   ngOnInit(): void {
     this.browserService.sendMessageToActiveTab({ type: 'content_script_set_sidebar_ready' })
   }

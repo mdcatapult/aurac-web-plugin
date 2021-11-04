@@ -32,7 +32,6 @@ export class XRefService {
       case 'DictMol':
       case 'Mol':
         if (!identifier.match(inchiKeyRegex)) {
-          console.log('dictmol or mol!')
           inchikeyPromise = this.SMILEStoInchi(identifier).then(converterResult => converterResult.output)
         } 
         break

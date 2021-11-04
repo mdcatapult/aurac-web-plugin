@@ -15,10 +15,9 @@ export class EntityMessengerService {
     private browserService: BrowserService,
     private entitiesService: EntitiesService,
     private settingsService: SettingsService,
-    private xRefService: XRefService
-    ) {
+    private xRefService: XRefService) {
 
-    this.entitiesService.changeStream$.subscribe(change => {
+    this.entitiesService.entityChangeObservable.subscribe(change => {
       if (change.setterInfo === 'noPropagate') {
         return
       }
@@ -49,7 +48,6 @@ export class EntityMessengerService {
                 const getXrefs: Promise<XRef[]> = entity.xRefs ? Promise.resolve(entity.xRefs) : this.xRefService.get(entity)
                
                 getXrefs.then(xRefs => {
-                  console.log('got xrefs: ', xRefs)
                   entity.xRefs = xRefs
                   const inspectedHighlightData: InspectedHighlightData = {
                       entity,
@@ -59,8 +57,10 @@ export class EntityMessengerService {
                       synonymOccurrence
                     }
 
-                    this.browserService.sendMessageToTab(tab.id!, {type: 'sidebar_component_inspect_highlight',
-                      body: stringifyWithTypes(inspectedHighlightData)})
+                    this.browserService.sendMessageToTab(tab.id!, {
+                      type: 'sidebar_data_service_inspect_highlight',
+                      body: stringifyWithTypes(inspectedHighlightData)
+                    })
                 })
               }).then(() => resolve(null))
             } catch (e) {
@@ -70,5 +70,5 @@ export class EntityMessengerService {
         default:
       }
     })
-  } 
+  }
 }
