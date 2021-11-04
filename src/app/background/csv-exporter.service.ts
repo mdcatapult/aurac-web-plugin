@@ -23,7 +23,6 @@ export class CsvExporterService {
     });
   }
 
-
   private exportCSV() {
     this.browserService.getActiveTab()
       .then((currentTab: browser.tabs.Tab) => {
@@ -37,45 +36,50 @@ export class CsvExporterService {
             case 'leadmine-proteins':
             case 'leadmine-chemical-entities':
             case 'leadmine-diseases':
+
               const entities: Map<string, Entity> = tabEntities[recogniser]!.entities;
-              console.log(entities);
               if (entities.size < 1) {
                 return;
               }
 
-              const headings = [
-                'Synonym',
-                'Resolved Entity',
-                'Entity Group',
-                'Enforce Bracketing',
-                'Entity Type',
-                'HTML Color',
-                'Maximum Correction Distance',
-                'Minimum Corrected Entity Length',
-                'Minimum Entity Length',
-                'Source'];
+              const CSVFormattedResults = this.leadmineToCSV(entities);
 
-              let text = headings.join(',') + '\n';
-              entities.forEach(entity => {
-                entity.synonyms.forEach((synonymData, synonymName) => {
-                  text = text + `"${synonymName}"` + ','
-                    + entity.identifiers!.get('resolvedEntity') + ','
-                    + entity.metadata.entityGroup! + ','
-                    + entity.metadata.RecognisingDict.enforceBracketing + ','
-                    + entity.metadata.RecognisingDict.entityType + ','
-                    + entity.metadata.RecognisingDict.htmlColor + ','
-                    + entity.metadata.RecognisingDict.maxCorrectionDistance + ','
-                    + entity.metadata.RecognisingDict.minimumCorrectedEntityLength + ','
-                    + entity.metadata.RecognisingDict.minimumEntityLength + ','
-                    + entity.metadata.RecognisingDict.source + '\n';
-                });
-              });
-
-              this.exportToCSV(text, currentTab.url!)
+              this.exportToCSV(CSVFormattedResults, currentTab.url!)
               break;
           }
         }
       });
+  }
+
+  private leadmineToCSV(entities: Map<string, Entity>): string {
+    const headings = [
+      'Synonym',
+      'Resolved Entity',
+      'Entity Group',
+      'Enforce Bracketing',
+      'Entity Type',
+      'HTML Color',
+      'Maximum Correction Distance',
+      'Minimum Corrected Entity Length',
+      'Minimum Entity Length',
+      'Source'];
+
+    let text = headings.join(',') + '\n';
+    entities.forEach(entity => {
+      entity.synonyms.forEach((synonymData, synonymName) => {
+        text = text + `"${synonymName}"` + ','
+          + entity.identifiers!.get('resolvedEntity') + ','
+          + entity.metadata.entityGroup! + ','
+          + entity.metadata.RecognisingDict.enforceBracketing + ','
+          + entity.metadata.RecognisingDict.entityType + ','
+          + entity.metadata.RecognisingDict.htmlColor + ','
+          + entity.metadata.RecognisingDict.maxCorrectionDistance + ','
+          + entity.metadata.RecognisingDict.minimumCorrectedEntityLength + ','
+          + entity.metadata.RecognisingDict.minimumEntityLength + ','
+          + entity.metadata.RecognisingDict.source + '\n';
+      });
+    });
+    return text;
   }
 
   private exportToCSV(text: string, currentURL: string): void {
