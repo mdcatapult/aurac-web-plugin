@@ -49,6 +49,7 @@ export class EntityMessengerService {
                 const getXrefs: Promise<XRef[]> = entity.xRefs ? Promise.resolve(entity.xRefs) : this.xRefService.get(entity)
                
                 getXrefs.then(xRefs => {
+                  console.log('got xrefs: ', xRefs)
                   entity.xRefs = xRefs
                   const inspectedHighlightData: InspectedHighlightData = {
                       entity,
