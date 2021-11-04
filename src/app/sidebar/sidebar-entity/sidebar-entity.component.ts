@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { BrowserService } from 'src/app/browser.service';
 import { Identifier, SidebarEntity } from '../types';
 
@@ -7,16 +7,12 @@ import { Identifier, SidebarEntity } from '../types';
   templateUrl: './sidebar-entity.component.html',
   styleUrls: ['./sidebar-entity.component.scss']
 })
-export class SidebarEntityComponent implements OnInit {
+export class SidebarEntityComponent {
 
   @Input() entity: SidebarEntity = {} as SidebarEntity
   
   scrollIndex = 0
   constructor(private browserService: BrowserService) { }
-
-  ngOnInit(): void {
-    console.log('CARD ENTITY: ', this.entity)
-  }
 
   filterIdentifiers(arr: Identifier[]): Identifier[] {
     return arr.filter(v => v.value)
