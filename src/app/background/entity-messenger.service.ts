@@ -11,7 +11,7 @@ import { SettingsService } from './settings.service';
 export class EntityMessengerService {
 
   constructor(private browserService: BrowserService, private entitiesService: EntitiesService, private settingsService: SettingsService) {
-    this.entitiesService.changeStream$.subscribe(change => {
+    this.entitiesService.entityChangeObservable.subscribe(change => {
       if (change.setterInfo === 'noPropagate') {
         return
       }
@@ -47,8 +47,10 @@ export class EntityMessengerService {
                   synonymOccurrence
                 }
 
-                this.browserService.sendMessageToTab(tab.id!, {type: 'sidebar_component_inspect_highlight',
-                  body: stringifyWithTypes(inspectedHighlightData)})
+                this.browserService.sendMessageToTab(tab.id!, {
+                  type: 'sidebar_data_service_inspect_highlight',
+                  body: stringifyWithTypes(inspectedHighlightData)
+                })
               }).then(() => resolve(null))
             } catch (e) {
               reject(e)
