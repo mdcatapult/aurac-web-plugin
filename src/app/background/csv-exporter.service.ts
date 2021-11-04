@@ -47,12 +47,12 @@ export class CsvExporterService {
                 'Synonym',
                 'Resolved Entity',
                 'Entity Group',
-                // 'Enforce Bracketing',
-                // 'Entity Type',
-                // 'HTML Color',
-                // 'Maximum Correction Distance',
-                // 'Minimum Corrected Entity Length',
-                // 'Minimum Entity Length',
+                'Enforce Bracketing',
+                'Entity Type',
+                'HTML Color',
+                'Maximum Correction Distance',
+                'Minimum Corrected Entity Length',
+                'Minimum Entity Length',
                 'Source'];
 
               let text = headings.join(',') + '\n';
@@ -61,13 +61,13 @@ export class CsvExporterService {
                   text = text + `"${synonymName}"` + ','
                     + entity.identifiers!.get('resolvedEntity') + ','
                     + entity.metadata.entityGroup! + ','
-                    // + entity.metadata.recognisingDict.enforceBracketing + ','
-                    // + entity.metadata.recognisingDict.entityType + ','
-                    // + entity.metadata.recognisingDict.htmlColor + ','
-                    // + entity.metadata.recognisingDict.maxCorrectionDistance + ','
-                    // + entity.metadata.recognisingDict.minimumCorrectedEntityLength + ','
-                    // + entity.metadata.recognisingDict.minimumEntityLength + ','
-                    + entity.metadata.recognisingDict?.source + '\n';
+                    + entity.metadata.RecognisingDict.enforceBracketing + ','
+                    + entity.metadata.RecognisingDict.entityType + ','
+                    + entity.metadata.RecognisingDict.htmlColor + ','
+                    + entity.metadata.RecognisingDict.maxCorrectionDistance + ','
+                    + entity.metadata.RecognisingDict.minimumCorrectedEntityLength + ','
+                    + entity.metadata.RecognisingDict.minimumEntityLength + ','
+                    + entity.metadata.RecognisingDict.source + '\n';
                 });
               });
 
