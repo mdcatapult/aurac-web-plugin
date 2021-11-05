@@ -1,7 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { of } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
 import { ConverterResult, Entity, XRef } from 'src/types';
 import {SettingsService} from './settings.service'
 
@@ -20,9 +18,12 @@ export class XRefService {
     }
 
     const entityType = entity.metadata['RecognisingDict']['entityType']
-    const identifier = entity.identifiers!.get('resolvedEntity')! // TODO remove !
+    const identifier = entity.identifiers?.get('resolvedEntity')
 
-    const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]$/;
+    if (!identifier) {
+      return Promise.resolve([])
+    }
+
     let inchikeyPromise: Promise<string> = new Promise(() => identifier)
 
     switch(entityType) {
@@ -31,6 +32,7 @@ export class XRefService {
       break
       case 'DictMol':
       case 'Mol':
+        const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]$/;
         if (!identifier.match(inchiKeyRegex)) {
           inchikeyPromise = this.SMILEStoInchi(identifier).then(converterResult => converterResult.output)
         } 
