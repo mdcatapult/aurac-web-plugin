@@ -1,3 +1,4 @@
+import { refsToArray } from '@angular/compiler/src/render3/util';
 import {environment} from './environments/environment';
 
 export type MessageType =
@@ -141,7 +142,7 @@ export interface Entity {
   identifiers?: Map<string, string>;
   metadata?: any;
   htmlTagIDs?: Array<string>;
-  // Other stuff should go here - e.g. cross references.
+  xRefs?: Array<XRef>
 }
 
 // RecogniserEntities is a wrapper for all the entities found when running NER.

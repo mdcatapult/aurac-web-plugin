@@ -48,7 +48,8 @@ export class SidebarDataService {
         entityName: inspectedHighlightData.entityName,
         identifiers,
         synonyms: Array.from(inspectedHighlightData.entity.synonyms.keys()),
-        occurrences: inspectedHighlightData.entity.htmlTagIDs!
+        occurrences: inspectedHighlightData.entity.htmlTagIDs!,
+        xRefs: inspectedHighlightData.entity.xRefs
       }
 
       this.setEntities(this.entities.concat([newSidebarEntity]))

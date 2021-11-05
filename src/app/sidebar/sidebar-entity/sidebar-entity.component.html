@@ -18,6 +18,21 @@
                 <tr mat-header-row *matHeaderRowDef="['type', 'value']"></tr>
                 <tr mat-row *matRowDef="let row; columns: ['type', 'value']"></tr>
             </table>
+
+            <!-- xrefs -->
+            <table mat-table [dataSource]="entity.xRefs">
+                <ng-container matColumnDef="databaseName">
+                    <th mat-header-cell *matHeaderCellDef>Source</th>
+                    <td mat-cell *matCellDef="let element">{{ element.databaseName | titlecase}}</td>
+                </ng-container>
+                <ng-container matColumnDef="url">
+                    <th mat-header-cell *matHeaderCellDef>URL</th>
+                    <td mat-cell *matCellDef="let element"><a href="{{element.url}}" target="_blank">{{ element.url }}</a></td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="['databaseName', 'url']"></tr>
+                <tr mat-row *matRowDef="let row; columns: ['databaseName', 'url']"></tr>
+            </table>
+
         </mat-card-content>
     </mat-card>
 </article>
