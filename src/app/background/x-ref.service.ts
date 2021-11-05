@@ -45,7 +45,7 @@ export class XRefService {
 
       return this.client.post<XRef[]>(
         xRefURL,
-        this.settingsService.getEnabledXrefs(this.settingsService.xRefSources)
+        this.settingsService.getEnabledXrefs()
       ).toPromise()
     })
   }

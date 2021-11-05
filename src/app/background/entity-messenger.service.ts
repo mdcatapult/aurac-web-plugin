@@ -36,7 +36,6 @@ export class EntityMessengerService {
       switch (msg.type) {
         case 'entity_messenger_service_highlight_clicked':
           return new Promise((resolve, reject) => {
-            try {
               const [entityName, entityOccurrence, synonym, synonymOccurrence] = parseHighlightID(msg.body)
               this.browserService.getActiveTab().then(tab => {
                 const entity = this.entitiesService.getEntity({
@@ -61,11 +60,9 @@ export class EntityMessengerService {
                       type: 'sidebar_data_service_inspect_highlight',
                       body: stringifyWithTypes(inspectedHighlightData)
                     })
-                })
+                }).catch((e) => console.error(`Error retreiving xRefs: ${JSON.stringify(e)}`))
               }).then(() => resolve(null))
-            } catch (e) {
-              reject(e)
-            }
+        
           })
         default:
       }
