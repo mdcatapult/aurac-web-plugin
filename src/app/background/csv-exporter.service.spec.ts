@@ -9,7 +9,7 @@ import {EntitiesService} from './entities.service';
 import {SettingsService} from './settings.service';
 import {Entity, SynonymText, TabEntities, XPath} from '../../types';
 
-fdescribe('CsvExporterService', () => {
+describe('CsvExporterService', () => {
   let service: CsvExporterService;
 
   const headerText = `Synonym,Resolved Entity,Entity Group,Enforce Bracketing,Entity Type,HTML Color,Maximum Correction Distance,
