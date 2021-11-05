@@ -65,7 +65,6 @@ export class CsvExporterService {
       'Minimum Corrected Entity Length',
       'Minimum Entity Length',
       'Source'];
-    console.log(entities)
     let text = headings.join(',') + '\n';
     entities.forEach(entity => {
       entity.synonyms.forEach((synonymData, synonymName) => {
