@@ -20,7 +20,7 @@ export class SidebarDataService {
   }
 
 
-  constructor(private browserService: BrowserService) {    
+  constructor(private browserService: BrowserService) {
     this.browserService.addListener((msg: any) => {
     switch (msg.type as MessageType) {
       case 'sidebar_data_service_inspect_highlight':
@@ -44,6 +44,7 @@ export class SidebarDataService {
       }
 
       const newSidebarEntity = {
+        entity: inspectedHighlightData.entity,
         title: inspectedHighlightData.clickedSynonymName,
         entityName: inspectedHighlightData.entityName,
         identifiers,

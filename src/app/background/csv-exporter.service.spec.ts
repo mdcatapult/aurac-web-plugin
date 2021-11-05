@@ -53,7 +53,7 @@ describe('CsvExporterService', () => {
       },
       synonyms: new Map([['K12', {xpaths: ['']}]])
     };
-    const entities: Map<string, Entity> = new Map([[resolvedEntity, entity]]);
+    const entities: Array<Entity> = [entity];
     const actual = service.leadmineToCSV(entities);
 
     const entityInfo = `"K12",HGNC:6414,Gene or Protein,false,GeneOrProteinMDC,pink,0,9,0,

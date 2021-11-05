@@ -2,11 +2,13 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SidebarEntity } from '../types';
 
 import { SidebarEntityComponent } from './sidebar-entity.component';
+import {SynonymText, SynonymData} from '../../../types';
 
 describe('SidebarEntityComponent', () => {
   let component: SidebarEntityComponent;
   let fixture: ComponentFixture<SidebarEntityComponent>;
   const entity: SidebarEntity = {
+    entity: {synonyms: new Map<SynonymText, SynonymData>()},
     title: '',
     entityName: '',
     identifiers: [],
@@ -35,7 +37,7 @@ describe('SidebarEntityComponent', () => {
 
   it('should handle right scrollIndex correctly', () => {
     // scroll to the end of occurrences
-    for(let i = 0; i < entity.occurrences.length - 1; i++) {
+    for (let i = 0; i < entity.occurrences.length - 1; i++) {
       component.arrowClicked('right')
       expect(component.scrollIndex).toBe(i + 1)
     }

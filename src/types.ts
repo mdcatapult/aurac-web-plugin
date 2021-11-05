@@ -132,7 +132,7 @@ export interface Occurrences {
 export type XPath = string
 export type SynonymText = string
 
-interface SynonymData {
+export interface SynonymData {
   xpaths: Array<XPath>;
 }
 

@@ -38,14 +38,15 @@ export class CsvExporterService {
             case 'leadmine-diseases':
 
               const entities: Map<string, Entity> = tabEntities[recogniser]!.entities;
+              const entitiesArray = Array.from(entities.values())
 
               if (entities.size < 1) {
 
                 return;
               }
 
-              const CSVFormattedResults = this.leadmineToCSV(entities);
-              this.exportToCSV(CSVFormattedResults, currentTab.url!)
+              const CSVFormattedResults = this.leadmineToCSV(entitiesArray);
+              this.exportToCSV(CSVFormattedResults, currentTab.url!, 'aurac_all_results_')
 
               break;
           }
@@ -53,7 +54,11 @@ export class CsvExporterService {
       });
   }
 
-  public leadmineToCSV(entities: Map<string, Entity>): string {
+  private sanitiseURL(url: string): string {
+    return url!.replace(/^(https?|http):\/\//, '').split('#')[0]
+  }
+
+  public leadmineToCSV(entities: Array<Entity>): string {
     const headings = [
       'Synonym',
       'Resolved Entity',
@@ -84,9 +89,10 @@ export class CsvExporterService {
     return text;
   }
 
-  private exportToCSV(text: string, currentURL: string): void {
+  public exportToCSV(text: string, currentURL: string, prefix: 'aurac_all_results_' | 'aurac_sidebar_results_'): void {
+    const sanitisedURL = this.sanitiseURL(currentURL)
     const blob = new Blob([text], {type: 'text/csv;charset=utf-8'})
-    saveAs(blob, 'aurac_all_results_' + currentURL + '.csv')
+    saveAs(blob, prefix + sanitisedURL + '.csv')
   }
 
 }
