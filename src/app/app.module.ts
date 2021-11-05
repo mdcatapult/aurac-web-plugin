@@ -17,9 +17,9 @@ import {XRefSourcesComponent} from './popup/settings/x-ref-sources/x-ref-sources
 import {SettingsComponent} from './popup/settings/settings.component';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import {PDFSelectorComponent} from './popup/pdfselector/pdfselector.component'
 import {PreferencesComponent} from './popup/settings/preferences/preferences.component';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import {MatRadioModule, MAT_RADIO_DEFAULT_OPTIONS} from '@angular/material/radio';
 import {MatCardModule} from '@angular/material/card';
 import { CommonModule } from '@angular/common';

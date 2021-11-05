@@ -59,8 +59,8 @@ export module Card {
     return card;
   }
 
-  export function  createModalOpeningButton(chemblId: string, compoundName: string): HTMLElement {
-    const modalButton = Globals.document.createElement('button')
+  export function createModalOpeningButton(chemblId: string, compoundName: string): HTMLElement {
+    const modalButton = document.createElement('button')
     modalButton.insertAdjacentHTML('beforeend', `Structure`)
     modalButton.id = `aurac-modal-open-button-${compoundName}`
     modalButton.className = 'open-modal-button'
