@@ -17,14 +17,9 @@ import {XRefSourcesComponent} from './popup/settings/x-ref-sources/x-ref-sources
 import {SettingsComponent} from './popup/settings/settings.component';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
-<<<<<<< HEAD
 import {PDFSelectorComponent} from './popup/pdfselector/pdfselector.component'
 import {PreferencesComponent} from './popup/settings/preferences/preferences.component';
-=======
 import { MatTooltipModule } from '@angular/material/tooltip';
-import {PDFSelectorComponent} from './pdfselector/pdfselector.component'
-import {PreferencesComponent} from './preferences/preferences.component';
->>>>>>> 5cde9490b52f65891e9beb683b8dcdee1f72c49c
 import {MatRadioModule, MAT_RADIO_DEFAULT_OPTIONS} from '@angular/material/radio';
 import {MatCardModule} from '@angular/material/card';
 import { CommonModule } from '@angular/common';
@@ -75,12 +70,9 @@ const routes: Routes = [
     MatInputModule,
     MatFormFieldModule,
     MatRadioModule,
-<<<<<<< HEAD
     MatCardModule,
-    MatTableModule
-=======
+    MatTableModule,
     MatTooltipModule
->>>>>>> 5cde9490b52f65891e9beb683b8dcdee1f72c49c
   ],
   providers: [
     {

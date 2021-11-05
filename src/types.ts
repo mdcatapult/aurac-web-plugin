@@ -33,7 +33,7 @@ export type MessageType =
   | 'content_script_highlight_entities'
   | 'settings_service_get_current_recogniser'
   | 'entity_messenger_service_highlight_clicked'
-  | 'sidebar_data_service_inspect_highlight'
+  | 'sidebar_data_service_view_or_create_clicked_entity'
   | 'content_script_scroll_to_highlight';
 
 export interface Message {
@@ -131,7 +131,7 @@ export interface Occurrences {
 export type XPath = string
 export type SynonymText = string
 
-interface SynonymData {
+export interface SynonymData {
   xpaths: Array<XPath>;
 }
 
@@ -197,7 +197,7 @@ export function parseHighlightID(id: string): [entityName: string, entityOccurre
   return [entityName, parseInt(entityOccurrences), synonymName, parseInt(xpathIndex)]
 }
 
-export type InspectedHighlightData = {
+export type ClickedHighlightData = {
   entityName: string; // key for entity map
   entity: Entity;
   entityOccurrence: number;

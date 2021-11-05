@@ -3,7 +3,7 @@ import {Globals} from './../src/content-script/globals'
 import * as jsdom from 'jsdom'
 import {BrowserMock} from './../src/content-script/browser-mock'
 import {TextHighlighter} from '../src/content-script/textHighlighter';
-import {Dictionary, LeadminerEntity} from '../src/types';
+// import {Dictionary, LeadminerEntity} from '../src/types';
 import {CardButtons} from '../src/content-script/cardButtons';
 
 const {JSDOM} = jsdom
@@ -68,27 +68,27 @@ export function clickElementForEntity(entityText: string): void {
 }
 
 // returns sample leadmine results for each entityText
-export function getLeadmineResults(entities: TestLeadmineEntity[]): LeadminerEntity[] {
-  return entities.map(entity => {
-    return {
-      beg: 325,
-      begInNormalizedDoc: 325,
-      end: 355,
-      endInNormalizedDoc: 355,
-      entityGroup: 'Gene or Protein',
-      entityText: entity.text,
-      possiblyCorrectedText: entity.text,
-      recognisingDict: {
-        enforceBracketing: false,
-        entityType: 'GeneOrProtein',
-        htmlColor: 'pink',
-        maxCorrectionDistance: 0,
-        minimumCorrectedEntityLength: 9,
-        minimumEntityLength: 0,
-        source: '/srv/config/common/leadmine/2018-11-06/dictionary/CFDictGeneAndProtein.cfx',
-      },
-      sectionType: 'sectionType',
-      resolvedEntity: entity.resolvedEntity,
-    }
-  })
-}
+// export function getLeadmineResults(entities: TestLeadmineEntity[]): LeadminerEntity[] {
+//   return entities.map(entity => {
+//     return {
+//       beg: 325,
+//       begInNormalizedDoc: 325,
+//       end: 355,
+//       endInNormalizedDoc: 355,
+//       entityGroup: 'Gene or Protein',
+//       entityText: entity.text,
+//       possiblyCorrectedText: entity.text,
+//       recognisingDict: {
+//         enforceBracketing: false,
+//         entityType: 'GeneOrProtein',
+//         htmlColor: 'pink',
+//         maxCorrectionDistance: 0,
+//         minimumCorrectedEntityLength: 9,
+//         minimumEntityLength: 0,
+//         source: '/srv/config/common/leadmine/2018-11-06/dictionary/CFDictGeneAndProtein.cfx',
+//       },
+//       sectionType: 'sectionType',
+//       resolvedEntity: entity.resolvedEntity,
+//     }
+//   })
+// }
