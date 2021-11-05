@@ -7,10 +7,13 @@ import {BrowserService} from '../browser.service';
 import {TestBrowserService} from '../test-browser.service';
 import {EntitiesService} from './entities.service';
 import {SettingsService} from './settings.service';
-import {Entity, TabEntities} from '../../types';
+import {Entity, SynonymText, TabEntities, XPath} from '../../types';
 
 fdescribe('CsvExporterService', () => {
   let service: CsvExporterService;
+
+  const headerText = `Synonym,Resolved Entity,Entity Group,Enforce Bracketing,Entity Type,HTML Color,Maximum Correction Distance,
+                        Minimum Corrected Entity Length,Minimum Entity Length,Source`;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -22,8 +25,8 @@ fdescribe('CsvExporterService', () => {
         EntitiesService,
         SettingsService
       ]
-    })
-    service = TestBed.inject(CsvExporterService)
+    });
+    service = TestBed.inject(CsvExporterService);
   }));
 
 
@@ -31,11 +34,11 @@ fdescribe('CsvExporterService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should return a populated tab entities', () => {
-    const resolvedEntity = 'HGNC:8756'
+  it('should return a string containing column headers and relevant entity data', () => {
+    const resolvedEntity = 'HGNC:6414';
     const entity: Entity = {
       htmlTagIDs: undefined,
-      identifiers: undefined,
+      identifiers: new Map([['resolvedEntity', 'HGNC:6414']]),
       metadata: {
         entityGroup: 'Gene or Protein',
         RecognisingDict: {
@@ -48,25 +51,16 @@ fdescribe('CsvExporterService', () => {
           source: '/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx'
         }
       },
-      synonyms: undefined
-    }
+      synonyms: new Map([['K12', {xpaths: ['']}]])
+    };
+    const entities: Map<string, Entity> = new Map([[resolvedEntity, entity]]);
+    const actual = service.leadmineToCSV(entities);
 
+    const entityInfo = `"K12",HGNC:6414,Gene or Protein,false,GeneOrProteinMDC,pink,0,9,0,
+                        /srv/config/common/mdc/dictionary/mdc_gene_protein.cfx`;
+    const expected = headerText + '\n' + entityInfo + '\n';
 
-    const entities: Map<string, Entity> = new Map([[resolvedEntity, entity]])
-    const result = service.leadmineToCSV(entities)
-    const expectedResult = `Synonym,
-    Resolved Entity,
-    Entity Group,
-    Enforce Bracketing,
-    Entity Type,
-    HTML Color,
-    Maximum Correction
-    Distance,
-    Minimum Corrected Entity Length,
-    Minimum Entity Length,
-    Source`
+    expect(actual).toEqual(expected);
 
-
-
-  })
+  });
 });

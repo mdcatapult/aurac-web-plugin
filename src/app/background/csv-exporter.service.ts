@@ -38,13 +38,15 @@ export class CsvExporterService {
             case 'leadmine-diseases':
 
               const entities: Map<string, Entity> = tabEntities[recogniser]!.entities;
+
               if (entities.size < 1) {
+
                 return;
               }
 
               const CSVFormattedResults = this.leadmineToCSV(entities);
-
               this.exportToCSV(CSVFormattedResults, currentTab.url!)
+
               break;
           }
         }
@@ -79,6 +81,7 @@ export class CsvExporterService {
           + entity.metadata.RecognisingDict.source + '\n';
       });
     });
+
     return text;
   }
 
