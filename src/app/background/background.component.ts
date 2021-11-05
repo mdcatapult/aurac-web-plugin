@@ -160,40 +160,6 @@ export class BackgroundComponent {
     return xRefObservable
   }
 
-  private loadXRefs([entityText, resolvedEntity, entityGroup, entityType]: [string, string, string, string]): void {
-    if (entityGroup !== 'Chemical') {
-      return
-    }
-    let xRefObservable: Observable<XRef[]>;
-    switch (entityType) {
-      case 'SMILES': {
-        xRefObservable = this.smilesToInChIToUnichemPlus([entityText, entityText])
-        break
-      }
-      // likely to be more cases here.
-      case 'DictMol':
-      case 'Mol': {
-        const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]$/;
-        if (!resolvedEntity.match(inchiKeyRegex)) {
-          xRefObservable = this.smilesToInChIToUnichemPlus([entityText, resolvedEntity])
-        } else {
-          xRefObservable = this.postToUnichemPlus([entityText, resolvedEntity])
-        }
-        break
-      }
-      default: {
-        // default case assumes that the entity text is itself an InChiKey.
-        xRefObservable = this.postToUnichemPlus([entityText, entityText])
-      }
-    }
-    xRefObservable.subscribe((xrefs: XRef[]) => {
-      if (xrefs.length) {
-        this.browserService.sendMessageToActiveTab({type: 'x-ref_result', body: xrefs})
-          .catch(console.error);
-      }
-    });
-  }
-
   private addCompoundNameToXRefObject = (entityTerm: string) => map((xrefs: XRef[]) => xrefs.map(xref => {
     if (xref) {
       xref.compoundName = entityTerm;
