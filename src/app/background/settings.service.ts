@@ -81,7 +81,7 @@ export class SettingsService {
     this.APIURLsBehaviorSubject.next(settings.urls);
   }
 
-  private async refreshXRefSources(unichemURL: string): Promise<void> {
+  private refreshXRefSources(unichemURL: string): Promise<void> {
     return this.httpClient.get<string[]>(`${unichemURL}/sources`).toPromise().then(unichemPlusSources => {
       const xRefSources: Record<string,boolean> = {}
       unichemPlusSources.forEach(source => {
