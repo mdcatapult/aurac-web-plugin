@@ -1,3 +1,4 @@
+import { refsToArray } from '@angular/compiler/src/render3/util';
 import {environment} from './environments/environment';
 
 export type MessageType =
@@ -32,7 +33,7 @@ export type MessageType =
   | 'content_script_highlight_entities'
   | 'settings_service_get_current_recogniser'
   | 'entity_messenger_service_highlight_clicked'
-  | 'sidebar_component_inspect_highlight'
+  | 'sidebar_data_service_inspect_highlight'
   | 'content_script_scroll_to_highlight';
 
 export interface Message {
@@ -141,7 +142,7 @@ export interface Entity {
   identifiers?: Map<string, string>;
   metadata?: any;
   htmlTagIDs?: Array<string>;
-  // Other stuff should go here - e.g. cross references.
+  xRefs?: Array<XRef>
 }
 
 // RecogniserEntities is a wrapper for all the entities found when running NER.

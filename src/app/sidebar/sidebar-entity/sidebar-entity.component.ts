@@ -1,5 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { BrowserService } from 'src/app/browser.service';
+import { SidebarDataService } from '../sidebar-data.service';
 import { Identifier, SidebarEntity } from '../types';
 
 @Component({
@@ -7,16 +8,12 @@ import { Identifier, SidebarEntity } from '../types';
   templateUrl: './sidebar-entity.component.html',
   styleUrls: ['./sidebar-entity.component.scss']
 })
-export class SidebarEntityComponent implements OnInit {
+export class SidebarEntityComponent {
 
   @Input() entity: SidebarEntity = {} as SidebarEntity
   
   scrollIndex = 0
-  constructor(private browserService: BrowserService) { }
-
-  ngOnInit(): void {
-    console.log(this.entity.occurrences)
-  }
+  constructor(private browserService: BrowserService, private sidebarDataService: SidebarDataService) { }
 
   filterIdentifiers(arr: Identifier[]): Identifier[] {
     return arr.filter(v => v.value)
@@ -32,5 +29,8 @@ export class SidebarEntityComponent implements OnInit {
      this.browserService.sendMessageToActiveTab({type: 'content_script_scroll_to_highlight', body: this.entity.occurrences[this.scrollIndex]})
   }
 
+  remove() {
+    this.sidebarDataService.setEntities(this.sidebarDataService.entities.filter(entity => entity.entityName !== this.entity.entityName))
+  }
 
 }
