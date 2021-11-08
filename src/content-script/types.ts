@@ -60,3 +60,4 @@ export const cardClassName = 'sidebar-text';
 
 export const cardStorageKey = 'cards';
 
+export const auracNarrativeElement = 'aurac-narrative';
