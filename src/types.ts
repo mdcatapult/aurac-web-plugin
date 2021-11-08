@@ -136,7 +136,7 @@ export interface SynonymData {
   xpaths: Array<XPath>;
 }
 
-// Entity is a wrapper for a leadminer entity with any extra functional
+// LeaminerEntityWrapper is a wrapper for a leadminer entity with any extra functional
 // information.
 export interface LeadminerEntityWrapper {
   synonyms: Map<SynonymText, SynonymData>

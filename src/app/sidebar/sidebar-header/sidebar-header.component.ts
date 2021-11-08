@@ -19,13 +19,12 @@ export class SidebarHeaderComponent implements OnInit {
   }
 
   exportCSV() {
-    const csvText = this.csvExporterService.leadmineToCSV(this.sidebarDataService.entities.map(sidebarEntity => {
+    const csvText = this.csvExporterService.stringifyCSVEntities(this.sidebarDataService.entities.map(sidebarEntity => {
       return {
         metadata: sidebarEntity.metadata,
         identifiers: new Map(sidebarEntity.identifiers.map(key => [key.type, key.value])),
         synonyms: Array.from(sidebarEntity.synonyms)
       }
-        ;
     }))
     this.browserService.getActiveTab().then(tab => {
       this.csvExporterService.exportToCSV(csvText, tab.url!, 'aurac_sidebar_results_')

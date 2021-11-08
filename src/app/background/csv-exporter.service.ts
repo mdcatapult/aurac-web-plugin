@@ -46,7 +46,7 @@ export class CsvExporterService {
             case 'leadmine-diseases':
 
               const entities: Map<string, LeadminerEntityWrapper> = tabEntities[recogniser]!.entities;
-              const entitiesArray = Array.from(entities.values()).map(entity => {
+              const CSVEntitiesArray: Array<CSVEntity> = Array.from(entities.values()).map(entity => {
                 return {
                   metadata: entity.metadata,
                   identifiers: entity.identifiers!,
@@ -58,7 +58,7 @@ export class CsvExporterService {
                 return;
               }
 
-              const CSVFormattedResults = this.leadmineToCSV(entitiesArray);
+              const CSVFormattedResults = this.stringifyCSVEntities(CSVEntitiesArray);
               this.exportToCSV(CSVFormattedResults, currentTab.url!, 'aurac_all_results_')
 
               break;
@@ -71,7 +71,8 @@ export class CsvExporterService {
     return url!.replace(/^(https?|http):\/\//, '').split('#')[0]
   }
 
-  public leadmineToCSV(csvEntities: Array<CSVEntity>): string {
+  // Converts the passed entities into a csv formatted string and appends headings to them
+  public stringifyCSVEntities(csvEntities: Array<CSVEntity>): string {
     const headings = [
       'Synonym',
       'Resolved Entity',

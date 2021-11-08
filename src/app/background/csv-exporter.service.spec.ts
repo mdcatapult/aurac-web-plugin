@@ -51,7 +51,7 @@ describe('CsvExporterService', () => {
       identifiers: new Map([['resolvedEntity', 'HGNC:6414']]),
     };
     const entities: Array<CSVEntity> = [entity];
-    const actual = service.leadmineToCSV(entities);
+    const actual = service.stringifyCSVEntities(entities);
 
     const entityInfo = `"K12",HGNC:6414,Gene or Protein,false,GeneOrProteinMDC,pink,0,9,0,/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx`;
     const expected = headerText + '\n' + entityInfo + '\n';
