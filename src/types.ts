@@ -208,6 +208,7 @@ export type InspectedHighlightData = {
 // Links
 export type Link = {
   resourceName: string,
+  url?: string
   createUrl: (id: string) => string
 }
 

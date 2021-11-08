@@ -1,3 +1,4 @@
+import { Identifier } from './../sidebar/types';
 import { Entity, Link, ExternalLinks} from './../../types';
 import { Injectable } from '@angular/core';
 
@@ -9,7 +10,7 @@ export class LinksService {
 
   constructor() { }
 
-  getLinks(entity: Entity): Link[] {
+  getLinks(entity: Entity, entityName: string): Link[] {
     let entityLinks: Array<Link>
     const links = ExternalLinks
     const entityGroup = entity.metadata['entityGroup']
@@ -18,8 +19,7 @@ export class LinksService {
     const geneAndProtein = 'Gene or Protein';
     const disease = 'Biological';
     const chemical = 'Chemical';
-    console.log(entity)
-
+    
     switch (entityGroup || entityType) {
       case geneAndProtein: {
         entityLinks = [links.ncbi, links.geneNames, links.genecards, links.ensembl,
@@ -37,6 +37,9 @@ export class LinksService {
       }
       default: entityLinks = []
     }
+
+    entityLinks.map(link => 
+      link.url = link.createUrl(entityName))
     return entityLinks;
 
   }

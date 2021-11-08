@@ -47,7 +47,7 @@ export class EntityMessengerService {
                 })!
 
                 const getXrefs: Promise<XRef[]> = entity.xRefs ? Promise.resolve(entity.xRefs) : this.xRefService.get(entity)
-                const links: Link[] = linksService.getLinks(entity)
+                const links: Link[] = linksService.getLinks(entity, synonym)
                 getXrefs.then(xRefs => {
                   entity.xRefs = xRefs
                   entity.links = links
