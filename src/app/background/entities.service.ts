@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { ChangeIdentifier, RecogniserEntities, RecogniserID, Entity, EntityChange, TabEntities, EntityID, SetterInfo } from '../../types'
+import { ChangeIdentifier, RecogniserEntities, RecogniserID, LeadminerEntityWrapper, EntityChange, TabEntities, EntityID, SetterInfo } from '../../types'
 
 @Injectable({
   providedIn: 'root'
@@ -30,8 +30,8 @@ export class EntitiesService {
 
   setRecogniserEntities(id: RecogniserID, entities: RecogniserEntities, setterInfo?: SetterInfo): void {
     const tabEntities = this.entityMap.get(id.tab)
-    
-    if (!tabEntities) { 
+
+    if (!tabEntities) {
       const newTabEntities: TabEntities = {}
       newTabEntities[id.recogniser] = entities
       this.entityMap.set(id.tab, newTabEntities)
@@ -43,12 +43,12 @@ export class EntitiesService {
     }
   }
 
-  getEntity(id: EntityID): Entity | undefined {
+  getEntity(id: EntityID): LeadminerEntityWrapper | undefined {
     const tabEntities = this.entityMap.get(id.tab)
     return tabEntities ? tabEntities[id.recogniser]?.entities?.get(id.identifier) : undefined
   }
 
-  private updateStream(identifier: ChangeIdentifier, result: TabEntities | RecogniserEntities | Entity | Map<string,Entity>, setterInfo?: SetterInfo): void {
+  private updateStream(identifier: ChangeIdentifier, result: TabEntities | RecogniserEntities | LeadminerEntityWrapper | Map<string,LeadminerEntityWrapper>, setterInfo?: SetterInfo): void {
     this.entityChangeSubject.next({identifier, result, setterInfo: setterInfo})
   }
 }

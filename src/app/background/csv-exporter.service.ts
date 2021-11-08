@@ -1,13 +1,21 @@
 import {Injectable} from '@angular/core';
 import {BrowserService} from '../browser.service';
 import {EntitiesService} from './entities.service';
-import {Entity} from '../../types';
+import {LeadminerEntityWrapper, SynonymData, SynonymText} from '../../types';
 import {SettingsService} from './settings.service';
 import {saveAs} from 'file-saver';
+import {Identifier, SidebarEntity} from '../sidebar/types';
+
+export type CSVEntity = {
+  metadata: any,
+  identifiers: Map<string, string>,
+  synonyms: Array<string>,
+}
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class CsvExporterService {
 
   constructor(
@@ -37,8 +45,13 @@ export class CsvExporterService {
             case 'leadmine-chemical-entities':
             case 'leadmine-diseases':
 
-              const entities: Map<string, Entity> = tabEntities[recogniser]!.entities;
-              const entitiesArray = Array.from(entities.values())
+              const entities: Map<string, LeadminerEntityWrapper> = tabEntities[recogniser]!.entities;
+              const entitiesArray = Array.from(entities.values()).map(entity => {
+                return {
+                  metadata: entity.metadata,
+                  identifiers: entity.identifiers!,
+                  synonyms: Array.from(entity.synonyms.keys())}
+              })
 
               if (entities.size < 1) {
 
@@ -58,7 +71,7 @@ export class CsvExporterService {
     return url!.replace(/^(https?|http):\/\//, '').split('#')[0]
   }
 
-  public leadmineToCSV(entities: Array<Entity>): string {
+  public leadmineToCSV(csvEntities: Array<CSVEntity>): string {
     const headings = [
       'Synonym',
       'Resolved Entity',
@@ -71,18 +84,18 @@ export class CsvExporterService {
       'Minimum Entity Length',
       'Source'];
     let text = headings.join(',') + '\n';
-    entities.forEach(entity => {
-      entity.synonyms.forEach((synonymData, synonymName) => {
+    csvEntities.forEach(csvEntity => {
+      csvEntity.synonyms.forEach((synonymName, _) => {
         text = text + `"${synonymName}"` + ','
-          + entity.identifiers!.get('resolvedEntity') + ','
-          + entity.metadata.entityGroup! + ','
-          + entity.metadata.RecognisingDict.enforceBracketing + ','
-          + entity.metadata.RecognisingDict.entityType + ','
-          + entity.metadata.RecognisingDict.htmlColor + ','
-          + entity.metadata.RecognisingDict.maxCorrectionDistance + ','
-          + entity.metadata.RecognisingDict.minimumCorrectedEntityLength + ','
-          + entity.metadata.RecognisingDict.minimumEntityLength + ','
-          + entity.metadata.RecognisingDict.source + '\n';
+          + csvEntity.identifiers?.get('resolvedEntity') + ','
+          + csvEntity.metadata.entityGroup! + ','
+          + csvEntity.metadata.RecognisingDict.enforceBracketing + ','
+          + csvEntity.metadata.RecognisingDict.entityType + ','
+          + csvEntity.metadata.RecognisingDict.htmlColor + ','
+          + csvEntity.metadata.RecognisingDict.maxCorrectionDistance + ','
+          + csvEntity.metadata.RecognisingDict.minimumCorrectedEntityLength + ','
+          + csvEntity.metadata.RecognisingDict.minimumEntityLength + ','
+          + csvEntity.metadata.RecognisingDict.source + '\n';
       });
     });
 

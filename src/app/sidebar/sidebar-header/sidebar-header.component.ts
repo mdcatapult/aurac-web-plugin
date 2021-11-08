@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BrowserService } from 'src/app/browser.service';
 import { SidebarDataService } from '../sidebar-data.service';
-import {CsvExporterService} from '../../background/csv-exporter.service';
+import {CSVEntity, CsvExporterService} from '../../background/csv-exporter.service';
 
 @Component({
   selector: 'app-sidebar-header',
@@ -19,7 +19,14 @@ export class SidebarHeaderComponent implements OnInit {
   }
 
   exportCSV() {
-    const csvText = this.csvExporterService.leadmineToCSV(this.sidebarDataService.entities.map(sidebarEntity => sidebarEntity.entity))
+    const csvText = this.csvExporterService.leadmineToCSV(this.sidebarDataService.entities.map(sidebarEntity => {
+      return {
+        metadata: sidebarEntity.metadata,
+        identifiers: new Map(sidebarEntity.identifiers.map(key => [key.type, key.value])),
+        synonyms: Array.from(sidebarEntity.synonyms)
+      }
+        ;
+    }))
     this.browserService.getActiveTab().then(tab => {
       this.csvExporterService.exportToCSV(csvText, tab.url!, 'aurac_sidebar_results_')
     })

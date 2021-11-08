@@ -138,7 +138,7 @@ export interface SynonymData {
 
 // Entity is a wrapper for a leadminer entity with any extra functional
 // information.
-export interface Entity {
+export interface LeadminerEntityWrapper {
   synonyms: Map<SynonymText, SynonymData>
   identifiers?: Map<string, string>;
   metadata?: any;
@@ -149,7 +149,7 @@ export interface Entity {
 // RecogniserEntities is a wrapper for all the entities found when running NER.
 export interface RecogniserEntities {
     show: boolean;
-    entities: Map<string, Entity>;
+    entities: Map<string, LeadminerEntityWrapper>;
 }
 
 // Holds all entities on a page in valid dictionaries.
@@ -180,7 +180,7 @@ export type ChangeIdentifier = number | RecogniserID | EntityID | SynonymID | Oc
 // result of the change.
 export interface EntityChange {
     identifier: ChangeIdentifier;
-    result: TabEntities | RecogniserEntities | Entity | Map<string,Entity>;
+    result: TabEntities | RecogniserEntities | LeadminerEntityWrapper | Map<string,LeadminerEntityWrapper>;
     setterInfo?: SetterInfo
 }
 
@@ -200,7 +200,7 @@ export function parseHighlightID(id: string): [entityName: string, entityOccurre
 
 export type InspectedHighlightData = {
   entityName: string; // key for entity map
-  entity: Entity;
+  entity: LeadminerEntityWrapper;
   entityOccurrence: number;
   clickedSynonymName: string;
   synonymOccurrence: number;

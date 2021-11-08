@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ConverterResult, Entity, XRef } from 'src/types';
+import { ConverterResult, LeadminerEntityWrapper, XRef } from 'src/types';
 import {SettingsService} from './settings.service'
 
 @Injectable({
@@ -10,7 +10,7 @@ export class XRefService {
 
   constructor(private client: HttpClient, private settingsService: SettingsService) { }
 
-  get(entity: Entity): Promise<XRef[]> {
+  get(entity: LeadminerEntityWrapper): Promise<XRef[]> {
     const entityGroup = entity.metadata['entityGroup']
 
     if (entityGroup != 'Chemical') {
@@ -27,7 +27,7 @@ export class XRefService {
     let inchikeyPromise: Promise<string> = new Promise(() => identifier)
 
     switch(entityType) {
-      case 'SMILES': 
+      case 'SMILES':
       inchikeyPromise = this.SMILEStoInchi(identifier).then(converterResult => converterResult.output)
       break
       case 'DictMol':
@@ -35,7 +35,7 @@ export class XRefService {
         const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]$/;
         if (!identifier.match(inchiKeyRegex)) {
           inchikeyPromise = this.SMILEStoInchi(identifier).then(converterResult => converterResult.output)
-        } 
+        }
         break
     }
 

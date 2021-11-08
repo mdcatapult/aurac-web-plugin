@@ -8,7 +8,7 @@ describe('SidebarEntityComponent', () => {
   let component: SidebarEntityComponent;
   let fixture: ComponentFixture<SidebarEntityComponent>;
   const entity: SidebarEntity = {
-    entity: {synonyms: new Map<SynonymText, SynonymData>()},
+    metadata: '',
     title: '',
     entityName: '',
     identifiers: [],
@@ -48,6 +48,6 @@ describe('SidebarEntityComponent', () => {
 
   it('should handle left scrollIndex correctly', () => {
     component.arrowClicked('left')
-    expect(component.scrollIndex).toBe(entity.occurrences.length -1)
+    expect(component.scrollIndex).toBe(entity.occurrences.length - 1)
   })
 });

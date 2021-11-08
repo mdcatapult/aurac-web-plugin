@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Recogniser, RecogniserEntities, Entity } from 'src/types';
+import { Recogniser, RecogniserEntities, LeadminerEntityWrapper } from 'src/types';
 import { BrowserService } from '../browser.service';
 import { EntitiesService } from './entities.service';
 import { SettingsService } from './settings.service';
@@ -22,7 +22,7 @@ type APIResponse = RecognisedEntity[]
 export class NerService {
 
   constructor(
-    private httpClient: HttpClient, 
+    private httpClient: HttpClient,
     private browserService: BrowserService,
     private settingsService: SettingsService,
     private entitiesService: EntitiesService
@@ -88,7 +88,7 @@ export class NerService {
     const headers = new HttpHeaders()
     if (this.settingsService.preferences.recogniser === 'leadmine-chemical-entities') {
       // Recognition API expects a base64 encoded, json encoded "RecogniserOptions" object.
-      // Currently there is only one key "queryParameters", which tells the api how to 
+      // Currently there is only one key "queryParameters", which tells the api how to
       // construct a url when forwarding a request. This key takes a Map<string,string[]>
       // in order to allow multiple values per key.
       const leadmineRecogniserOptions = {'queryParameters': {'inchi': ['true']}}
@@ -104,7 +104,7 @@ export class NerService {
   private transformAPIResponse(response: APIResponse): RecogniserEntities {
     let recogniserEntities: RecogniserEntities = {
       show: true,
-      entities: new Map<string,Entity>()
+      entities: new Map<string,LeadminerEntityWrapper>()
     }
 
     const setEntities = (key: string, recognisedEntity: RecognisedEntity) => {
@@ -140,7 +140,7 @@ export class NerService {
                 entity.synonyms.set(recognisedEntity.entity, {xpaths: [recognisedEntity.xpath]})
               }
 
-              
+
             } else {
               setEntities(resolvedEntity, recognisedEntity)
             }

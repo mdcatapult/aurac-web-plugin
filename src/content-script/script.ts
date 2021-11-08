@@ -1,4 +1,4 @@
-import { Entity, highlightID, Message, Recogniser, TabEntities } from '../types';
+import { LeadminerEntityWrapper, highlightID, Message, Recogniser, TabEntities } from '../types';
 import { UserExperience } from './userExperience';
 import { Globals } from './globals';
 import { BrowserImplementation } from './browser-implementation';
@@ -74,7 +74,7 @@ async function openSidebar() {
   if (!document.getElementById("aurac-sidebar")) {
     await injectSidebar()
   }
-  
+
   Array.from(document.getElementsByClassName('aurac-transform')).forEach(e => {
     e.className = e.className.replace('collapsed', 'expanded');
   });
@@ -107,11 +107,11 @@ function highlightEntites(tabEntities: TabEntities): Promise<string> {
   return new Promise((resolve, reject) => {
     Globals.browser.sendMessage({type: 'settings_service_get_current_recogniser'})
       .then((recogniser: Recogniser) => {
-        
+
         tabEntities[recogniser]!.entities.forEach((entity, entityName) => {
-          
+
           entity.synonyms.forEach((synonymData, synonymName) => {
-            
+
             let entityOccurrence = 0
               synonymData.xpaths.forEach((xpath, synonymOccurrence) => {
 
@@ -125,7 +125,7 @@ function highlightEntites(tabEntities: TabEntities): Promise<string> {
                       entityOccurrence++
                     }
                   }
-                            
+
                 } catch (e) {
                   reject(e)
                 }
@@ -161,7 +161,7 @@ function highlightText(contextNode: Node, text: string, callback: (element: HTML
   return success
 }
 
-function newHighlightElementCallback(entity: Entity, entityName: string, entityOccurrence: number, synonymName: string, synonymOccurrence: number): (element: HTMLElement) => void {
+function newHighlightElementCallback(entity: LeadminerEntityWrapper, entityName: string, entityOccurrence: number, synonymName: string, synonymOccurrence: number): (element: HTMLElement) => void {
   return (element: HTMLElement): void => {
     element.id = highlightID(entityName, entityOccurrence, synonymName, synonymOccurrence);
     entity.htmlTagIDs = entity.htmlTagIDs ? entity.htmlTagIDs.concat([element.id]) : [element.id];

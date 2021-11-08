@@ -1,7 +1,7 @@
-import {Entity, XRef} from 'src/types';
+import {LeadminerEntityWrapper, XRef} from 'src/types';
 
 export interface SidebarEntity {
-  entity: Entity
+  metadata: any,
   title: string
   entityName: string,
   identifiers: Array<Identifier>,

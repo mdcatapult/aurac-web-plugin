@@ -4,6 +4,7 @@ import { parseWithTypes } from 'src/json';
 import { MessageType, InspectedHighlightData } from 'src/types';
 import { BrowserService } from '../browser.service';
 import { Identifier, SidebarEntity } from './types';
+import {CSVEntity} from '../background/csv-exporter.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ export class SidebarDataService {
 
   private entitiesBehaviorSubject: BehaviorSubject<Array<SidebarEntity>> = new BehaviorSubject(new Array<SidebarEntity>())
   readonly entitiesObservable: Observable<Array<SidebarEntity>> = this.entitiesBehaviorSubject.asObservable()
+
   get entities(): Array<SidebarEntity> {
     return this.entitiesBehaviorSubject.getValue()
   }
@@ -43,15 +45,27 @@ export class SidebarDataService {
         })
       }
 
-      const newSidebarEntity = {
-        entity: inspectedHighlightData.entity,
+      const newSidebarEntity: SidebarEntity = {
+        metadata: inspectedHighlightData.entity.metadata,
         title: inspectedHighlightData.clickedSynonymName,
         entityName: inspectedHighlightData.entityName,
         identifiers,
         synonyms: Array.from(inspectedHighlightData.entity.synonyms.keys()),
         occurrences: inspectedHighlightData.entity.htmlTagIDs!,
-        xRefs: inspectedHighlightData.entity.xRefs
+        xrefs: inspectedHighlightData.entity.xRefs
       }
+
+
+      /*const newCSVEntity: CSVEntity = {
+        entity: inspectedHighlightData.entity,
+        title: inspectedHighlightData.clickedSynonymName,
+        entityName: inspectedHighlightData.entityName,
+        synonyms: Array.from(inspectedHighlightData.entity.synonyms.keys()),
+        occurrences: inspectedHighlightData.entity.htmlTagIDs!,
+        xrefs: inspectedHighlightData.entity.xRefs,
+        metadata: inspectedHighlightData.entity.metadata,
+        identifiers: inspectedHighlightData.entity.identifiers!,
+      }*/
 
       this.setEntities(this.entities.concat([newSidebarEntity]))
     }

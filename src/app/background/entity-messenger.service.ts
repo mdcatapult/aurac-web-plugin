@@ -45,7 +45,7 @@ export class EntityMessengerService {
                 })!
 
                 const getXrefs: Promise<XRef[]> = entity.xRefs ? Promise.resolve(entity.xRefs) : this.xRefService.get(entity)
-               
+
                 getXrefs.then(xRefs => {
                   entity.xRefs = xRefs
                   const inspectedHighlightData: InspectedHighlightData = {
@@ -62,7 +62,7 @@ export class EntityMessengerService {
                     })
                 }).catch((e) => console.error(`Error retreiving xRefs: ${JSON.stringify(e)}`))
               }).then(() => resolve(null))
-        
+
           })
         default:
       }
