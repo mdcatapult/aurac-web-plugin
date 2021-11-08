@@ -157,8 +157,11 @@ export type TabEntities = {
     [key in Recogniser]?: RecogniserEntities;
 }
 
-export interface RecogniserID {
-    tab: number;
+export interface TabID {
+  tab: number
+}
+
+export interface RecogniserID extends TabID {
     recogniser: Recogniser;
 }
 
@@ -174,7 +177,7 @@ export interface OccurrenceID extends EntityID {
     occurrence: string;
 }
 
-export type ChangeIdentifier = number | RecogniserID | EntityID | SynonymID | OccurrenceID
+export type ChangeIdentifier = TabID | RecogniserID | EntityID | SynonymID | OccurrenceID
 
 // EntityChange describes where a change to the cache has been made and the
 // result of the change.

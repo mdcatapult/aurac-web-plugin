@@ -20,7 +20,7 @@ export class EntitiesService {
 
   setTabEntities(tab: number, entities: TabEntities, setterInfo?: SetterInfo): void {
     this.entityMap.set(tab, entities)
-    this.updateStream(tab, entities, setterInfo)
+    this.updateStream({tab: tab}, entities, setterInfo)
   }
 
   getRecogniserEntities(id: RecogniserID): RecogniserEntities | undefined {
@@ -35,11 +35,11 @@ export class EntitiesService {
       const newTabEntities: TabEntities = {}
       newTabEntities[id.recogniser] = entities
       this.entityMap.set(id.tab, newTabEntities)
-      this.updateStream(id.tab, newTabEntities, setterInfo)
+      this.updateStream(id, newTabEntities, setterInfo)
     } else {
       tabEntities[id.recogniser] = entities
       this.entityMap.set(id.tab, tabEntities)
-      this.updateStream(id, entities, setterInfo)
+      this.updateStream(id, tabEntities, setterInfo)
     }
   }
 
