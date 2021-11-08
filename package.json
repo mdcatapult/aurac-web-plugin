@@ -1,6 +1,6 @@
 {
   "name": "browser-plugin",
-  "version": "0.12.0",
+  "version": "0.12.1",
   "scripts": {
     "ng": "ng",
     "start": "web-ext run --verbose --source-dir=dist/browser-plugin",
@@ -38,6 +38,7 @@
     "puppeteer": "^1.14.0",
     "puppeteer-core": "^1.14.0",
     "rxjs": "~6.5.4",
+    "tippy.js": "^6.3.1",
     "tslib": "^2.0.0",
     "zone.js": "~0.11.4"
   },

@@ -22,13 +22,13 @@ export class EntityMessengerService {
         return
       }
 
-      this.browserService.sendMessageToTab(change.identifier as number, {type: 'content_script_highlight_entities', body: stringifyWithTypes(change.result)})
+      this.browserService.sendMessageToTab(change.identifier.tab, {type: 'content_script_highlight_entities', body: stringifyWithTypes(change.result)})
         .then((stringifiedTabEntities) => {
           const tabEntities = parseWithTypes(stringifiedTabEntities)
 
           // Use 'noPropagate' setter info so that we don't get into an infinite loop.
-          this.entitiesService.setTabEntities(change.identifier as number, tabEntities, 'noPropagate')
-          this.browserService.sendMessageToTab(change.identifier as number, 'content_script_open_sidebar')
+          this.entitiesService.setTabEntities(change.identifier.tab, tabEntities, 'noPropagate')
+          this.browserService.sendMessageToTab(change.identifier.tab, 'content_script_open_sidebar')
         })
     })
 
