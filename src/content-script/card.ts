@@ -10,6 +10,7 @@ export module Card {
   const geneAndProtein = 'Gene or Protein';
   const disease = 'Biological';
   const chemical = 'Chemical';
+  export const entityBaseClass = 'aurac-entity-text'
 
   function createListOfLinks(categoryName: string, hrefList: Array<Link>): HTMLUListElement {
     const htmlListOfLinks: HTMLUListElement = Globals.document.createElement('ul');
@@ -19,6 +20,10 @@ export module Card {
       htmlListOfLinks.insertAdjacentHTML('beforeend', `<li><a href=${link} target="_blank"> ${element.name}</a></li>`);
     });
     return htmlListOfLinks;
+  }
+
+  export function getEntityClass(entityId: string): string {
+    return `${entityBaseClass}-${entityId}`
   }
 
   // Creates a card for a given entity
@@ -35,13 +40,15 @@ export module Card {
 
     card.appendChild(CardButtons.createCardControls(information, entityLinks, synonyms, listOfEntities));
 
+    const entityId = information.resolvedEntity || information.entityText
+
     // If possible link directly to the gene/protein using the resolvedEntity from the entityText
     // We could move this to the externalLinks class (or elsewhere) and make them for each type of entity.
     if (information.entityGroup === 'Gene or Protein' && information.resolvedEntity) {
       const geneNameLink = ExternalLinks.geneNames.createUrl(information.resolvedEntity);
-      card.insertAdjacentHTML('beforeend', `<p><a target="_blank" href="${geneNameLink}" title="Link to HGNC for this gene/protein">${synonyms.toString()}</a></p>`);
+      card.insertAdjacentHTML('beforeend', `<p id=${getEntityClass(entityId)}><a target="_blank" href="${geneNameLink}" title="Link to HGNC for this gene/protein">${synonyms.toString()}</a></p>`);
     } else {
-      card.insertAdjacentHTML('beforeend', `<p>${synonyms.toString()}</p>`);
+      card.insertAdjacentHTML('beforeend', `<p id=${getEntityClass(entityId)}>${synonyms.toString()}</p>`);
     }
     card.insertAdjacentHTML('beforeend', `<p>Links:</p>`);
     card.appendChild(links);
@@ -52,8 +59,8 @@ export module Card {
     return card;
   }
 
-  export function  createModalOpeningButton(chemblId: string, compoundName: string): HTMLElement {
-    const modalButton = Globals.document.createElement('button')
+  export function createModalOpeningButton(chemblId: string, compoundName: string): HTMLElement {
+    const modalButton = document.createElement('button')
     modalButton.insertAdjacentHTML('beforeend', `Structure`)
     modalButton.id = `aurac-modal-open-button-${compoundName}`
     modalButton.className = 'open-modal-button'

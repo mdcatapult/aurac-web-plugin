@@ -24,6 +24,16 @@ export module CardButtons {
     isClicked: boolean,
   };
 
+  export function getOccurrenceCounts(synonyms: string[]): number {
+    return synonyms.reduce((count: number, synonym) => {
+      if (CardButtons.entityToOccurrence.get(synonym)) {
+        return count + CardButtons.entityToOccurrence.get(synonym)!.length
+      } else {
+        return count
+      }
+    }, 0)
+  }
+
   function createOccurrenceCounts(information: Entity, synonyms: string[]): HTMLElement {
     const entityText = synonyms.length === 1 ? information.entityText : information.resolvedEntity;
     const occurrenceElement = Globals.document.createElement('span');
@@ -31,8 +41,7 @@ export module CardButtons {
     occurrenceElement.style.display = 'flex';
     occurrenceElement.style.justifyContent = 'flex-end';
 
-    let numOfOccurrences = 0;
-    synonyms.forEach(synonym => numOfOccurrences = numOfOccurrences + CardButtons.entityToOccurrence.get(synonym)!.length);
+    const numOfOccurrences = getOccurrenceCounts(synonyms);
     occurrenceElement.innerText = `${numOfOccurrences} matches found`;
     return occurrenceElement;
   }
