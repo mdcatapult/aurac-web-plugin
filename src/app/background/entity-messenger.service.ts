@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { InspectedHighlightData, parseHighlightID, XRef } from 'src/types';
+import { InspectedHighlightData, parseHighlightID, XRef, Link } from 'src/types';
 import { parseWithTypes, stringifyWithTypes } from '../../json';
 import { BrowserService } from '../browser.service';
 import { EntitiesService } from './entities.service';
 import { SettingsService } from './settings.service';
+import { LinksService } from './links.service';
 import { XRefService } from './x-ref.service';
 
 @Injectable({
@@ -15,7 +16,8 @@ export class EntityMessengerService {
     private browserService: BrowserService,
     private entitiesService: EntitiesService,
     private settingsService: SettingsService,
-    private xRefService: XRefService) {
+    private xRefService: XRefService,
+    private linksService: LinksService) {
 
     this.entitiesService.entityChangeObservable.subscribe(change => {
       if (change.setterInfo === 'noPropagate') {
@@ -45,9 +47,10 @@ export class EntityMessengerService {
                 })!
 
                 const getXrefs: Promise<XRef[]> = entity.xRefs ? Promise.resolve(entity.xRefs) : this.xRefService.get(entity)
-               
+                const links: Link[] = linksService.getLinks(entity)
                 getXrefs.then(xRefs => {
                   entity.xRefs = xRefs
+                  entity.links = links
                   const inspectedHighlightData: InspectedHighlightData = {
                       entity,
                       entityName,

@@ -20,7 +20,7 @@
             </table>
 
             <!-- xrefs -->
-            <table mat-table [dataSource]="entity.xRefs">
+            <table mat-table [dataSource]="entity.xrefs">
                 <ng-container matColumnDef="databaseName">
                     <th mat-header-cell *matHeaderCellDef>Source</th>
                     <td mat-cell *matCellDef="let element">{{ element.databaseName | titlecase}}</td>
@@ -31,6 +31,19 @@
                 </ng-container>
                 <tr mat-header-row *matHeaderRowDef="['databaseName', 'url']"></tr>
                 <tr mat-row *matRowDef="let row; columns: ['databaseName', 'url']"></tr>
+            </table>
+            <!-- links -->
+            <table mat-table [dataSource]="entity.links">
+                <ng-container matColumnDef="resourceName">
+                    <th mat-header-cell *matHeaderCellDef>Resource</th>
+                    <td mat-cell *matCellDef="let element">{{ element.resourceName }}</td>
+                </ng-container>
+                <ng-container matColumnDef="linkUrl">
+                    <th mat-header-cell *matHeaderCellDef>URL</th>
+                    <td mat-cell *matCellDef="let element"><a href="www.google.co.uk" target="_blank">  Hello World  </a></td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="['resourceName', 'linkUrl']"></tr>
+                <tr mat-row *matRowDef="let row; columns: ['resourceName', 'linkUrl']"></tr>
             </table>
 
         </mat-card-content>

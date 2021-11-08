@@ -43,13 +43,14 @@ export class SidebarDataService {
         })
       }
 
-      const newSidebarEntity = {
+      const newSidebarEntity: SidebarEntity = {
         title: inspectedHighlightData.clickedSynonymName,
         entityName: inspectedHighlightData.entityName,
         identifiers,
         synonyms: Array.from(inspectedHighlightData.entity.synonyms.keys()),
         occurrences: inspectedHighlightData.entity.htmlTagIDs!,
-        xRefs: inspectedHighlightData.entity.xRefs
+        xrefs: inspectedHighlightData.entity.xRefs,
+        links: inspectedHighlightData.entity.links,
       }
 
       this.setEntities(this.entities.concat([newSidebarEntity]))
