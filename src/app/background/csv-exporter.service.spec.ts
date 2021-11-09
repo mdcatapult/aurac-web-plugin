@@ -1,19 +1,17 @@
-import {ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
+import { TestBed, waitForAsync} from '@angular/core/testing';
 
 import {CsvExporterService} from './csv-exporter.service';
 import {HttpClient, HttpHandler} from '@angular/common/http';
-import {BackgroundComponent} from './background.component';
 import {BrowserService} from '../browser.service';
 import {TestBrowserService} from '../test-browser.service';
 import {EntitiesService} from './entities.service';
 import {SettingsService} from './settings.service';
-import {Entity, SynonymText, TabEntities, XPath} from '../../types';
+import {Entity} from '../../types';
 
-describe('CsvExporterService', () => {
+fdescribe('CsvExporterService', () => {
   let service: CsvExporterService;
 
-  const headerText = `Synonym,Resolved Entity,Entity Group,Enforce Bracketing,Entity Type,HTML Color,Maximum Correction Distance,
-                        Minimum Corrected Entity Length,Minimum Entity Length,Source`;
+  const headerText = `Synonym,Resolved Entity,Entity Group,Enforce Bracketing,Entity Type,HTML Color,Maximum Correction Distance,Minimum Corrected Entity Length,Minimum Entity Length,Source`;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -56,11 +54,11 @@ describe('CsvExporterService', () => {
     const entities: Map<string, Entity> = new Map([[resolvedEntity, entity]]);
     const actual = service.leadmineToCSV(entities);
 
-    const entityInfo = `"K12",HGNC:6414,Gene or Protein,false,GeneOrProteinMDC,pink,0,9,0,
-                        /srv/config/common/mdc/dictionary/mdc_gene_protein.cfx`;
+    const entityInfo = `"K12",HGNC:6414,Gene or Protein,false,GeneOrProteinMDC,pink,0,9,0,/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx`;
     const expected = headerText + '\n' + entityInfo + '\n';
 
     expect(actual).toEqual(expected);
 
   });
+
 });
