@@ -30,7 +30,8 @@ export class LinksService {
         entityLinks = [links.drugBank, links.pubmed, links.dimensions, links.patents, links.diseaseClinicalTrial];
         break;
       }
-      case chemical: {
+      case chemical: 
+      case "DictMol": {
         entityLinks = [links.pubchem, links.drugBank, links.pubmed,
           links.dimensions, links.patents, links.geneProteinChemicalClinicalTrial];
         break;

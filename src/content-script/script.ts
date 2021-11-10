@@ -163,6 +163,8 @@ function highlightText(contextNode: Node, text: string, callback: (element: HTML
 
 function newHighlightElementCallback(entity: Entity, entityName: string, entityOccurrence: number, synonymName: string, synonymOccurrence: number): (element: HTMLElement) => void {
   return (element: HTMLElement): void => {
+    console.log(entityName, entityOccurrence, synonymName, synonymOccurrence)
+    console.log(entity)
     element.id = highlightID(entityName, entityOccurrence, synonymName, synonymOccurrence);
     entity.htmlTagIDs = entity.htmlTagIDs ? entity.htmlTagIDs.concat([element.id]) : [element.id];
     element.addEventListener('click', (_event: Event): void => {
