@@ -18,13 +18,13 @@ export class CsvExporterService {
     this.browserService.addListener((msg) => {
       switch (msg.type) {
         case 'csv_exporter_service_export_csv':
-          this.exportCSV();
+          return this.exportCSV();
       }
     });
   }
 
-  private exportCSV() {
-    this.browserService.getActiveTab()
+  private exportCSV(): Promise<void> {
+    return this.browserService.getActiveTab()
       .then((currentTab: browser.tabs.Tab) => {
         const tabEntities = this.entitiesService.getTabEntities(currentTab.id!);
         return {currentTab, tabEntities}
@@ -45,10 +45,8 @@ export class CsvExporterService {
               }
 
               const CSVFormattedResults = this.leadmineToCSV(entities);
-              this.exportToCSV(CSVFormattedResults, currentTab.url!)
-                .catch(console.error)
 
-              break;
+              this.saveAsCSV(CSVFormattedResults, currentTab.url!)
           }
         }
       });
@@ -65,8 +63,11 @@ export class CsvExporterService {
       'Maximum Correction Distance',
       'Minimum Corrected Entity Length',
       'Minimum Entity Length',
-      'Source'];
+      'Source'
+    ];
+
     let text = headings.join(',') + '\n';
+
     entities.forEach(entity => {
       entity.synonyms.forEach((synonymData, synonymName) => {
         text = text + `"${synonymName}"` + ','
@@ -85,13 +86,9 @@ export class CsvExporterService {
     return text;
   }
 
-  private exportToCSV(text: string, currentURL: string): Promise<any> {
-    try {
+  private saveAsCSV(text: string, currentURL: string): void {
       const blob = new Blob([text], { type: 'text/csv;charset=utf-8' })
       saveAs(blob, 'aurac_all_results_' + currentURL + '.csv')
-      return new Promise(_ => {})
-    } catch (error) {
-      return new Promise (resolve => resolve(error))
     }
-  }
+
 }
