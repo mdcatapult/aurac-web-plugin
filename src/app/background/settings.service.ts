@@ -35,9 +35,9 @@ export class SettingsService {
   constructor(private browserService: BrowserService, private httpClient: HttpClient) {
     this.browserService.addListener(msg => this.handleMessages(msg))
     this.loadFromBrowserStorage().then(settings => {
-      this.setAll(settings);
-      this.refreshXRefSources(this.APIURLs.unichemURL);
-    })
+      this.setAll(settings)
+      this.refreshXRefSources(this.APIURLs.unichemURL).then(console.error)
+    }).catch(console.error)
   }
 
   private handleMessages(msg: Partial<Message>): Promise<any> | void {
@@ -82,10 +82,11 @@ export class SettingsService {
   }
 
   private refreshXRefSources(unichemURL: string): Promise<void> {
-    return this.httpClient.get<string[]>(`${unichemURL}/sources`).toPromise().then(sources => {
+    return this.httpClient.get<string[]>(`${unichemURL}/sources`).toPromise().then(unichemPlusSources => {
       const xRefSources: Record<string,boolean> = {}
-      sources.forEach(source => {
-        // Left hand side must be null or undefined (not false). See "nullish coallescing operator".
+      unichemPlusSources.forEach(source => {
+        // If source is already defined, use the existing value (true/false). If it isn't defined, set the
+        // value to be true. See "nullish coallescing operator".
         xRefSources[source] = this.xRefSources[source] ?? true
       })
       this.xRefSourcesBehaviorSubject.next(xRefSources)

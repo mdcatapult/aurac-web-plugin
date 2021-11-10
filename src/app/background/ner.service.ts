@@ -5,7 +5,7 @@ import { BrowserService } from '../browser.service';
 import { EntitiesService } from './entities.service';
 import { SettingsService } from './settings.service';
 
-type RecognisedEntity = {
+export type RecognisedEntity = {
   entity: string;
   position: number;
   xpath: string;
@@ -14,7 +14,7 @@ type RecognisedEntity = {
   metadata?: string;
 }
 
-type APIResponse = RecognisedEntity[]
+export type APIResponse = RecognisedEntity[]
 
 @Injectable({
   providedIn: 'root'
@@ -60,7 +60,7 @@ export class NerService {
   }
 
   private callAPI(body: string): Promise<APIResponse | void> {
-    const [params, headers] = this.constructRequestParametersAndHeaders()
+    const [params, headers] = this.constructRequestParametersAndHeaders(this.settingsService.preferences.recogniser)
     return this.httpClient.post<APIResponse>(`${this.settingsService.APIURLs.nerURL}/html/entities`, body, {observe: 'response', params, headers})
       .toPromise()
       .then(response => {
@@ -81,42 +81,64 @@ export class NerService {
     throw error
   }
 
-  private constructRequestParametersAndHeaders(): [HttpParams, HttpHeaders] {
+  private constructRequestParametersAndHeaders(recogniser: Recogniser): [HttpParams, HttpHeaders] {
     // HttpParams.set returns a copy but the original is unmodified - so be careful!
-    const params = new HttpParams().set('recogniser', this.settingsService.preferences.recogniser)
+    const params = new HttpParams().set('recogniser', recogniser)
 
-    const headers = new HttpHeaders()
-    if (this.settingsService.preferences.recogniser === 'leadmine-chemical-entities') {
+    let headers = new HttpHeaders()
+    if (recogniser === 'leadmine-chemical-entities') {
       // Recognition API expects a base64 encoded, json encoded "RecogniserOptions" object.
       // Currently there is only one key "queryParameters", which tells the api how to 
       // construct a url when forwarding a request. This key takes a Map<string,string[]>
       // in order to allow multiple values per key.
-      const leadmineRecogniserOptions = {'queryParameters': {'inchi': ['true']}}
+      const leadmineRecogniserOptions = {"queryParameters":{"inchi":["true"]}}
       const leadmineRecogniserOptionsJSON = JSON.stringify(leadmineRecogniserOptions)
       const base64leadmineRecogniserOptionsJSON = btoa(leadmineRecogniserOptionsJSON)
 
-      headers.set('x-leadmine-chemical-entities', base64leadmineRecogniserOptionsJSON)
+      headers = headers.set('x-leadmine-chemical-entities', base64leadmineRecogniserOptionsJSON)
     }
 
     return [params, headers];
+  }
+
+  private entityFromRecognisedEntity(recognisedEntity: RecognisedEntity): Entity {
+    const entity: Entity = {
+      synonyms: new Map([[recognisedEntity.entity, {xpaths: [recognisedEntity.xpath]}]]),
+    }
+    
+    if (recognisedEntity.metadata) {
+      // API returns metadata as a base64 encoded json blob (because grpc has problems dealing with "any").
+      // Convert it and parse it to get something useful.
+      entity.metadata = JSON.parse(atob(recognisedEntity.metadata!))
+    }
+
+    if (recognisedEntity.identifiers) {
+      entity.identifiers = new Map<string,string>(Object.entries(recognisedEntity.identifiers))
+    }
+
+    return entity
+  }
+
+  private setOrUpdateEntity(recogniserEntities: RecogniserEntities, key: string, recognisedEntity: RecognisedEntity): void {
+    const entity = recogniserEntities.entities.get(key)
+    if (entity) {
+
+      const synonym = entity.synonyms.get(recognisedEntity.entity)
+      if (synonym) {
+        synonym.xpaths.push(recognisedEntity.xpath)
+      } else {
+        entity.synonyms.set(recognisedEntity.entity, {xpaths: [recognisedEntity.xpath]})
+      }
+      
+    } else {
+      recogniserEntities.entities.set(key, this.entityFromRecognisedEntity(recognisedEntity))
+    }
   }
 
   private transformAPIResponse(response: APIResponse): RecogniserEntities {
     let recogniserEntities: RecogniserEntities = {
       show: true,
       entities: new Map<string,Entity>()
-    }
-
-    const setEntities = (key: string, recognisedEntity: RecognisedEntity) => {
-      // API returns metadata as a base64 encoded json blob (because grpc has problems dealing with "any").
-      // Convert it and parse it to get something useful.
-      const metadata = recognisedEntity.metadata ? JSON.parse(atob(recognisedEntity.metadata!)) : null
-
-      recogniserEntities.entities.set(key, {
-        synonyms: new Map([[recognisedEntity.entity, {xpaths: [recognisedEntity.xpath]}]]),
-        identifiers: new Map(Object.entries(recognisedEntity.identifiers)),
-        metadata: metadata
-      })
     }
 
     response.forEach(recognisedEntity => {
@@ -130,34 +152,11 @@ export class NerService {
           const resolvedEntity: string = recognisedEntity.identifiers?.resolvedEntity
 
           if (resolvedEntity) {
-            if (recogniserEntities.entities.has(resolvedEntity)) {
-              const entity = recogniserEntities.entities.get(resolvedEntity)!
-
-              if (entity.synonyms.has(recognisedEntity.entity)) {
-                const synonym = entity.synonyms.get(recognisedEntity.entity)!
-                synonym.xpaths.push(recognisedEntity.xpath)
-              } else {
-                entity.synonyms.set(recognisedEntity.entity, {xpaths: [recognisedEntity.xpath]})
-              }
-
-              
-            } else {
-              setEntities(resolvedEntity, recognisedEntity)
-            }
+            this.setOrUpdateEntity(recogniserEntities, resolvedEntity, recognisedEntity)
           } else {
-            if (recogniserEntities.entities.has(recognisedEntity.entity.toLowerCase())) {
-              const entity = recogniserEntities.entities.get(recognisedEntity.entity.toLowerCase())!
-
-              if (entity.synonyms.has(recognisedEntity.entity)) {
-                const synonym = entity.synonyms.get(recognisedEntity.entity)!
-                synonym.xpaths.push(recognisedEntity.xpath)
-              } else {
-                entity.synonyms.set(recognisedEntity.entity, {xpaths: [recognisedEntity.xpath]})
-              }
-
-            } else {
-              setEntities(recognisedEntity.entity.toLowerCase(), recognisedEntity)
-            }
+            // If there is no resolved entity, just use the entity text (lowercased) to determine synonyms.
+            // (This means the synonyms will be identical except for their casing).
+            this.setOrUpdateEntity(recogniserEntities, recognisedEntity.entity.toLowerCase(), recognisedEntity)
           }
 
           break;

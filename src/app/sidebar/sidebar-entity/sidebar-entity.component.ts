@@ -20,13 +20,15 @@ export class SidebarEntityComponent {
   } 
 
   arrowClicked(direction: 'left' | 'right'): void {
-    direction === 'left' ? this.scrollIndex-- : this.scrollIndex++   
+    this.scrollIndex = direction === 'left' ? this.scrollIndex - 1 : this.scrollIndex + 1   
     
-    this.scrollIndex = 
-    (this.scrollIndex % this.entity.occurrences.length + this.entity.occurrences.length)
-     % this.entity.occurrences.length
+    const i = this.scrollIndex
+    const n = this.entity.occurrences.length
+    
+    // This modulo operation means the scroll index with circle back to zero.
+    this.scrollIndex = (i % n + n) % n
 
-     this.browserService.sendMessageToActiveTab({type: 'content_script_scroll_to_highlight', body: this.entity.occurrences[this.scrollIndex]})
+    this.browserService.sendMessageToActiveTab({type: 'content_script_scroll_to_highlight', body: this.entity.occurrences[this.scrollIndex]})
   }
 
   remove() {
