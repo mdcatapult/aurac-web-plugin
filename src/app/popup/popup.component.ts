@@ -33,6 +33,8 @@ export class PopupComponent {
   }
 
   exportResults(): void {
-    this.browserService.sendMessage('export_csv')
+    this.browserService.sendMessage('csv_exporter_service_export_csv')
+      .catch(Logger.error);
+
   }
 }
