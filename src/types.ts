@@ -144,7 +144,6 @@ export interface Entity {
   metadata?: any;
   htmlTagIDs?: Array<string>;
   xRefs?: Array<XRef>;
-  links?: Array<Link>;
 }
 
 export type TabID = number
