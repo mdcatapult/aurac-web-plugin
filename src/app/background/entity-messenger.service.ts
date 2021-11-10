@@ -54,7 +54,7 @@ export class EntityMessengerService {
 
       getXrefs.then(xRefs => {
         entity.xRefs = xRefs
-        const inspectedHighlightData: ClickedHighlightData = {
+        const clickedHighlightData: ClickedHighlightData = {
           entity,
           entityName,
           entityOccurrence,
@@ -64,7 +64,7 @@ export class EntityMessengerService {
 
         this.browserService.sendMessageToTab(tab.id!, {
           type: 'sidebar_data_service_view_or_create_clicked_entity',
-          body: stringifyWithTypes(inspectedHighlightData)
+          body: stringifyWithTypes(clickedHighlightData)
         })
       })
     })
