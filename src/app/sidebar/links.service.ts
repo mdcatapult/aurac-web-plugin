@@ -1,6 +1,6 @@
-import { Identifier } from './../sidebar/types';
-import { Entity, Link, ExternalLinks} from './../../types';
+import * as links from './links';
 import { Injectable } from '@angular/core';
+import { Entity } from 'src/types';
 
 
 @Injectable({
@@ -10,9 +10,8 @@ export class LinksService {
 
   constructor() { }
 
-  getLinks(entity: Entity, entityName: string): Link[] {
-    let entityLinks: Array<Link>
-    const links = ExternalLinks
+  getLinks(entity: Entity, synonym: string): links.Link[] {
+    let entityLinks: Array<links.Link>
     const entityGroup = entity.metadata['entityGroup']
     const entityType = entity.metadata['RecognisingDict']['entityType']
 
@@ -40,7 +39,7 @@ export class LinksService {
     }
 
     entityLinks.map(link => 
-      link.url = link.createUrl(entityName))
+      link.url = link.createUrl(synonym))
     return entityLinks;
 
   }

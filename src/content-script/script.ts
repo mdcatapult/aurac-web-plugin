@@ -166,7 +166,7 @@ function newHighlightElementCallback(entity: Entity, entityName: string, entityO
     element.id = highlightID(entityName, entityOccurrence, synonymName, synonymOccurrence);
     entity.htmlTagIDs = entity.htmlTagIDs ? entity.htmlTagIDs.concat([element.id]) : [element.id];
     element.addEventListener('click', (_event: Event): void => {
-      Globals.browser.sendMessage({ type: 'entity_messenger_service_highlight_clicked', body: element.id }).catch(console.log);
+      Globals.browser.sendMessage({ type: 'entity_messenger_service_highlight_clicked', body: element.id }).catch(console.error);
     });
   }
 }

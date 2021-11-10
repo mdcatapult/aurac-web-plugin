@@ -33,8 +33,9 @@ export type MessageType =
   | 'content_script_highlight_entities'
   | 'settings_service_get_current_recogniser'
   | 'entity_messenger_service_highlight_clicked'
-  | 'sidebar_data_service_inspect_highlight'
-  | 'content_script_scroll_to_highlight';
+  | 'sidebar_data_service_view_or_create_clicked_entity'
+  | 'content_script_scroll_to_highlight'
+  | 'csv_exporter_service_export_csv';
 
 export interface Message {
   type: MessageType;
@@ -131,7 +132,7 @@ export interface Occurrences {
 export type XPath = string
 export type SynonymText = string
 
-interface SynonymData {
+export interface SynonymData {
   xpaths: Array<XPath>;
 }
 
@@ -146,10 +147,13 @@ export interface Entity {
   links?: Array<Link>;
 }
 
-// RecogniserEntities is a wrapper for all the entities found when running NER.
+export type TabID = number
+export type EntityID = string
+
+// Contains all the entities for a particular recogniser in the tab.
 export interface RecogniserEntities {
     show: boolean;
-    entities: Map<string, Entity>;
+    entities: Map<EntityID, Entity>;
 }
 
 // Holds all entities on a page in valid dictionaries.
@@ -157,33 +161,11 @@ export type TabEntities = {
     [key in Recogniser]?: RecogniserEntities;
 }
 
-export interface TabID {
-  tab: number
-}
-
-export interface RecogniserID extends TabID {
-    recogniser: Recogniser;
-}
-
-export interface EntityID extends RecogniserID {
-    identifier: string;
-}
-
-export interface SynonymID extends EntityID {
-    synonym: string;
-}
-
-export interface OccurrenceID extends EntityID {
-    occurrence: string;
-}
-
-export type ChangeIdentifier = TabID | RecogniserID | EntityID | SynonymID | OccurrenceID
-
 // EntityChange describes where a change to the cache has been made and the
 // result of the change.
 export interface EntityChange {
-    identifier: ChangeIdentifier;
-    result: TabEntities | RecogniserEntities | Entity | Map<string,Entity>;
+    tabID: TabID;
+    entities: TabEntities;
     setterInfo?: SetterInfo
 }
 
@@ -192,103 +174,19 @@ export type SetterInfo = 'noPropagate'
 
 export const HIGHLIGHTED_ELEMENT_ID_DELIMITER = '@@'
 
-export function highlightID(entityName: string, entityOccurrences: number, synonymName: string, xpathIndex: number): string {
-  return [entityName, entityOccurrences, synonymName, xpathIndex].join(HIGHLIGHTED_ELEMENT_ID_DELIMITER)
+export function highlightID(entityID: string, entityOccurrence: number, synonymName: string, synonymOccurrence: number): string {
+  return [entityID, entityOccurrence, synonymName, synonymOccurrence].join(HIGHLIGHTED_ELEMENT_ID_DELIMITER)
 }
 
-export function parseHighlightID(id: string): [entityName: string, entityOccurrences: number, synonymName: string, xpathIndex: number] {
-  const [entityName, entityOccurrences, synonymName, xpathIndex] = id.split(HIGHLIGHTED_ELEMENT_ID_DELIMITER)
-  return [entityName, parseInt(entityOccurrences), synonymName, parseInt(xpathIndex)]
+export function parseHighlightID(id: string): [entityID: string, entityOccurrence: number, synonymName: string, synonymOccurrence: number] {
+  const [entityID, entityOccurrence, synonymName, synonymOccurrence] = id.split(HIGHLIGHTED_ELEMENT_ID_DELIMITER)
+  return [entityID, parseInt(entityOccurrence), synonymName, parseInt(synonymOccurrence)]
 }
 
-export type InspectedHighlightData = {
-  entityName: string; // key for entity map
+export type ClickedHighlightData = {
+  clickedEntityID: string; // key for entity map
   entity: Entity;
-  entityOccurrence: number;
+  clickedEntityOccurrence: number;
   clickedSynonymName: string;
-  synonymOccurrence: number; 
-}
-// Links
-export type Link = {
-  resourceName: string,
-  url?: string
-  createUrl: (id: string) => string
-}
-
-export module ExternalLinks {
-  // genes and proteins
-  export const geneNames: Link = {
-    resourceName: 'HGNC',
-    createUrl: (identifier: string) =>
-      `https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/${identifier}`
-  }
-
-  export const ncbi: Link = {
-    resourceName: 'NCBI',
-    createUrl: (identifier: string) =>
-      `https://www.ncbi.nlm.nih.gov/search/all/?term=${identifier}`
-  }
-
-  export const antibodies: Link = {
-    resourceName: 'Antibodies',
-    createUrl: (identifier: string) => `https://www.antibodies.com/products/search=${identifier}`
-  }
-
-  export const addGene: Link = {
-    resourceName: 'Addgene',
-    createUrl: (identifier: string) => `https://www.addgene.org/search/catalog/plasmids/?q=${identifier}`,
-  }
-
-  export const genecards: Link = {
-    resourceName: 'Genecards',
-    createUrl: (identifier: string) => `https://www.genecards.org/cgi-bin/carddisp.pl?gene=${identifier}`,
-  }
-
-  export const ensembl: Link = {
-    resourceName: 'Ensembl',
-    createUrl: (identifier: string) => `https://www.ensembl.org/Homo_sapiens/Gene/Summary?g=${identifier}`,
-  }
-
-
-
-  // chemistry
-
-  export const pubchem: Link = {
-    resourceName: 'Pubchem',
-    createUrl: (identifier: string) => `https://pubchem.ncbi.nlm.nih.gov/#query=${identifier}`,
-  }
-
-  // general
-
-  export const pubmed: Link = {
-    resourceName: 'Articles',
-    createUrl: (identifier: string) => `https://pubmed.ncbi.nlm.nih.gov/?term=${identifier}&sort=date`,
-  }
-
-  export const dimensions: Link = {
-    resourceName: 'Top Cited Articles',
-    createUrl: (identifier: string) => `https://app.dimensions.ai/discover/publication?search_mode=content&search_text=${identifier}&search_type=kws&search_field=text_search&order=times_cited`,
-  }
-
-  export const patents: Link = {
-    resourceName: 'Patents',
-    createUrl: (identifier: string) => `https://patents.google.com/?q=${identifier}`
-  }
-
-  export const geneProteinChemicalClinicalTrial: Link = {
-    resourceName: 'Clinical Trial',
-    createUrl: (identifier: string) => `https://clinicaltrials.gov/ct2/results?cond=&term=${identifier}&cntry=&state=&city=&dist=`
-  }
-
-  // disease
-
-  export const drugBank: Link = {
-    resourceName: 'Drug Bank',
-    createUrl: (identifier: string) => `https://go.drugbank.com/unearth/q?utf8=%E2%9C%93&searcher=drugs&query=${identifier}`
-  }
-
-  export const diseaseClinicalTrial: Link = {
-    resourceName: 'Clinical Trial',
-    createUrl: (identifier: string) => `https://clinicaltrials.gov/ct2/results?cond=${identifier}&term=&cntry=&state=&city=&dist=`
-  }
+  clickedSynonymOccurrence: number;
 }

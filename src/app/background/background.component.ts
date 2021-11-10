@@ -11,6 +11,7 @@ import {saveAs} from 'file-saver';
 import { EntityMessengerService } from './entity-messenger.service';
 import { SettingsService } from './settings.service';
 import { NerService } from './ner.service';
+import {CsvExporterService} from './csv-exporter.service';
 
 @Component({
   selector: 'app-background',
@@ -23,11 +24,12 @@ export class BackgroundComponent {
   // entityCache: EntityCache = new Map()
 
   constructor (
-    private client: HttpClient, 
+    private client: HttpClient,
     private browserService: BrowserService,
     private entityMessengerService: EntityMessengerService,
     private settingsService: SettingsService,
-    private nerService: NerService
+    private nerService: NerService,
+    private csvExporterService: CsvExporterService
   ) {
     // this.browserService.addListener(this.getBrowserListenerFn());
   }
@@ -131,53 +133,6 @@ export class BackgroundComponent {
   //     })
   //     .catch(e => console.error(`Error: ' : ${JSON.stringify(e)}`));
   // }
-
-  // private exportResultsToCSV(currentResults: Array<LeadminerEntity>, currentURL: string): void {
-  //   if (currentResults.length === 0) {
-  //     return;
-  //   }
-  //   const headings = ['beg',
-  //     'begInNormalizedDoc',
-  //     'end',
-  //     'endInNormalizedDoc',
-  //     'entityText',
-  //     'possiblyCorrectedText',
-  //     'resolvedEntity',
-  //     'sectionType',
-  //     'entityGroup',
-  //     'enforceBracketing',
-  //     'entityType',
-  //     'htmlColor',
-  //     'maxCorrectionDistance',
-  //     'minimumCorrectedEntityLength',
-  //     'minimumEntityLength',
-  //     'source']
-  //   let text = headings.join(',') + '\n'
-  //   currentResults.forEach(entity => {
-  //     text = text + entity.beg + ','
-  //       + entity.begInNormalizedDoc + ','
-  //       + entity.end + ','
-  //       + entity.endInNormalizedDoc + ','
-  //       + `"${entity.entityText}"` + ','
-  //       + entity.possiblyCorrectedText + ','
-  //       + entity.resolvedEntity + ','
-  //       + entity.sectionType + ','
-  //       + entity.entityGroup + ','
-  //       + entity.recognisingDict.enforceBracketing + ','
-  //       + entity.recognisingDict.entityType + ','
-  //       + entity.recognisingDict.htmlColor + ','
-  //       + entity.recognisingDict.maxCorrectionDistance + ','
-  //       + entity.recognisingDict.minimumCorrectedEntityLength + ','
-  //       + entity.recognisingDict.minimumEntityLength + ','
-  //       + entity.recognisingDict.source + '\n'
-  //   })
-  //   this.exportToCSV(text, currentURL)
-  // }
-
-  private exportToCSV(text: string, currentURL: string): void {
-    const blob = new Blob([text], {type: 'text/csv;charset=utf-8'})
-    saveAs(blob, 'aurac_all_results_' + currentURL + '.csv')
-  }
 
   private smilesToInChIToUnichemPlus([entityText, smilesText]: [string, string]): Observable<XRef[]> {
     const encodedEntity = encodeURIComponent(smilesText);
