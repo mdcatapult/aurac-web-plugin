@@ -1,6 +1,6 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {FormGroup} from '@angular/forms';
-import { allRecognisers } from '../../../../types';
+import { Component, Input, OnInit } from '@angular/core'
+import { FormGroup } from '@angular/forms'
+import { allRecognisers } from '../../../../types/recognisers'
 
 @Component({
   selector: 'app-preferences',
@@ -8,17 +8,15 @@ import { allRecognisers } from '../../../../types';
   styleUrls: ['./preferences.component.scss']
 })
 export class PreferencesComponent implements OnInit {
-
   minEntityLength = [...Array(50).keys()].slice(2)
-  isLoaded = false;
+  isLoaded = false
   recognisers = allRecognisers()
 
-  @Input() preferencesForm?: FormGroup;
+  @Input() preferencesForm?: FormGroup
 
   constructor() {}
 
   ngOnInit(): void {
-    this.isLoaded = true;
+    this.isLoaded = true
   }
 }
-

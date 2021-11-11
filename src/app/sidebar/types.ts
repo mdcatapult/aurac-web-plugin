@@ -1,14 +1,13 @@
-import { XRef, EntityID } from "src/types";
-import {Link} from './links';
+import { Entity, EntityID } from 'src/types/entity'
+import { Recogniser } from 'src/types/recognisers'
 
-export interface SidebarEntity {
-  title: string
-  entityID: EntityID,
-  identifiers: Array<Identifier>,
-  synonyms: Array<string>,
-  occurrences: Array<string> // HTML element IDs 
-  xrefs?: Array<XRef>
-  links?: Array<Link>
+export interface SidebarCard {
+  clickedSynonymName: string
+  clickedSynonymOccurrence: number
+  clickedEntityOccurrence: number
+  entityID: EntityID
+  entity: Entity
+  recogniser: Recogniser
 }
 
 export interface Identifier {

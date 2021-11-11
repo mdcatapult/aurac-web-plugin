@@ -8,7 +8,7 @@ export const environment = {
   compoundConverterURL: 'http://localhost:8082/convert',
   unichemURL: 'http://localhost:8080',
   pdfConverterURL: 'http://localhost:8083/html'
-};
+}
 
 /*
  * For easier debugging in development mode, you can import the following file

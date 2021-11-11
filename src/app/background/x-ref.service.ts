@@ -1,14 +1,18 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { ConverterResult, Entity, XRef } from 'src/types';
-import {SettingsService} from './settings.service'
+import { HttpClient } from '@angular/common/http'
+import { Injectable } from '@angular/core'
+import { Entity, XRef } from 'src/types/entity'
+import { SettingsService } from './settings.service'
+
+export type ConverterResult = {
+  input: string
+  output: string
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class XRefService {
-
-  constructor(private client: HttpClient, private settingsService: SettingsService) { }
+  constructor(private client: HttpClient, private settingsService: SettingsService) {}
 
   get(entity: Entity): Promise<XRef[]> {
     const entityGroup = entity.metadata['entityGroup']
@@ -18,7 +22,7 @@ export class XRefService {
     }
 
     const entityType = entity.metadata['RecognisingDict']['entityType']
-    const identifier = entity.identifiers?.get('resolvedEntity')
+    const identifier = entity.identifierSourceToID?.get('resolvedEntity')
 
     if (!identifier) {
       return Promise.resolve([])
@@ -26,16 +30,20 @@ export class XRefService {
 
     let inchikeyPromise: Promise<string> = new Promise(() => identifier)
 
-    switch(entityType) {
-      case 'SMILES': 
-      inchikeyPromise = this.SMILEStoInchi(identifier).then(converterResult => converterResult.output)
-      break
+    switch (entityType) {
+      case 'SMILES':
+        inchikeyPromise = this.SMILEStoInchi(identifier).then(
+          converterResult => converterResult.output
+        )
+        break
       case 'DictMol':
       case 'Mol':
-        const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]$/;
+        const inchiKeyRegex = /^[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]$/
         if (!identifier.match(inchiKeyRegex)) {
-          inchikeyPromise = this.SMILEStoInchi(identifier).then(converterResult => converterResult.output)
-        } 
+          inchikeyPromise = this.SMILEStoInchi(identifier).then(
+            converterResult => converterResult.output
+          )
+        }
         break
     }
 
@@ -43,17 +51,14 @@ export class XRefService {
       const encodedInchiKey = encodeURIComponent(inchikey)
       const xRefURL = `${this.settingsService.APIURLs.unichemURL}/x-ref/${encodedInchiKey}`
 
-      return this.client.post<XRef[]>(
-        xRefURL,
-        this.settingsService.getEnabledXrefs()
-      ).toPromise()
+      return this.client.post<XRef[]>(xRefURL, this.settingsService.getEnabledXrefs()).toPromise()
     })
   }
 
   private SMILEStoInchi(entity: string): Promise<ConverterResult> {
     const encodedEntity = encodeURIComponent(entity)
     const converterURL = `${this.settingsService.APIURLs.compoundConverterURL}/${encodedEntity}?from=SMILES&to=inchikey`
+
     return this.client.get<ConverterResult>(converterURL).toPromise()
   }
-
 }

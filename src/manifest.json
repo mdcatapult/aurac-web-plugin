@@ -12,13 +12,8 @@
   },
   "content_scripts": [
     {
-      "matches": [
-        "<all_urls>"
-      ],
-      "js": [
-        "browser-polyfill.min.js",
-        "content.js"
-      ],
+      "matches": ["<all_urls>"],
+      "js": ["browser-polyfill.min.js", "content.js"],
       "css": [
         "assets/styles.css",
         "assets/tippy.css",
@@ -27,10 +22,7 @@
       ]
     }
   ],
-  "permissions": [
-    "tabs",
-    "storage"
-  ],
+  "permissions": ["tabs", "storage"],
   "icons": {
     "48": "assets/head-brains.icon.48.png",
     "128": "assets/head-brains.icon.128.png"

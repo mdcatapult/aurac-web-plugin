@@ -1,13 +1,14 @@
 function replacer(key: any, value: any): any {
-  if(value instanceof Map) {
+  if (value instanceof Map) {
     return {
       dataType: 'Map',
       value: Array.from(value.entries()).map(([k, v]) => {
         if (v instanceof Map || v instanceof Set) {
           return replacer(k, v)
         }
-        return [k,v]
-      }), // or with spread: value: [...value]
+
+        return [k, v]
+      }) // or with spread: value: [...value]
     }
   } else if (value instanceof Set) {
     return {
@@ -16,16 +17,17 @@ function replacer(key: any, value: any): any {
         if (v instanceof Map || v instanceof Set) {
           return replacer(v, v)
         }
+
         return v
       })
     }
   } else {
-    return value;
+    return value
   }
 }
 
 function reviver(key: any, value: any) {
-  if(typeof value === 'object' && value !== null) {
+  if (typeof value === 'object' && value !== null) {
     if (value.dataType === 'Map') {
       return new Map(value.value)
     }
@@ -34,7 +36,8 @@ function reviver(key: any, value: any) {
       return new Set(value.value)
     }
   }
-  return value;
+
+  return value
 }
 
 export function stringifyWithTypes(thing: any): string {

@@ -1,49 +1,47 @@
-import {ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
-import {BackgroundComponent} from './background.component';
-import {TestBrowserService} from '../test-browser.service';
-import {HttpClient, HttpHandler} from '@angular/common/http';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
+import { BackgroundComponent } from './background.component'
+import { TestBrowserService } from '../test-browser.service'
+import { HttpClient, HttpHandler } from '@angular/common/http'
 // import {LeadminerEntity} from '../../types';
-import {BrowserService} from '../browser.service';
-import { SettingsService } from './settings.service';
+import { BrowserService } from '../browser.service'
+import { SettingsService } from './settings.service'
 
 describe('BackgroundComponent', () => {
-  let testBrowserService: TestBrowserService;
-  let httpClient: HttpClient;
+  let testBrowserService: TestBrowserService
+  let httpClient: HttpClient
   let fixture: ComponentFixture<BackgroundComponent>
-  let backgroundComponent: BackgroundComponent;
+  let backgroundComponent: BackgroundComponent
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [
-        BackgroundComponent,
-      ],
-      providers: [
-        HttpClient,
-        HttpHandler,
-        {provide: BrowserService, useClass: TestBrowserService}
-      ]
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [BackgroundComponent],
+        providers: [
+          HttpClient,
+          HttpHandler,
+          { provide: BrowserService, useClass: TestBrowserService }
+        ]
+      }).compileComponents()
     })
-      .compileComponents();
-  }));
+  )
 
   beforeEach(() => {
-
     httpClient = TestBed.inject(HttpClient)
     testBrowserService = TestBed.inject(TestBrowserService)
 
-    fixture = TestBed.createComponent(BackgroundComponent);
-    backgroundComponent = fixture.componentInstance;
-  });
+    fixture = TestBed.createComponent(BackgroundComponent)
+    backgroundComponent = fixture.componentInstance
+  })
 
   it('should create', () => {
-    expect(backgroundComponent).toBeTruthy();
-  });
+    expect(backgroundComponent).toBeTruthy()
+  })
 
   it('should create unique entities', () => {
     // const leadmineEntities = getLeadminerEntities(['protein', 'protein', 'sometext'])
     // const result = backgroundComponent.getUniqueEntities(leadmineEntities);
     // expect(result.length).toBe(2);
-  });
+  })
 
   // it('unique entities should filter entities whose length is less than minEntityLength', () => {
   //   const leadmineEntities = getLeadminerEntities(['foo', 'bar', 'some'])
@@ -84,5 +82,3 @@ describe('BackgroundComponent', () => {
   //   })
   // }
 })
-
-

@@ -3,21 +3,9 @@
   "compilerOptions": {
     "module": "esnext",
     "outDir": "./out-tsc/spec",
-    "types": [
-      "node",
-      "jasmine",
-    ]
+    "types": ["node", "jasmine"]
   },
-  "files": [
-    "src/test.ts",
-    "src/polyfills.ts"
-  ],
-  "include": [
-    "src/**/*.spec.ts",
-    "src/**/*.d.ts",
-    "src/content-script/script.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ],
+  "files": ["src/test.ts", "src/polyfills.ts"],
+  "include": ["src/**/*.spec.ts", "src/**/*.d.ts", "src/content-script/script.ts"],
+  "exclude": ["node_modules"]
 }

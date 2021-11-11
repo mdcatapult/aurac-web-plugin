@@ -1,10 +1,5 @@
-import {HttpClient} from '@angular/common/http';
-import {Component, Input, OnChanges, OnInit} from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
-import {Settings} from 'src/types'
-import { BrowserService } from '../../../browser.service';
-import {Logger} from '../../../logger';
-
+import { Component, Input, OnChanges } from '@angular/core'
+import { FormControl, FormGroup } from '@angular/forms'
 
 @Component({
   selector: 'app-x-ref-sources',
@@ -12,17 +7,16 @@ import {Logger} from '../../../logger';
   styleUrls: ['./x-ref-sources.component.scss']
 })
 export class XRefSourcesComponent implements OnChanges {
-
   @Input() sourcesForm: FormGroup = new FormGroup({})
-  @Input() xRefSources: {[key: string]: boolean} = {}
+  @Input() xRefSources: { [key: string]: boolean } = {}
 
-  constructor() { }
+  constructor() {}
 
   ngOnChanges() {
-    if (!this.xRefSources) return;
+    if (!this.xRefSources) return
     this.sourcesForm.controls = {}
-    Object.entries(this.xRefSources).map(([key,value]) => {
-      this.sourcesForm.addControl(key, new FormControl(value));
+    Object.entries(this.xRefSources).map(([key, value]) => {
+      this.sourcesForm.addControl(key, new FormControl(value))
     })
   }
 

@@ -1,14 +1,15 @@
 <div class="form-container">
   <form [formGroup]="urlsForm">
-
     <mat-form-field appearance="outline">
       <mat-label>NER URL</mat-label>
       <input
         type="text"
-        name="{{urlKeys.nerURL}}"
-        formControlName="{{urlKeys.nerURL}}"
-        id="{{urlKeys.nerURL}}"
-        matInput placeholder="Enter NER URL here">
+        name="{{ urlKeys.nerURL }}"
+        formControlName="{{ urlKeys.nerURL }}"
+        id="{{ urlKeys.nerURL }}"
+        matInput
+        placeholder="Enter NER URL here"
+      />
       <mat-error *ngIf="urlsForm!.get(urlKeys.nerURL)!.invalid">Please enter a valid URL</mat-error>
     </mat-form-field>
 
@@ -16,34 +17,45 @@
       <mat-label>Compound Converter URL</mat-label>
       <input
         type="text"
-        name="{{urlKeys.compoundConverterURL}}"
-        formControlName="{{urlKeys.compoundConverterURL}}"
-        id="{{urlKeys.compoundConverterURL}}"
-        matInput placeholder="Enter Compound Converter URL here">
-      <mat-error *ngIf="urlsForm!.get(urlKeys.compoundConverterURL)!.invalid">Please enter a valid URL</mat-error>
+        name="{{ urlKeys.compoundConverterURL }}"
+        formControlName="{{ urlKeys.compoundConverterURL }}"
+        id="{{ urlKeys.compoundConverterURL }}"
+        matInput
+        placeholder="Enter Compound Converter URL here"
+      />
+      <mat-error *ngIf="urlsForm!.get(urlKeys.compoundConverterURL)!.invalid"
+        >Please enter a valid URL</mat-error
+      >
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Unichem URL</mat-label>
       <input
         type="text"
-        name="{{urlKeys.unichemURL}}"
-        formControlName="{{urlKeys.unichemURL}}"
-        id="{{urlKeys.unichemURL}}"
-        matInput placeholder="Enter Unichem URL here">
-      <mat-error *ngIf="urlsForm!.get(urlKeys.unichemURL)!.invalid">Please enter a valid URL</mat-error>
+        name="{{ urlKeys.unichemURL }}"
+        formControlName="{{ urlKeys.unichemURL }}"
+        id="{{ urlKeys.unichemURL }}"
+        matInput
+        placeholder="Enter Unichem URL here"
+      />
+      <mat-error *ngIf="urlsForm!.get(urlKeys.unichemURL)!.invalid"
+        >Please enter a valid URL</mat-error
+      >
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>PDF converter URL</mat-label>
       <input
         type="text"
-        name="{{urlKeys.pdfConverterURL}}"
-        formControlName="{{urlKeys.pdfConverterURL}}"
-        id="{{urlKeys.pdfConverterURL}}"
-        matInput placeholder="Enter Unichem URL here">
-      <mat-error *ngIf="urlsForm!.get(urlKeys.pdfConverterURL)!.invalid">Please enter a valid URL</mat-error>
+        name="{{ urlKeys.pdfConverterURL }}"
+        formControlName="{{ urlKeys.pdfConverterURL }}"
+        id="{{ urlKeys.pdfConverterURL }}"
+        matInput
+        placeholder="Enter Unichem URL here"
+      />
+      <mat-error *ngIf="urlsForm!.get(urlKeys.pdfConverterURL)!.invalid"
+        >Please enter a valid URL</mat-error
+      >
     </mat-form-field>
-
   </form>
 </div>
