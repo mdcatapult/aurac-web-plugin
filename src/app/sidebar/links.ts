@@ -1,85 +1,80 @@
 export type Link = {
-  name: string,
-  createUrl: (id: string) => string
+    resourceName: string,
+    url?: string
+    createUrl: (id: string) => string
 }
 
-export module ExternalLinks {
-  // genes and proteins
-
-  export const geneNames: Link = {
-    name: 'HGNC',
+export const geneNames: Link = {
+    resourceName: 'HGNC',
     createUrl: (identifier: string) =>
-      `https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/${identifier}`
-  }
+        `https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/${identifier}`
+}
 
-  export const ncbi: Link = {
-    name: 'NCBI',
+export const ncbi: Link = {
+    resourceName: 'NCBI',
     createUrl: (identifier: string) =>
-      `https://www.ncbi.nlm.nih.gov/search/all/?term=${identifier}`
-  }
+        `https://www.ncbi.nlm.nih.gov/search/all/?term=${identifier}`
+}
 
-  export const antibodies: Link = {
-    name: 'Antibodies',
+export const antibodies: Link = {
+    resourceName: 'Antibodies',
     createUrl: (identifier: string) => `https://www.antibodies.com/products/search=${identifier}`
-  }
+}
 
-  export const addGene: Link = {
-    name: 'Addgene',
+export const addGene: Link = {
+    resourceName: 'Addgene',
     createUrl: (identifier: string) => `https://www.addgene.org/search/catalog/plasmids/?q=${identifier}`,
-  }
+}
 
-  export const genecards: Link = {
-    name: 'Genecards',
+export const genecards: Link = {
+    resourceName: 'Genecards',
     createUrl: (identifier: string) => `https://www.genecards.org/cgi-bin/carddisp.pl?gene=${identifier}`,
-  }
+}
 
-  export const ensembl: Link = {
-    name: 'Ensembl',
+export const ensembl: Link = {
+    resourceName: 'Ensembl',
     createUrl: (identifier: string) => `https://www.ensembl.org/Homo_sapiens/Gene/Summary?g=${identifier}`,
-  }
+}
 
 
 
-  // chemistry
+// chemistry
 
-  export const pubchem: Link = {
-    name: 'Pubchem',
+export const pubchem: Link = {
+    resourceName: 'Pubchem',
     createUrl: (identifier: string) => `https://pubchem.ncbi.nlm.nih.gov/#query=${identifier}`,
-  }
+}
 
-  // general
+// general
 
-  export const pubmed: Link = {
-    name: 'Articles',
+export const pubmed: Link = {
+    resourceName: 'Articles',
     createUrl: (identifier: string) => `https://pubmed.ncbi.nlm.nih.gov/?term=${identifier}&sort=date`,
-  }
+}
 
-  export const dimensions: Link = {
-    name: 'Top Cited Articles',
+export const dimensions: Link = {
+    resourceName: 'Top Cited Articles',
     createUrl: (identifier: string) => `https://app.dimensions.ai/discover/publication?search_mode=content&search_text=${identifier}&search_type=kws&search_field=text_search&order=times_cited`,
-  }
+}
 
-  export const patents: Link = {
-    name: 'Patents',
+export const patents: Link = {
+    resourceName: 'Patents',
     createUrl: (identifier: string) => `https://patents.google.com/?q=${identifier}`
-  }
+}
 
-  export const geneProteinChemicalClinicalTrial: Link = {
-    name: 'Clinical Trial',
+export const geneProteinChemicalClinicalTrial: Link = {
+    resourceName: 'Clinical Trial',
     createUrl: (identifier: string) => `https://clinicaltrials.gov/ct2/results?cond=&term=${identifier}&cntry=&state=&city=&dist=`
-  }
+}
 
-  // disease
+// disease
 
-  export const drugBank: Link = {
-    name: 'Drug Bank',
+export const drugBank: Link = {
+    resourceName: 'Drug Bank',
     createUrl: (identifier: string) => `https://go.drugbank.com/unearth/q?utf8=%E2%9C%93&searcher=drugs&query=${identifier}`
-  }
+}
 
-  export const diseaseClinicalTrial: Link = {
-    name: 'Clinical Trial',
+export const diseaseClinicalTrial: Link = {
+    resourceName: 'Clinical Trial',
     createUrl: (identifier: string) => `https://clinicaltrials.gov/ct2/results?cond=${identifier}&term=&cntry=&state=&city=&dist=`
-  }
-
-
 }

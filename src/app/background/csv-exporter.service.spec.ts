@@ -1,23 +1,22 @@
 import { TestBed, waitForAsync} from '@angular/core/testing';
 
-import {CSVEntity, CsvExporterService} from './csv-exporter.service';
-import {HttpClient, HttpHandler} from '@angular/common/http';
+import {CsvExporterService} from './csv-exporter.service';
 import {BrowserService} from '../browser.service';
 import {TestBrowserService} from '../test-browser.service';
 import {EntitiesService} from './entities.service';
 import {SettingsService} from './settings.service';
-import {Entity, SynonymText, TabEntities, XPath} from '../../types';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { Entity } from 'src/types/entity';
 
-fdescribe('CsvExporterService', () => {
+describe('CsvExporterService', () => {
   let service: CsvExporterService;
 
   const headerText = `Synonym,Resolved Entity,Entity Group,Enforce Bracketing,Entity Type,HTML Color,Maximum Correction Distance,Minimum Corrected Entity Length,Minimum Entity Length,Source`;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
       providers: [
-        HttpClient,
-        HttpHandler,
         {provide: BrowserService, useClass: TestBrowserService},
         CsvExporterService,
         EntitiesService,
@@ -33,7 +32,7 @@ fdescribe('CsvExporterService', () => {
   });
 
   it('should return a string containing column headers and relevant entity data', () => {
-    const entity: CSVEntity = {
+    const entity: Entity = {
       metadata: {
         entityGroup: 'Gene or Protein',
         RecognisingDict: {
@@ -46,10 +45,10 @@ fdescribe('CsvExporterService', () => {
           source: '/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx'
         }
       },
-      synonyms: ['K12'],
-      identifiers: new Map([['resolvedEntity', 'HGNC:6414']]),
+      synonymToXPaths: new Map([['K12', [""]]]),
+      identifierSourceToID: new Map([['resolvedEntity', 'HGNC:6414']]),
     };
-    const entities: Array<CSVEntity> = [entity];
+    const entities: Array<Entity> = [entity];
     const actual = service.leadmineToCSV(entities);
 
     const entityInfo = `"K12",HGNC:6414,Gene or Protein,false,GeneOrProteinMDC,pink,0,9,0,/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx`;

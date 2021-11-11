@@ -6,7 +6,6 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {AppComponent} from './app.component';
 import {BackgroundComponent} from './background/background.component';
-import {LoggerComponent} from './background/logger/logger.component';
 import {PopupComponent} from './popup/popup.component';
 import {RouterComponent} from './router/router.component';
 import {Routes, RouterModule} from '@angular/router';
@@ -25,8 +24,8 @@ import {MatCardModule} from '@angular/material/card';
 import { CommonModule } from '@angular/common';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { SidebarHeaderComponent } from './sidebar/sidebar-header/sidebar-header.component';
-import { SidebarEntityListComponent } from './sidebar/sidebar-entity-list/sidebar-entity-list.component';
-import { SidebarEntityComponent } from './sidebar/sidebar-entity/sidebar-entity.component';
+import { SidebarCardListComponent } from './sidebar/sidebar-card-list/sidebar-card-list.component';
+import { SidebarCardComponent } from './sidebar/sidebar-card/sidebar-card.component';
 import { SafeResourcePipe } from './safe-resource.pipe';
 import { MatTableModule } from '@angular/material/table';
 import { RecogniserNamePipe } from './popup/settings/recogniser-name.pipe';
@@ -39,7 +38,6 @@ const routes: Routes = [
   declarations: [
     AppComponent,
     BackgroundComponent,
-    LoggerComponent,
     PopupComponent,
     RouterComponent,
     UrlsComponent,
@@ -49,8 +47,8 @@ const routes: Routes = [
     PDFSelectorComponent,
     SidebarComponent,
     SidebarHeaderComponent,
-    SidebarEntityListComponent,
-    SidebarEntityComponent,
+    SidebarCardListComponent,
+    SidebarCardComponent,
     SafeResourcePipe,
     RecogniserNamePipe,
   ],

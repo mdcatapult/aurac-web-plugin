@@ -2,7 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { XRefSources, Preferences, defaultSettings, APIURLs, Settings, Message } from '../../types'
+import { Message } from 'src/types/messages';
+import { XRefSources, Preferences, defaultSettings, APIURLs, Settings } from 'src/types/settings';
 import { BrowserService } from '../browser.service';
 
 @Injectable({

@@ -1,16 +1,17 @@
-import { Entity, highlightID, Message, Recogniser, TabEntities } from '../types';
-import { UserExperience } from './userExperience';
 import { Globals } from './globals';
 import { BrowserImplementation } from './browser-implementation';
 import { parseWithTypes, stringifyWithTypes } from '../json';
+import { Entity, TabEntities } from '../types/entity';
+import { Message } from '../types/messages';
+import { Recogniser } from '../types/recognisers';
 import * as Mark from 'mark.js';
+import { highlightID } from '../types/highlights';
 
 Globals.document = document
 Globals.browser = new BrowserImplementation()
 
-let SIDEBAR_IS_READY = false;
-
 // document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
+let SIDEBAR_IS_READY = false
 
 const sidebar = Globals.document.createElement('div')
 sidebar.id = "aurac-sidebar"
@@ -28,7 +29,7 @@ buttonRoot.style.left = '100%'
 buttonRoot.style.height = '100%'
 sidebar.appendChild(buttonRoot)
 
-const shadowButtonRoot = buttonRoot.attachShadow({mode: 'closed'})
+const shadowButtonRoot = buttonRoot.attachShadow({ mode: 'closed' })
 
 const sidebarButtonStyle = Globals.document.createElement('style')
 sidebarButtonStyle.innerHTML = `button {
@@ -55,7 +56,17 @@ sidebarButtonLogo.src = browser.runtime.getURL('assets/head-brains.icon.128.png'
 sidebarButtonLogo.style.width = "80%"
 sidebarButton.appendChild(sidebarButtonLogo)
 
-UserExperience.create()
+const loadingIcon = Globals.document.createElement('div');
+loadingIcon.id = 'aurac-loading-icon'
+Globals.document.body.appendChild(loadingIcon);
+
+sidebarButton.addEventListener('click', toggleSidebar)
+
+
+function showLoadingIcon(on: boolean): void {
+  let loadingIcon = Globals.document.getElementById('aurac-loading-icon');
+  loadingIcon!.style.display = on ? 'block' : 'none'
+}
 
 async function injectSidebar() {
   Globals.document.body.appendChild(sidebar);
@@ -63,7 +74,7 @@ async function injectSidebar() {
 }
 
 async function toggleSidebar() {
-  if (!!document.getElementsByClassName('aurac-sidebar--expanded').length) {
+  if (!!Globals.document.getElementsByClassName('aurac-sidebar--expanded').length) {
     closeSidebar();
   } else {
     await openSidebar();
@@ -71,27 +82,27 @@ async function toggleSidebar() {
 }
 
 async function openSidebar() {
-  if (!document.getElementById("aurac-sidebar")) {
+  if (!Globals.document.getElementById("aurac-sidebar")) {
     await injectSidebar()
   }
 
-  Array.from(document.getElementsByClassName('aurac-transform')).forEach(e => {
+  Array.from(Globals.document.getElementsByClassName('aurac-transform')).forEach(e => {
     e.className = e.className.replace('collapsed', 'expanded');
   });
 }
 
-const closeSidebar: () => void = () => {
-  Array.from(document.getElementsByClassName('aurac-transform')).forEach(e => {
+function closeSidebar(): void {
+  Array.from(Globals.document.getElementsByClassName('aurac-transform')).forEach(e => {
     e.className = e.className.replace('expanded', 'collapsed');
   });
 }
 
-const getPageContents: () => string = () => {
-  return document.documentElement.outerHTML
+function getPageContents(): string {
+  return Globals.document.documentElement.outerHTML
 }
 
-async function sidebarIsReady(): Promise<boolean> {
-  return SIDEBAR_IS_READY;
+function sidebarIsReady(): Promise<boolean> {
+  return Promise.resolve(SIDEBAR_IS_READY);
 }
 
 async function awaitSidebarReadiness(): Promise<void> {
@@ -101,39 +112,37 @@ async function awaitSidebarReadiness(): Promise<void> {
   return;
 }
 
-sidebarButton.addEventListener('click', toggleSidebar)
-
 function highlightEntites(tabEntities: TabEntities): Promise<string> {
   return new Promise((resolve, reject) => {
-    Globals.browser.sendMessage({type: 'settings_service_get_current_recogniser'})
+    Globals.browser.sendMessage({ type: 'settings_service_get_current_recogniser' })
       .then((recogniser: Recogniser) => {
 
         tabEntities[recogniser]!.entities.forEach((entity, entityName) => {
 
-          entity.synonymToXPaths.forEach((synonymData, synonymName) => {
+          entity.synonymToXPaths.forEach((xpaths, synonymName) => {
 
             let entityOccurrence = 0
-              synonymData.xpaths.forEach((xpath, synonymOccurrence) => {
+            xpaths.forEach((xpath, synonymOccurrence) => {
 
               try {
-                  const xpathNode = Globals.document.evaluate(xpath, Globals.document, null, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue
+                const xpathNode = Globals.document.evaluate(xpath, Globals.document, null, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue
 
-                  if (xpathNode) {
-                    const highlightElementCallback = newHighlightElementCallback(entity, entityName, entityOccurrence, synonymName, synonymOccurrence)
-                    const success = highlightText(xpathNode, synonymName, highlightElementCallback);
-                    if (success) {
-                      entityOccurrence++
-                    }
+                if (xpathNode) {
+                  const highlightElementCallback = newHighlightElementCallback(entity, entityName, entityOccurrence, synonymName, synonymOccurrence)
+                  const success = highlightText(xpathNode, synonymName, highlightElementCallback);
+                  if (success) {
+                    entityOccurrence++
                   }
-
-                } catch (e) {
-                  reject(e)
                 }
-              })
+
+              } catch (e) {
+                reject(e)
+              }
             })
           })
-          UserExperience.showLoadingIcon(false)
-          resolve(stringifyWithTypes(tabEntities))
+        })
+        showLoadingIcon(false)
+        resolve(stringifyWithTypes(tabEntities))
       })
 
   })
@@ -156,7 +165,7 @@ function highlightText(contextNode: Node, text: string, callback: (element: HTML
     ],
     filter: (_node, _term, countAtCall, _totalCount): boolean => countAtCall < 1,
     each: callback,
-    noMatch: (_term: string) => {success = false}
+    noMatch: (_term: string) => { success = false }
   });
   return success
 }
@@ -172,11 +181,11 @@ function newHighlightElementCallback(entity: Entity, entityName: string, entityO
 }
 
 function scrollToHighlight(id: string): void {
-  Globals.document.getElementById(id)!.scrollIntoView({behavior: 'smooth', block: 'center'})
+  Globals.document.getElementById(id)!.scrollIntoView({ behavior: 'smooth', block: 'center' })
 }
 
-// @ts-ignore
-browser.runtime.onMessage.addListener((msg: Message) => {
+
+Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
   switch (msg.type) {
     case 'content_script_toggle_sidebar':
       return toggleSidebar();
@@ -197,10 +206,10 @@ browser.runtime.onMessage.addListener((msg: Message) => {
       return awaitSidebarReadiness();
 
     case 'content_script_open_loading_icon':
-      return Promise.resolve(UserExperience.showLoadingIcon(true))
+      return Promise.resolve(showLoadingIcon(true))
 
     case 'content_script_close_loading_icon':
-      return Promise.resolve(UserExperience.showLoadingIcon(false))
+      return Promise.resolve(showLoadingIcon(false))
 
     case 'content_script_highlight_entities':
       const tabEntities: TabEntities = parseWithTypes(msg.body)

@@ -1,20 +1,17 @@
-import {Message} from 'src/types/types'
+import {Message} from 'src/types/messages'
 import {IBrowser} from './IBrowser'
-import {SavedCard} from './types'
 
 /**
  * BrowserMock provides mocked functions required by IBrowser interface
  */
 export class BrowserMock implements IBrowser {
 
-  getStoredCards(key: string): SavedCard[] {
-      return []
-  }
-
   sendMessage(msg: Message): Promise<any> {
       return new Promise(() => {})
   }
   getURL(url: string): string {
     return ''
+  }
+  addListener(callback: (msg: Message) => Promise<any> | undefined) {
   }
 }

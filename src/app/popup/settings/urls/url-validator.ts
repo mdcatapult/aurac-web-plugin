@@ -1,6 +1,5 @@
-import {APIURLs} from '../../../../types';
 import {AbstractControl} from '@angular/forms';
-import { Logger } from '../../../logger';
+import { APIURLs } from 'src/types/settings';
 
 export class UrlValidator {
 
@@ -25,7 +24,6 @@ export class UrlValidator {
     } catch (e) {
       // TODO: This is throwing with seemingly valid urls when we open the sidebar. 
       // Are they temporarily empty? Investigate.
-      Logger.error("invalid url", e);
       return false;
     }
   }

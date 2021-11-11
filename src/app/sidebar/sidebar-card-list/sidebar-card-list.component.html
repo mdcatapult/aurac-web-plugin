@@ -1,0 +1,4 @@
+<section>
+    <p *ngIf="cards.length === 0">Click on a highlighted entity to display further information and links below...</p>
+    <app-sidebar-card *ngFor="let card of cards" [card]="card"></app-sidebar-card>
+</section>

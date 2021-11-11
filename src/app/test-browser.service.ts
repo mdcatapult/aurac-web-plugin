@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {BrowserService} from './browser.service';
-import {Message, StringMessage, Settings, MessageType} from '../types';
+import {Message, MessageType} from '../types/messages';
+import { Settings } from '../types/settings';
 import Tab = browser.tabs.Tab;
 import MessageSender = browser.runtime.MessageSender;
 
@@ -18,7 +19,11 @@ export class TestBrowserService extends BrowserService {
     return new Promise(() => {});
   }
 
-  sendMessageToTab<T>(tabId: number, message: Message): Promise<void | StringMessage> {
+  sendMessageToBackground(msg: Message | MessageType): Promise<any> {
+    return Promise.resolve()
+  }
+
+  sendMessageToTab<T>(tabId: number, message: Message): Promise<void> {
     return new Promise(() => {});
   }
 
@@ -26,14 +31,8 @@ export class TestBrowserService extends BrowserService {
     return Promise.resolve();
   }
 
-  saveSettings(settings: Settings): void {}
-
   getURL(thing: string): string {
     return ""
-  }
-
-  sendMessage(msg: Message | MessageType): Promise<any> {
-    return Promise.resolve()
   }
 
   save(obj: browser.storage.StorageObject): Promise<void> {
@@ -45,9 +44,4 @@ export class TestBrowserService extends BrowserService {
     return Promise.resolve()
   }
 
-  saveEntityCache(urlToEntityMap: string): void {}
-
-  // loadEntityCache(): Promise<EntityCache> {
-  //   return Promise.resolve(new Map())
-  // }
 }

@@ -2,9 +2,8 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import { timer } from 'rxjs';
 import { debounce } from 'rxjs/operators';
-import {defaultSettings, APIURLs, Settings} from 'src/types/types';
+import {defaultSettings, APIURLs, Settings} from 'src/types/settings';
 import {BrowserService} from '../../browser.service';
-import {Logger} from '../../logger';
 import {UrlValidator} from './urls/url-validator';
 
 @Component({
@@ -56,7 +55,7 @@ export class SettingsComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.browserService.sendMessage('settings_service_get_settings').then(settingsObj => {
+    this.browserService.sendMessageToBackground('settings_service_get_settings').then(settingsObj => {
       const settings = settingsObj as Settings
       this.xRefSources = settings.xRefSources
       this.settingsForm.reset(settings);
@@ -71,15 +70,15 @@ export class SettingsComponent implements OnInit {
       // setting has been changed before this message is sent?
       this.settingsForm.get('preferences')?.get('minEntityLength')!.valueChanges.subscribe(() => {
           if (this.valid()) {
-            this.browserService.sendMessage('min-entity-length-changed')
-              .catch((error) => Logger.error("couldn't send message 'min-entity-length-changed'", error));
+            this.browserService.sendMessageToBackground('min-entity-length-changed')
+              .catch((error) => console.error("couldn't send message 'min-entity-length-changed'", error));
           }
         }
       );
 
       this.settingsForm.get('urls')?.get('unichemURL')!.valueChanges.pipe(debounce(() => timer(500))).subscribe((url) => {
         if (this.valid()) {
-          this.browserService.sendMessage({type: 'settings_service_refresh_xref_sources', body: url}).then((resp) => {
+          this.browserService.sendMessageToBackground({type: 'settings_service_refresh_xref_sources', body: url}).then((resp) => {
             this.xRefSources = resp as Record<string,boolean> 
           });
         }
@@ -90,7 +89,7 @@ export class SettingsComponent implements OnInit {
   valid(): boolean {
     Object.keys(this.settingsForm.controls).forEach(key => {
       if (this.settingsForm.get(key)!.invalid) {
-        Logger.error(`invalid settings: ${key}`)
+        console.error(`invalid settings: ${key}`)
       }
     })
     return this.settingsForm.valid;
@@ -98,8 +97,8 @@ export class SettingsComponent implements OnInit {
 
   save(): void {
     if (this.valid()) {
-      this.browserService.sendMessage({type: 'settings_service_set_settings', body: this.settingsForm.value})
-        .catch(error => Logger.error("couldn't send message 'settings_service_set_settings'", error));
+      this.browserService.sendMessageToBackground({type: 'settings_service_set_settings', body: this.settingsForm.value})
+        .catch(error => console.error("couldn't send message 'settings_service_set_settings'", error));
     }
   }
 

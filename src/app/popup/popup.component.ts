@@ -1,5 +1,4 @@
 import {Component} from '@angular/core';
-import {Logger} from '../logger';
 import {BrowserService} from '../browser.service';
 
 @Component({
@@ -19,13 +18,13 @@ export class PopupComponent {
   }
 
   nerCurrentPage(): void {
-    this.browserService.sendMessage('ner_service_process_current_page')
-      .catch((error) => Logger.error("couldn't send message 'ner_service_process_current_page'", error));
+    this.browserService.sendMessageToBackground('ner_service_process_current_page')
+      .catch((error) => console.error("couldn't send message 'ner_service_process_current_page'", error));
   }
 
   toggleSidebar(): void {
     this.browserService.sendMessageToActiveTab({type: 'content_script_toggle_sidebar'})
-      .catch((error) => Logger.error("couldn't send message 'content_script_toggle_sidebar'", error));
+      .catch((error) => console.error("couldn't send message 'content_script_toggle_sidebar'", error));
   }
 
   pdfClicked(): void {
@@ -33,8 +32,8 @@ export class PopupComponent {
   }
 
   exportResults(): void {
-    this.browserService.sendMessage('csv_exporter_service_export_csv')
-      .catch(Logger.error);
+    this.browserService.sendMessageToBackground('csv_exporter_service_export_csv')
+      .catch(console.error);
 
   }
 }

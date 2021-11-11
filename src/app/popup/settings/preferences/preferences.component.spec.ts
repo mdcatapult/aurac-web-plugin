@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PreferencesComponent } from './preferences.component';
 import {FormBuilder, FormControl} from '@angular/forms';
-import {defaultSettings} from 'src/types/types';
+import {defaultSettings} from 'src/types/settings';
 
 describe('PreferencesComponent', () => {
   let component: PreferencesComponent;

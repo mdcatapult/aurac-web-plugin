@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Recogniser, RecogniserEntities, Entity } from 'src/types/types';
+import { RecogniserEntities, Entity } from 'src/types/entity';
+import { Recogniser } from 'src/types/recognisers';
 import { BrowserService } from '../browser.service';
 import { EntitiesService } from './entities.service';
 import { SettingsService } from './settings.service';
@@ -42,7 +43,7 @@ export class NerService {
       .then(contents => this.callAPI(contents), error => this.handleAPIError(tab.id!, error))
       .then(response => {
         const recogniserEntities = this.transformAPIResponse(response as APIEntities)
-        this.entitiesService.setRecogniserEntities({tab: tab.id!, recogniser: this.settingsService.preferences.recogniser}, recogniserEntities)
+        this.entitiesService.setRecogniserEntities(tab.id!, this.settingsService.preferences.recogniser, recogniserEntities)
       })
     })
   }
@@ -103,7 +104,7 @@ export class NerService {
 
   private entityFromAPIEntity(recognisedEntity: APIEntity): Entity {
     const entity: Entity = {
-      synonymToXPaths: new Map([[recognisedEntity.name, {xpaths: [recognisedEntity.xpath]}]]),
+      synonymToXPaths: new Map([[recognisedEntity.name, [recognisedEntity.xpath]]]),
     }
     
     if (recognisedEntity.metadata) {
@@ -123,11 +124,11 @@ export class NerService {
     const entity = recogniserEntities.entities.get(key)
     if (entity) {
 
-      const synonym = entity.synonymToXPaths.get(recognisedEntity.name)
-      if (synonym) {
-        synonym.xpaths.push(recognisedEntity.xpath)
+      const xpaths = entity.synonymToXPaths.get(recognisedEntity.name)
+      if (xpaths) {
+        xpaths.push(recognisedEntity.xpath)
       } else {
-        entity.synonymToXPaths.set(recognisedEntity.name, {xpaths: [recognisedEntity.xpath]})
+        entity.synonymToXPaths.set(recognisedEntity.name, [recognisedEntity.xpath])
       }
       
     } else {
@@ -156,7 +157,7 @@ export class NerService {
           } else {
             // If there is no resolved entity, just use the entity text (lowercased) to determine synonyms.
             // (This means the synonyms will be identical except for their casing).
-            this.setOrUpdateEntity(recogniserEntities, recognisedEntity.entity.toLowerCase(), recognisedEntity)
+            this.setOrUpdateEntity(recogniserEntities, recognisedEntity.name.toLowerCase(), recognisedEntity)
           }
 
           break;

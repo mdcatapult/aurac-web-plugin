@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { BrowserService } from '../browser.service';
+import { TestBrowserService } from '../test-browser.service';
 
 import { SidebarComponent } from './sidebar.component';
 
@@ -8,7 +10,10 @@ describe('SidebarComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SidebarComponent ]
+      declarations: [ SidebarComponent ],
+      providers: [
+        {provide: BrowserService, useClass: TestBrowserService}
+      ]
     })
     .compileComponents();
   });

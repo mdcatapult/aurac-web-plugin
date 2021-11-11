@@ -1,6 +1,6 @@
 import {TestBed} from '@angular/core/testing';
 import {UrlValidator} from './url-validator';
-import {APIURLs} from '../../../../types';
+import {APIURLs} from '../../../../types/settings';
 
 describe('SettingsService', () => {
 

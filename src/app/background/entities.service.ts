@@ -1,54 +1,55 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { ChangeIdentifier, RecogniserEntities, RecogniserID, Entity, EntityChange, TabEntities, EntityID, SetterInfo } from '../../types'
+import { Recogniser } from 'src/types/recognisers';
+import { Entity, EntityChange, EntityID, RecogniserEntities, SetterInfo, TabEntities, TabID } from '../../types/entity';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EntitiesService {
 
-  private entityMap: Map<number, TabEntities> = new Map()
+  private entityMap: Map<TabID, TabEntities> = new Map()
 
   private readonly entityChangeSubject = new Subject<EntityChange>()
   readonly entityChangeObservable = this.entityChangeSubject.asObservable()
 
   constructor() { }
 
-  getTabEntities(tab: number): TabEntities | undefined {
+  getTabEntities(tab: TabID): TabEntities | undefined {
     return this.entityMap.get(tab)
   }
 
-  setTabEntities(tab: number, entities: TabEntities, setterInfo?: SetterInfo): void {
-    this.entityMap.set(tab, entities)
-    this.updateStream({tab: tab}, entities, setterInfo)
+  setTabEntities(tabID: TabID, entities: TabEntities, setterInfo?: SetterInfo): void {
+    this.entityMap.set(tabID, entities)
+    this.updateStream(tabID, entities, setterInfo)
   }
 
-  getRecogniserEntities(id: RecogniserID): RecogniserEntities | undefined {
-    const dictEntities = this.entityMap.get(id.tab)
-    return dictEntities ? dictEntities[id.recogniser] : undefined
+  getRecogniserEntities(tabID: TabID, recogniser: Recogniser): RecogniserEntities | undefined {
+    const dictEntities = this.entityMap.get(tabID)
+    return dictEntities ? dictEntities[recogniser] : undefined
   }
 
-  setRecogniserEntities(id: RecogniserID, entities: RecogniserEntities, setterInfo?: SetterInfo): void {
-    const tabEntities = this.entityMap.get(id.tab)
-
-    if (!tabEntities) {
+  setRecogniserEntities(tabID: TabID, recogniser: Recogniser, entities: RecogniserEntities, setterInfo?: SetterInfo): void {
+    const tabEntities = this.entityMap.get(tabID)
+    
+    if (!tabEntities) { 
       const newTabEntities: TabEntities = {}
-      newTabEntities[id.recogniser] = entities
-      this.entityMap.set(id.tab, newTabEntities)
-      this.updateStream(id, newTabEntities, setterInfo)
+      newTabEntities[recogniser] = entities
+      this.entityMap.set(tabID, newTabEntities)
+      this.updateStream(tabID, newTabEntities, setterInfo)
     } else {
-      tabEntities[id.recogniser] = entities
-      this.entityMap.set(id.tab, tabEntities)
-      this.updateStream(id, tabEntities, setterInfo)
+      tabEntities[recogniser] = entities
+      this.entityMap.set(tabID, tabEntities)
+      this.updateStream(tabID, tabEntities, setterInfo)
     }
   }
 
-  getEntity(id: EntityID): Entity | undefined {
-    const tabEntities = this.entityMap.get(id.tab)
-    return tabEntities ? tabEntities[id.recogniser]?.entities?.get(id.identifier) : undefined
+  getEntity(tabID: TabID, recogniser: Recogniser, entityID: EntityID): Entity | undefined {
+    const tabEntities = this.entityMap.get(tabID)
+    return tabEntities ? tabEntities[recogniser]?.entities?.get(entityID) : undefined
   }
 
-  private updateStream(identifier: ChangeIdentifier, result: TabEntities | RecogniserEntities | Entity | Map<string,Entity>, setterInfo?: SetterInfo): void {
-    this.entityChangeSubject.next({identifier, result, setterInfo: setterInfo})
+  private updateStream(tabID: TabID, entities: TabEntities, setterInfo?: SetterInfo): void {
+    this.entityChangeSubject.next({tabID, entities, setterInfo: setterInfo})
   }
 }

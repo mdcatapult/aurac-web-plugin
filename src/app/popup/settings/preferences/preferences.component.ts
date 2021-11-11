@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormGroup} from '@angular/forms';
-import { allRecognisers } from '../../../../types';
+import { allRecognisers } from '../../../../types/recognisers';
 
 @Component({
   selector: 'app-preferences',

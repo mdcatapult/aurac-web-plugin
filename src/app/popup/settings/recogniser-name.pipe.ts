@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { Recogniser } from '../../../types';
+import { Recogniser } from '../../../types/recognisers';
 
 @Pipe({
   name: 'recogniserName'

@@ -1,5 +1,4 @@
-import { Message } from 'src/types/types';
-import { SavedCard } from './types';
+import { Message } from 'src/types/messages';
 
 /**
  * IBrowser interface is used to implement or mock browser functions.
@@ -7,5 +6,5 @@ import { SavedCard } from './types';
 export interface IBrowser{
   getURL(url: string): string
   sendMessage(msg: Message): Promise<any>
-  getStoredCards(key: string): SavedCard[]
+  addListener(callback: (msg: Message) => Promise<any> | undefined): void
 }

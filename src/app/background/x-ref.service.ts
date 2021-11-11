@@ -1,7 +1,19 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ConverterResult, Entity, XRef } from 'src/types/types';
+import { Entity } from 'src/types/entity';
 import {SettingsService} from './settings.service'
+
+export type ConverterResult = {
+  input: string,
+  output: string,
+};
+
+export type XRef = {
+  compoundName: string,
+  databaseName: string,
+  url: string,
+};
+
 
 @Injectable({
   providedIn: 'root'

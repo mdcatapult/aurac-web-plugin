@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { ClickedHighlightData, parseHighlightID, XRef } from 'src/types/types';
+import { parseHighlightID } from 'src/types/highlights';
 import { parseWithTypes, stringifyWithTypes } from '../../json';
 import { BrowserService } from '../browser.service';
+import { SidebarCard } from '../sidebar/types';
 import { EntitiesService } from './entities.service';
 import { SettingsService } from './settings.service';
-import { XRefService } from './x-ref.service';
+import { XRef, XRefService } from './x-ref.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,13 +23,13 @@ export class EntityMessengerService {
         return
       }
 
-      this.browserService.sendMessageToTab(change.identifier.tab, { type: 'content_script_highlight_entities', body: stringifyWithTypes(change.result) })
+      this.browserService.sendMessageToTab(change.tabID, { type: 'content_script_highlight_entities', body: stringifyWithTypes(change.entities) })
         .then((stringifiedTabEntities) => {
           const tabEntities = parseWithTypes(stringifiedTabEntities)
 
           // Use 'noPropagate' setter info so that we don't get into an infinite loop.
-          this.entitiesService.setTabEntities(change.identifier.tab, tabEntities, 'noPropagate')
-          this.browserService.sendMessageToTab(change.identifier.tab, 'content_script_open_sidebar')
+          this.entitiesService.setTabEntities(change.tabID, tabEntities, 'noPropagate')
+          this.browserService.sendMessageToTab(change.tabID, 'content_script_open_sidebar')
         })
     })
 
@@ -42,29 +43,25 @@ export class EntityMessengerService {
   }
 
   highlightClicked(elementID: string): Promise<void> {
-    const [entityName, entityOccurrence, synonym, synonymOccurrence] = parseHighlightID(elementID)
+    const [entityID, entityOccurrence, synonymName, synonymOccurrence] = parseHighlightID(elementID)
     return this.browserService.getActiveTab().then(tab => {
-      const entity = this.entitiesService.getEntity({
-        tab: tab.id!,
-        recogniser: this.settingsService.preferences.recogniser,
-        identifier: entityName
-      })!
+      const entity = this.entitiesService.getEntity(tab.id!, this.settingsService.preferences.recogniser, entityID)!
 
       const getXrefs: Promise<XRef[]> = entity.xRefs ? Promise.resolve(entity.xRefs) : this.xRefService.get(entity)
 
       getXrefs.then(xRefs => {
         entity.xRefs = xRefs
-        const clickedHighlightData: ClickedHighlightData = {
+        const sidebarCard: SidebarCard = {
           entity,
-          entityName,
-          entityOccurrence,
-          clickedSynonymName: synonym,
-          synonymOccurrence
+          entityID: entityID,
+          clickedEntityOccurrence: entityOccurrence,
+          clickedSynonymName: synonymName,
+          clickedSynonymOccurrence: synonymOccurrence
         }
 
         this.browserService.sendMessageToTab(tab.id!, {
-          type: 'sidebar_data_service_view_or_create_clicked_entity',
-          body: stringifyWithTypes(clickedHighlightData)
+          type: 'sidebar_data_service_view_or_create_card',
+          body: stringifyWithTypes(sidebarCard)
         })
       })
     })

@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {FormGroup} from '@angular/forms';
-import {APIURLs} from '../../../../types';
+import {APIURLs} from '../../../../types/settings';
 
 @Component({
   selector: 'app-urls',

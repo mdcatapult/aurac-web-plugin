@@ -1,10 +1,5 @@
-import {HttpClient} from '@angular/common/http';
-import {Component, Input, OnChanges, OnInit} from '@angular/core';
+import {Component, Input, OnChanges} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
-import {Settings} from 'src/types/types'
-import { BrowserService } from '../../../browser.service';
-import {Logger} from '../../../logger';
-
 
 @Component({
   selector: 'app-x-ref-sources',

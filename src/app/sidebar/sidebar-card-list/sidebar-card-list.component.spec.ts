@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SidebarEntityListComponent } from './sidebar-entity-list.component';
+import { SidebarCardListComponent } from './sidebar-card-list.component';
 
 describe('SidebarEntityListComponent', () => {
-  let component: SidebarEntityListComponent;
-  let fixture: ComponentFixture<SidebarEntityListComponent>;
+  let component: SidebarCardListComponent;
+  let fixture: ComponentFixture<SidebarCardListComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SidebarEntityListComponent ]
+      declarations: [ SidebarCardListComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SidebarEntityListComponent);
+    fixture = TestBed.createComponent(SidebarCardListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

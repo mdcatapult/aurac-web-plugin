@@ -1,15 +1,9 @@
 import {Injectable} from '@angular/core';
 import {BrowserService} from '../browser.service';
 import {EntitiesService} from './entities.service';
-import {Entity} from '../../types';
+import {Entity} from '../../types/entity';
 import {SettingsService} from './settings.service';
 import {saveAs} from 'file-saver';
-
-export type CSVEntity = {
-  metadata: any,
-  identifiers: Map<string, string>,
-  synonyms: Array<string>,
-}
 
 @Injectable({
   providedIn: 'root'
@@ -45,19 +39,13 @@ export class CsvExporterService {
             case 'leadmine-diseases':
 
               const entities: Map<string, Entity> = tabEntities[recogniser]!.entities;
-              const CSVEntitiesArray: Array<CSVEntity> = Array.from(entities.values()).map(entity => {
-                return {
-                  metadata: entity.metadata,
-                  identifiers: entity.identifierSourceToID!,
-                  synonyms: Array.from(entity.synonymToXPaths.keys())}
-              })
+              const entitiesArray: Array<Entity> = Array.from(entities.values())
 
               if (entities.size < 1) {
-
                 return;
               }
 
-              const CSVFormattedResults = this.leadmineToCSV(CSVEntitiesArray);
+              const CSVFormattedResults = this.leadmineToCSV(entitiesArray);
               this.saveAsCSV(CSVFormattedResults, currentTab.url!, 'aurac_all_results_')
           }
         }
@@ -69,7 +57,7 @@ export class CsvExporterService {
   }
 
   // Converts the passed entities into a csv formatted string and appends headings to them
-  leadmineToCSV(csvEntities: Array<CSVEntity>): string {
+  leadmineToCSV(entities: Array<Entity>): string {
     const headings = [
       'Synonym',
       'Resolved Entity',
@@ -84,18 +72,18 @@ export class CsvExporterService {
     ];
 
     let text = headings.join(',') + '\n';
-    csvEntities.forEach(csvEntity => {
-      csvEntity.synonyms.forEach(synonymName => {
+    entities.forEach(entity => {
+      entity.synonymToXPaths.forEach((_, synonymName) => {
         text = text + `"${synonymName}"` + ','
-          + csvEntity.identifiers?.get('resolvedEntity') + ','
-          + csvEntity.metadata.entityGroup! + ','
-          + csvEntity.metadata.RecognisingDict.enforceBracketing + ','
-          + csvEntity.metadata.RecognisingDict.entityType + ','
-          + csvEntity.metadata.RecognisingDict.htmlColor + ','
-          + csvEntity.metadata.RecognisingDict.maxCorrectionDistance + ','
-          + csvEntity.metadata.RecognisingDict.minimumCorrectedEntityLength + ','
-          + csvEntity.metadata.RecognisingDict.minimumEntityLength + ','
-          + csvEntity.metadata.RecognisingDict.source + '\n';
+          + entity.identifierSourceToID?.get('resolvedEntity') + ','
+          + entity.metadata.entityGroup! + ','
+          + entity.metadata.RecognisingDict.enforceBracketing + ','
+          + entity.metadata.RecognisingDict.entityType + ','
+          + entity.metadata.RecognisingDict.htmlColor + ','
+          + entity.metadata.RecognisingDict.maxCorrectionDistance + ','
+          + entity.metadata.RecognisingDict.minimumCorrectedEntityLength + ','
+          + entity.metadata.RecognisingDict.minimumEntityLength + ','
+          + entity.metadata.RecognisingDict.source + '\n';
       });
     });
 
