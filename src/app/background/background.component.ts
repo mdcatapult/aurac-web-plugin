@@ -2,7 +2,7 @@ import {Entity} from './../../content-script/types';
 import {Component} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {ConverterResult, defaultSettings, Message, Settings, StringMessage, XRef, Recogniser} from 'src/types';
+import {ConverterResult, defaultSettings, Message, Settings, StringMessage, XRef, Recogniser} from 'src/types/types';
 import {map, switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {BrowserService} from '../browser.service';

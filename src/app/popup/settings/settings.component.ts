@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import { timer } from 'rxjs';
 import { debounce } from 'rxjs/operators';
-import {defaultSettings, APIURLs, Settings} from 'src/types';
+import {defaultSettings, APIURLs, Settings} from 'src/types/types';
 import {BrowserService} from '../../browser.service';
 import {Logger} from '../../logger';
 import {UrlValidator} from './urls/url-validator';

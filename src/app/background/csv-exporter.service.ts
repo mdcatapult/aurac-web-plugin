@@ -1,10 +1,9 @@
 import {Injectable} from '@angular/core';
 import {BrowserService} from '../browser.service';
 import {EntitiesService} from './entities.service';
-import {LeadminerEntityWrapper, SynonymData, SynonymText} from '../../types';
+import {Entity} from '../../types';
 import {SettingsService} from './settings.service';
 import {saveAs} from 'file-saver';
-import {Identifier, SidebarEntity} from '../sidebar/types';
 
 export type CSVEntity = {
   metadata: any,
@@ -26,13 +25,13 @@ export class CsvExporterService {
     this.browserService.addListener((msg) => {
       switch (msg.type) {
         case 'csv_exporter_service_export_csv':
-          this.exportCSV();
+          return this.exportCSV();
       }
     });
   }
 
-  private exportCSV() {
-    this.browserService.getActiveTab()
+  private exportCSV(): Promise<void> {
+    return this.browserService.getActiveTab()
       .then((currentTab: browser.tabs.Tab) => {
         const tabEntities = this.entitiesService.getTabEntities(currentTab.id!);
         return {currentTab, tabEntities}
@@ -45,12 +44,12 @@ export class CsvExporterService {
             case 'leadmine-chemical-entities':
             case 'leadmine-diseases':
 
-              const entities: Map<string, LeadminerEntityWrapper> = tabEntities[recogniser]!.entities;
+              const entities: Map<string, Entity> = tabEntities[recogniser]!.entities;
               const CSVEntitiesArray: Array<CSVEntity> = Array.from(entities.values()).map(entity => {
                 return {
                   metadata: entity.metadata,
-                  identifiers: entity.identifiers!,
-                  synonyms: Array.from(entity.synonyms.keys())}
+                  identifiers: entity.identifierSourceToID!,
+                  synonyms: Array.from(entity.synonymToXPaths.keys())}
               })
 
               if (entities.size < 1) {
@@ -58,10 +57,8 @@ export class CsvExporterService {
                 return;
               }
 
-              const CSVFormattedResults = this.stringifyCSVEntities(CSVEntitiesArray);
-              this.exportToCSV(CSVFormattedResults, currentTab.url!, 'aurac_all_results_')
-
-              break;
+              const CSVFormattedResults = this.leadmineToCSV(CSVEntitiesArray);
+              this.saveAsCSV(CSVFormattedResults, currentTab.url!, 'aurac_all_results_')
           }
         }
       });
@@ -72,7 +69,7 @@ export class CsvExporterService {
   }
 
   // Converts the passed entities into a csv formatted string and appends headings to them
-  public stringifyCSVEntities(csvEntities: Array<CSVEntity>): string {
+  leadmineToCSV(csvEntities: Array<CSVEntity>): string {
     const headings = [
       'Synonym',
       'Resolved Entity',
@@ -83,10 +80,12 @@ export class CsvExporterService {
       'Maximum Correction Distance',
       'Minimum Corrected Entity Length',
       'Minimum Entity Length',
-      'Source'];
+      'Source'
+    ];
+
     let text = headings.join(',') + '\n';
     csvEntities.forEach(csvEntity => {
-      csvEntity.synonyms.forEach((synonymName, _) => {
+      csvEntity.synonyms.forEach(synonymName => {
         text = text + `"${synonymName}"` + ','
           + csvEntity.identifiers?.get('resolvedEntity') + ','
           + csvEntity.metadata.entityGroup! + ','
@@ -103,7 +102,7 @@ export class CsvExporterService {
     return text;
   }
 
-  public exportToCSV(text: string, currentURL: string, prefix: 'aurac_all_results_' | 'aurac_sidebar_results_'): void {
+  public saveAsCSV(text: string, currentURL: string, prefix: 'aurac_all_results_' | 'aurac_sidebar_results_'): void {
     const sanitisedURL = this.sanitiseURL(currentURL)
     const blob = new Blob([text], {type: 'text/csv;charset=utf-8'})
     saveAs(blob, prefix + sanitisedURL + '.csv')

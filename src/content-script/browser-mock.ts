@@ -1,4 +1,4 @@
-import {Message} from 'src/types'
+import {Message} from 'src/types/types'
 import {IBrowser} from './IBrowser'
 import {SavedCard} from './types'
 

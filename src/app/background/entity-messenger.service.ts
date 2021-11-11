@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { InspectedHighlightData, parseHighlightID, XRef } from 'src/types';
+import { ClickedHighlightData, parseHighlightID, XRef } from 'src/types/types';
 import { parseWithTypes, stringifyWithTypes } from '../../json';
 import { BrowserService } from '../browser.service';
 import { EntitiesService } from './entities.service';
@@ -22,7 +22,7 @@ export class EntityMessengerService {
         return
       }
 
-      this.browserService.sendMessageToTab(change.identifier.tab, {type: 'content_script_highlight_entities', body: stringifyWithTypes(change.result)})
+      this.browserService.sendMessageToTab(change.identifier.tab, { type: 'content_script_highlight_entities', body: stringifyWithTypes(change.result) })
         .then((stringifiedTabEntities) => {
           const tabEntities = parseWithTypes(stringifiedTabEntities)
 
@@ -35,37 +35,38 @@ export class EntityMessengerService {
     this.browserService.addListener(msg => {
       switch (msg.type) {
         case 'entity_messenger_service_highlight_clicked':
-          return new Promise((resolve, reject) => {
-              const [entityName, entityOccurrence, synonym, synonymOccurrence] = parseHighlightID(msg.body)
-              this.browserService.getActiveTab().then(tab => {
-                const entity = this.entitiesService.getEntity({
-                  tab: tab.id!,
-                  recogniser: this.settingsService.preferences.recogniser,
-                  identifier: entityName
-                })!
-
-                const getXrefs: Promise<XRef[]> = entity.xRefs ? Promise.resolve(entity.xRefs) : this.xRefService.get(entity)
-
-                getXrefs.then(xRefs => {
-                  entity.xRefs = xRefs
-                  const inspectedHighlightData: InspectedHighlightData = {
-                      entity,
-                      entityName,
-                      entityOccurrence,
-                      clickedSynonymName: synonym,
-                      synonymOccurrence
-                    }
-
-                    this.browserService.sendMessageToTab(tab.id!, {
-                      type: 'sidebar_data_service_inspect_highlight',
-                      body: stringifyWithTypes(inspectedHighlightData)
-                    })
-                }).catch((e) => console.error(`Error retreiving xRefs: ${JSON.stringify(e)}`))
-              }).then(() => resolve(null))
-
-          })
+          return this.highlightClicked(msg.body)
         default:
       }
+    })
+  }
+
+  highlightClicked(elementID: string): Promise<void> {
+    const [entityName, entityOccurrence, synonym, synonymOccurrence] = parseHighlightID(elementID)
+    return this.browserService.getActiveTab().then(tab => {
+      const entity = this.entitiesService.getEntity({
+        tab: tab.id!,
+        recogniser: this.settingsService.preferences.recogniser,
+        identifier: entityName
+      })!
+
+      const getXrefs: Promise<XRef[]> = entity.xRefs ? Promise.resolve(entity.xRefs) : this.xRefService.get(entity)
+
+      getXrefs.then(xRefs => {
+        entity.xRefs = xRefs
+        const clickedHighlightData: ClickedHighlightData = {
+          entity,
+          entityName,
+          entityOccurrence,
+          clickedSynonymName: synonym,
+          synonymOccurrence
+        }
+
+        this.browserService.sendMessageToTab(tab.id!, {
+          type: 'sidebar_data_service_view_or_create_clicked_entity',
+          body: stringifyWithTypes(clickedHighlightData)
+        })
+      })
     })
   }
 }

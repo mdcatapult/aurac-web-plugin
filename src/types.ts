@@ -33,7 +33,7 @@ export type MessageType =
   | 'content_script_highlight_entities'
   | 'settings_service_get_current_recogniser'
   | 'entity_messenger_service_highlight_clicked'
-  | 'sidebar_data_service_inspect_highlight'
+  | 'sidebar_data_service_view_or_create_clicked_entity'
   | 'content_script_scroll_to_highlight'
   | 'csv_exporter_service_export_csv';
 
@@ -129,18 +129,10 @@ export interface Occurrences {
   id?: string[];
 }
 
-export type XPath = string
-export type SynonymText = string
-
-export interface SynonymData {
-  xpaths: Array<XPath>;
-}
-
-// LeaminerEntityWrapper is a wrapper for a leadminer entity with any extra functional
-// information.
-export interface LeadminerEntityWrapper {
-  synonyms: Map<SynonymText, SynonymData>
-  identifiers?: Map<string, string>;
+// Entity
+export interface Entity {
+  synonymToXPaths: Map<string, string[]>
+  identifierSourceToID?: Map<string, string>; // e.g. {"pubchem":"1"}
   metadata?: any;
   htmlTagIDs?: Array<string>;
   xRefs?: Array<XRef>
@@ -149,7 +141,7 @@ export interface LeadminerEntityWrapper {
 // RecogniserEntities is a wrapper for all the entities found when running NER.
 export interface RecogniserEntities {
     show: boolean;
-    entities: Map<string, LeadminerEntityWrapper>;
+    entities: Map<string, Entity>;
 }
 
 // Holds all entities on a page in valid dictionaries.
@@ -183,7 +175,7 @@ export type ChangeIdentifier = TabID | RecogniserID | EntityID | SynonymID | Occ
 // result of the change.
 export interface EntityChange {
     identifier: ChangeIdentifier;
-    result: TabEntities | RecogniserEntities | LeadminerEntityWrapper | Map<string,LeadminerEntityWrapper>;
+    result: TabEntities | RecogniserEntities | Entity | Map<string,Entity>;
     setterInfo?: SetterInfo
 }
 
@@ -201,9 +193,9 @@ export function parseHighlightID(id: string): [entityName: string, entityOccurre
   return [entityName, parseInt(entityOccurrences), synonymName, parseInt(xpathIndex)]
 }
 
-export type InspectedHighlightData = {
+export type ClickedHighlightData = {
   entityName: string; // key for entity map
-  entity: LeadminerEntityWrapper;
+  entity: Entity;
   entityOccurrence: number;
   clickedSynonymName: string;
   synonymOccurrence: number;

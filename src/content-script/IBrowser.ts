@@ -1,4 +1,4 @@
-import { Message } from 'src/types';
+import { Message } from 'src/types/types';
 import { SavedCard } from './types';
 
 /**

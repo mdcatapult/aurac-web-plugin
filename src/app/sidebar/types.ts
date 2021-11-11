@@ -1,4 +1,4 @@
-import {LeadminerEntityWrapper, XRef} from 'src/types';
+import {Entity, XRef} from 'src/types/types';
 
 export interface SidebarEntity {
   metadata: any,

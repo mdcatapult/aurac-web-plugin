@@ -1,7 +1,7 @@
 import {HttpClient} from '@angular/common/http';
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {AbstractControl, FormControl, ValidationErrors} from '@angular/forms';
-import {defaultSettings} from 'src/types';
+import {defaultSettings} from 'src/types/types';
 import {BrowserService} from '../../browser.service';
 import {Logger} from '../../logger';
 import {UrlValidator} from '../settings/urls/url-validator'

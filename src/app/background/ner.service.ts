@@ -1,12 +1,12 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Recogniser, RecogniserEntities, LeadminerEntityWrapper } from 'src/types';
+import { Recogniser, RecogniserEntities, Entity } from 'src/types/types';
 import { BrowserService } from '../browser.service';
 import { EntitiesService } from './entities.service';
 import { SettingsService } from './settings.service';
 
-type RecognisedEntity = {
-  entity: string;
+export type APIEntity = {
+  name: string;
   position: number;
   xpath: string;
   recogniser: Recogniser;
@@ -14,7 +14,7 @@ type RecognisedEntity = {
   metadata?: string;
 }
 
-type APIResponse = RecognisedEntity[]
+export type APIEntities = APIEntity[]
 
 @Injectable({
   providedIn: 'root'
@@ -41,7 +41,7 @@ export class NerService {
       .then(() => this.getPageContents(tab.id!), e => {throw e})
       .then(contents => this.callAPI(contents), error => this.handleAPIError(tab.id!, error))
       .then(response => {
-        const recogniserEntities = this.transformAPIResponse(response as APIResponse)
+        const recogniserEntities = this.transformAPIResponse(response as APIEntities)
         this.entitiesService.setRecogniserEntities({tab: tab.id!, recogniser: this.settingsService.preferences.recogniser}, recogniserEntities)
       })
     })
@@ -59,9 +59,9 @@ export class NerService {
     return this.browserService.sendMessageToTab(tab, 'content_script_get_page_contents')
   }
 
-  private callAPI(body: string): Promise<APIResponse | void> {
-    const [params, headers] = this.constructRequestParametersAndHeaders()
-    return this.httpClient.post<APIResponse>(`${this.settingsService.APIURLs.nerURL}/html/entities`, body, {observe: 'response', params, headers})
+  private callAPI(body: string): Promise<APIEntities | void> {
+    const [params, headers] = this.constructRequestParametersAndHeaders(this.settingsService.preferences.recogniser)
+    return this.httpClient.post<APIEntities>(`${this.settingsService.APIURLs.nerURL}/html/entities`, body, {observe: 'response', params, headers})
       .toPromise()
       .then(response => {
         if (response?.status !== 200) {
@@ -81,42 +81,64 @@ export class NerService {
     throw error
   }
 
-  private constructRequestParametersAndHeaders(): [HttpParams, HttpHeaders] {
+  private constructRequestParametersAndHeaders(recogniser: Recogniser): [HttpParams, HttpHeaders] {
     // HttpParams.set returns a copy but the original is unmodified - so be careful!
-    const params = new HttpParams().set('recogniser', this.settingsService.preferences.recogniser)
+    const params = new HttpParams().set('recogniser', recogniser)
 
-    const headers = new HttpHeaders()
-    if (this.settingsService.preferences.recogniser === 'leadmine-chemical-entities') {
+    let headers = new HttpHeaders()
+    if (recogniser === 'leadmine-chemical-entities') {
       // Recognition API expects a base64 encoded, json encoded "RecogniserOptions" object.
       // Currently there is only one key "queryParameters", which tells the api how to
       // construct a url when forwarding a request. This key takes a Map<string,string[]>
       // in order to allow multiple values per key.
-      const leadmineRecogniserOptions = {'queryParameters': {'inchi': ['true']}}
+      const leadmineRecogniserOptions = {"queryParameters":{"inchi":["true"]}}
       const leadmineRecogniserOptionsJSON = JSON.stringify(leadmineRecogniserOptions)
       const base64leadmineRecogniserOptionsJSON = btoa(leadmineRecogniserOptionsJSON)
 
-      headers.set('x-leadmine-chemical-entities', base64leadmineRecogniserOptionsJSON)
+      headers = headers.set('x-leadmine-chemical-entities', base64leadmineRecogniserOptionsJSON)
     }
 
     return [params, headers];
   }
 
-  private transformAPIResponse(response: APIResponse): RecogniserEntities {
-    let recogniserEntities: RecogniserEntities = {
-      show: true,
-      entities: new Map<string,LeadminerEntityWrapper>()
+  private entityFromAPIEntity(recognisedEntity: APIEntity): Entity {
+    const entity: Entity = {
+      synonymToXPaths: new Map([[recognisedEntity.name, {xpaths: [recognisedEntity.xpath]}]]),
     }
-
-    const setEntities = (key: string, recognisedEntity: RecognisedEntity) => {
+    
+    if (recognisedEntity.metadata) {
       // API returns metadata as a base64 encoded json blob (because grpc has problems dealing with "any").
       // Convert it and parse it to get something useful.
-      const metadata = recognisedEntity.metadata ? JSON.parse(atob(recognisedEntity.metadata!)) : null
+      entity.metadata = JSON.parse(atob(recognisedEntity.metadata!))
+    }
 
-      recogniserEntities.entities.set(key, {
-        synonyms: new Map([[recognisedEntity.entity, {xpaths: [recognisedEntity.xpath]}]]),
-        identifiers: new Map(Object.entries(recognisedEntity.identifiers)),
-        metadata: metadata
-      })
+    if (recognisedEntity.identifiers) {
+      entity.identifierSourceToID = new Map<string,string>(Object.entries(recognisedEntity.identifiers))
+    }
+
+    return entity
+  }
+
+  private setOrUpdateEntity(recogniserEntities: RecogniserEntities, key: string, recognisedEntity: APIEntity): void {
+    const entity = recogniserEntities.entities.get(key)
+    if (entity) {
+
+      const synonym = entity.synonymToXPaths.get(recognisedEntity.name)
+      if (synonym) {
+        synonym.xpaths.push(recognisedEntity.xpath)
+      } else {
+        entity.synonymToXPaths.set(recognisedEntity.name, {xpaths: [recognisedEntity.xpath]})
+      }
+      
+    } else {
+      recogniserEntities.entities.set(key, this.entityFromAPIEntity(recognisedEntity))
+    }
+  }
+
+  private transformAPIResponse(response: APIEntities): RecogniserEntities {
+    let recogniserEntities: RecogniserEntities = {
+      show: true,
+      entities: new Map<string,Entity>()
     }
 
     response.forEach(recognisedEntity => {
@@ -130,34 +152,11 @@ export class NerService {
           const resolvedEntity: string = recognisedEntity.identifiers?.resolvedEntity
 
           if (resolvedEntity) {
-            if (recogniserEntities.entities.has(resolvedEntity)) {
-              const entity = recogniserEntities.entities.get(resolvedEntity)!
-
-              if (entity.synonyms.has(recognisedEntity.entity)) {
-                const synonym = entity.synonyms.get(recognisedEntity.entity)!
-                synonym.xpaths.push(recognisedEntity.xpath)
-              } else {
-                entity.synonyms.set(recognisedEntity.entity, {xpaths: [recognisedEntity.xpath]})
-              }
-
-
-            } else {
-              setEntities(resolvedEntity, recognisedEntity)
-            }
+            this.setOrUpdateEntity(recogniserEntities, resolvedEntity, recognisedEntity)
           } else {
-            if (recogniserEntities.entities.has(recognisedEntity.entity.toLowerCase())) {
-              const entity = recogniserEntities.entities.get(recognisedEntity.entity.toLowerCase())!
-
-              if (entity.synonyms.has(recognisedEntity.entity)) {
-                const synonym = entity.synonyms.get(recognisedEntity.entity)!
-                synonym.xpaths.push(recognisedEntity.xpath)
-              } else {
-                entity.synonyms.set(recognisedEntity.entity, {xpaths: [recognisedEntity.xpath]})
-              }
-
-            } else {
-              setEntities(recognisedEntity.entity.toLowerCase(), recognisedEntity)
-            }
+            // If there is no resolved entity, just use the entity text (lowercased) to determine synonyms.
+            // (This means the synonyms will be identical except for their casing).
+            this.setOrUpdateEntity(recogniserEntities, recognisedEntity.entity.toLowerCase(), recognisedEntity)
           }
 
           break;

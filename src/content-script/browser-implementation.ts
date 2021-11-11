@@ -7,7 +7,7 @@ import {SidebarButtons} from './sidebarButtons';
 import {Modal} from './modal';
 
 import { IBrowser } from './IBrowser';
-import { Message } from 'src/types';
+import { Message } from 'src/types/types';
 import { SavedCard } from './types';
 import {Globals} from './globals';
 

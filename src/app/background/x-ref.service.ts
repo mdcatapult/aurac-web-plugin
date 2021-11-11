@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ConverterResult, LeadminerEntityWrapper, XRef } from 'src/types';
+import { ConverterResult, Entity, XRef } from 'src/types/types';
 import {SettingsService} from './settings.service'
 
 @Injectable({
@@ -10,7 +10,7 @@ export class XRefService {
 
   constructor(private client: HttpClient, private settingsService: SettingsService) { }
 
-  get(entity: LeadminerEntityWrapper): Promise<XRef[]> {
+  get(entity: Entity): Promise<XRef[]> {
     const entityGroup = entity.metadata['entityGroup']
 
     if (entityGroup != 'Chemical') {
@@ -18,7 +18,7 @@ export class XRefService {
     }
 
     const entityType = entity.metadata['RecognisingDict']['entityType']
-    const identifier = entity.identifiers?.get('resolvedEntity')
+    const identifier = entity.identifierSourceToID?.get('resolvedEntity')
 
     if (!identifier) {
       return Promise.resolve([])

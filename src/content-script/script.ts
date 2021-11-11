@@ -1,4 +1,4 @@
-import { LeadminerEntityWrapper, highlightID, Message, Recogniser, TabEntities } from '../types';
+import { Entity, highlightID, Message, Recogniser, TabEntities } from '../types';
 import { UserExperience } from './userExperience';
 import { Globals } from './globals';
 import { BrowserImplementation } from './browser-implementation';
@@ -110,7 +110,7 @@ function highlightEntites(tabEntities: TabEntities): Promise<string> {
 
         tabEntities[recogniser]!.entities.forEach((entity, entityName) => {
 
-          entity.synonyms.forEach((synonymData, synonymName) => {
+          entity.synonymToXPaths.forEach((synonymData, synonymName) => {
 
             let entityOccurrence = 0
               synonymData.xpaths.forEach((xpath, synonymOccurrence) => {
@@ -161,12 +161,12 @@ function highlightText(contextNode: Node, text: string, callback: (element: HTML
   return success
 }
 
-function newHighlightElementCallback(entity: LeadminerEntityWrapper, entityName: string, entityOccurrence: number, synonymName: string, synonymOccurrence: number): (element: HTMLElement) => void {
+function newHighlightElementCallback(entity: Entity, entityName: string, entityOccurrence: number, synonymName: string, synonymOccurrence: number): (element: HTMLElement) => void {
   return (element: HTMLElement): void => {
     element.id = highlightID(entityName, entityOccurrence, synonymName, synonymOccurrence);
     entity.htmlTagIDs = entity.htmlTagIDs ? entity.htmlTagIDs.concat([element.id]) : [element.id];
     element.addEventListener('click', (_event: Event): void => {
-      Globals.browser.sendMessage({ type: 'entity_messenger_service_highlight_clicked', body: element.id }).catch(console.log);
+      Globals.browser.sendMessage({ type: 'entity_messenger_service_highlight_clicked', body: element.id }).catch(console.error);
     });
   }
 }
