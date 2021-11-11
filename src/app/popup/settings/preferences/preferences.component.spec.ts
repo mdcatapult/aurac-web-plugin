@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PreferencesComponent } from './preferences.component';
 import {FormBuilder, FormControl} from '@angular/forms';
 import {defaultSettings} from 'src/types/settings';
+import { RecogniserNamePipe } from '../recogniser-name.pipe';
 
 describe('PreferencesComponent', () => {
   let component: PreferencesComponent;
@@ -11,7 +12,7 @@ describe('PreferencesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PreferencesComponent ]
+      declarations: [ PreferencesComponent, RecogniserNamePipe],
     })
     .compileComponents();
   });

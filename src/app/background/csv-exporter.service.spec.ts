@@ -18,7 +18,6 @@ describe('CsvExporterService', () => {
       imports: [HttpClientTestingModule],
       providers: [
         {provide: BrowserService, useClass: TestBrowserService},
-        CsvExporterService,
         EntitiesService,
         SettingsService
       ]

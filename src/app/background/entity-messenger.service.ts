@@ -52,6 +52,7 @@ export class EntityMessengerService {
       getXrefs.then(xRefs => {
         entity.xRefs = xRefs
         const sidebarCard: SidebarCard = {
+          recogniser: this.settingsService.preferences.recogniser,
           entity,
           entityID: entityID,
           clickedEntityOccurrence: entityOccurrence,

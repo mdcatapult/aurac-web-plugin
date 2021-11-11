@@ -26,8 +26,8 @@ export class SidebarCardComponent implements OnInit {
     this.synonyms = Array.from(this.card.entity.synonymToXPaths.keys())
 
     this.nOccurrences = this.card.entity.htmlTagIDs!.length
-    
-    this.links = this.linksService.getLinks(this.card.entity, this.card.clickedSynonymName)
+
+    this.links = this.linksService.getLinks(this.card)
     
     if (this.card.entity.identifierSourceToID) {
       const identifiers = Array.from(this.card.entity.identifierSourceToID.entries()).map(([type, value]) => {
