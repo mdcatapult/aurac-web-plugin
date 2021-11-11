@@ -3,6 +3,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { parseWithTypes } from 'src/json';
 import { MessageType, ClickedHighlightData } from 'src/types';
 import { BrowserService } from '../browser.service';
+import { LinksService } from './links.service';
 import { Identifier, SidebarEntity } from './types';
 
 @Injectable({
@@ -20,7 +21,7 @@ export class SidebarDataService {
   }
 
 
-  constructor(private browserService: BrowserService) {    
+  constructor(private browserService: BrowserService, private linksService: LinksService) {    
     this.browserService.addListener((msg: any) => {
     switch (msg.type as MessageType) {
       case 'sidebar_data_service_view_or_create_clicked_entity':
@@ -39,13 +40,16 @@ export class SidebarDataService {
       })
     }
 
+    const links = this.linksService.getLinks(highlightData.entity, highlightData.clickedSynonymName)
+
     return {
       title: highlightData.clickedSynonymName,
-      entityName: highlightData.entityName,
+      entityID: highlightData.clickedEntityID,
       identifiers,
       synonyms: Array.from(highlightData.entity.synonyms.keys()),
       occurrences: highlightData.entity.htmlTagIDs!,
-      xrefs: highlightData.entity.xRefs
+      xrefs: highlightData.entity.xRefs,
+      links
     }
   }
 
@@ -53,7 +57,7 @@ export class SidebarDataService {
     // convert inspected highlight data into sidebar entity (check if it's already in the array etc.)
     // and manipulate the entities array to render the cards
 
-    const cardExists = this.entities.some(entity => entity.entityName === clickedHighlightData.entityName)
+    const cardExists = this.entities.some(entity => entity.entityID === clickedHighlightData.clickedEntityID)
     if (!cardExists) {
       this.setEntities(this.entities.concat([this.sidebarEntityFromHighlightData(clickedHighlightData)]))
     }

@@ -139,17 +139,20 @@ export interface SynonymData {
 // Entity is a wrapper for a leadminer entity with any extra functional
 // information.
 export interface Entity {
-  synonyms: Map<SynonymText, SynonymData>
+  synonyms: Map<SynonymText, SynonymData>;
   identifiers?: Map<string, string>;
   metadata?: any;
   htmlTagIDs?: Array<string>;
-  xRefs?: Array<XRef>
+  xRefs?: Array<XRef>;
 }
 
-// RecogniserEntities is a wrapper for all the entities found when running NER.
+export type TabID = number
+export type EntityID = string
+
+// Contains all the entities for a particular recogniser in the tab.
 export interface RecogniserEntities {
     show: boolean;
-    entities: Map<string, Entity>;
+    entities: Map<EntityID, Entity>;
 }
 
 // Holds all entities on a page in valid dictionaries.
@@ -157,33 +160,11 @@ export type TabEntities = {
     [key in Recogniser]?: RecogniserEntities;
 }
 
-export interface TabID {
-  tab: number
-}
-
-export interface RecogniserID extends TabID {
-    recogniser: Recogniser;
-}
-
-export interface EntityID extends RecogniserID {
-    identifier: string;
-}
-
-export interface SynonymID extends EntityID {
-    synonym: string;
-}
-
-export interface OccurrenceID extends EntityID {
-    occurrence: string;
-}
-
-export type ChangeIdentifier = TabID | RecogniserID | EntityID | SynonymID | OccurrenceID
-
 // EntityChange describes where a change to the cache has been made and the
 // result of the change.
 export interface EntityChange {
-    identifier: ChangeIdentifier;
-    result: TabEntities | RecogniserEntities | Entity | Map<string,Entity>;
+    tabID: TabID;
+    entities: TabEntities;
     setterInfo?: SetterInfo
 }
 
@@ -192,19 +173,19 @@ export type SetterInfo = 'noPropagate'
 
 export const HIGHLIGHTED_ELEMENT_ID_DELIMITER = '@@'
 
-export function highlightID(entityName: string, entityOccurrences: number, synonymName: string, xpathIndex: number): string {
-  return [entityName, entityOccurrences, synonymName, xpathIndex].join(HIGHLIGHTED_ELEMENT_ID_DELIMITER)
+export function highlightID(entityID: string, entityOccurrence: number, synonymName: string, synonymOccurrence: number): string {
+  return [entityID, entityOccurrence, synonymName, synonymOccurrence].join(HIGHLIGHTED_ELEMENT_ID_DELIMITER)
 }
 
-export function parseHighlightID(id: string): [entityName: string, entityOccurrences: number, synonymName: string, xpathIndex: number] {
-  const [entityName, entityOccurrences, synonymName, xpathIndex] = id.split(HIGHLIGHTED_ELEMENT_ID_DELIMITER)
-  return [entityName, parseInt(entityOccurrences), synonymName, parseInt(xpathIndex)]
+export function parseHighlightID(id: string): [entityID: string, entityOccurrence: number, synonymName: string, synonymOccurrence: number] {
+  const [entityID, entityOccurrence, synonymName, synonymOccurrence] = id.split(HIGHLIGHTED_ELEMENT_ID_DELIMITER)
+  return [entityID, parseInt(entityOccurrence), synonymName, parseInt(synonymOccurrence)]
 }
 
 export type ClickedHighlightData = {
-  entityName: string; // key for entity map
+  clickedEntityID: string; // key for entity map
   entity: Entity;
-  entityOccurrence: number;
+  clickedEntityOccurrence: number;
   clickedSynonymName: string;
-  synonymOccurrence: number;
+  clickedSynonymOccurrence: number;
 }

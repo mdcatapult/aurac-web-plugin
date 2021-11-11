@@ -8,7 +8,7 @@ describe('SidebarEntityComponent', () => {
   let fixture: ComponentFixture<SidebarEntityComponent>;
   const entity: SidebarEntity = {
     title: '',
-    entityName: '',
+    entityID: '',
     identifiers: [],
     synonyms: ['a-synonym'],
     occurrences: ['occ1', 'occ2', 'occ3'],

@@ -32,7 +32,7 @@ export class SidebarEntityComponent {
   }
 
   remove() {
-    this.sidebarDataService.setEntities(this.sidebarDataService.entities.filter(entity => entity.entityName !== this.entity.entityName))
+    this.sidebarDataService.setEntities(this.sidebarDataService.entities.filter(entity => entity.entityID !== this.entity.entityID))
   }
 
 }

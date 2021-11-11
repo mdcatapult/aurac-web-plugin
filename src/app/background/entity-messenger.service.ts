@@ -22,13 +22,13 @@ export class EntityMessengerService {
         return
       }
 
-      this.browserService.sendMessageToTab(change.identifier.tab, { type: 'content_script_highlight_entities', body: stringifyWithTypes(change.result) })
+      this.browserService.sendMessageToTab(change.tabID, { type: 'content_script_highlight_entities', body: stringifyWithTypes(change.entities) })
         .then((stringifiedTabEntities) => {
           const tabEntities = parseWithTypes(stringifiedTabEntities)
 
           // Use 'noPropagate' setter info so that we don't get into an infinite loop.
-          this.entitiesService.setTabEntities(change.identifier.tab, tabEntities, 'noPropagate')
-          this.browserService.sendMessageToTab(change.identifier.tab, 'content_script_open_sidebar')
+          this.entitiesService.setTabEntities(change.tabID, tabEntities, 'noPropagate')
+          this.browserService.sendMessageToTab(change.tabID, 'content_script_open_sidebar')
         })
     })
 
@@ -44,11 +44,7 @@ export class EntityMessengerService {
   highlightClicked(elementID: string): Promise<void> {
     const [entityName, entityOccurrence, synonym, synonymOccurrence] = parseHighlightID(elementID)
     return this.browserService.getActiveTab().then(tab => {
-      const entity = this.entitiesService.getEntity({
-        tab: tab.id!,
-        recogniser: this.settingsService.preferences.recogniser,
-        identifier: entityName
-      })!
+      const entity = this.entitiesService.getEntity(tab.id!, this.settingsService.preferences.recogniser, entityName)!
 
       const getXrefs: Promise<XRef[]> = entity.xRefs ? Promise.resolve(entity.xRefs) : this.xRefService.get(entity)
 
@@ -56,10 +52,10 @@ export class EntityMessengerService {
         entity.xRefs = xRefs
         const clickedHighlightData: ClickedHighlightData = {
           entity,
-          entityName,
-          entityOccurrence,
+          clickedEntityID: entityName,
+          clickedEntityOccurrence: entityOccurrence,
           clickedSynonymName: synonym,
-          synonymOccurrence
+          clickedSynonymOccurrence: synonymOccurrence
         }
 
         this.browserService.sendMessageToTab(tab.id!, {
