@@ -6,8 +6,9 @@ function replacer(key: any, value: any): any {
         if (v instanceof Map || v instanceof Set) {
           return replacer(k, v)
         }
+
         return [k, v]
-      }), // or with spread: value: [...value]
+      }) // or with spread: value: [...value]
     }
   } else if (value instanceof Set) {
     return {
@@ -16,11 +17,12 @@ function replacer(key: any, value: any): any {
         if (v instanceof Map || v instanceof Set) {
           return replacer(v, v)
         }
+
         return v
       })
     }
   } else {
-    return value;
+    return value
   }
 }
 
@@ -34,7 +36,8 @@ function reviver(key: any, value: any) {
       return new Set(value.value)
     }
   }
-  return value;
+
+  return value
 }
 
 export function stringifyWithTypes(thing: any): string {

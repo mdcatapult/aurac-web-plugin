@@ -1,25 +1,25 @@
-import {environment} from '../environments/environment';
-import { Recogniser } from './recognisers';
+import { environment } from '../environments/environment'
+import { Recogniser } from './recognisers'
 
 export type Preferences = {
-  minEntityLength: number,
+  minEntityLength: number
   recogniser: Recogniser
 }
 
-export type XRefSources = {[key: string]: boolean}
+export type XRefSources = { [key: string]: boolean }
 
 export type Settings = {
-  urls: APIURLs,
-  xRefSources: XRefSources,
+  urls: APIURLs
+  xRefSources: XRefSources
   preferences: Preferences
 }
 
 export type APIURLs = {
-  nerURL: string,
-  compoundConverterURL: string,
-  unichemURL: string,
-  pdfConverterURL: string,
-};
+  nerURL: string
+  compoundConverterURL: string
+  unichemURL: string
+  pdfConverterURL: string
+}
 
 const devAPIURLs: APIURLs = {
   nerURL: 'http://localhost:8081',
@@ -32,7 +32,7 @@ const productionAPIURLs: APIURLs = {
   nerURL: 'https://ner-api.wopr.inf.mdc',
   compoundConverterURL: 'https://compound-converter.wopr.inf.mdc/convert',
   unichemURL: 'https://unichem-plus.wopr.inf.mdc',
-  pdfConverterURL: 'https://pdf.wopr.inf.mdc/html',
+  pdfConverterURL: 'https://pdf.wopr.inf.mdc/html'
 }
 
 export const defaultSettings: Settings = {
@@ -42,4 +42,4 @@ export const defaultSettings: Settings = {
     minEntityLength: 2,
     recogniser: 'leadmine-proteins'
   }
-};
+}

@@ -1,5 +1,5 @@
-import {Component, Input, OnChanges} from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
+import { Component, Input, OnChanges } from '@angular/core'
+import { FormControl, FormGroup } from '@angular/forms'
 
 @Component({
   selector: 'app-x-ref-sources',
@@ -7,17 +7,16 @@ import {FormControl, FormGroup} from '@angular/forms';
   styleUrls: ['./x-ref-sources.component.scss']
 })
 export class XRefSourcesComponent implements OnChanges {
-
   @Input() sourcesForm: FormGroup = new FormGroup({})
-  @Input() xRefSources: {[key: string]: boolean} = {}
+  @Input() xRefSources: { [key: string]: boolean } = {}
 
-  constructor() { }
+  constructor() {}
 
   ngOnChanges() {
-    if (!this.xRefSources) return;
+    if (!this.xRefSources) return
     this.sourcesForm.controls = {}
-    Object.entries(this.xRefSources).map(([key,value]) => {
-      this.sourcesForm.addControl(key, new FormControl(value));
+    Object.entries(this.xRefSources).map(([key, value]) => {
+      this.sourcesForm.addControl(key, new FormControl(value))
     })
   }
 

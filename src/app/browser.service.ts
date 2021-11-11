@@ -1,41 +1,42 @@
-import {Injectable} from '@angular/core';
-import { Message, MessageType } from 'src/types/messages';
-import Tab = browser.tabs.Tab;
+import { Injectable } from '@angular/core'
+import { Message, MessageType } from 'src/types/messages'
+import Tab = browser.tabs.Tab
 
 @Injectable({
   providedIn: 'root'
 })
 export class BrowserService {
-
-  constructor() { }
+  constructor() {}
 
   private makeValidMessage(msg: Message | MessageType): Message {
     let message: Message = msg as Message
     if (!message.type) {
-      message = {type: msg as MessageType}
+      message = { type: msg as MessageType }
     }
-    return message;
+
+    return message
   }
 
   sendMessageToBackground(msg: Message | MessageType): Promise<any> {
     return browser.runtime.sendMessage<Message>(this.makeValidMessage(msg))
   }
 
-  addListener(f: (msg: Partial<Message>) => void): void  {
-    browser.runtime.onMessage.addListener(f);
+  addListener(f: (msg: Partial<Message>) => void): void {
+    browser.runtime.onMessage.addListener(f)
   }
 
   getActiveTab(): Promise<Tab> {
-    return browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT})
-      .then(tabs => tabs[0]);
+    return browser.tabs
+      .query({ active: true, windowId: browser.windows.WINDOW_ID_CURRENT })
+      .then(tabs => tabs[0])
   }
 
   sendMessageToTab(tabId: number, msg: Message | MessageType): Promise<any> {
-    return browser.tabs.sendMessage<Message>(tabId, this.makeValidMessage(msg));
+    return browser.tabs.sendMessage<Message>(tabId, this.makeValidMessage(msg))
   }
 
-  sendMessageToActiveTab(msg: Message| MessageType): Promise<any> {
-    return this.getActiveTab().then(tab => this.sendMessageToTab(tab.id!, msg));
+  sendMessageToActiveTab(msg: Message | MessageType): Promise<any> {
+    return this.getActiveTab().then(tab => this.sendMessageToTab(tab.id!, msg))
   }
 
   save(obj: browser.storage.StorageObject): Promise<void> {
@@ -47,7 +48,6 @@ export class BrowserService {
   }
 
   getURL(asset: string): string {
-    return browser.runtime.getURL(asset);
+    return browser.runtime.getURL(asset)
   }
 }
-

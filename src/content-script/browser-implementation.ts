@@ -1,12 +1,11 @@
-import { IBrowser } from './IBrowser';
-import { Message } from 'src/types/messages';
+import { IBrowser } from './IBrowser'
+import { Message } from 'src/types/messages'
 
 /**
  * BrowserImplementation provides implementation of functions in IBroswer interface
  */
 export class BrowserImplementation implements IBrowser {
-
-  constructor() { }
+  constructor() {}
 
   addListener(callback: (msg: Message) => Promise<any> | undefined) {
     browser.runtime.onMessage.addListener((msg: any) => callback(msg as Message))

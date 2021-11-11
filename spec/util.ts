@@ -3,7 +3,7 @@ import { Globals } from './../src/content-script/globals'
 import * as jsdom from 'jsdom'
 import { BrowserMock } from './../src/content-script/browser-mock'
 import { APIEntities } from 'src/app/background/ner.service'
-const {JSDOM} = jsdom
+const { JSDOM } = jsdom
 
 export function setup(apiEntities: APIEntities): Document {
   Globals.document = createDocument(apiEntities)
@@ -11,6 +11,7 @@ export function setup(apiEntities: APIEntities): Document {
 
   // scrollIntoView will not work in test context without this
   Globals.document.defaultView.HTMLElement.prototype.scrollIntoView = () => {}
+
   return Globals.document
 }
 
@@ -27,6 +28,6 @@ function createDocument(apiEntities: APIEntities): Document {
     el.innerHTML = `${entity.name}`
     document.body.appendChild(el)
   })
+
   return document
 }
-

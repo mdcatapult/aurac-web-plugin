@@ -1,46 +1,43 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { BrowserService } from 'src/app/browser.service';
-import { TestBrowserService } from 'src/app/test-browser.service';
-import { Entity } from 'src/types/entity';
-import { SidebarCard } from '../types';
-import { SidebarCardComponent } from './sidebar-card.component';
+import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { BrowserService } from 'src/app/browser.service'
+import { TestBrowserService } from 'src/app/test-browser.service'
+import { Entity } from 'src/types/entity'
+import { SidebarCard } from '../types'
+import { SidebarCardComponent } from './sidebar-card.component'
 
 describe('SidebarCardComponent', () => {
-  let component: SidebarCardComponent;
-  let fixture: ComponentFixture<SidebarCardComponent>;
+  let component: SidebarCardComponent
+  let fixture: ComponentFixture<SidebarCardComponent>
   const entity: Entity = {
-    synonymToXPaths: new Map<string,string[]>(),
-    htmlTagIDs: ["a", "b", "c", "d"]
+    synonymToXPaths: new Map<string, string[]>(),
+    htmlTagIDs: ['a', 'b', 'c', 'd']
   }
   const card: SidebarCard = {
     recogniser: 'leadmine-proteins',
     entity: entity,
     clickedEntityOccurrence: 0,
     clickedSynonymOccurrence: 0,
-    clickedSynonymName: "",
-    entityID: "1"
+    clickedSynonymName: '',
+    entityID: '1'
   }
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SidebarCardComponent ],
-      providers: [
-        {provide: BrowserService, useClass: TestBrowserService}
-      ]
-    })
-    .compileComponents();
-  });
+      declarations: [SidebarCardComponent],
+      providers: [{ provide: BrowserService, useClass: TestBrowserService }]
+    }).compileComponents()
+  })
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SidebarCardComponent);
-    component = fixture.componentInstance;
+    fixture = TestBed.createComponent(SidebarCardComponent)
+    component = fixture.componentInstance
     component.card = card
-    fixture.detectChanges();
-  });
+    fixture.detectChanges()
+  })
 
   it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    expect(component).toBeTruthy()
+  })
 
   it('should handle right scrollIndex correctly', () => {
     // scroll to the end of occurrences
@@ -57,4 +54,4 @@ describe('SidebarCardComponent', () => {
     component.arrowClicked('left')
     expect(component.scrollIndex).toBe(entity.htmlTagIDs.length - 1)
   })
-});
+})

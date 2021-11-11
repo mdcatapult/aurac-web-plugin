@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
-import { SidebarDataService } from '../sidebar-data.service';
-import { SidebarCard } from '../types';
+import { Component } from '@angular/core'
+import { SidebarDataService } from '../sidebar-data.service'
+import { SidebarCard } from '../types'
 
 @Component({
   selector: 'app-sidebar-card-list',
@@ -8,13 +8,9 @@ import { SidebarCard } from '../types';
   styleUrls: ['./sidebar-card-list.component.scss']
 })
 export class SidebarCardListComponent {
+  cards: Array<SidebarCard> = []
 
-  cards: Array<SidebarCard> = [];
-
-  constructor(
-    private sidebarDataService: SidebarDataService,
-  ) {
-
+  constructor(private sidebarDataService: SidebarDataService) {
     this.sidebarDataService.cardsObservable.subscribe(cards => {
       this.cards = cards
     })
