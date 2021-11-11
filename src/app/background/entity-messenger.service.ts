@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
+import { XRef } from 'src/types/entity';
 import { parseHighlightID } from 'src/types/highlights';
 import { parseWithTypes, stringifyWithTypes } from '../../json';
 import { BrowserService } from '../browser.service';
 import { SidebarCard } from '../sidebar/types';
 import { EntitiesService } from './entities.service';
 import { SettingsService } from './settings.service';
-import { XRef, XRefService } from './x-ref.service';
+import { XRefService } from './x-ref.service';
 
 @Injectable({
   providedIn: 'root'

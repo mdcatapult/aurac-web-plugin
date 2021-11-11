@@ -12,7 +12,7 @@ export class LinksService {
   constructor() { }
 
   getLinks(card: SidebarCard): links.Link[] {
-    let entityLinks: Array<links.Link>
+    let entityLinks: Array<links.Link> = []
 
     switch (card.recogniser) {
       case 'leadmine-chemical-entities':

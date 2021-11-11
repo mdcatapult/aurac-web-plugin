@@ -5,8 +5,8 @@
         <button (click)="arrowClicked('left')">Left</button>
         <button (click)="arrowClicked('right')">Right</button>
         <button (click)="remove()">Remove</button>
-        <mat-card-content *ngIf="identifiers.length">
-            <table mat-table [dataSource]="identifiers">
+        <mat-card-content>
+            <table *ngIf="identifiers.length" mat-table [dataSource]="identifiers">
                 <ng-container matColumnDef="type">
                     <th mat-header-cell *matHeaderCellDef>Type</th>
                     <td mat-cell *matCellDef="let element">{{ element.type }}</td>
@@ -20,7 +20,7 @@
             </table>
 
             <!-- xrefs -->
-            <table mat-table [dataSource]="card.entity.xrefs">
+            <table *ngIf="card.entity.xRefs?.length" mat-table [dataSource]="card.entity.xrefs">
                 <ng-container matColumnDef="databaseName">
                     <th mat-header-cell *matHeaderCellDef>Source</th>
                     <td mat-cell *matCellDef="let element">{{ element.databaseName | titlecase}}</td>
@@ -32,20 +32,21 @@
                 <tr mat-header-row *matHeaderRowDef="['databaseName', 'url']"></tr>
                 <tr mat-row *matRowDef="let row; columns: ['databaseName', 'url']"></tr>
             </table>
+
+            <!-- links -->
+            <table mat-table [dataSource]="links">
+                <ng-container matColumnDef="resourceName">
+                    <th mat-header-cell *matHeaderCellDef>Resource</th>
+                    <td mat-cell *matCellDef="let element">{{ element.resourceName }}</td>
+                </ng-container>
+                <ng-container matColumnDef="linkUrl">
+                    <th mat-header-cell *matHeaderCellDef>URL</th>
+                    <td mat-cell *matCellDef="let element"><a href="{{ element.url }}" target="_blank">  {{ element.url }}  </a></td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="['resourceName', 'linkUrl']"></tr>
+                <tr mat-row *matRowDef="let row; columns: ['resourceName', 'linkUrl']"></tr>
+            </table>
         </mat-card-content>
-        <!-- links -->
-        <table mat-table [dataSource]="links">
-            <ng-container matColumnDef="resourceName">
-                <th mat-header-cell *matHeaderCellDef>Resource</th>
-                <td mat-cell *matCellDef="let element">{{ element.resourceName }}</td>
-            </ng-container>
-            <ng-container matColumnDef="linkUrl">
-                <th mat-header-cell *matHeaderCellDef>URL</th>
-                <td mat-cell *matCellDef="let element"><a href="{{ element.url }}" target="_blank">  {{ element.url }}  </a></td>
-            </ng-container>
-            <tr mat-header-row *matHeaderRowDef="['resourceName', 'linkUrl']"></tr>
-            <tr mat-row *matRowDef="let row; columns: ['resourceName', 'linkUrl']"></tr>
-        </table>
     </mat-card>
 </article>
 <br>
