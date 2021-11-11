@@ -1,12 +1,12 @@
 function replacer(key: any, value: any): any {
-  if(value instanceof Map) {
+  if (value instanceof Map) {
     return {
       dataType: 'Map',
       value: Array.from(value.entries()).map(([k, v]) => {
         if (v instanceof Map || v instanceof Set) {
           return replacer(k, v)
         }
-        return [k,v]
+        return [k, v]
       }), // or with spread: value: [...value]
     }
   } else if (value instanceof Set) {
@@ -25,7 +25,7 @@ function replacer(key: any, value: any): any {
 }
 
 function reviver(key: any, value: any) {
-  if(typeof value === 'object' && value !== null) {
+  if (typeof value === 'object' && value !== null) {
     if (value.dataType === 'Map') {
       return new Map(value.value)
     }

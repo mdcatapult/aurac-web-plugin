@@ -1,17 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Entity } from 'src/types/entity';
+import { Entity, XRef } from 'src/types/entity';
 import {SettingsService} from './settings.service'
 
 export type ConverterResult = {
   input: string,
   output: string,
-};
-
-export type XRef = {
-  compoundName: string,
-  databaseName: string,
-  url: string,
 };
 
 
