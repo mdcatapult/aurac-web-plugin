@@ -129,7 +129,7 @@ function highlightEntites(tabEntities: TabEntities): Promise<string> {
                   XPathResult.FIRST_ORDERED_NODE_TYPE
                 ).singleNodeValue
 
-                if (xpathNode) {
+                if (xpathNode && entityName !== 'protein') {
                   const highlightElementCallback = newHighlightElementCallback(
                     entity,
                     entityName,
@@ -154,32 +154,32 @@ function highlightEntites(tabEntities: TabEntities): Promise<string> {
   })
 }
 
-function highlightText(
-  contextNode: Node,
-  text: string,
-  callback: (element: HTMLElement) => void
-): boolean {
+function highlightText(contextNode: Node, text: string, callback: (element: HTMLElement) => void): boolean {
   let success = true
   let highlighter = new Mark(contextNode as HTMLElement)
-  highlighter.mark(text, {
-    element: 'span',
-    className: 'aurac-highlight',
-    accuracy: 'exactly',
-    acrossElements: true,
-    separateWordSearch: false,
-    exclude: ['a', '.tooltipped', '.tooltipped-click', '.aurac-highlight'],
-    filter: (_node, _term, countAtCall, _totalCount): boolean => countAtCall < 1,
-    each: callback,
-    noMatch: (_term: string) => {
-      success = false
-    }
-  })
+
+  const highlightingFormat = `(?<=[\\s${text}|\\W${text}])|${text}(?=\\s|\\W)`
+  let output = new RegExp(highlightingFormat)
+
+  if(output.test(text)) {
+    highlighter.mark(text, {
+      element: 'span',
+      className: 'aurac-highlight',
+      acrossElements: true,
+      separateWordSearch: false,
+      exclude: ['a', '.tooltipped', '.tooltipped-click', '.aurac-highlight', 'svg'],
+      each: callback,
+      noMatch: (_term: string) => {
+        console.log('no match on term ' + text)
+        success = false
+      }
+    })
+  }
 
   return success
 }
 
-function newHighlightElementCallback(
-  entity: Entity,
+function newHighlightElementCallback(entity: Entity,
   entityName: string,
   entityOccurrence: number,
   synonymName: string,
