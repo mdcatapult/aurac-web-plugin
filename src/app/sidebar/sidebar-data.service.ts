@@ -37,11 +37,11 @@ export class SidebarDataService {
 
   private viewOrCreateCard(clickedCard: SidebarCard): void {
     const cardExists = this.cards.some(card => card.entityID === clickedCard.entityID)
-    
+
     if (!cardExists) {
       this.setCards(this.cards.concat([clickedCard]))
     }
-    
+
     this.focusedCardSubject.next(clickedCard)
   }
 }

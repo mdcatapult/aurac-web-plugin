@@ -21,7 +21,6 @@ describe('SidebarCardComponent', () => {
     clickedSynonymName: '',
     entityID: '1'
   }
-  
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
