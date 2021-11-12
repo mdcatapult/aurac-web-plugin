@@ -12,27 +12,14 @@ import { SidebarCard } from '../types'
 })
 export class SidebarCardListComponent {
   cards: Array<SidebarCard> = []
+  focusedCard: SidebarCard = {} as SidebarCard
 
-  constructor(
-    private sidebarDataService: SidebarDataService,
-    private pageScrollService: PageScrollService,
-    @Inject(DOCUMENT) private document: any
-  ) {
+  constructor(private sidebarDataService: SidebarDataService) {
     this.sidebarDataService.cardsObservable.subscribe(cards => {
       this.cards = cards
-      this.scrollToCard(this.cards.find(card => card.inFocus))
     })
-  }
-
-  private scrollToCard(card: SidebarCard) {
-    // This must be on a timeout to give the child cards some time
-    // to render. Running this in the cards themselves i.e. in ngOnInit
-    // only works for new cards but not for existing cards (don't know why).
-    setTimeout(() => {
-      this.pageScrollService.scroll({
-        document: this.document,
-        scrollTarget: `#${card.entityID}`
-      })
-    }, 100)
+    this.sidebarDataService.focusedCardObservable.subscribe(card => {
+      this.focusedCard = card
+    })
   }
 }

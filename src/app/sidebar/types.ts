@@ -2,7 +2,6 @@ import { Entity, EntityID } from 'src/types/entity'
 import { Recogniser } from 'src/types/recognisers'
 
 export interface SidebarCard {
-  inFocus: boolean
   clickedSynonymName: string
   clickedSynonymOccurrence: number
   clickedEntityOccurrence: number

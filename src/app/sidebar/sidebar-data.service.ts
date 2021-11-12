@@ -22,6 +22,9 @@ export class SidebarDataService {
     this.cardsBehaviorSubject.next(cards)
   }
 
+  private focusedCardSubject: Subject<SidebarCard> = new Subject()
+  readonly focusedCardObservable: Observable<SidebarCard> = this.focusedCardSubject.asObservable()
+
   constructor(private browserService: BrowserService) {
     this.browserService.addListener((msg: any) => {
       switch (msg.type as MessageType) {
@@ -32,32 +35,14 @@ export class SidebarDataService {
     })
   }
 
-  private changeFocusedCard(newFocusedCard: SidebarCard): SidebarCard[] {
-    return this.cards.map(card => {
-      card.entityID === newFocusedCard.entityID ? (card.inFocus = true) : (card.inFocus = false)
-
-      return card
-    })
-  }
-
-  private unfocusAllCards(): SidebarCard[] {
-    return this.cards.map(card => {
-      card.inFocus = false
-
-      return card
-    })
-  }
-
   private viewOrCreateCard(clickedCard: SidebarCard): void {
     // convert inspected highlight data into sidebar entity (check if it's already in the array etc.)
     // and manipulate the entities array to render the cards
 
     const cardExists = this.cards.some(card => card.entityID === clickedCard.entityID)
-    if (cardExists) {
-      this.setCards(this.changeFocusedCard(clickedCard))
-    } else {
-      clickedCard.inFocus = true
-      this.setCards(this.unfocusAllCards().concat([clickedCard]))
+    if (!cardExists) {
+      this.setCards(this.cards.concat([clickedCard]))
     }
+    this.focusedCardSubject.next(clickedCard)
   }
 }

@@ -63,7 +63,6 @@ export class EntityMessengerService {
       getXrefs.then(xRefs => {
         entity.xRefs = xRefs
         const sidebarCard: SidebarCard = {
-          inFocus: true,
           recogniser: this.settingsService.preferences.recogniser,
           entity,
           entityID: entityID,
