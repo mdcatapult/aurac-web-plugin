@@ -111,7 +111,7 @@ export class NerService {
       // Currently there is only one key "queryParameters", which tells the api how to
       // construct a url when forwarding a request. This key takes a Map<string,string[]>
       // in order to allow multiple values per key.
-      const leadmineRecogniserOptions = { queryParameters: { inchi: ['true'] } }
+      const leadmineRecogniserOptions = { queryParameters: { inchikey: ['true'] } }
       const leadmineRecogniserOptionsJSON = JSON.stringify(leadmineRecogniserOptions)
       const base64leadmineRecogniserOptionsJSON = btoa(leadmineRecogniserOptionsJSON)
 
