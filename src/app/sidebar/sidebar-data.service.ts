@@ -36,13 +36,12 @@ export class SidebarDataService {
   }
 
   private viewOrCreateCard(clickedCard: SidebarCard): void {
-    // convert inspected highlight data into sidebar entity (check if it's already in the array etc.)
-    // and manipulate the entities array to render the cards
-
     const cardExists = this.cards.some(card => card.entityID === clickedCard.entityID)
+    
     if (!cardExists) {
       this.setCards(this.cards.concat([clickedCard]))
     }
+    
     this.focusedCardSubject.next(clickedCard)
   }
 }
