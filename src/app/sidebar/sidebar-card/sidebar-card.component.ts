@@ -41,7 +41,7 @@ export class SidebarCardComponent implements OnInit, OnChanges {
     }
 
     if (this.inFocus) {
-      this.scrollToMe()
+      this.scrollToMe(100)
     }
   }
 
@@ -59,14 +59,20 @@ export class SidebarCardComponent implements OnInit, OnChanges {
     @Inject(DOCUMENT) private document: any
   ) {}
 
-  private scrollToMe() {
+  private scrollToMe(delayMs?: number) {
     // This still requires a timeout in order to work in ngOnInit.
-    setTimeout(() => {
+    const doScroll = () => {
       this.pageScrollService.scroll({
         document: this.document,
         scrollTarget: `#${this.card.entityID}`
       })
-    }, 100)
+    }
+
+    if (delayMs) {
+      setTimeout(doScroll, delayMs)
+    } else {
+      doScroll()
+    }
   }
 
   filterIdentifiers(arr: Identifier[]): Identifier[] {
