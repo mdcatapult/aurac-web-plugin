@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { BrowserService } from 'src/app/browser.service'
 import { TestBrowserService } from 'src/app/test-browser.service'
-
 import { SidebarCardListComponent } from './sidebar-card-list.component'
+import { NgxPageScrollCoreModule, PageScrollService } from 'ngx-page-scroll-core'
 
 describe('SidebarCardListComponent', () => {
   let component: SidebarCardListComponent
@@ -10,8 +10,9 @@ describe('SidebarCardListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [NgxPageScrollCoreModule.forRoot()],
       declarations: [SidebarCardListComponent],
-      providers: [{ provide: BrowserService, useClass: TestBrowserService }]
+      providers: [PageScrollService, { provide: BrowserService, useClass: TestBrowserService }]
     }).compileComponents()
   })
 

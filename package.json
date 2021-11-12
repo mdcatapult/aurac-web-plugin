@@ -36,6 +36,8 @@
     "file-saver": "^2.0.5",
     "lodash": "^4.17.21",
     "lodash.merge": "^4.6.2",
+    "ngx-page-scroll": "^7.0.6",
+    "ngx-page-scroll-core": "^7.0.6",
     "puppeteer": "^1.14.0",
     "puppeteer-core": "^1.14.0",
     "rxjs": "~6.5.4",

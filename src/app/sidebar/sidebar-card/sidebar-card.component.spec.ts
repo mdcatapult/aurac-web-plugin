@@ -13,6 +13,7 @@ describe('SidebarCardComponent', () => {
     htmlTagIDs: ['a', 'b', 'c', 'd']
   }
   const card: SidebarCard = {
+    inFocus: false,
     recogniser: 'leadmine-proteins',
     entity: entity,
     clickedEntityOccurrence: 0,
