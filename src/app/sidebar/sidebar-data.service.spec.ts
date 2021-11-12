@@ -62,7 +62,7 @@ describe('SidebarDataService', () => {
 
   it('should return a list of cards with none in focus', () => {
     const unfocusedCards = service['unfocusAllCards']()
-    unfocusedCards.map(card => expect(card.inFocus).toBeFalse())
+    expect(unfocusedCards.some(card => card.inFocus)).toBeFalse()
   })
 
   it('should return a list of cards with the given card in focus', () => {

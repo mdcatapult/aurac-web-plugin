@@ -1,6 +1,7 @@
 import { DOCUMENT } from '@angular/common'
 import { Component, Inject } from '@angular/core'
 import { PageScrollService } from 'ngx-page-scroll-core'
+import { Touchscreen } from 'puppeteer'
 import { SidebarDataService } from '../sidebar-data.service'
 import { SidebarCard } from '../types'
 
@@ -19,7 +20,7 @@ export class SidebarCardListComponent {
   ) {
     this.sidebarDataService.cardsObservable.subscribe(cards => {
       this.cards = cards
-      this.cards.map(card => card.inFocus && this.scrollToCard(card))
+      this.scrollToCard(this.cards.find(card => card.inFocus))
     })
   }
 
