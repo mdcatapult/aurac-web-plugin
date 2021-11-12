@@ -28,7 +28,7 @@ export class XRefService {
       return Promise.resolve([])
     }
 
-    let inchikeyPromise: Promise<string> = new Promise(() => identifier)
+    let inchikeyPromise: Promise<string> = new Promise(resolve => resolve(identifier))
 
     switch (entityType) {
       case 'SMILES':
