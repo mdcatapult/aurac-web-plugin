@@ -257,7 +257,7 @@ describe('NerService', () => {
     )
     expect(params.toString()).toEqual('recogniser=leadmine-chemical-entities')
     expect(headers.get('x-leadmine-chemical-entities')).toEqual(
-      'eyJxdWVyeVBhcmFtZXRlcnMiOnsiaW5jaGkiOlsidHJ1ZSJdfX0='
+      'eyJxdWVyeVBhcmFtZXRlcnMiOnsiaW5jaGlrZXkiOlsidHJ1ZSJdfX0='
     )
   })
 })
