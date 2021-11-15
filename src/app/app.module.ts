@@ -29,6 +29,7 @@ import { SidebarCardComponent } from './sidebar/sidebar-card/sidebar-card.compon
 import { SafeResourcePipe } from './safe-resource.pipe'
 import { MatTableModule } from '@angular/material/table'
 import { RecogniserNamePipe } from './popup/settings/recogniser-name.pipe'
+import { NgxPageScrollCoreModule } from 'ngx-page-scroll-core'
 
 const routes: Routes = [{ path: '**', component: RouterComponent }]
 
@@ -68,7 +69,8 @@ const routes: Routes = [{ path: '**', component: RouterComponent }]
     MatRadioModule,
     MatCardModule,
     MatTableModule,
-    MatTooltipModule
+    MatTooltipModule,
+    NgxPageScrollCoreModule.forRoot({ scrollOffset: 200 })
   ],
   providers: [
     {

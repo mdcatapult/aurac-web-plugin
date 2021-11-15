@@ -1,4 +1,7 @@
-import { Component } from '@angular/core'
+import { DOCUMENT } from '@angular/common'
+import { Component, Inject } from '@angular/core'
+import { PageScrollService } from 'ngx-page-scroll-core'
+import { Touchscreen } from 'puppeteer'
 import { SidebarDataService } from '../sidebar-data.service'
 import { SidebarCard } from '../types'
 
@@ -9,10 +12,14 @@ import { SidebarCard } from '../types'
 })
 export class SidebarCardListComponent {
   cards: Array<SidebarCard> = []
+  focusedCard: SidebarCard = {} as SidebarCard
 
   constructor(private sidebarDataService: SidebarDataService) {
     this.sidebarDataService.cardsObservable.subscribe(cards => {
       this.cards = cards
+    })
+    this.sidebarDataService.focusedCardObservable.subscribe(card => {
+      this.focusedCard = card
     })
   }
 }

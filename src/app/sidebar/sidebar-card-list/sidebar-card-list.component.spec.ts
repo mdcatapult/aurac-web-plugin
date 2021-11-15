@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { BrowserService } from 'src/app/browser.service'
 import { TestBrowserService } from 'src/app/test-browser.service'
-
 import { SidebarCardListComponent } from './sidebar-card-list.component'
 
 describe('SidebarCardListComponent', () => {
