@@ -158,6 +158,8 @@ function highlightText(contextNode: Node, text: string, callback: (element: HTML
   let success = true
   let highlighter = new Mark(contextNode as HTMLElement)
 
+  // This regex will only highlight terms that either begin and end with its first and last letter (therefore no other word characters
+  // next to it) or contain non word characters
   const highlightingFormat = `(?<=\\W|^)${text}(?=\\W|$)`
   let output = new RegExp(highlightingFormat)
 
@@ -165,7 +167,7 @@ function highlightText(contextNode: Node, text: string, callback: (element: HTML
       element: 'span',
       className: 'aurac-highlight',
       acrossElements: true,
-      exclude: ['a', '.tooltipped', '.tooltipped-click', '.aurac-highlight', 'svg'],
+      exclude: ['a', '.tooltipped', '.tooltipped-click', '.aurac-highlight'],
       each: callback,
       noMatch: (_term: string) => {
         console.log('no match on term ' + text)
