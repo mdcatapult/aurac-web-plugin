@@ -158,15 +158,13 @@ function highlightText(contextNode: Node, text: string, callback: (element: HTML
   let success = true
   let highlighter = new Mark(contextNode as HTMLElement)
 
-  const highlightingFormat = `(?<=[\\s${text}|\\W${text}])|${text}(?=\\s|\\W)`
+  const highlightingFormat = `(?<=\\W|^)${text}(?=\\W|$)`
   let output = new RegExp(highlightingFormat)
 
-  if(output.test(text)) {
-    highlighter.mark(text, {
+  highlighter.markRegExp(output, {
       element: 'span',
       className: 'aurac-highlight',
       acrossElements: true,
-      separateWordSearch: false,
       exclude: ['a', '.tooltipped', '.tooltipped-click', '.aurac-highlight', 'svg'],
       each: callback,
       noMatch: (_term: string) => {
@@ -174,7 +172,6 @@ function highlightText(contextNode: Node, text: string, callback: (element: HTML
         success = false
       }
     })
-  }
 
   return success
 }
