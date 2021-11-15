@@ -1,4 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core'
+import { DOCUMENT } from '@angular/common'
+import { Component, Inject, Input, OnChanges, OnInit } from '@angular/core'
+import { PageScrollService } from 'ngx-page-scroll-core'
 import { BrowserService } from 'src/app/browser.service'
 import { Link } from '../links'
 import { LinksService } from '../links.service'
@@ -10,8 +12,9 @@ import { Identifier, SidebarCard } from '../types'
   templateUrl: './sidebar-card.component.html',
   styleUrls: ['./sidebar-card.component.scss']
 })
-export class SidebarCardComponent implements OnInit {
+export class SidebarCardComponent implements OnInit, OnChanges {
   @Input() card: SidebarCard = {} as SidebarCard
+  @Input() inFocus: boolean = false
   synonyms: string[] = []
   links: Link[] = []
   identifiers: Identifier[] = []
@@ -36,13 +39,41 @@ export class SidebarCardComponent implements OnInit {
       )
       this.identifiers = this.filterIdentifiers(identifiers)
     }
+
+    if (this.inFocus) {
+      this.scrollToMe(100)
+    }
+  }
+
+  ngOnChanges() {
+    if (this.inFocus) {
+      this.scrollToMe()
+    }
   }
 
   constructor(
     private browserService: BrowserService,
     private sidebarDataService: SidebarDataService,
-    private linksService: LinksService
+    private linksService: LinksService,
+    private pageScrollService: PageScrollService,
+    @Inject(DOCUMENT) private document: any
   ) {}
+
+  private scrollToMe(delayMs?: number) {
+    // This still requires a timeout in order to work in ngOnInit.
+    const doScroll = () => {
+      this.pageScrollService.scroll({
+        document: this.document,
+        scrollTarget: `#${this.card.entityID}`
+      })
+    }
+
+    if (delayMs) {
+      setTimeout(doScroll, delayMs)
+    } else {
+      doScroll()
+    }
+  }
 
   filterIdentifiers(arr: Identifier[]): Identifier[] {
     return arr.filter(v => v.value)

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { BehaviorSubject, Observable } from 'rxjs'
+import { BehaviorSubject, Observable, Subject } from 'rxjs'
 import { parseWithTypes } from 'src/json'
 import { MessageType } from 'src/types/messages'
 import { BrowserService } from '../browser.service'
@@ -22,20 +22,26 @@ export class SidebarDataService {
     this.cardsBehaviorSubject.next(cards)
   }
 
+  private focusedCardSubject: Subject<SidebarCard> = new Subject()
+  readonly focusedCardObservable: Observable<SidebarCard> = this.focusedCardSubject.asObservable()
+
   constructor(private browserService: BrowserService) {
     this.browserService.addListener((msg: any) => {
       switch (msg.type as MessageType) {
         case 'sidebar_data_service_view_or_create_card':
-          const highlightData = parseWithTypes(msg.body) as SidebarCard
-          this.viewOrCreateCard(highlightData)
+          const sidebarCard = parseWithTypes(msg.body) as SidebarCard
+          this.viewOrCreateCard(sidebarCard)
       }
     })
   }
 
-  private viewOrCreateCard(card: SidebarCard): void {
-    const cardExists = this.cards.some(entity => entity.entityID === card.entityID)
+  private viewOrCreateCard(clickedCard: SidebarCard): void {
+    const cardExists = this.cards.some(card => card.entityID === clickedCard.entityID)
+
     if (!cardExists) {
-      this.setCards(this.cards.concat([card]))
+      this.setCards(this.cards.concat([clickedCard]))
     }
+
+    this.focusedCardSubject.next(clickedCard)
   }
 }
