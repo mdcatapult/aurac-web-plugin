@@ -8,19 +8,6 @@
     <button (click)="arrowClicked('right')">Right</button>
     <button (click)="remove()">Remove</button>
     <mat-card-content>
-      <table *ngIf="identifiers.length" mat-table [dataSource]="identifiers">
-        <ng-container matColumnDef="type">
-          <th mat-header-cell *matHeaderCellDef>Type</th>
-          <td mat-cell *matCellDef="let element">{{ element.type }}</td>
-        </ng-container>
-        <ng-container matColumnDef="value">
-          <th mat-header-cell *matHeaderCellDef>Value</th>
-          <td mat-cell *matCellDef="let element">{{ element.value }}</td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="['type', 'value']"></tr>
-        <tr mat-row *matRowDef="let row; columns: ['type', 'value']"></tr>
-      </table>
-
       <!-- xrefs -->
       <table *ngIf="card.entity.xRefs?.length" mat-table [dataSource]="card.entity.xrefs">
         <ng-container matColumnDef="databaseName">
