@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core'
+import { Injectable, NgZone } from '@angular/core'
 import { BehaviorSubject, Observable, Subject } from 'rxjs'
 import { parseWithTypes } from 'src/json'
 import { MessageType } from 'src/types/messages'
@@ -25,14 +25,18 @@ export class SidebarDataService {
   private focusedCardSubject: Subject<SidebarCard> = new Subject()
   readonly focusedCardObservable: Observable<SidebarCard> = this.focusedCardSubject.asObservable()
 
-  constructor(private browserService: BrowserService) {
+  constructor(private browserService: BrowserService, private zone: NgZone) {
+
     this.browserService.addListener((msg: any) => {
-      switch (msg.type as MessageType) {
+      this.zone.run(() => {
+        switch (msg.type as MessageType) {
         case 'sidebar_data_service_view_or_create_card':
           const sidebarCard = parseWithTypes(msg.body) as SidebarCard
           this.viewOrCreateCard(sidebarCard)
-      }
+        }
+      })
     })
+    
   }
 
   private viewOrCreateCard(clickedCard: SidebarCard): void {
