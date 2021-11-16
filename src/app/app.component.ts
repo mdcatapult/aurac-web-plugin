@@ -14,5 +14,21 @@ export class AppComponent {
       `dna_icon`,
       this.domSanitizer.bypassSecurityTrustResourceUrl('../assets/dna_icon.svg')
     )
+    this.matIconRegistry.addSvgIcon(
+      `left_arrow`,
+      this.domSanitizer.bypassSecurityTrustResourceUrl('../assets/left_arrow.svg')
+    )
+    this.matIconRegistry.addSvgIcon(
+      `right_arrow`,
+      this.domSanitizer.bypassSecurityTrustResourceUrl('../assets/right_arrow.svg')
+    )
+    this.matIconRegistry.addSvgIcon(
+      `save`,
+      this.domSanitizer.bypassSecurityTrustResourceUrl('../assets/save.svg')
+    )
+    this.matIconRegistry.addSvgIcon(
+      `close`,
+      this.domSanitizer.bypassSecurityTrustResourceUrl('../assets/close.svg')
+    )
   }
 }
