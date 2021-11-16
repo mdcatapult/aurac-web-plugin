@@ -167,16 +167,16 @@ function highlightText(
   let termToHighlight = new RegExp(highlightingFormat)
 
   highlighter.markRegExp(termToHighlight, {
-      element: 'span',
-      className: 'aurac-highlight',
-      acrossElements: true,
-      exclude: ['a', '.tooltipped', '.tooltipped-click', '.aurac-highlight'],
-      each: callback,
-      noMatch: (_term: string) => {
-        console.log('no match on term ' + text)
-        success = false
-      }
-    })
+    element: 'span',
+    className: 'aurac-highlight',
+    acrossElements: true,
+    exclude: ['a', '.tooltipped', '.tooltipped-click', '.aurac-highlight'],
+    each: callback,
+    noMatch: (_term: string) => {
+      console.log('no match on term ' + text)
+      success = false
+    }
+  })
 
   return success
 }
