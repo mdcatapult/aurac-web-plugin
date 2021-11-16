@@ -57,6 +57,10 @@ export class CsvExporterService {
 
   // Converts the passed entities into a csv formatted string and appends headings to them
   leadmineToCSV(entities: Array<Entity>): string {
+    if (!entities.length) {
+      return ''
+    }
+
     const headings = [
       'Synonym',
       'Resolved Entity',

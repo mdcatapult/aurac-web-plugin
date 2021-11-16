@@ -22,13 +22,12 @@ export class SidebarHeaderComponent {
     const csvText = this.csvExporterService.leadmineToCSV(
       this.sidebarDataService.cards.map(sidebarEntity => sidebarEntity.entity)
     )
-    this.browserService.getActiveTab().then(tab => {
-      this.csvExporterService.saveAsCSV(csvText, tab.url!, 'aurac_sidebar_results_')
-    })
-  }
 
-  closeSidebar() {
-    this.browserService.sendMessageToActiveTab({ type: 'content_script_close_sidebar' })
+    if (csvText) {
+      this.browserService.getActiveTab().then(tab => {
+        this.csvExporterService.saveAsCSV(csvText, tab.url!, 'aurac_sidebar_results_')
+      })
+    }
   }
 
   clearCards() {
