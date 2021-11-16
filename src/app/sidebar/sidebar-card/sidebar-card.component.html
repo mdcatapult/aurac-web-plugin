@@ -3,19 +3,18 @@
     <mat-card-title id="{{ card.entityID }}"
       >{{ title }} ({{ scrollIndex + 1 }} / {{ nOccurrences }} occurrences)</mat-card-title
     >
-    <mat-card-subtitle>{{ synonyms.join(', ') }}.</mat-card-subtitle>
+    <mat-card-subtitle>{{ synonyms.join(', ') }}</mat-card-subtitle>
     <button (click)="arrowClicked('left')">Left</button>
     <button (click)="arrowClicked('right')">Right</button>
     <button (click)="remove()">Remove</button>
     <mat-card-content>
+
+      <mat-accordion>
+
       <!-- xrefs -->
-      <mat-accordion *ngIf="card.entity.xRefs?.length">
-        <mat-expansion-panel hideToggle>
+        <mat-expansion-panel  *ngIf="card.entity.xRefs?.length">
           <mat-expansion-panel-header>
-            <mat-panel-title> Cross-refs </mat-panel-title>
-            <mat-panel-description>
-              Link to {{ title }} on external websites
-            </mat-panel-description>
+            <mat-panel-description>Links</mat-panel-description>
           </mat-expansion-panel-header>
           <mat-chip-list>
             <mat-chip *ngFor="let xRef of card.entity.xRefs">
@@ -25,16 +24,11 @@
             </mat-chip>
           </mat-chip-list>
         </mat-expansion-panel>
-      </mat-accordion>
 
       <!-- links -->
-      <mat-accordion>
-        <mat-expansion-panel hideToggle>
+        <mat-expansion-panel>
           <mat-expansion-panel-header>
-            <mat-panel-title> Links </mat-panel-title>
-            <mat-panel-description>
-              Search for {{ title }} on external websites
-            </mat-panel-description>
+            <mat-panel-description>Search</mat-panel-description>
           </mat-expansion-panel-header>
           <mat-chip-list>
             <mat-chip *ngFor="let link of links">
@@ -44,6 +38,7 @@
             </mat-chip>
           </mat-chip-list>
         </mat-expansion-panel>
+
       </mat-accordion>
     </mat-card-content>
   </mat-card>
