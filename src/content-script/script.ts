@@ -129,7 +129,7 @@ function highlightEntites(tabEntities: TabEntities): Promise<string> {
                   XPathResult.FIRST_ORDERED_NODE_TYPE
                 ).singleNodeValue
 
-                if (xpathNode && entityName !== 'protein') {
+                if (xpathNode) {
                   const highlightElementCallback = newHighlightElementCallback(
                     entity,
                     entityName,
@@ -154,16 +154,19 @@ function highlightEntites(tabEntities: TabEntities): Promise<string> {
   })
 }
 
-function highlightText(contextNode: Node, text: string, callback: (element: HTMLElement) => void): boolean {
+function highlightText(
+  contextNode: Node,
+  text: string,
+  callback: (element: HTMLElement) => void
+): boolean {
   let success = true
   let highlighter = new Mark(contextNode as HTMLElement)
 
-  // This regex will only highlight terms that either begin and end with its first and last letter (therefore no other word characters
-  // next to it) or contain non word characters
+  // This regex will only highlight terms that either begin and end with its first and last letter or contain non word characters
   const highlightingFormat = `(?<=\\W|^)${text}(?=\\W|$)`
-  let output = new RegExp(highlightingFormat)
+  let termToHighlight = new RegExp(highlightingFormat)
 
-  highlighter.markRegExp(output, {
+  highlighter.markRegExp(termToHighlight, {
       element: 'span',
       className: 'aurac-highlight',
       acrossElements: true,
@@ -178,7 +181,8 @@ function highlightText(contextNode: Node, text: string, callback: (element: HTML
   return success
 }
 
-function newHighlightElementCallback(entity: Entity,
+function newHighlightElementCallback(
+  entity: Entity,
   entityName: string,
   entityOccurrence: number,
   synonymName: string,
