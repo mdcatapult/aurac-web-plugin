@@ -1,5 +1,19 @@
 img {
-  width: 10em;
+  width: 13em;
   display: block;
-  margin: 3em auto 3em auto;
+  margin: 1em auto 0.5em auto;
+}
+
+header {
+  margin: 0.75vh;
+}
+
+.button-container {
+  display: flex;
+}
+
+.header-button {
+  margin: 0.25em;
+  flex: fit-content;
+  background-color: #e59437;
 }

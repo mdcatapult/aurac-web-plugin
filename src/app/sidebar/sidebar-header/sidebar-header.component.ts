@@ -15,7 +15,7 @@ export class SidebarHeaderComponent {
     private sidebarDataService: SidebarDataService,
     private csvExporterService: CsvExporterService
   ) {
-    this.imgSrc = this.browserService.getURL('assets/head-brains.icon.128.png')
+    this.imgSrc = this.browserService.getURL('assets/head-brains.png')
   }
 
   exportCSV() {
