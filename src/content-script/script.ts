@@ -133,8 +133,8 @@ function highlightEntites(tabEntities: TabEntities): Promise<string> {
                 if (xpathNode) {
                   highlightText(
                     entity,
-                    synonymName, 
-                    xpathNode, 
+                    synonymName,
+                    xpathNode,
                     entityName,
                     entityOccurrence,
                     synonymOccurrence
@@ -152,13 +152,24 @@ function highlightEntites(tabEntities: TabEntities): Promise<string> {
   })
 }
 
+/**
+ *
+ * @param entity {Entity}
+ * @param synonymName
+ * @param contextNode
+ * @param entityName
+ * @param {number} highlightedEntityOccurrence count of highlighted occurrences of a particular entity,
+ * rather than the total number of entities on the page
+ * @param synonymOccurrence a particular xpath  the occurrence on the page from the total entities
+ */
 function highlightText(
   entity: Entity,
   synonymName: string,
   contextNode: Node,
-  entityName,
-  entityOccurrence,
-  synonymOccurrence
+  entityName: string,
+  highlightedEntityOccurrence: number, // sequential count of a particular entity that has been highlighted,
+  // rather than the total number of entities on the page
+  synonymOccurrence: number // the occurrence on the page from the total entities
 ) {
   let highlighter = new Mark(contextNode as HTMLElement)
 
@@ -175,12 +186,12 @@ function highlightText(
       newHighlightElementCallback(
         entity,
         entityName,
-        entityOccurrence,
+        highlightedEntityOccurrence,
         synonymName,
         synonymOccurrence
       )(element)
       synonymOccurrence++
-      entityOccurrence++
+      highlightedEntityOccurrence++
     },
   })
 }
@@ -188,12 +199,12 @@ function highlightText(
 function newHighlightElementCallback(
   entity: Entity,
   entityName: string,
-  entityOccurrence: number,
+  highlightedEntityOccurrence: number,
   synonymName: string,
   synonymOccurrence: number
 ): (element: HTMLElement) => void {
   return (element: HTMLElement): void => {
-    element.id = highlightID(entityName, entityOccurrence, synonymName, synonymOccurrence)
+    element.id = highlightID(entityName, highlightedEntityOccurrence, synonymName, synonymOccurrence)
     entity.htmlTagIDs = entity.htmlTagIDs ? entity.htmlTagIDs.concat([element.id]) : [element.id]
     element.addEventListener('click', (_event: Event): void => {
       Globals.browser
