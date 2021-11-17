@@ -1,3 +1,5 @@
+@import 'src/app/utilities/stylingVariables';
+
 img {
   width: 13em;
   display: block;
@@ -15,5 +17,5 @@ header {
 .header-button {
   margin: 0.25em;
   flex: fit-content;
-  background-color: #e59437;
+  background-color: $ner_icon;
 }
