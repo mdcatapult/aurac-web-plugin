@@ -15,6 +15,7 @@ let SIDEBAR_IS_READY = false
 
 const sidebar = Globals.document.createElement('div')
 sidebar.id = 'aurac-sidebar'
+sidebar.style.backgroundColor = 'lightslategray'
 sidebar.className = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed'
 
 const iframe = Globals.document.createElement('iframe')
