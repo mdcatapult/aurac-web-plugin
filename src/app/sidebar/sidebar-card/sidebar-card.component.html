@@ -1,26 +1,34 @@
 <article>
   <mat-card>
-    <mat-card-title id="{{ card.entityID }}"
-    >{{ title }} ({{ scrollIndex + 1 }} / {{ nOccurrences }} occurrences)
-    </mat-card-title
-    >
-    <mat-card-subtitle>{{ synonyms.join(', ') }}</mat-card-subtitle>
-
-    <button (click)="remove()">Remove</button>
-
-    <div class="arrow-buttons">
-      <button mat-icon-button aria-label="Left arrow button" (click)="arrowClicked('left')">
-        <mat-icon>svgIcon="left_arrow"</mat-icon>
+    <div class="button-container">
+      <button class="close-button" mat-icon-button aria-label="Close button" (click)="remove()">
+        <mat-icon>clear</mat-icon>
       </button>
-      <button mat-icon-button aria-label="Right arrow button" (click)="arrowClicked('right')">
-        <mat-icon>svgIcon="right_arrow"</mat-icon>
-      </button>
+      <div class="arrow-buttons">
+        <button mat-icon-button aria-label="Left arrow button" (click)="arrowClicked('left')">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <button
+          class="arrow-buttons"
+          mat-icon-button
+          aria-label="Right arrow button"
+          (click)="arrowClicked('right')"
+        >
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </div>
     </div>
+    <mat-card-header>
+      <mat-card-title id="{{ card.entityID }}">
+        <p>
+          {{ title }} <em>({{ scrollIndex + 1 }} / {{ nOccurrences }} occurrences)</em>
+        </p>
+      </mat-card-title>
+      <mat-card-subtitle>{{ synonyms.join(', ') }}</mat-card-subtitle>
+    </mat-card-header>
 
     <mat-card-content>
-
       <mat-accordion>
-
         <!-- xrefs -->
         <mat-expansion-panel *ngIf="card.entity.xRefs?.length">
           <mat-expansion-panel-header>
@@ -30,7 +38,7 @@
             <mat-chip *ngFor="let xRef of card.entity.xRefs">
               <a href="{{ xRef.url }}" target="_blank" class="href-no-underline">{{
                 xRef.databaseName | titlecase
-                }}</a>
+              }}</a>
             </mat-chip>
           </mat-chip-list>
         </mat-expansion-panel>
@@ -44,11 +52,10 @@
             <mat-chip *ngFor="let link of links">
               <a href="{{ link.url }}" target="_blank" class="href-no-underline">{{
                 link.resourceName
-                }}</a>
+              }}</a>
             </mat-chip>
           </mat-chip-list>
         </mat-expansion-panel>
-
       </mat-accordion>
     </mat-card-content>
   </mat-card>

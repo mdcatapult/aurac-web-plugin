@@ -1,3 +1,13 @@
 .href-no-underline {
   text-decoration: none;
 }
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 -1rem -1rem -1rem;
+}
+
+mat-card {
+  padding-top: 0;
+}

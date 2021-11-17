@@ -26,17 +26,15 @@ export class SidebarDataService {
   readonly focusedCardObservable: Observable<SidebarCard> = this.focusedCardSubject.asObservable()
 
   constructor(private browserService: BrowserService, private zone: NgZone) {
-
     this.browserService.addListener((msg: any) => {
       this.zone.run(() => {
         switch (msg.type as MessageType) {
-        case 'sidebar_data_service_view_or_create_card':
-          const sidebarCard = parseWithTypes(msg.body) as SidebarCard
-          this.viewOrCreateCard(sidebarCard)
+          case 'sidebar_data_service_view_or_create_card':
+            const sidebarCard = parseWithTypes(msg.body) as SidebarCard
+            this.viewOrCreateCard(sidebarCard)
         }
       })
     })
-    
   }
 
   private viewOrCreateCard(clickedCard: SidebarCard): void {
