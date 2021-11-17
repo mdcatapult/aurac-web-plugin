@@ -1,10 +1,11 @@
 <article>
   <mat-card>
     <div class="button-container">
-      <button class="close-button" mat-icon-button aria-label="Close button" (click)="remove()">
+      <button mat-icon-button aria-label="Close button" (click)="remove()">
         <mat-icon>clear</mat-icon>
       </button>
       <div class="arrow-buttons">
+        <p><em>{{ scrollIndex + 1 }} / {{ nOccurrences }}</em></p>
         <button mat-icon-button aria-label="Left arrow button" (click)="arrowClicked('left')">
           <mat-icon>arrow_back</mat-icon>
         </button>
@@ -21,7 +22,7 @@
     <mat-card-header>
       <mat-card-title id="{{ card.entityID }}">
         <p>
-          {{ title }} <em>({{ scrollIndex + 1 }} / {{ nOccurrences }} occurrences)</em>
+          {{ title }}
         </p>
       </mat-card-title>
       <mat-card-subtitle>{{ synonyms.join(', ') }}</mat-card-subtitle>
@@ -38,7 +39,7 @@
             <mat-chip *ngFor="let xRef of card.entity.xRefs">
               <a href="{{ xRef.url }}" target="_blank" class="href-no-underline">{{
                 xRef.databaseName | titlecase
-              }}</a>
+                }}</a>
             </mat-chip>
           </mat-chip-list>
         </mat-expansion-panel>
@@ -52,7 +53,7 @@
             <mat-chip *ngFor="let link of links">
               <a href="{{ link.url }}" target="_blank" class="href-no-underline">{{
                 link.resourceName
-              }}</a>
+                }}</a>
             </mat-chip>
           </mat-chip-list>
         </mat-expansion-panel>
