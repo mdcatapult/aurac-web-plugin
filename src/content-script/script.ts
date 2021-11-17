@@ -173,7 +173,6 @@ function highlightText(
     exclude: ['a', '.tooltipped', '.tooltipped-click', '.aurac-highlight'],
     each: callback,
     noMatch: (_term: string) => {
-      console.log('no match on term ' + text)
       success = false
     }
   })
