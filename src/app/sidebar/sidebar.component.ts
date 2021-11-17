@@ -7,9 +7,7 @@ import { BrowserService } from '../browser.service'
   styleUrls: ['./sidebar.component.scss']
 })
 export class SidebarComponent implements OnInit {
-  constructor(private browserService: BrowserService) {
-
-  }
+  constructor(private browserService: BrowserService) {}
 
   ngOnInit(): void {
     this.browserService.sendMessageToActiveTab({ type: 'content_script_set_sidebar_ready' })
