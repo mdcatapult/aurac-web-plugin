@@ -100,10 +100,6 @@ function getPageContents(): string {
   return Globals.document.documentElement.outerHTML
 }
 
-function sidebarIsReady(): Promise<boolean> {
-  return Promise.resolve(SIDEBAR_IS_READY)
-}
-
 async function awaitSidebarReadiness(): Promise<void> {
   while (!SIDEBAR_IS_READY) {
     await new Promise(r => setTimeout(r, 100))
@@ -112,12 +108,17 @@ async function awaitSidebarReadiness(): Promise<void> {
   return
 }
 
-function highlightEntites(tabEntities: TabEntities): Promise<string> {
+function highlightEntities(tabEntities: TabEntities): Promise<string> {
   return new Promise((resolve, reject) => {
     Globals.browser
       .sendMessage({ type: 'settings_service_get_current_recogniser' })
       .then((recogniser: Recogniser) => {
         tabEntities[recogniser]!.entities.forEach((entity, entityName) => {
+
+          // if (entityName.length > minEntityLength) {
+          //   return 
+          // }
+
           entity.synonymToXPaths.forEach((xpaths, synonymName) => {
             let entityOccurrence = 0
             xpaths.forEach((xpath, synonymOccurrence) => {
@@ -228,8 +229,7 @@ Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
 
     case 'content_script_highlight_entities':
       const tabEntities: TabEntities = parseWithTypes(msg.body)
-
-      return highlightEntites(tabEntities)
+      return highlightEntities(tabEntities)
 
     case 'content_script_scroll_to_highlight':
       return Promise.resolve(scrollToHighlight(msg.body))

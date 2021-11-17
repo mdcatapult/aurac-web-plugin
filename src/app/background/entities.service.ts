@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core'
+import { min } from 'lodash'
 import { Subject } from 'rxjs'
 import { Recogniser } from 'src/types/recognisers'
 import {
@@ -31,6 +32,38 @@ export class EntitiesService {
     this.updateStream(tabID, entities, setterInfo)
   }
 
+
+  filterEntities(minEntityLength: number): void {
+
+    const entityMap = {...this.entityMap}
+    
+    entityMap.forEach((tabEntities, tabId) => {
+
+      // this will call highlightEntities in content script. There,we need to clear previous highlights.
+      this.updateStream(tabId, this.filterTabEntities(minEntityLength, tabEntities))
+    })
+    //TODO: when we pass in SidebarEntity to sidebar on click, make sure the occurrence count will be correct.
+  }
+
+
+  // TODO: test
+  private filterTabEntities(minEntityLength: number, tabEntities: TabEntities): TabEntities {
+
+    Object.keys(tabEntities).forEach(recogniser => {
+      const filteredEntities = new Map<string, Entity>()
+
+      const recogniserEntities = tabEntities[`${recogniser}`] as RecogniserEntities
+      recogniserEntities.entities.forEach((entity, entityName) => {
+        if (entityName.length > minEntityLength) {
+          filteredEntities.set(entityName, entity)
+        }
+      })
+      tabEntities[`${recogniser}`] = filteredEntities
+    })
+
+    return tabEntities
+  }
+
   getRecogniserEntities(tabID: TabID, recogniser: Recogniser): RecogniserEntities | undefined {
     const dictEntities = this.entityMap.get(tabID)
 
@@ -59,7 +92,7 @@ export class EntitiesService {
 
   getEntity(tabID: TabID, recogniser: Recogniser, entityID: EntityID): Entity | undefined {
     const tabEntities = this.entityMap.get(tabID)
-
+ 
     return tabEntities ? tabEntities[recogniser]?.entities?.get(entityID) : undefined
   }
 
