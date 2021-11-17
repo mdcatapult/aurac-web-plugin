@@ -118,9 +118,10 @@ function highlightEntites(tabEntities: TabEntities): Promise<string> {
       .sendMessage({ type: 'settings_service_get_current_recogniser' })
       .then((recogniser: Recogniser) => {
         tabEntities[recogniser]!.entities.forEach((entity, entityName) => {
+          let entityOccurrence = 0
           entity.synonymToXPaths.forEach((xpaths, synonymName) => {
-            let entityOccurrence = 0
-            xpaths.forEach((xpath, synonymOccurrence) => {
+            let synonymOccurrence = 0
+            xpaths.forEach(xpath => {
               try {
                 const xpathNode = Globals.document.evaluate(
                   xpath,
@@ -130,17 +131,14 @@ function highlightEntites(tabEntities: TabEntities): Promise<string> {
                 ).singleNodeValue
 
                 if (xpathNode) {
-                  const highlightElementCallback = newHighlightElementCallback(
+                  highlightText(
                     entity,
+                    synonymName, 
+                    xpathNode, 
                     entityName,
                     entityOccurrence,
-                    synonymName,
                     synonymOccurrence
                   )
-                  const success = highlightText(xpathNode, synonymName, highlightElementCallback)
-                  if (success) {
-                    entityOccurrence++
-                  }
                 }
               } catch (e) {
                 reject(e)
@@ -155,15 +153,17 @@ function highlightEntites(tabEntities: TabEntities): Promise<string> {
 }
 
 function highlightText(
+  entity: Entity,
+  synonymName: string,
   contextNode: Node,
-  text: string,
-  callback: (element: HTMLElement) => void
-): boolean {
-  let success = true
+  entityName,
+  entityOccurrence,
+  synonymOccurrence
+) {
   let highlighter = new Mark(contextNode as HTMLElement)
 
   // This regex will only highlight terms that either begin and end with its first and last letter or contain non word characters
-  const highlightingFormat = `(?<=\\W|^)${text}(?=\\W|$)`
+  const highlightingFormat = `(?<=\\W|^)${synonymName}(?=\\W|$)`
   let termToHighlight = new RegExp(highlightingFormat)
 
   highlighter.markRegExp(termToHighlight, {
@@ -171,13 +171,18 @@ function highlightText(
     className: 'aurac-highlight',
     acrossElements: true,
     exclude: ['a', '.tooltipped', '.tooltipped-click', '.aurac-highlight'],
-    each: callback,
-    noMatch: (_term: string) => {
-      success = false
-    }
+    each: (element: HTMLElement) => {
+      newHighlightElementCallback(
+        entity,
+        entityName,
+        entityOccurrence,
+        synonymName,
+        synonymOccurrence
+      )(element)
+      synonymOccurrence++
+      entityOccurrence++
+    },
   })
-
-  return success
 }
 
 function newHighlightElementCallback(
