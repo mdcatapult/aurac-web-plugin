@@ -1,7 +1,4 @@
-import { DOCUMENT } from '@angular/common'
-import { Component, Inject } from '@angular/core'
-import { PageScrollService } from 'ngx-page-scroll-core'
-import { Touchscreen } from 'puppeteer'
+import { Component } from '@angular/core'
 import { SidebarDataService } from '../sidebar-data.service'
 import { SidebarCard } from '../types'
 
