@@ -42,4 +42,4 @@ export interface EntityChange {
 }
 
 // Sometimes we need to pass in extra information so that the setter doesn't get in a pickle!
-export type SetterInfo = 'noPropagate'
+export type SetterInfo = 'noPropagate' | 'noSetEntities'

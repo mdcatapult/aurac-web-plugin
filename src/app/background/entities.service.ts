@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core'
+import * as _ from 'lodash'
 import { min } from 'lodash'
 import { Subject } from 'rxjs'
 import { Recogniser } from 'src/types/recognisers'
@@ -16,7 +17,8 @@ import {
   providedIn: 'root'
 })
 export class EntitiesService {
-  private entityMap: Map<TabID, TabEntities> = new Map()
+  //TODO: make this private again! 
+  entityMap: Map<TabID, TabEntities> = new Map()
 
   private readonly entityChangeSubject = new Subject<EntityChange>()
   readonly entityChangeObservable = this.entityChangeSubject.asObservable()
@@ -35,13 +37,12 @@ export class EntitiesService {
 
   filterEntities(minEntityLength: number): void {
 
-    const entityMap = {...this.entityMap}
-    
-    entityMap.forEach((tabEntities, tabId) => {
+    const entityMap =_.cloneDeep(this.entityMap)
 
-      // this will call highlightEntities in content script. There,we need to clear previous highlights.
-      this.updateStream(tabId, this.filterTabEntities(minEntityLength, tabEntities))
+    entityMap.forEach((tabEntities, tabId) => {
+      this.updateStream(tabId, this.filterTabEntities(minEntityLength, tabEntities), 'noSetEntities')
     })
+
     //TODO: when we pass in SidebarEntity to sidebar on click, make sure the occurrence count will be correct.
   }
 
@@ -52,22 +53,21 @@ export class EntitiesService {
     Object.keys(tabEntities).forEach(recogniser => {
       const filteredEntities = new Map<string, Entity>()
 
+      // @ts-ignore
       const recogniserEntities = tabEntities[`${recogniser}`] as RecogniserEntities
+
+      // @ts-ignore
       recogniserEntities.entities.forEach((entity, entityName) => {
         if (entityName.length > minEntityLength) {
           filteredEntities.set(entityName, entity)
         }
       })
-      tabEntities[`${recogniser}`] = filteredEntities
+
+      // @ts-ignore
+      tabEntities[`${recogniser}`].entities = filteredEntities
     })
 
     return tabEntities
-  }
-
-  getRecogniserEntities(tabID: TabID, recogniser: Recogniser): RecogniserEntities | undefined {
-    const dictEntities = this.entityMap.get(tabID)
-
-    return dictEntities ? dictEntities[recogniser] : undefined
   }
 
   setRecogniserEntities(
@@ -76,6 +76,8 @@ export class EntitiesService {
     entities: RecogniserEntities,
     setterInfo?: SetterInfo
   ): void {
+
+    console.log('setRecogniserEntities: ', entities)
     const tabEntities = this.entityMap.get(tabID)
 
     if (!tabEntities) {

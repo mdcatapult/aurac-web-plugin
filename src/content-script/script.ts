@@ -7,10 +7,12 @@ import { Recogniser } from '../types/recognisers'
 import * as Mark from 'mark.js'
 import { highlightID } from '../types/highlights'
 
+console.log('SCRIPT LOADED')
+
 Globals.document = document
 Globals.browser = new BrowserImplementation()
 
-// document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
+const highlightClass = 'aurac-highlight'
 let SIDEBAR_IS_READY = false
 
 const sidebar = Globals.document.createElement('div')
@@ -109,6 +111,9 @@ async function awaitSidebarReadiness(): Promise<void> {
 }
 
 function highlightEntities(tabEntities: TabEntities): Promise<string> {
+
+  console.log('highlight entities called')
+  console.log('highlightEntities: ', tabEntities)
   return new Promise((resolve, reject) => {
     Globals.browser
       .sendMessage({ type: 'settings_service_get_current_recogniser' })
@@ -164,7 +169,7 @@ function highlightText(
   let highlighter = new Mark(contextNode as HTMLElement)
   highlighter.mark(text, {
     element: 'span',
-    className: 'aurac-highlight',
+    className: highlightClass,
     accuracy: 'exactly',
     acrossElements: true,
     separateWordSearch: false,
@@ -201,6 +206,14 @@ function scrollToHighlight(id: string): void {
   Globals.document.getElementById(id)!.scrollIntoView({ behavior: 'smooth', block: 'center' })
 }
 
+function removeHighlights(): void {
+  Array.from(Globals.document.getElementsByClassName(highlightClass))
+  .forEach(element => {
+    const childNodes = Array.from(element.childNodes);
+    element.replaceWith(...childNodes);
+  });
+}
+
 Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
   switch (msg.type) {
     case 'content_script_toggle_sidebar':
@@ -229,9 +242,13 @@ Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
 
     case 'content_script_highlight_entities':
       const tabEntities: TabEntities = parseWithTypes(msg.body)
+
       return highlightEntities(tabEntities)
 
     case 'content_script_scroll_to_highlight':
       return Promise.resolve(scrollToHighlight(msg.body))
+
+    case 'content_script_remove_highlights':
+      return Promise.resolve(removeHighlights())
   }
 })

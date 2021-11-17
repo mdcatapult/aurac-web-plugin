@@ -29,10 +29,14 @@ export class EntityMessengerService {
           body: stringifyWithTypes(change.entities)
         })
         .then(stringifiedTabEntities => {
-          const tabEntities = parseWithTypes(stringifiedTabEntities)
 
-          // Use 'noPropagate' setter info so that we don't get into an infinite loop.
-          this.entitiesService.setTabEntities(change.tabID, tabEntities, 'noPropagate')
+          if (change.setterInfo !== 'noSetEntities') {
+            const tabEntities = parseWithTypes(stringifiedTabEntities)
+
+            // Use 'noPropagate' setter info so that we don't get into an infinite loop.
+            this.entitiesService.setTabEntities(change.tabID, tabEntities, 'noPropagate')
+          }
+          
           this.browserService.sendMessageToTab(change.tabID, 'content_script_open_sidebar')
         })
     })
@@ -43,6 +47,10 @@ export class EntityMessengerService {
           return this.highlightClicked(msg.body)
         case 'min_entity_length_changed':
 
+        // @ts-ignore
+        console.log('on min_entity_length_changed received: ', this.entitiesService.entityMap.get(322)['leadmine-proteins'].entities.size)
+
+        // I think this actually needs doing for every tab
           this.browserService.sendMessageToActiveTab('content_script_remove_highlights').then(() => {
             const minEntityLength = msg.body
             this.entitiesService.filterEntities(minEntityLength)
