@@ -1,18 +1,28 @@
 <article>
   <mat-card>
     <mat-card-title id="{{ card.entityID }}"
-      >{{ title }} ({{ scrollIndex + 1 }} / {{ nOccurrences }} occurrences)</mat-card-title
+    >{{ title }} ({{ scrollIndex + 1 }} / {{ nOccurrences }} occurrences)
+    </mat-card-title
     >
     <mat-card-subtitle>{{ synonyms.join(', ') }}</mat-card-subtitle>
-    <button (click)="arrowClicked('left')">Left</button>
-    <button (click)="arrowClicked('right')">Right</button>
+
     <button (click)="remove()">Remove</button>
+
+    <div class="arrow-buttons">
+      <button mat-icon-button aria-label="Left arrow button" (click)="arrowClicked('left')">
+        <mat-icon>svgIcon="left_arrow"</mat-icon>
+      </button>
+      <button mat-icon-button aria-label="Right arrow button" (click)="arrowClicked('right')">
+        <mat-icon>svgIcon="right_arrow"</mat-icon>
+      </button>
+    </div>
+
     <mat-card-content>
 
       <mat-accordion>
 
-      <!-- xrefs -->
-        <mat-expansion-panel  *ngIf="card.entity.xRefs?.length">
+        <!-- xrefs -->
+        <mat-expansion-panel *ngIf="card.entity.xRefs?.length">
           <mat-expansion-panel-header>
             <mat-panel-description>Links</mat-panel-description>
           </mat-expansion-panel-header>
@@ -20,12 +30,12 @@
             <mat-chip *ngFor="let xRef of card.entity.xRefs">
               <a href="{{ xRef.url }}" target="_blank" class="href-no-underline">{{
                 xRef.databaseName | titlecase
-              }}</a>
+                }}</a>
             </mat-chip>
           </mat-chip-list>
         </mat-expansion-panel>
 
-      <!-- links -->
+        <!-- links -->
         <mat-expansion-panel>
           <mat-expansion-panel-header>
             <mat-panel-description>Search</mat-panel-description>
@@ -34,7 +44,7 @@
             <mat-chip *ngFor="let link of links">
               <a href="{{ link.url }}" target="_blank" class="href-no-underline">{{
                 link.resourceName
-              }}</a>
+                }}</a>
             </mat-chip>
           </mat-chip-list>
         </mat-expansion-panel>
