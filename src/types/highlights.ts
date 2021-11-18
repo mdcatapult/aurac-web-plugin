@@ -1,12 +1,11 @@
-export const HIGHLIGHTED_ELEMENT_ID_DELIMITER = '@@'
+export const HIGHLIGHTED_ELEMENT_ID_DELIMITER = '_'
 
 export function highlightID(
   entityID: string,
   entityOccurrence: number,
   synonymName: string,
-  synonymOccurrence: number
 ): string {
-  return [entityID, entityOccurrence, synonymName, synonymOccurrence].join(
+  return [entityID, entityOccurrence, synonymName].join(
     HIGHLIGHTED_ELEMENT_ID_DELIMITER
   )
 }
