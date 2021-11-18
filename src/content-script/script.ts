@@ -131,7 +131,7 @@ function highlightEntites(tabEntities: TabEntities): Promise<string> {
                 ).singleNodeValue
 
                 if (xpathNode) {
-                  highlightText(
+                  const success = highlightText(
                     entity,
                     synonymName,
                     xpathNode,
@@ -139,6 +139,12 @@ function highlightEntites(tabEntities: TabEntities): Promise<string> {
                     entityOccurrence,
                     synonymOccurrence
                   )
+
+                  if (success) {
+                    entityOccurrence++
+                  }
+
+                synonymOccurrence++
                 }
               } catch (e) {
                 reject(e)
@@ -167,10 +173,10 @@ function highlightText(
   synonymName: string,
   contextNode: Node,
   entityName: string,
-  highlightedEntityOccurrence: number, // sequential count of a particular entity that has been highlighted,
-  // rather than the total number of entities on the page
-  synonymOccurrence: number // the occurrence on the page from the total entities
-) {
+  highlightedEntityOccurrence: number,
+  synonymOccurrence: number
+): boolean {
+  let success = true
   let highlighter = new Mark(contextNode as HTMLElement)
 
   // This regex will only highlight terms that either begin and end with its first and last letter or contain non word characters
@@ -190,10 +196,12 @@ function highlightText(
         synonymName,
         synonymOccurrence
       )(element)
-      synonymOccurrence++
-      highlightedEntityOccurrence++
     },
+    noMatch(_term) {
+      success = false
+    }
   })
+  return success
 }
 
 function newHighlightElementCallback(
