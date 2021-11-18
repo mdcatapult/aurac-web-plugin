@@ -39,7 +39,6 @@ export class EntitiesService {
   // TODO: test
   filterEntities(minEntityLength: number): Map<TabID, TabEntities> {
 
-    // const clonedMap =_.cloneDeep(this.entityMap)
     const entityMap = new Map<TabID, TabEntities>()
 
     _.cloneDeep(this.entityMap).forEach((tabEntities, tabId) => {
@@ -49,7 +48,6 @@ export class EntitiesService {
     })
 
     return entityMap
-    //TODO: the sidebar card needs replacing.
   }
 
   private filterTabEntities(minEntityLength: number, tabEntities: TabEntities): TabEntities {
