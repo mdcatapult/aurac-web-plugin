@@ -1,6 +1,10 @@
 <div class="settings">
-  <button class="close-button" mat-icon-button aria-label="Button that closes the settings page"
-          (click)="closeSettings()">
+  <button
+    class="close-button"
+    mat-icon-button
+    aria-label="Button that closes the settings page"
+    (click)="closeSettings()"
+  >
     <mat-icon>clear</mat-icon>
   </button>
 
@@ -15,7 +19,7 @@
           matTooltip="Select the type and length of entities to highlight"
           matTooltipPosition="above"
           aria-label="Tab which contains settings for the type and length of entities to highlight"
-        >Preferences</span
+          >Preferences</span
         >
       </ng-template>
       <app-preferences [preferencesForm]="settingsForm.get('preferences')"></app-preferences>
@@ -26,7 +30,7 @@
           matTooltip="Select the cross reference sources to show in an entity card"
           matTooltipPosition="above"
           aria-label="Tab which contains the type of cross reference sources to show in the sidebar card for an entity"
-        >Sources</span
+          >Sources</span
         >
       </ng-template>
       <app-x-ref-sources
@@ -40,7 +44,7 @@
           matTooltip="Change where Aurac gets its information from"
           matTooltipPosition="above"
           aria-label="Tab which contains input fields for the URLs that Aurac fetches its information from"
-        >URLs</span
+          >URLs</span
         >
       </ng-template>
       <app-urls [urlsForm]="settingsForm.get('urls')"></app-urls>
