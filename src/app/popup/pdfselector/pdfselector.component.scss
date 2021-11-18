@@ -3,12 +3,18 @@
 .link-control {
   margin: 10px;
   width: 95%;
+  background-color: rgba(249, 250, 251, 1);
+}
+
+.pdf-conversion-text {
+  width: 95%;
+  margin: auto;
 }
 
 .confirm {
   width: 50%;
   display: block;
-  margin: 0 auto 5px;
+  margin: 0 auto 15px;
   background-color: $aurac_button;
 }
 
