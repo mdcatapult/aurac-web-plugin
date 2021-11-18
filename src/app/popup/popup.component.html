@@ -1,4 +1,4 @@
-<div *ngIf="mode === 'menu'" class="popup-div">
+<div *ngIf="mode === 'menu'" class="aurac-popup-div">
   <img src="./assets/head-brains.icon.128.png" alt="logo" class="aurac-popup-logo" />
 
   <div class="ner-button-container">
@@ -9,13 +9,13 @@
       matTooltipPosition="above"
       aria-label="Button that highlights things of interest in the current page"
     >
-      <mat-icon inline="true" class="ner-icon">manage_search</mat-icon>
+      <mat-icon inline="true" class="aurac-ner-icon">manage_search</mat-icon>
       Highlight
     </button>
   </div>
   <br />
 
-  <div class="settings-button-container">
+  <div class="aurac-settings-button-container">
     <button
       mat-raised-button
       color="black"
@@ -68,6 +68,6 @@
   <app-settings (closed)="mode = 'menu'"></app-settings>
 </div>
 
-<div class="pdf-selector" [hidden]="mode !== 'pdf'">
+<div class="aurac-pdf-selector" [hidden]="mode !== 'pdf'">
   <app-pdfselector (closed)="mode = 'menu'"></app-pdfselector>
 </div>

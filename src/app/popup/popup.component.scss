@@ -8,7 +8,7 @@
   background-color: lightgrey;
 }
 
-.popup-div {
+.aurac-popup-div {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -22,7 +22,7 @@
   background-color: $popup_default_background;
 }
 
-.ner-icon {
+.aurac-ner-icon {
   color: $ner_icon;
   height: 15px !important;
   width: 15px !important;
@@ -35,7 +35,7 @@
   background-color: rgb(226, 152, 71);
 }
 
-.settings-button-container {
+.aurac-settings-button-container {
   padding: 0.3rem;
   display: flex;
   flex-wrap: wrap;
@@ -48,16 +48,6 @@ button {
   margin-bottom: 3px;
 }
 
-.pdf-selector {
+.aurac-pdf-selector {
   width: 400px;
-}
-
-.radio-group {
-  display: flex;
-  flex-direction: column;
-  margin: 15px 0;
-}
-
-.radio-button {
-  margin-bottom: 2px;
 }

@@ -1,9 +1,13 @@
 <header>
   <img [src]="imgSrc | safeResource" />
   <nav>
-    <div class="button-container">
-      <button class="header-button" mat-raised-button (click)="exportCSV()">Export sidebar</button>
-      <button class="header-button" mat-raised-button (click)="clearCards()">Clear sidebar</button>
+    <div class="aurac-sidebar-header-button-container">
+      <button class="aurac-sidebar-header-button" mat-raised-button (click)="exportCSV()">
+        Export sidebar
+      </button>
+      <button class="aurac-sidebar-header-button" mat-raised-button (click)="clearCards()">
+        Clear sidebar
+      </button>
     </div>
   </nav>
 </header>

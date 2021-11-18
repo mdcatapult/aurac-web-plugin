@@ -1,6 +1,6 @@
 <div *ngIf="hasXRefs()">
   <form [formGroup]="sourcesForm">
-    <table class="table">
+    <table class="xref-settings-table">
       <tr *ngFor="let control of sourcesForm.value | keyvalue">
         <td>
           <label [for]="control.key">
