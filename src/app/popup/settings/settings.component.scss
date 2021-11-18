@@ -2,7 +2,7 @@
 
 .settings {
   width: 400px;
-  background-color: $popup_default_background;
+  background-color: $popup_background;
   flex-direction: column;
 }
 
@@ -13,12 +13,11 @@
 }
 
 .aurac-settings-logo {
-  background-color: $popup_default_background;
+  background-color: $popup_background;
   padding-bottom: 1rem;
 }
 
 .restore-defaults-button-container {
-  background-color: $ner_button;
   padding: 0.5rem;
   display: flex;
   justify-content: center;

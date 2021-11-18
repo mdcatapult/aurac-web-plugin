@@ -12,18 +12,18 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: $popup_default_background;
+  background-color: $aurac_background;
   width: 180px;
   overflow: hidden;
 }
 
 .aurac-popup-logo {
   padding: 10px;
-  background-color: $popup_default_background;
+  background-color: $aurac_background;
 }
 
 .aurac-ner-icon {
-  color: $aurac_orange;
+  color: $aurac_button;
   height: 15px !important;
   width: 15px !important;
   display: inline-table;
@@ -39,7 +39,7 @@
   padding: 0.3rem;
   display: flex;
   flex-wrap: wrap;
-  background-color: grey;
+  background-color: $aurac_background;
 }
 
 button {

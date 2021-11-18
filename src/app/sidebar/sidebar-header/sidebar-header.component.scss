@@ -17,5 +17,10 @@ header {
 .aurac-sidebar-header-button {
   margin: 0.25em;
   flex: fit-content;
-  background-color: $aurac_orange;
+  background-color: $aurac_button;
+  font-weight: bold;
+}
+
+.aurac-sidebar-header-button:hover {
+  background-color: $aurac_button_hover;
 }

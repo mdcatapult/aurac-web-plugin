@@ -10,12 +10,11 @@ import { highlightID } from '../types/highlights'
 Globals.document = document
 Globals.browser = new BrowserImplementation()
 
-// document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
 let SIDEBAR_IS_READY = false
 
 const sidebar = Globals.document.createElement('div')
 sidebar.id = 'aurac-sidebar'
-sidebar.style.backgroundColor = 'lightslategray'
+sidebar.style.backgroundColor = 'rgb(192, 192, 192)'
 sidebar.className = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed'
 
 const iframe = Globals.document.createElement('iframe')
