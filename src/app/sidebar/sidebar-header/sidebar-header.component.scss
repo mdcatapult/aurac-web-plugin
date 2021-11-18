@@ -1,4 +1,4 @@
-@import 'src/app/utilities/stylingVariables';
+@import 'src/assets/stylingVariables';
 
 img {
   width: 13em;
@@ -17,5 +17,5 @@ header {
 .aurac-sidebar-header-button {
   margin: 0.25em;
   flex: fit-content;
-  background-color: $ner_icon;
+  background-color: $aurac_orange;
 }
