@@ -1,6 +1,6 @@
 import * as Highlights from '../../src/types/highlights'
 
-describe('callRegex', () => {
+describe('highlightFormat', () => {
   it('returns true given the string just contains the term', () => {
     const synonym = 'OPG'
     const result = Highlights.highlightFormat(synonym)
