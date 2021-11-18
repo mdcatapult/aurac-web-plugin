@@ -3,11 +3,9 @@ export const HIGHLIGHTED_ELEMENT_ID_DELIMITER = '_'
 export function highlightID(
   entityID: string,
   entityOccurrence: number,
-  synonymName: string,
+  synonymName: string
 ): string {
-  return [entityID, entityOccurrence, synonymName].join(
-    HIGHLIGHTED_ELEMENT_ID_DELIMITER
-  )
+  return [entityID, entityOccurrence, synonymName].join(HIGHLIGHTED_ELEMENT_ID_DELIMITER)
 }
 
 export function parseHighlightID(

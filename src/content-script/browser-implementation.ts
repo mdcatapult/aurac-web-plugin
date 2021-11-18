@@ -8,14 +8,17 @@ export class BrowserImplementation implements IBrowser {
   constructor() {}
 
   addListener(callback: (msg: Message) => Promise<any> | undefined) {
-    browser.runtime.onMessage.addListener((msg: any) => callback(msg as Message))
+    //@ts-ignore
+    browser?.runtime.onMessage.addListener((msg: any) => callback(msg as Message))
   }
 
   sendMessage(msg: Message): Promise<any> {
-    return browser.runtime.sendMessage(msg)
+    //@ts-ignore
+    return browser?.runtime.sendMessage(msg)
   }
 
   getURL(url: string): string {
-    return browser.runtime.getURL(url)
+    //@ts-ignore
+    return browser?.runtime.getURL(url)
   }
 }

@@ -6,7 +6,9 @@ import { Message } from '../types/messages'
 import { Recogniser } from '../types/recognisers'
 import * as Mark from 'mark.js'
 import { highlightID } from '../types/highlights'
+import * as Consts from './consts'
 
+export const number = 5
 Globals.document = document
 Globals.browser = new BrowserImplementation()
 
@@ -19,7 +21,7 @@ sidebar.className = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed'
 
 const iframe = Globals.document.createElement('iframe')
 iframe.className = 'aurac-iframe'
-iframe.src = browser.runtime.getURL('index.html?page=sidebar')
+iframe.src = Globals.browser.getURL('index.html?page=sidebar')
 sidebar.appendChild(iframe)
 
 const buttonRoot = Globals.document.createElement('div')
@@ -52,7 +54,7 @@ const sidebarButton = Globals.document.createElement('button')
 shadowButtonRoot.appendChild(sidebarButton)
 
 const sidebarButtonLogo = Globals.document.createElement('img')
-sidebarButtonLogo.src = browser.runtime.getURL('assets/head-brains.icon.128.png')
+sidebarButtonLogo.src = Globals.browser.getURL('assets/head-brains.icon.128.png')
 sidebarButtonLogo.style.width = '80%'
 sidebarButton.appendChild(sidebarButtonLogo)
 
@@ -135,7 +137,7 @@ function highlightEntites(tabEntities: TabEntities): Promise<string> {
                     synonymName,
                     xpathNode,
                     entityName,
-                    entityOccurrence,
+                    entityOccurrence
                   )
 
                   if (success) {
@@ -163,19 +165,18 @@ function highlightEntites(tabEntities: TabEntities): Promise<string> {
  * @param {number} highlightedEntityOccurrence count of highlighted occurrences of a particular entity,
  * rather than the total number of entities on the page
  * */
-function highlightText(
+export function highlightText(
   entity: Entity,
   synonymName: string,
   contextNode: Node,
   entityName: string,
-  highlightedEntityOccurrence: number,
+  highlightedEntityOccurrence: number
 ): boolean {
   let success = true
   let highlighter = new Mark(contextNode as HTMLElement)
 
   // This regex will only highlight terms that either begin and end with its first and last letter or contain non word characters
-  const highlightingFormat = `(?<=\\W|^)${synonymName}(?=\\W|$)`
-  let termToHighlight = new RegExp(highlightingFormat)
+  let termToHighlight = Consts.callRegex(synonymName)
 
   highlighter.markRegExp(termToHighlight, {
     element: 'span',
@@ -202,14 +203,10 @@ function newHighlightElementCallback(
   entity: Entity,
   entityName: string,
   highlightedEntityOccurrence: number,
-  synonymName: string,
+  synonymName: string
 ): (element: HTMLElement) => void {
   return (element: HTMLElement): void => {
-    element.id = highlightID(
-      entityName,
-      highlightedEntityOccurrence,
-      synonymName
-    )
+    element.id = highlightID(entityName, highlightedEntityOccurrence, synonymName)
     entity.htmlTagIDs = entity.htmlTagIDs ? entity.htmlTagIDs.concat([element.id]) : [element.id]
     element.addEventListener('click', (_event: Event): void => {
       Globals.browser
