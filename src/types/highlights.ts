@@ -17,3 +17,9 @@ export function parseHighlightID(
 
   return [entityID, parseInt(entityOccurrence), synonymName, parseInt(synonymOccurrence)]
 }
+
+export function highlightFormat(synonym: string): RegExp {
+  const highlightingFormat = `(?<=\\W|^)${synonym}(?=\\W|$)`
+
+  return new RegExp(highlightingFormat)
+}

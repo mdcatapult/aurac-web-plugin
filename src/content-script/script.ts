@@ -6,9 +6,8 @@ import { Message } from '../types/messages'
 import { Recogniser } from '../types/recognisers'
 import * as Mark from 'mark.js'
 import { highlightID } from '../types/highlights'
-import * as Consts from './consts'
+import * as Highlights from '../types/highlights'
 
-export const number = 5
 Globals.document = document
 Globals.browser = new BrowserImplementation()
 
@@ -176,7 +175,7 @@ export function highlightText(
   let highlighter = new Mark(contextNode as HTMLElement)
 
   // This regex will only highlight terms that either begin and end with its first and last letter or contain non word characters
-  let termToHighlight = Consts.callRegex(synonymName)
+  let termToHighlight = Highlights.highlightFormat(synonymName)
 
   highlighter.markRegExp(termToHighlight, {
     element: 'span',
