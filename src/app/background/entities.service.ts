@@ -1,6 +1,7 @@
+import { ConstantPool } from '@angular/compiler'
 import { Injectable } from '@angular/core'
 import * as _ from 'lodash'
-import { min } from 'lodash'
+import { filter, min } from 'lodash'
 import { Subject } from 'rxjs'
 import { Recogniser } from 'src/types/recognisers'
 import {
@@ -12,6 +13,7 @@ import {
   TabEntities,
   TabID
 } from '../../types/entity'
+import { SettingsService } from './settings.service'
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +25,7 @@ export class EntitiesService {
   private readonly entityChangeSubject = new Subject<EntityChange>()
   readonly entityChangeObservable = this.entityChangeSubject.asObservable()
 
-  constructor() {}
+  constructor(private settingsService: SettingsService) {}
 
   getTabEntities(tab: TabID): TabEntities | undefined {
     return this.entityMap.get(tab)
@@ -34,37 +36,44 @@ export class EntitiesService {
     this.updateStream(tabID, entities, setterInfo)
   }
 
+  // TODO: test
+  filterEntities(minEntityLength: number): Map<TabID, TabEntities> {
 
-  filterEntities(minEntityLength: number): void {
+    // const clonedMap =_.cloneDeep(this.entityMap)
+    const entityMap = new Map<TabID, TabEntities>()
 
-    const entityMap =_.cloneDeep(this.entityMap)
-
-    entityMap.forEach((tabEntities, tabId) => {
-      this.updateStream(tabId, this.filterTabEntities(minEntityLength, tabEntities), 'noSetEntities')
+    _.cloneDeep(this.entityMap).forEach((tabEntities, tabId) => {
+      const filteredEntities = this.filterTabEntities(minEntityLength, tabEntities)
+      entityMap.set(tabId, filteredEntities)
+      this.updateStream(tabId, filteredEntities, 'noSetEntities')
     })
 
-    //TODO: when we pass in SidebarEntity to sidebar on click, make sure the occurrence count will be correct.
+    return entityMap
+    //TODO: the sidebar card needs replacing.
   }
 
-
-  // TODO: test
   private filterTabEntities(minEntityLength: number, tabEntities: TabEntities): TabEntities {
 
     Object.keys(tabEntities).forEach(recogniser => {
-      const filteredEntities = new Map<string, Entity>()
 
       // @ts-ignore
       const recogniserEntities = tabEntities[`${recogniser}`] as RecogniserEntities
 
       // @ts-ignore
       recogniserEntities.entities.forEach((entity, entityName) => {
-        if (entityName.length > minEntityLength) {
-          filteredEntities.set(entityName, entity)
-        }
-      })
+        console.log(entityName, entity)
 
-      // @ts-ignore
-      tabEntities[`${recogniser}`].entities = filteredEntities
+        const filteredSynonyms = new Map<string, string[]>()
+
+        entity.synonymToXPaths.forEach((occurrences, synonym) => {
+          if (synonym.length >= minEntityLength) {
+            filteredSynonyms.set(synonym, occurrences)
+          }
+        })
+
+        entity.synonymToXPaths = filteredSynonyms
+
+      })
     })
 
     return tabEntities
@@ -77,19 +86,26 @@ export class EntitiesService {
     setterInfo?: SetterInfo
   ): void {
 
-    console.log('setRecogniserEntities: ', entities)
+    const minEntityLength = this.settingsService.preferences.minEntityLength
+
     const tabEntities = this.entityMap.get(tabID)
+
+    let entityCopy: TabEntities
 
     if (!tabEntities) {
       const newTabEntities: TabEntities = {}
       newTabEntities[recogniser] = entities
       this.entityMap.set(tabID, newTabEntities)
-      this.updateStream(tabID, newTabEntities, setterInfo)
+      entityCopy = _.cloneDeep(newTabEntities)
     } else {
       tabEntities[recogniser] = entities
       this.entityMap.set(tabID, tabEntities)
-      this.updateStream(tabID, tabEntities, setterInfo)
+      entityCopy = _.cloneDeep(tabEntities)
+      // this.updateStream(tabID, this.filterTabEntities(minEntityLength, tabEntities), setterInfo)
     }
+    this.updateStream(tabID, this.filterTabEntities(minEntityLength, entityCopy), setterInfo)
+
+    console.log('set entityMap: ', this.entityMap.get(tabID))
   }
 
   getEntity(tabID: TabID, recogniser: Recogniser, entityID: EntityID): Entity | undefined {

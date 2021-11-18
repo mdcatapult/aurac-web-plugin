@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core'
+import { filter } from 'lodash'
 import { XRef } from 'src/types/entity'
 import { parseHighlightID } from 'src/types/highlights'
 import { parseWithTypes, stringifyWithTypes } from '../../json'
@@ -47,13 +48,20 @@ export class EntityMessengerService {
           return this.highlightClicked(msg.body)
         case 'min_entity_length_changed':
 
-        // @ts-ignore
-        console.log('on min_entity_length_changed received: ', this.entitiesService.entityMap.get(322)['leadmine-proteins'].entities.size)
-
         // I think this actually needs doing for every tab
           this.browserService.sendMessageToActiveTab('content_script_remove_highlights').then(() => {
             const minEntityLength = msg.body
-            this.entitiesService.filterEntities(minEntityLength)
+            const filteredTabEntities = this.entitiesService.filterEntities(minEntityLength)
+            
+            this.browserService.getActiveTab().then(tab => {
+
+              console.log('filteredTabEntities: ', filteredTabEntities.get(tab.id!))
+
+              this.browserService.sendMessageToTab(tab.id!, {
+                type: 'sidebar_data_replace_cards',
+                body: stringifyWithTypes(filteredTabEntities.get(tab.id!))
+              })
+            })
             return Promise.resolve()
           })
         default:

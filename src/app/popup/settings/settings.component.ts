@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
+import { min } from 'lodash'
 import { timer } from 'rxjs'
 import { debounce } from 'rxjs/operators'
 import { defaultSettings, APIURLs, Settings } from 'src/types/settings'
@@ -50,6 +51,7 @@ export class SettingsComponent implements OnInit {
   })
 
   ngOnInit(): void {
+    console.log('settings init!')
     this.browserService
       .sendMessageToBackground('settings_service_get_settings')
       .then(settingsObj => {
@@ -57,7 +59,7 @@ export class SettingsComponent implements OnInit {
         this.xRefSources = settings.xRefSources
         this.settingsForm.reset(settings)
 
-        this.settingsForm.valueChanges.pipe(debounce(() => timer(500))).subscribe(() => {
+        this.settingsForm.valueChanges.pipe(debounce(() => timer(500))).subscribe(v => {
           if (this.valid()) {
             this.save()
           }
@@ -69,11 +71,12 @@ export class SettingsComponent implements OnInit {
           .get('preferences')
           ?.get('minEntityLength')!
           .valueChanges.subscribe(minEntityLength => {
+            console.log('min entity length changed', minEntityLength)
             if (this.valid()) {
               this.browserService
                 .sendMessageToBackground({type: 'min_entity_length_changed', body: minEntityLength})
                 .catch(error =>
-                  console.error("couldn't send message 'min-entity-length-changed'", error)
+                  console.error("couldn't send message 'min_entity_length_changed'", error)
                 )
             }
           })

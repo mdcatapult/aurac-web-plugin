@@ -1,6 +1,7 @@
 import { Injectable, NgZone } from '@angular/core'
 import { BehaviorSubject, Observable, Subject } from 'rxjs'
 import { parseWithTypes } from 'src/json'
+import { RecogniserEntities, TabEntities } from 'src/types/entity'
 import { MessageType } from 'src/types/messages'
 import { BrowserService } from '../browser.service'
 import { SidebarCard } from './types'
@@ -32,6 +33,9 @@ export class SidebarDataService {
           case 'sidebar_data_service_view_or_create_card':
             const sidebarCard = parseWithTypes(msg.body) as SidebarCard
             this.viewOrCreateCard(sidebarCard)
+          case 'sidebar_data_replace_cards':
+            this.replaceCards(parseWithTypes(msg.body) as TabEntities)
+
         }
       })
     })
@@ -45,5 +49,34 @@ export class SidebarDataService {
     }
 
     this.focusedCardSubject.next(clickedCard)
+  }
+
+  private replaceCards(replacementEntities: TabEntities): void {
+    Object.keys(replacementEntities).forEach(recogniser => {
+
+      // @ts-ignore
+      (replacementEntities[`${recogniser}`] as RecogniserEntities).entities.forEach((entity, entityName) => {
+        const cardToReplace = this.cards.find(card => card.entityID === entityName)
+        
+        console.log('card to replace: ', cardToReplace)
+        
+        if (!cardToReplace) {
+          return 
+        }
+
+        console.log('replacing ', cardToReplace!.entity, ' with ', entity)
+
+
+        entity.htmlTagIDs = entity.htmlTagIDs?.filter(htmlTag => {
+          return Array.from(cardToReplace.entity.synonymToXPaths.keys()).some(synonym => htmlTag.includes(synonym))
+        })
+
+
+        cardToReplace.entity = entity
+    
+      })
+    })
+    
+    console.log(this.cards[0], replacementEntities)
   }
 }
