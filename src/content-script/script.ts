@@ -144,7 +144,7 @@ function highlightEntites(tabEntities: TabEntities): Promise<string> {
                     entityOccurrence++
                   }
 
-                synonymOccurrence++
+                  synonymOccurrence++
                 }
               } catch (e) {
                 reject(e)
@@ -201,6 +201,7 @@ function highlightText(
       success = false
     }
   })
+
   return success
 }
 
@@ -212,7 +213,12 @@ function newHighlightElementCallback(
   synonymOccurrence: number
 ): (element: HTMLElement) => void {
   return (element: HTMLElement): void => {
-    element.id = highlightID(entityName, highlightedEntityOccurrence, synonymName, synonymOccurrence)
+    element.id = highlightID(
+      entityName,
+      highlightedEntityOccurrence,
+      synonymName,
+      synonymOccurrence
+    )
     entity.htmlTagIDs = entity.htmlTagIDs ? entity.htmlTagIDs.concat([element.id]) : [element.id]
     element.addEventListener('click', (_event: Event): void => {
       Globals.browser
