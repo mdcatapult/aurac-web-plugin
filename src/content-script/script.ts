@@ -5,8 +5,8 @@ import { Entity, TabEntities } from '../types/entity'
 import { Message } from '../types/messages'
 import { Recogniser } from '../types/recognisers'
 import * as Mark from 'mark.js'
-import { highlightID } from '../types/highlights'
 import * as Highlights from '../types/highlights'
+import { highlightID } from '../types/highlights'
 
 Globals.document = document
 Globals.browser = new BrowserImplementation()
@@ -119,7 +119,7 @@ function highlightEntites(tabEntities: TabEntities): Promise<string> {
       .sendMessage({ type: 'settings_service_get_current_recogniser' })
       .then((recogniser: Recogniser) => {
         tabEntities[recogniser]!.entities.forEach((entity, entityName) => {
-          let entityOccurrence = 0
+          let highlightedEntityOccurrence = 0
           entity.synonymToXPaths.forEach((xpaths, synonymName) => {
             xpaths.forEach(xpath => {
               try {
@@ -131,17 +131,13 @@ function highlightEntites(tabEntities: TabEntities): Promise<string> {
                 ).singleNodeValue
 
                 if (xpathNode) {
-                  const success = highlightText(
+                  highlightedEntityOccurrence = highlightText(
                     entity,
                     synonymName,
                     xpathNode,
                     entityName,
-                    entityOccurrence
+                    highlightedEntityOccurrence
                   )
-
-                  if (success) {
-                    entityOccurrence++
-                  }
                 }
               } catch (e) {
                 reject(e)
@@ -170,12 +166,17 @@ export function highlightText(
   contextNode: Node,
   entityName: string,
   highlightedEntityOccurrence: number
-): boolean {
-  let success = true
+): number {
   let highlighter = new Mark(contextNode as HTMLElement)
 
   // This regex will only highlight terms that either begin and end with its first and last letter or contain non word characters
   let termToHighlight = Highlights.highlightFormat(synonymName)
+  console.log(
+    'term is ' +
+      synonymName +
+      ' and highlightentityoccurrence before is ' +
+      highlightedEntityOccurrence
+  )
 
   highlighter.markRegExp(termToHighlight, {
     element: 'span',
@@ -189,13 +190,17 @@ export function highlightText(
         highlightedEntityOccurrence,
         synonymName
       )(element)
-    },
-    noMatch(_term) {
-      success = false
+      highlightedEntityOccurrence++
     }
   })
+  console.log(
+    'term is ' +
+      synonymName +
+      ' and highlightentityoccurrence now is ' +
+      highlightedEntityOccurrence
+  )
 
-  return success
+  return highlightedEntityOccurrence
 }
 
 function newHighlightElementCallback(
