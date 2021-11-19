@@ -1,6 +1,6 @@
 <div class="form-container">
   <form [formGroup]="urlsForm">
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="fill">
       <mat-label>NER URL</mat-label>
       <input
         type="text"
@@ -13,7 +13,7 @@
       <mat-error *ngIf="urlsForm!.get(urlKeys.nerURL)!.invalid">Please enter a valid URL</mat-error>
     </mat-form-field>
 
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="fill">
       <mat-label>Compound Converter URL</mat-label>
       <input
         type="text"
@@ -28,7 +28,7 @@
       >
     </mat-form-field>
 
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="fill">
       <mat-label>Unichem URL</mat-label>
       <input
         type="text"
@@ -43,7 +43,7 @@
       >
     </mat-form-field>
 
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="fill">
       <mat-label>PDF converter URL</mat-label>
       <input
         type="text"
