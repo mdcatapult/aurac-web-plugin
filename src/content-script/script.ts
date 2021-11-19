@@ -119,8 +119,8 @@ function highlightEntites(tabEntities: TabEntities): Promise<string> {
       .sendMessage({ type: 'settings_service_get_current_recogniser' })
       .then((recogniser: Recogniser) => {
         tabEntities[recogniser]!.entities.forEach((entity, entityName) => {
-          let highlightedEntityOccurrence = 0
           entity.synonymToXPaths.forEach((xpaths, synonymName) => {
+            let highlightedEntityOccurrence = 0
             xpaths.forEach(xpath => {
               try {
                 const xpathNode = Globals.document.evaluate(
@@ -171,12 +171,6 @@ export function highlightText(
 
   // This regex will only highlight terms that either begin and end with its first and last letter or contain non word characters
   let termToHighlight = Highlights.highlightFormat(synonymName)
-  console.log(
-    'term is ' +
-      synonymName +
-      ' and highlightentityoccurrence before is ' +
-      highlightedEntityOccurrence
-  )
 
   highlighter.markRegExp(termToHighlight, {
     element: 'span',
@@ -193,12 +187,6 @@ export function highlightText(
       highlightedEntityOccurrence++
     }
   })
-  console.log(
-    'term is ' +
-      synonymName +
-      ' and highlightentityoccurrence now is ' +
-      highlightedEntityOccurrence
-  )
 
   return highlightedEntityOccurrence
 }
