@@ -52,31 +52,33 @@ export class SidebarDataService {
   }
 
   private replaceCards(replacementEntities: TabEntities): void {
+
+    const newCards: SidebarCard[] = []
     Object.keys(replacementEntities).forEach(recogniser => {
 
       // @ts-ignore
       (replacementEntities[`${recogniser}`] as RecogniserEntities).entities.forEach((entity, entityName) => {
         const cardToReplace = this.cards.find(card => card.entityID === entityName)
-        
-        console.log('card to replace: ', cardToReplace)
-        
+                
         if (!cardToReplace) {
           return 
         }
 
-        console.log('replacing ', cardToReplace!.entity, ' with ', entity)
+        cardToReplace.entity.htmlTagIDs = entity.htmlTagIDs
 
-
-        entity.htmlTagIDs = entity.htmlTagIDs?.filter(htmlTag => {
-          return Array.from(cardToReplace.entity.synonymToXPaths.keys()).some(synonym => htmlTag.includes(synonym))
-        })
-
-
-        cardToReplace.entity = entity
-    
+        newCards.push(cardToReplace)
       })
     })
-    
-    console.log(this.cards[0], replacementEntities)
+
+    this.cardsBehaviorSubject.next(this.cards)
+
+    // const cards = [...this.cards]
+    // // does this clear cards?
+    // this.cardsBehaviorSubject.next([])
+
+    // // if so, run this line to refresh the cards
+    // this.cardsBehaviorSubject.next(cards)
+
+    console.log(this.cards)
   }
 }

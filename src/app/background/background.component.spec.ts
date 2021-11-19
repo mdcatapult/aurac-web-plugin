@@ -2,9 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { BackgroundComponent } from './background.component'
 import { TestBrowserService } from '../test-browser.service'
 import { HttpClient, HttpHandler } from '@angular/common/http'
-// import {LeadminerEntity} from '../../types';
 import { BrowserService } from '../browser.service'
-import { SettingsService } from './settings.service'
 
 describe('BackgroundComponent', () => {
   let testBrowserService: TestBrowserService

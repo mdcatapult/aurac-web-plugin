@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import { filter } from 'lodash'
-import { XRef } from 'src/types/entity'
+import { TabEntities, XRef } from 'src/types/entity'
 import { parseHighlightID } from 'src/types/highlights'
 import { parseWithTypes, stringifyWithTypes } from '../../json'
 import { BrowserService } from '../browser.service'
@@ -31,11 +31,28 @@ export class EntityMessengerService {
         })
         .then(stringifiedTabEntities => {
 
+          const tabEntities = parseWithTypes(stringifiedTabEntities) as TabEntities
           if (change.setterInfo !== 'noSetEntities') {
-            const tabEntities = parseWithTypes(stringifiedTabEntities)
+
 
             // Use 'noPropagate' setter info so that we don't get into an infinite loop.
             this.entitiesService.setTabEntities(change.tabID, tabEntities, 'noPropagate')
+          } else {
+
+            this.browserService.sendMessageToTab(change.tabID, {
+              type: 'sidebar_data_replace_cards',
+              body: stringifiedTabEntities
+            })
+            // // if 'noSetEntities', we DO want to set the HTMLTagIds on each entity now that it's come back from highlighting!
+
+            // this.entitiesService.getTabEntities(change.tabID)!['leadmine-proteins']!.entities
+            // .forEach((entity, entityId) => {
+            //   console.log(entityId, 'old HTML IDs: ', entity.htmlTagIDs)
+            //   console.log('new HTML IDs: ', tabEntities['leadmine-proteins']!.entities.get(entityId)!.htmlTagIDs)
+
+            // })
+
+  
           }
           
           this.browserService.sendMessageToTab(change.tabID, 'content_script_open_sidebar')
@@ -53,15 +70,13 @@ export class EntityMessengerService {
             const minEntityLength = msg.body
             const filteredTabEntities = this.entitiesService.filterEntities(minEntityLength)
             
-            this.browserService.getActiveTab().then(tab => {
+            // this.browserService.getActiveTab().then(tab => {
 
-              console.log('filteredTabEntities: ', filteredTabEntities.get(tab.id!))
-
-              this.browserService.sendMessageToTab(tab.id!, {
-                type: 'sidebar_data_replace_cards',
-                body: stringifyWithTypes(filteredTabEntities.get(tab.id!))
-              })
-            })
+              // this.browserService.sendMessageToTab(tab.id!, {
+              //   type: 'sidebar_data_replace_cards',
+              //   body: stringifyWithTypes(filteredTabEntities.get(tab.id!))
+              // })
+            // })
             return Promise.resolve()
           })
         default:

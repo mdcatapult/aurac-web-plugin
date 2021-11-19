@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common'
-import { Component, Inject, Input, OnChanges, OnInit } from '@angular/core'
+import { Component, Inject, Input, OnChanges, OnInit, SimpleChange, SimpleChanges } from '@angular/core'
 import { PageScrollService } from 'ngx-page-scroll-core'
 import { BrowserService } from 'src/app/browser.service'
 import { Link } from '../links'
@@ -45,7 +45,8 @@ export class SidebarCardComponent implements OnInit, OnChanges {
     }
   }
 
-  ngOnChanges() {
+  ngOnChanges(v: SimpleChanges) {
+    console.log('card changed!', v)
     if (this.inFocus) {
       this.scrollToMe()
     }

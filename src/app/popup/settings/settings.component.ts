@@ -51,7 +51,6 @@ export class SettingsComponent implements OnInit {
   })
 
   ngOnInit(): void {
-    console.log('settings init!')
     this.browserService
       .sendMessageToBackground('settings_service_get_settings')
       .then(settingsObj => {
@@ -71,7 +70,6 @@ export class SettingsComponent implements OnInit {
           .get('preferences')
           ?.get('minEntityLength')!
           .valueChanges.subscribe(minEntityLength => {
-            console.log('min entity length changed', minEntityLength)
             if (this.valid()) {
               this.browserService
                 .sendMessageToBackground({type: 'min_entity_length_changed', body: minEntityLength})

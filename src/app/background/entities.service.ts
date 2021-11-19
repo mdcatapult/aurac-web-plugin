@@ -1,4 +1,4 @@
-import { ConstantPool } from '@angular/compiler'
+import { ConditionalExpr, ConstantPool } from '@angular/compiler'
 import { Injectable } from '@angular/core'
 import * as _ from 'lodash'
 import { filter, min } from 'lodash'
@@ -19,8 +19,7 @@ import { SettingsService } from './settings.service'
   providedIn: 'root'
 })
 export class EntitiesService {
-  //TODO: make this private again! 
-  entityMap: Map<TabID, TabEntities> = new Map()
+  private entityMap: Map<TabID, TabEntities> = new Map()
 
   private readonly entityChangeSubject = new Subject<EntityChange>()
   readonly entityChangeObservable = this.entityChangeSubject.asObservable()
@@ -36,7 +35,6 @@ export class EntitiesService {
     this.updateStream(tabID, entities, setterInfo)
   }
 
-  // TODO: test
   filterEntities(minEntityLength: number): Map<TabID, TabEntities> {
 
     const entityMap = new Map<TabID, TabEntities>()
@@ -59,11 +57,11 @@ export class EntitiesService {
 
       // @ts-ignore
       recogniserEntities.entities.forEach((entity, entityName) => {
-        console.log(entityName, entity)
 
         const filteredSynonyms = new Map<string, string[]>()
 
         entity.synonymToXPaths.forEach((occurrences, synonym) => {
+
           if (synonym.length >= minEntityLength) {
             filteredSynonyms.set(synonym, occurrences)
           }
@@ -99,11 +97,9 @@ export class EntitiesService {
       tabEntities[recogniser] = entities
       this.entityMap.set(tabID, tabEntities)
       entityCopy = _.cloneDeep(tabEntities)
-      // this.updateStream(tabID, this.filterTabEntities(minEntityLength, tabEntities), setterInfo)
     }
     this.updateStream(tabID, this.filterTabEntities(minEntityLength, entityCopy), setterInfo)
 
-    console.log('set entityMap: ', this.entityMap.get(tabID))
   }
 
   getEntity(tabID: TabID, recogniser: Recogniser, entityID: EntityID): Entity | undefined {

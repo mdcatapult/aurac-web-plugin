@@ -7,8 +7,6 @@ import { Recogniser } from '../types/recognisers'
 import * as Mark from 'mark.js'
 import { highlightID } from '../types/highlights'
 
-console.log('SCRIPT LOADED')
-
 Globals.document = document
 Globals.browser = new BrowserImplementation()
 
@@ -120,6 +118,7 @@ function highlightEntities(tabEntities: TabEntities): Promise<string> {
       .then((recogniser: Recogniser) => {
         tabEntities[recogniser]!.entities.forEach((entity, entityName) => {
 
+          entity.htmlTagIDs = []
           // if (entityName.length > minEntityLength) {
           //   return 
           // }
