@@ -1,22 +1,12 @@
 <div *ngIf="hasXRefs()">
   <form [formGroup]="sourcesForm">
-    <table class="xref-settings-table">
-      <tr *ngFor="let control of sourcesForm.value | keyvalue">
-        <td>
-          <label [for]="control.key">
-            {{ control.key }}
-          </label>
-        </td>
-        <td>
-          <input
-            type="checkbox"
-            [id]="control.key"
-            [value]="control.value"
-            [formControlName]="control.key"
-          />
-        </td>
-      </tr>
-    </table>
+    <ul>
+      <li *ngFor="let control of sourcesForm.value | keyvalue">
+        <mat-checkbox [id]="control.key" [value]="control.value" [formControlName]="control.key">
+          {{ control.key }}
+        </mat-checkbox>
+      </li>
+    </ul>
   </form>
 </div>
 <div *ngIf="!hasXRefs()">No sources available.</div>

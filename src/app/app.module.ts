@@ -32,6 +32,8 @@ import { RecogniserNamePipe } from './popup/settings/recogniser-name.pipe'
 import { NgxPageScrollCoreModule } from 'ngx-page-scroll-core'
 import { MatExpansionModule } from '@angular/material/expansion'
 import { MatChipsModule } from '@angular/material/chips'
+import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatSelectModule } from '@angular/material/select'
 
 const routes: Routes = [{ path: '**', component: RouterComponent }]
 
@@ -74,7 +76,9 @@ const routes: Routes = [{ path: '**', component: RouterComponent }]
     MatTooltipModule,
     NgxPageScrollCoreModule.forRoot({ scrollOffset: 200 }),
     MatExpansionModule,
-    MatChipsModule
+    MatChipsModule,
+    MatCheckboxModule,
+    MatSelectModule
   ],
   providers: [
     {
