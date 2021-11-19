@@ -14,9 +14,6 @@ export class SidebarCardListComponent {
   constructor(private sidebarDataService: SidebarDataService) {
     this.sidebarDataService.cardsObservable.subscribe(cards => {    
       this.cards = cards
-
-      // this.cards.forEach((v, i) => this.cards[i] = cards[i])
-      console.log('setting cards to:', this.cards)
     })
     this.sidebarDataService.focusedCardObservable.subscribe(card => {
       this.focusedCard = card

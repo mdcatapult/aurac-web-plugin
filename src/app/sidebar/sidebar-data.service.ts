@@ -53,11 +53,10 @@ export class SidebarDataService {
 
   private replaceCards(replacementEntities: TabEntities): void {
 
-    const newCards: SidebarCard[] = []
-    Object.keys(replacementEntities).forEach(recogniser => {
+    const newCards: SidebarCard[] = [];
 
-      // @ts-ignore
-      (replacementEntities[`${recogniser}`] as RecogniserEntities).entities.forEach((entity, entityName) => {
+    (Object.keys(replacementEntities) as Array<keyof TabEntities>).forEach(recogniser => {
+      (replacementEntities[recogniser] as RecogniserEntities).entities.forEach((entity, entityName) => {
         const cardToReplace = this.cards.find(card => card.entityID === entityName)
                 
         if (!cardToReplace) {

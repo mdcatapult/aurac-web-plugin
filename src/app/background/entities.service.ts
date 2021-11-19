@@ -66,13 +66,11 @@ export class EntitiesService {
 
   private filterTabEntities(minEntityLength: number, tabEntities: TabEntities): TabEntities {
 
-    Object.keys(tabEntities).forEach(recogniser => {
+    (Object.keys(tabEntities) as Array<keyof TabEntities>).forEach(recogniser => {
 
-      // @ts-ignore
-      const recogniserEntities = tabEntities[`${recogniser}`] as RecogniserEntities
+      const recogniserEntities = tabEntities[recogniser] as RecogniserEntities
 
       recogniserEntities.entities.forEach(entity => {
-
         const filteredSynonyms = new Map<string, string[]>()
 
         entity.synonymToXPaths.forEach((occurrences, synonym) => {
