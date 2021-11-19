@@ -66,7 +66,6 @@ export class EntityMessengerService {
   }
 
   highlightClicked(elementID: string): Promise<void> {
-    console.log('highlight clicked()')
     const [entityID, entityOccurrence, synonymName, synonymOccurrence] = parseHighlightID(elementID)
 
     return this.browserService.getActiveTab().then(tab => {

@@ -66,14 +66,10 @@ export class SidebarDataService {
 
         cardToReplace.entity.htmlTagIDs = entity.htmlTagIDs
 
-        console.log('replacing', entityName, cardToReplace.entity.htmlTagIDs?.length, cardToReplace.entity.htmlTagIDs)
-        console.log('with', entity.htmlTagIDs?.length, entity.htmlTagIDs)
-
-
         newCards.push(cardToReplace)
       })
     })
 
-    this.cardsBehaviorSubject.next(this.cards)
+    this.cardsBehaviorSubject.next(newCards)
   }
 }

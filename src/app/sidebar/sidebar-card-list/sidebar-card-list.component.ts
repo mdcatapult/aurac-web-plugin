@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core'
+import { Component } from '@angular/core'
 import { SidebarDataService } from '../sidebar-data.service'
 import { SidebarCard } from '../types'
 
@@ -7,20 +7,19 @@ import { SidebarCard } from '../types'
   templateUrl: './sidebar-card-list.component.html',
   styleUrls: ['./sidebar-card-list.component.scss']
 })
-export class SidebarCardListComponent implements OnInit{
+export class SidebarCardListComponent {
   cards: Array<SidebarCard> = []
   focusedCard: SidebarCard = {} as SidebarCard
 
   constructor(private sidebarDataService: SidebarDataService) {
-    this.sidebarDataService.cardsObservable.subscribe(cards => {
+    this.sidebarDataService.cardsObservable.subscribe(cards => {    
       this.cards = cards
-      this.ngOnInit()
+
+      // this.cards.forEach((v, i) => this.cards[i] = cards[i])
       console.log('setting cards to:', this.cards)
     })
     this.sidebarDataService.focusedCardObservable.subscribe(card => {
       this.focusedCard = card
     })
   }
-
-  ngOnInit(){}
 }
