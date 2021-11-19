@@ -66,19 +66,14 @@ export class SidebarDataService {
 
         cardToReplace.entity.htmlTagIDs = entity.htmlTagIDs
 
+        console.log('replacing', entityName, cardToReplace.entity.htmlTagIDs?.length, cardToReplace.entity.htmlTagIDs)
+        console.log('with', entity.htmlTagIDs?.length, entity.htmlTagIDs)
+
+
         newCards.push(cardToReplace)
       })
     })
 
     this.cardsBehaviorSubject.next(this.cards)
-
-    // const cards = [...this.cards]
-    // // does this clear cards?
-    // this.cardsBehaviorSubject.next([])
-
-    // // if so, run this line to refresh the cards
-    // this.cardsBehaviorSubject.next(cards)
-
-    console.log(this.cards)
   }
 }

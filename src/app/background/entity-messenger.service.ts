@@ -32,27 +32,17 @@ export class EntityMessengerService {
         .then(stringifiedTabEntities => {
 
           const tabEntities = parseWithTypes(stringifiedTabEntities) as TabEntities
-          if (change.setterInfo !== 'noSetEntities') {
-
+          if (change.setterInfo !== 'noSetEntities') { // TODO:change this string to 'isFilteredEntities' or something
 
             // Use 'noPropagate' setter info so that we don't get into an infinite loop.
             this.entitiesService.setTabEntities(change.tabID, tabEntities, 'noPropagate')
+            this.entitiesService.setFilteredEntities(change.tabID, tabEntities)
           } else {
-
+            this.entitiesService.setFilteredEntities(change.tabID, tabEntities)
             this.browserService.sendMessageToTab(change.tabID, {
               type: 'sidebar_data_replace_cards',
               body: stringifiedTabEntities
             })
-            // // if 'noSetEntities', we DO want to set the HTMLTagIds on each entity now that it's come back from highlighting!
-
-            // this.entitiesService.getTabEntities(change.tabID)!['leadmine-proteins']!.entities
-            // .forEach((entity, entityId) => {
-            //   console.log(entityId, 'old HTML IDs: ', entity.htmlTagIDs)
-            //   console.log('new HTML IDs: ', tabEntities['leadmine-proteins']!.entities.get(entityId)!.htmlTagIDs)
-
-            // })
-
-  
           }
           
           this.browserService.sendMessageToTab(change.tabID, 'content_script_open_sidebar')
@@ -65,18 +55,9 @@ export class EntityMessengerService {
           return this.highlightClicked(msg.body)
         case 'min_entity_length_changed':
 
-        // I think this actually needs doing for every tab
           this.browserService.sendMessageToActiveTab('content_script_remove_highlights').then(() => {
             const minEntityLength = msg.body
-            const filteredTabEntities = this.entitiesService.filterEntities(minEntityLength)
-            
-            // this.browserService.getActiveTab().then(tab => {
-
-              // this.browserService.sendMessageToTab(tab.id!, {
-              //   type: 'sidebar_data_replace_cards',
-              //   body: stringifyWithTypes(filteredTabEntities.get(tab.id!))
-              // })
-            // })
+            this.entitiesService.filterEntities(minEntityLength)
             return Promise.resolve()
           })
         default:
@@ -85,10 +66,11 @@ export class EntityMessengerService {
   }
 
   highlightClicked(elementID: string): Promise<void> {
+    console.log('highlight clicked()')
     const [entityID, entityOccurrence, synonymName, synonymOccurrence] = parseHighlightID(elementID)
 
     return this.browserService.getActiveTab().then(tab => {
-      const entity = this.entitiesService.getEntity(
+      const entity = this.entitiesService.getFilteredEntity(
         tab.id!,
         this.settingsService.preferences.recogniser,
         entityID

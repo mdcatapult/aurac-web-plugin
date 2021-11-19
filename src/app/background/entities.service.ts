@@ -19,7 +19,14 @@ import { SettingsService } from './settings.service'
   providedIn: 'root'
 })
 export class EntitiesService {
+
+  // contains all entities on the page
   private entityMap: Map<TabID, TabEntities> = new Map()
+
+  // maintaining a separate map is necessary because HTMLTagIDs are populated from the content script
+  // every time highlight is called. Therefore the results from the script need storing - it is not good enough 
+  // to simply filter entityMap each time we need filtered entities because the HTMLTagIDs need recalculating.
+  private filteredEntities: Map<TabID, TabEntities> = new Map()
 
   private readonly entityChangeSubject = new Subject<EntityChange>()
   readonly entityChangeObservable = this.entityChangeSubject.asObservable()
@@ -33,6 +40,15 @@ export class EntitiesService {
   setTabEntities(tabID: TabID, entities: TabEntities, setterInfo?: SetterInfo): void {
     this.entityMap.set(tabID, entities)
     this.updateStream(tabID, entities, setterInfo)
+  }
+
+
+  setFilteredEntities(tabID: TabID, entities: TabEntities): void {
+    this.filteredEntities.set(tabID, entities)
+  }
+
+  getFilteredEntities(tab: TabID): TabEntities | undefined {
+    return this.filteredEntities.get(tab)
   }
 
   filterEntities(minEntityLength: number): Map<TabID, TabEntities> {
@@ -55,8 +71,7 @@ export class EntitiesService {
       // @ts-ignore
       const recogniserEntities = tabEntities[`${recogniser}`] as RecogniserEntities
 
-      // @ts-ignore
-      recogniserEntities.entities.forEach((entity, entityName) => {
+      recogniserEntities.entities.forEach(entity => {
 
         const filteredSynonyms = new Map<string, string[]>()
 
@@ -105,7 +120,13 @@ export class EntitiesService {
   getEntity(tabID: TabID, recogniser: Recogniser, entityID: EntityID): Entity | undefined {
     const tabEntities = this.entityMap.get(tabID)
  
-    return tabEntities ? tabEntities[recogniser]?.entities?.get(entityID) : undefined
+    return tabEntities ? tabEntities[recogniser]?.entities?.get(entityID) : undefined 
+  }
+
+  getFilteredEntity(tabID: TabID, recogniser: Recogniser, entityID: EntityID): Entity | undefined {
+    const tabEntities = this.filteredEntities.get(tabID)
+ 
+    return tabEntities ? tabEntities[recogniser]?.entities?.get(entityID) : undefined 
   }
 
   private updateStream(tabID: TabID, entities: TabEntities, setterInfo?: SetterInfo): void {
