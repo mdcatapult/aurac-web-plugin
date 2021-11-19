@@ -26,6 +26,10 @@
   color: rgba(150, 150, 150, 0.26);
 }
 
+:host ::ng-deep .mat-ripple-element{
+  display: none !important;
+}
+
 .aurac-dropdown {
   padding: 0.5rem;
   display: block;
@@ -37,6 +41,6 @@
   padding: 15px;
 }
 
-.aurac-radio-button .aurac-prefs-label {
+.aurac-radio-button .aurac-prefs-label{
   margin: 5px;
 }

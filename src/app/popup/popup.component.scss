@@ -2,7 +2,7 @@
 
 .settings {
   width: 400px;
-}
+  height: 400px;}
 
 .mat-raised-button:hover {
   background-color: lightgrey;
@@ -13,8 +13,9 @@
   flex-direction: column;
   align-items: center;
   background-color: $aurac_background;
-  width: 180px;
   overflow: hidden;
+  width: 400px;
+  height: 400px;
 }
 
 .aurac-popup-logo {
@@ -50,6 +51,6 @@ button {
 
 .aurac-pdf-selector {
   width: 400px;
-  height: 265px;
+  height: 400px;
   background-color: $aurac_background;
 }
