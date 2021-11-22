@@ -25,7 +25,9 @@ export class SidebarHeaderComponent {
 
     if (csvText) {
       this.browserService.getActiveTab().then(tab => {
-        this.csvExporterService.saveAsCSV(csvText, tab.url!, 'aurac_sidebar_results_')
+        const fileName =
+          'aurac_sidebar_results_' + this.csvExporterService.sanitiseURL(tab.url!) + '.csv'
+        this.csvExporterService.saveAsCSV(csvText, fileName)
       })
     }
   }
