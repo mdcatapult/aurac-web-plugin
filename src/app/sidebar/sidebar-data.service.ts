@@ -51,18 +51,18 @@ export class SidebarDataService {
   }
 
   private updateCards(updatedEntities: TabEntities): void {
-    ;(Object.keys(updatedEntities) as Array<keyof TabEntities>).forEach(recogniser => {
-      ;(updatedEntities[recogniser] as RecogniserEntities).entities.forEach(
-        (entity, entityName) => {
-          const cardToUpdate = this.cards.find(card => card.entityID === entityName)
+    const updatedEntitiesKeys = Object.keys(updatedEntities) as Array<keyof TabEntities>
 
-          if (!cardToUpdate) {
-            return
-          }
+    updatedEntitiesKeys.forEach(recogniser => {
+      const recogniserEntities = updatedEntities[recogniser] as RecogniserEntities
 
+      recogniserEntities.entities.forEach((entity, entityName) => {
+        const cardToUpdate = this.cards.find(card => card.entityID === entityName)
+
+        if (cardToUpdate) {
           cardToUpdate.entity.htmlTagIDs = entity.htmlTagIDs
         }
-      )
+      })
     })
 
     this.cardsBehaviorSubject.next([...this.cards])

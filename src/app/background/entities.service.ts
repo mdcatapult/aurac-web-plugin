@@ -20,7 +20,8 @@ export class EntitiesService {
   // contains all entities on the page
   private entityMap: Map<TabID, TabEntities> = new Map()
 
-  // maintaining a separate map is necessary because HTMLTagIDs are populated from the content script
+  // filteredEntities is used when we want to filter entities based on minEntityLength.
+  // Maintaining a separate map is necessary because HTMLTagIDs are populated from the content script
   // every time highlight is called. Therefore the results from the script need storing - it is not good enough
   // to simply filter entityMap each time we need filtered entities because the HTMLTagIDs need recalculating.
   private filteredEntities: Map<TabID, TabEntities> = new Map()
@@ -47,12 +48,15 @@ export class EntitiesService {
     return _.cloneDeep(this.filteredEntities.get(tab))
   }
 
+  // filterEntities updates the entity stream with a copy of this.entityMap, filtered by minEntityLength
   filterEntities(minEntityLength: number): Map<TabID, TabEntities> {
     const entityMap = new Map<TabID, TabEntities>()
 
     _.cloneDeep(this.entityMap).forEach((tabEntities, tabId) => {
       const filteredEntities = this.filterTabEntities(minEntityLength, tabEntities)
       entityMap.set(tabId, filteredEntities)
+
+      // update entity stream with filteredEntities for tabId
       this.updateStream(tabId, filteredEntities, 'isFilteredEntities')
     })
 
@@ -60,7 +64,9 @@ export class EntitiesService {
   }
 
   private filterTabEntities(minEntityLength: number, tabEntities: TabEntities): TabEntities {
-    ;(Object.keys(tabEntities) as Array<keyof TabEntities>).forEach(recogniser => {
+    const tabEntityKeys = Object.keys(tabEntities) as Array<keyof TabEntities>
+
+    tabEntityKeys.forEach(recogniser => {
       const recogniserEntities = tabEntities[recogniser] as RecogniserEntities
 
       recogniserEntities.entities.forEach(entity => {
