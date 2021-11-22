@@ -20,7 +20,7 @@ sidebar.className = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed'
 const iframe = Globals.document.createElement('iframe')
 iframe.className = 'aurac-iframe'
 iframe.src = browser.runtime.getURL('index.html?page=sidebar')
-iframe.style.width = '20%';
+iframe.style.width = '20%'
 sidebar.appendChild(iframe)
 
 const buttonRoot = Globals.document.createElement('div')
