@@ -58,7 +58,7 @@ export class EntitiesService {
     _.cloneDeep(this.entityMap).forEach((tabEntities, tabId) => {
       const filteredEntities = this.filterTabEntities(minEntityLength, tabEntities)
       entityMap.set(tabId, filteredEntities)
-      this.updateStream(tabId, filteredEntities, 'noSetEntities')
+      this.updateStream(tabId, filteredEntities, 'isFilteredEntities')
     })
 
     return entityMap

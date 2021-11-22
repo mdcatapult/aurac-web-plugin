@@ -6,7 +6,7 @@ import { TestBrowserService } from '../test-browser.service'
 
 import { EntitiesService } from './entities.service'
 
-fdescribe('EntitiesService', () => {
+describe('EntitiesService', () => {
   let service: EntitiesService
 
   beforeEach(() => {

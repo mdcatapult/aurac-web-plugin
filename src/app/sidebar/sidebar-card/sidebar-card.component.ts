@@ -1,6 +1,5 @@
 import { DOCUMENT } from '@angular/common'
-import { ThrowStmt } from '@angular/compiler'
-import { Component, Inject, Input, OnChanges, OnInit, SimpleChange, SimpleChanges } from '@angular/core'
+import { Component, Inject, Input, OnChanges, OnInit } from '@angular/core'
 import { PageScrollService } from 'ngx-page-scroll-core'
 import { BrowserService } from 'src/app/browser.service'
 import { Link } from '../links'

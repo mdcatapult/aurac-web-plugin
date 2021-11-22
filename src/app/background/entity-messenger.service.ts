@@ -32,7 +32,7 @@ export class EntityMessengerService {
         .then(stringifiedTabEntities => {
 
           const tabEntities = parseWithTypes(stringifiedTabEntities) as TabEntities
-          if (change.setterInfo !== 'noSetEntities') { // TODO:change this string to 'isFilteredEntities' or something
+          if (change.setterInfo !== 'isFilteredEntities') {
 
             // Use 'noPropagate' setter info so that we don't get into an infinite loop.
             this.entitiesService.setTabEntities(change.tabID, tabEntities, 'noPropagate')
