@@ -1,32 +1,27 @@
-@import 'src/app/utilities/stylingVariables';
+@import 'src/assets/stylingVariables';
 
 .settings {
   width: 400px;
-  background-color: $popup_default_background;
+  height: auto;
+  background-color: $aurac_background;
   flex-direction: column;
 }
 
-.close-button {
-  align-content: flex-start;
-  padding: 0.25rem;
-  color: red;
-}
-
-.logo-container {
+.aurac-settings-logo-container {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.aurac-logo {
-  background-color: $popup_default_background;
+.aurac-settings-logo {
+  background-color: $aurac_background;
   padding-bottom: 1rem;
 }
 
 .restore-defaults-button-container {
-  background-color: $ner_button;
   padding: 0.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: $aurac_background;
 }
