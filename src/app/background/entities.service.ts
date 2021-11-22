@@ -34,7 +34,7 @@ export class EntitiesService {
   constructor(private settingsService: SettingsService) {}
 
   getTabEntities(tab: TabID): TabEntities | undefined {
-    return this.entityMap.get(tab)
+    return _.cloneDeep(this.entityMap.get(tab))
   }
 
   setTabEntities(tabID: TabID, entities: TabEntities, setterInfo?: SetterInfo): void {
@@ -48,7 +48,7 @@ export class EntitiesService {
   }
 
   getFilteredEntities(tab: TabID): TabEntities | undefined {
-    return this.filteredEntities.get(tab)
+    return _.cloneDeep(this.filteredEntities.get(tab))
   }
 
   filterEntities(minEntityLength: number): Map<TabID, TabEntities> {
