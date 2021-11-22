@@ -33,7 +33,7 @@
                 "output": "."
               }
             ],
-            "styles": ["src/styles.scss"],
+            "styles": ["src/assets/styles.scss"],
             "scripts": []
           },
           "configurations": {
@@ -93,7 +93,7 @@
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
             "assets": ["src/favicon.ico", "src/assets"],
-            "styles": ["src/styles.scss"],
+            "styles": ["src/assets/styles.scss"],
             "scripts": []
           }
         },

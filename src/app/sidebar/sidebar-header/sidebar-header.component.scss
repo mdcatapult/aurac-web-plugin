@@ -1,5 +1,30 @@
+@import 'src/assets/stylingVariables';
+
 img {
-  width: 10em;
+  width: 13em;
   display: block;
-  margin: 3em auto 3em auto;
+  margin: 1em auto 0.5em auto;
+}
+
+header {
+  margin: 0.75vh;
+}
+
+.aurac-sidebar-header-button-container {
+  display: flex;
+}
+
+.aurac-sidebar-header-button {
+  margin: 0.25em;
+  flex: fit-content;
+  background-color: $aurac_button;
+  font-weight: bold;
+}
+
+.aurac-sidebar-header-button:hover {
+  background-color: $aurac_button_hover;
+}
+
+button {
+  white-space: pre-wrap;
 }

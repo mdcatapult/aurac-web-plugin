@@ -1,58 +1,65 @@
 <article>
   <mat-card>
-    <mat-card-title id="{{ card.entityID }}"
-      >{{ title }}
-      <span *ngIf="nOccurrences > 0">({{ scrollIndex + 1 }} / {{ nOccurrences }} occurrences)</span>
-    </mat-card-title>
-    <mat-card-subtitle>{{ synonyms.join(', ') }}.</mat-card-subtitle>
-    <button (click)="arrowClicked('left')">Left</button>
-    <button (click)="arrowClicked('right')">Right</button>
-    <button (click)="remove()">Remove</button>
+    <div class="aurac-sidebar-card-button-container">
+      <button mat-icon-button aria-label="Close button for a sidebar card" (click)="remove()">
+        <mat-icon>clear</mat-icon>
+      </button>
+      <div class="aurac-sidebar-arrow-buttons">
+        <p *ngIf="nOccurrences > 0">
+          <em>{{ scrollIndex + 1 }} / {{ nOccurrences }}</em>
+        </p>
+        <button mat-icon-button aria-label="Left arrow button" (click)="arrowClicked('left')">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <button
+          class="arrow-buttons"
+          mat-icon-button
+          aria-label="Right arrow button"
+          (click)="arrowClicked('right')"
+        >
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </div>
+    </div>
+    <mat-card-header>
+      <mat-card-title id="{{ card.entityID }}">
+        <p>
+          {{ title }}
+        </p>
+      </mat-card-title>
+      <mat-card-subtitle>{{ synonyms.join(', ') }}</mat-card-subtitle>
+    </mat-card-header>
+
     <mat-card-content>
-      <table *ngIf="identifiers.length" mat-table [dataSource]="identifiers">
-        <ng-container matColumnDef="type">
-          <th mat-header-cell *matHeaderCellDef>Type</th>
-          <td mat-cell *matCellDef="let element">{{ element.type }}</td>
-        </ng-container>
-        <ng-container matColumnDef="value">
-          <th mat-header-cell *matHeaderCellDef>Value</th>
-          <td mat-cell *matCellDef="let element">{{ element.value }}</td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="['type', 'value']"></tr>
-        <tr mat-row *matRowDef="let row; columns: ['type', 'value']"></tr>
-      </table>
+      <mat-accordion>
+        <!-- xrefs -->
+        <mat-expansion-panel *ngIf="card.entity.xRefs?.length">
+          <mat-expansion-panel-header>
+            <mat-panel-description>Links</mat-panel-description>
+          </mat-expansion-panel-header>
+          <mat-chip-list>
+            <mat-chip *ngFor="let xRef of card.entity.xRefs">
+              <a href="{{ xRef.url }}" target="_blank" class="href-no-underline">{{
+                xRef.databaseName | titlecase
+              }}</a>
+            </mat-chip>
+          </mat-chip-list>
+        </mat-expansion-panel>
 
-      <!-- xrefs -->
-      <table *ngIf="card.entity.xRefs?.length" mat-table [dataSource]="card.entity.xrefs">
-        <ng-container matColumnDef="databaseName">
-          <th mat-header-cell *matHeaderCellDef>Source</th>
-          <td mat-cell *matCellDef="let element">{{ element.databaseName | titlecase }}</td>
-        </ng-container>
-        <ng-container matColumnDef="url">
-          <th mat-header-cell *matHeaderCellDef>URL</th>
-          <td mat-cell *matCellDef="let element">
-            <a href="{{ element.url }}" target="_blank">{{ element.url }}</a>
-          </td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="['databaseName', 'url']"></tr>
-        <tr mat-row *matRowDef="let row; columns: ['databaseName', 'url']"></tr>
-      </table>
-
-      <!-- links -->
-      <table mat-table [dataSource]="links">
-        <ng-container matColumnDef="resourceName">
-          <th mat-header-cell *matHeaderCellDef>Resource</th>
-          <td mat-cell *matCellDef="let element">{{ element.resourceName }}</td>
-        </ng-container>
-        <ng-container matColumnDef="linkUrl">
-          <th mat-header-cell *matHeaderCellDef>URL</th>
-          <td mat-cell *matCellDef="let element">
-            <a href="{{ element.url }}" target="_blank"> {{ element.url }} </a>
-          </td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="['resourceName', 'linkUrl']"></tr>
-        <tr mat-row *matRowDef="let row; columns: ['resourceName', 'linkUrl']"></tr>
-      </table>
+        <!-- links -->
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-description>Explore</mat-panel-description>
+          </mat-expansion-panel-header>
+          <mat-chip-list>
+            <mat-chip *ngFor="let link of links">
+              <a href="{{ link.url }}" target="_blank" class="href-no-underline">{{
+                link.resourceName
+              }}</a>
+            </mat-chip>
+          </mat-chip-list>
+        </mat-expansion-panel>
+      </mat-accordion>
     </mat-card-content>
   </mat-card>
 </article>

@@ -56,4 +56,8 @@ describe('CsvExporterService', () => {
 
     expect(actual).toEqual(expected)
   })
+
+  it('should return an empty string if passed an empty array', () => {
+    expect(service.leadmineToCSV([])).toEqual('')
+  })
 })
