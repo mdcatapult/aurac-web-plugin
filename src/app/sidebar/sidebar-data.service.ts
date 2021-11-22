@@ -33,8 +33,8 @@ export class SidebarDataService {
           case 'sidebar_data_service_view_or_create_card':
             const sidebarCard = parseWithTypes(msg.body) as SidebarCard
             this.viewOrCreateCard(sidebarCard)
-          case 'sidebar_data_replace_cards':
-            this.replaceCards(parseWithTypes(msg.body) as TabEntities)
+          case 'sidebar_data_update_cards':
+            this.updateCards(parseWithTypes(msg.body) as TabEntities)
 
         }
       })
@@ -51,12 +51,10 @@ export class SidebarDataService {
     this.focusedCardSubject.next(clickedCard)
   }
 
-  private replaceCards(replacementEntities: TabEntities): void {
+  private updateCards(updatedEntities: TabEntities): void {
 
-    const newCards: SidebarCard[] = [];
-
-    (Object.keys(replacementEntities) as Array<keyof TabEntities>).forEach(recogniser => {
-      (replacementEntities[recogniser] as RecogniserEntities).entities.forEach((entity, entityName) => {
+    (Object.keys(updatedEntities) as Array<keyof TabEntities>).forEach(recogniser => {
+      (updatedEntities[recogniser] as RecogniserEntities).entities.forEach((entity, entityName) => {
         const cardToReplace = this.cards.find(card => card.entityID === entityName)
                 
         if (!cardToReplace) {
@@ -65,10 +63,9 @@ export class SidebarDataService {
 
         cardToReplace.entity.htmlTagIDs = entity.htmlTagIDs
 
-        newCards.push(cardToReplace)
       })
     })
 
-    this.cardsBehaviorSubject.next(newCards)
+    this.cardsBehaviorSubject.next([...this.cards])
   }
 }

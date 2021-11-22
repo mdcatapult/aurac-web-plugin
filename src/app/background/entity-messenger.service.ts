@@ -40,7 +40,7 @@ export class EntityMessengerService {
           } else {
             this.entitiesService.setFilteredEntities(change.tabID, tabEntities)
             this.browserService.sendMessageToTab(change.tabID, {
-              type: 'sidebar_data_replace_cards',
+              type: 'sidebar_data_update_cards',
               body: stringifiedTabEntities
             })
           }

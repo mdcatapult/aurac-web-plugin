@@ -30,7 +30,7 @@ export type MessageType =
   | 'settings_service_refresh_xref_sources'
   | 'settings_service_set_settings'
   | 'sidebar_component_set_entities'
-  | 'sidebar_data_replace_cards'
+  | 'sidebar_data_update_cards'
   | 'sidebar_data_service_view_or_create_card'
   | 'sidebar_rendered'
   | 'x-ref_result'

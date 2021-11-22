@@ -1,4 +1,5 @@
 import { DOCUMENT } from '@angular/common'
+import { ThrowStmt } from '@angular/compiler'
 import { Component, Inject, Input, OnChanges, OnInit, SimpleChange, SimpleChanges } from '@angular/core'
 import { PageScrollService } from 'ngx-page-scroll-core'
 import { BrowserService } from 'src/app/browser.service'
@@ -26,7 +27,6 @@ export class SidebarCardComponent implements OnInit, OnChanges {
   ngOnInit() {
 
     this.title = this.card.clickedSynonymName
-
     
     if (this.inFocus) {
       this.scrollToMe(100)
@@ -46,7 +46,7 @@ export class SidebarCardComponent implements OnInit, OnChanges {
       )
       this.identifiers = this.filterIdentifiers(identifiers)
     }
-    
+
     if (this.inFocus) {
       this.scrollToMe()
     }
