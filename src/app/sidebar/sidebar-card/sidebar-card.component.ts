@@ -27,6 +27,13 @@ export class SidebarCardComponent implements OnInit, OnChanges {
 
     this.title = this.card.clickedSynonymName
 
+    
+    if (this.inFocus) {
+      this.scrollToMe(100)
+    }
+  }
+  
+  ngOnChanges() {
     this.synonyms = Array.from(this.card.entity.synonymToXPaths.keys())
   
     this.links = this.linksService.getLinks(this.card)
@@ -40,12 +47,6 @@ export class SidebarCardComponent implements OnInit, OnChanges {
       this.identifiers = this.filterIdentifiers(identifiers)
     }
     
-    if (this.inFocus) {
-      this.scrollToMe(100)
-    }
-  }
-  
-  ngOnChanges() {
     if (this.inFocus) {
       this.scrollToMe()
     }
