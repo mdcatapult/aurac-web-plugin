@@ -4,18 +4,9 @@
   "compilerOptions": {
     "strict": true,
     "outDir": "./out-tsc/app",
-    "typeRoots": [
-      "node_modules/@types",
-      "node_modules/web-ext-types"
-    ],
+    "typeRoots": ["node_modules/@types", "node_modules/web-ext-types"],
     "types": []
   },
-  "files": [
-    "src/main.ts",
-    "src/polyfills.ts"
-  ],
-  "include": [
-    "src/**/*.d.ts",
-    "src/content-script/*.ts"
-  ]
+  "files": ["src/main.ts", "src/polyfills.ts"],
+  "include": ["src/**/*.d.ts", "src/content-script/*.ts"]
 }

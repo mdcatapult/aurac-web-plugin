@@ -28,7 +28,6 @@ test-lint-build:
     variables:
       - $CI_COMMIT_MESSAGE =~ /^Setting version to.*/
 
-
 release:
   stage: release
   image: registry.mdcatapult.io/informatics/docker-images/ci/node

@@ -1,104 +1,126 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title id="title">NER Edge Case Tests</title>
-</head>
-<body style="padding: 2vw">
-  <h1 style="color: blue">NER Edge Case Tests</h1>
-  <p><b>The purpose of this page is to test all the various edge cases that may appear when we try to run NER on a page.</b></p>
-  <h2 style="color: blue">Terms</h2>
-  <text>Coronin<br/></text>
-  <text>coronin<br/></text>
-  <text>Dystrophin<br/></text>
-  <text>dystrophin<br/></text>
-  <text>mdoD<br/></text>
-  <text>myosin<br/></text>
-  <text>Myosin<br/></text>
-  <text>Glucans biosynthesis protein D<br/></text>
-  <text>opg<br/></text>
-  <text>OPG<br/></text>
-  <text>k12<br/></text>
-  <text>K12<br/></text>
-  <h2 style="color: blue">Delimiters</h2>
-  <text>(k12)<br/></text>
-  <text>(Coronin)<br/></text>
-  <text>(Dystrophin)<br/></text>
-  <text>(dystrophin)<br/></text>
-  <text>(Coronin)<br/></text>
-  <text>(opg)<br/></text>
-  <text>\nk12\n<br/></text>
-  <text>k12.<br/></text>
-  <text>k12,<br/></text>
-  <text>K12"/<br/></text>
-  <text>k12;<br/></text>
-  <text>k12-<br/></text>
-  <text>k12.<br/></text>
-  <text>k12,<br/></text>
-  <text>k12\",<br/></text>
-  <text>k12\'<br/></text>
-  <text>\nk12\n<br/></text>
-  <text>termiswithinthisline(OPG)termnowreached<br/></text>
-  <text>\nopg\n<br/></text>
-  <text>\nmdoD\n<br/></text>
-  <text>(opg)<br/></text>
-  <text>mdoD;<br/></text>
-  <text>(mdoD)<br/></text>
-  <text>"k12"<br/></text>
-  <text>'k12'<br/></text>
-  <text>opg;<br/></text>
-  <text>(K12)<br/></text>
-  <text>OPG-<br/></text>
-  <text>OPG-<br/></text>
-  <text>(Glucans biosynthesis protein D)-<br/></text>
-  <text>(Glucans biosynthesis protein D.-<br/></text>
-  <text>\nGlucans biosynthesis protein D\n<br/></text>
-  <h2 style="color: blue">Other</h2>
-  <p id="script-tag-test"></p>
-  <script>document.getElementById("script-tag-test").innerHTML = "This sentence that contains the term 'coronin' was written in a script tag";</script>
-  <text>sdf coronin sdf<sub>coronin in a sub tag<sub>second coronin in a sub tag</sub></sub></text>
-  <p>
-    These terms are within a p tag. coronin, Coronin, dystrophin-, Dystrophin\n. Myosin\', myosin\", (Keratin), \FtsZ\,
-    -coronin-, \ncoronin\n, \'coronin\', \"coronin\"
-    <text>nested coronin</text>
-    <text>nested coronin</text>
-    <text>nested coronin</text>
-  </p>
-  <h1>FtsZ H1</h1>
-  <h2>Coronin H2</h2>
-  <h3>Myosin H3</h3>
-  <p>Testing if NER works with nested elements
-    <b> k12 nest1,
-      <b> k12 nest2,
-        <b> k12 nest3,
-          <b> k12 nest4,
-            <b> k12 nest5,
+  <head>
+    <meta charset="utf-8" />
+    <title id="title">NER Edge Case Tests</title>
+  </head>
+  <body style="padding: 2vw">
+    <h1 style="color: blue">NER Edge Case Tests</h1>
+    <p>
+      <b
+        >The purpose of this page is to test all the various edge cases that may appear when we try
+        to run NER on a page.</b
+      >
+    </p>
+    <h2 style="color: blue">Terms</h2>
+    <text>Coronin<br /></text>
+    <text>coronin<br /></text>
+    <text>Dystrophin<br /></text>
+    <text>dystrophin<br /></text>
+    <text>mdoD<br /></text>
+    <text>myosin<br /></text>
+    <text>Myosin<br /></text>
+    <text>Glucans biosynthesis protein D<br /></text>
+    <text>opg<br /></text>
+    <text>OPG<br /></text>
+    <text>k12<br /></text>
+    <text>K12<br /></text>
+    <h2 style="color: blue">Delimiters</h2>
+    <text>(k12)<br /></text>
+    <text>(Coronin)<br /></text>
+    <text>(Dystrophin)<br /></text>
+    <text>(dystrophin)<br /></text>
+    <text>(Coronin)<br /></text>
+    <text>(opg)<br /></text>
+    <text>\nk12\n<br /></text>
+    <text>k12.<br /></text>
+    <text>k12,<br /></text>
+    <text>K12"/<br /></text>
+    <text>k12;<br /></text>
+    <text>k12-<br /></text>
+    <text>k12.<br /></text>
+    <text>k12,<br /></text>
+    <text>k12\",<br /></text>
+    <text>k12\'<br /></text>
+    <text>\nk12\n<br /></text>
+    <text>termiswithinthisline(OPG)termnowreached<br /></text>
+    <text>\nopg\n<br /></text>
+    <text>\nmdoD\n<br /></text>
+    <text>(opg)<br /></text>
+    <text>mdoD;<br /></text>
+    <text>(mdoD)<br /></text>
+    <text>"k12"<br /></text>
+    <text>'k12'<br /></text>
+    <text>opg;<br /></text>
+    <text>(K12)<br /></text>
+    <text>OPG-<br /></text>
+    <text>OPG-<br /></text>
+    <text>(Glucans biosynthesis protein D)-<br /></text>
+    <text>(Glucans biosynthesis protein D.-<br /></text>
+    <text>\nGlucans biosynthesis protein D\n<br /></text>
+    <h2 style="color: blue">Other</h2>
+    <p id="script-tag-test"></p>
+    <script>
+      document.getElementById('script-tag-test').innerHTML =
+        "This sentence that contains the term 'coronin' was written in a script tag"
+    </script>
+    <text
+      >sdf coronin sdf<sub>coronin in a sub tag<sub>second coronin in a sub tag</sub></sub></text
+    >
+    <p>
+      These terms are within a p tag. coronin, Coronin, dystrophin-, Dystrophin\n. Myosin\',
+      myosin\", (Keratin), \FtsZ\, -coronin-, \ncoronin\n, \'coronin\', \"coronin\"
+      <text>nested coronin</text>
+      <text>nested coronin</text>
+      <text>nested coronin</text>
+    </p>
+    <h1>FtsZ H1</h1>
+    <h2>Coronin H2</h2>
+    <h3>Myosin H3</h3>
+    <p>
+      Testing if NER works with nested elements
+      <b>
+        k12 nest1,
+        <b>
+          k12 nest2,
+          <b>
+            k12 nest3,
+            <b>
+              k12 nest4,
+              <b> k12 nest5, </b>
             </b>
           </b>
         </b>
       </b>
-    </b>
-  </p>
-  <p>
-    <b>opg</b><b> coronin</b><b> k12</b><b>k12</b><b>k12</b><b>k12</b><b>k12</b><b>OPG</b><b>coronin</b>
-    <b>k12</b><b>k12</b><b>k12</b><b>k12</b><b>k12</b><b>this should still ner the term k12.</b>
-    <b> myosin</b><b>k12</b><b>k12</b><b>opg</b><b>mdoD</b><b>k12</b><b>mdoD</b>
     </p>
-  <p>
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla Glucans biosynthesis protein D OPG- dolor, et
-    ursus nulla interdum id. Pellentesque habitant k12k12k12 tristique senectus et netus et malesuada fames ac turpis
-    egestas. Donec quis (Glucans biosynthesis protein D), ex, sed opg, lectus. Proin lacinia tincidunt fringilla.
-    Nunc purus (k12), mdoD! nec coronin! et, dictum a dolor. coroninmdoDk12 vel mauris \nmdoD\n. Ut iaculis
-    ().,coronin!) id nisl consequat, at OPG turpis (mdoD). Lorem ipsum dolor sit amet, k12, adipiscing
-    elit. Nullam magna velit, venenatis ac ipsum quis, fringilla laoreet sem. Praesent nec odio ut erat dignissim
-    malesuada in sit amet massa. Cras at leo sapien. Praesent a malesuada tellus. Maecenas coronin. tellus a nibh
-    pharetra
-    gravida nec vel diam. Donec ut ante coronin. Praesent dui neque, myosin. in sapien mdoD, fringilla ultrices
-    tortor.
-  </p>
-  <p>
-    This text contains<sub>(myosin)</sub>within sub text and also<sub>Coronin</sub> within sub text<sub>(Myosin.)
-    <sub>Coronin<sub>coronin<sub>mdoD<sub>Myosin.</sub></sub></sub></sub></sub>
-  </p>
-</body>
+    <p>
+      <b>opg</b><b> coronin</b><b> k12</b><b>k12</b><b>k12</b><b>k12</b><b>k12</b><b>OPG</b
+      ><b>coronin</b> <b>k12</b><b>k12</b><b>k12</b><b>k12</b><b>k12</b
+      ><b>this should still ner the term k12.</b> <b> myosin</b><b>k12</b><b>k12</b><b>opg</b
+      ><b>mdoD</b><b>k12</b><b>mdoD</b>
+    </p>
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla Glucans biosynthesis protein D
+      OPG- dolor, et ursus nulla interdum id. Pellentesque habitant k12k12k12 tristique senectus et
+      netus et malesuada fames ac turpis egestas. Donec quis (Glucans biosynthesis protein D), ex,
+      sed opg, lectus. Proin lacinia tincidunt fringilla. Nunc purus (k12), mdoD! nec coronin! et,
+      dictum a dolor. coroninmdoDk12 vel mauris \nmdoD\n. Ut iaculis ().,coronin!) id nisl
+      consequat, at OPG turpis (mdoD). Lorem ipsum dolor sit amet, k12, adipiscing elit. Nullam
+      magna velit, venenatis ac ipsum quis, fringilla laoreet sem. Praesent nec odio ut erat
+      dignissim malesuada in sit amet massa. Cras at leo sapien. Praesent a malesuada tellus.
+      Maecenas coronin. tellus a nibh pharetra gravida nec vel diam. Donec ut ante coronin. Praesent
+      dui neque, myosin. in sapien mdoD, fringilla ultrices tortor.
+    </p>
+    <p>
+      This text contains<sub>(myosin)</sub>within sub text and also<sub>Coronin</sub> within sub
+      text<sub
+        >(Myosin.)
+        <sub
+          >Coronin<sub
+            >coronin<sub>mdoD<sub>Myosin.</sub></sub></sub
+          ></sub
+        ></sub
+      >
+    </p>
+  </body>
 </html>

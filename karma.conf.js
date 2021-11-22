@@ -32,21 +32,21 @@ module.exports = function (config) {
       GitlabCI: {
         base: 'ChromeHeadless',
         flags: [
-          "--disable-background-networking",
-          "--disable-default-apps",
-          "--disable-extensions",
-          "--disable-gpu",
-          "--disable-sync",
-          "--disable-translate",
-          "--headless",
-          "--hide-scrollbars",
-          "--metrics-recording-only",
-          "--mute-audio",
-          "--no-first-run",
-          "--no-sandbox",
-          "--safebrowsing-disable-auto-update"
+          '--disable-background-networking',
+          '--disable-default-apps',
+          '--disable-extensions',
+          '--disable-gpu',
+          '--disable-sync',
+          '--disable-translate',
+          '--headless',
+          '--hide-scrollbars',
+          '--metrics-recording-only',
+          '--mute-audio',
+          '--no-first-run',
+          '--no-sandbox',
+          '--safebrowsing-disable-auto-update'
         ]
       }
     }
-  });
-};
+  })
+}

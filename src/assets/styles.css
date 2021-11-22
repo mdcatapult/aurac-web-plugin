@@ -2,24 +2,29 @@
   color: black;
   font-family: Arial, sans-serif;
   font-size: 14px;
-  background: rgb(192,192,192);
+  background: rgb(255, 255, 255);
   position: fixed;
   z-index: 2147483646;
   height: 100vh;
   top: 0;
   width: 20vw;
-  border-right: 2px solid black;
-  padding: 5px;
-  overflow-wrap: break-word;
-  overflow-y: scroll;
+  overflow: hidden;
+  display: flex;
+}
+
+.aurac-iframe {
+  flex-grow: 1;
+  border: none;
+  margin: 0;
 }
 
 .aurac-sidebar--collapsed {
-  left: -21vw;
+  left: -20vw;
 }
 
 .aurac-sidebar--expanded {
   left: 0;
+  box-shadow: 0px 10px 5px grey;
 }
 
 .aurac-sidebar-button {
@@ -87,11 +92,11 @@
 }
 
 .aurac-transform {
-  -webkit-transition: all 1s ease;
-  -moz-transition: all 1s ease;
-  -o-transition: all 1s ease;
-  -ms-transition: all 1s ease;
-  transition: all 1s ease;
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  -ms-transition: all 0.5s ease;
+  transition: all 0.5s ease;
 }
 
 .aurac-body--sidebar-collapsed {
@@ -109,7 +114,7 @@
   padding: 0;
 }
 
-.aurac-mdc-href-list-style li{
+.aurac-mdc-href-list-style li {
   display: inline;
   padding: 0 1em 0 0;
 }
@@ -151,7 +156,6 @@
   margin: 20px;
   height: 80%;
 }
-
 
 .aurac-modal-background {
   position: fixed;
@@ -202,6 +206,20 @@ body.aurac-modal-open {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.aurac-highlight {
+  background: plum;
+  color: black;
+  cursor: pointer;
+}
+
+.aurac-highlight:focus {
+  background: lightblue;
 }

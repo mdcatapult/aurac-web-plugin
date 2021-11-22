@@ -1,27 +1,51 @@
-import { Injectable } from '@angular/core';
-import {BrowserService} from './browser.service';
-import {Message, DictionaryURLs, StringMessage, Settings} from '../types';
-import Tab = browser.tabs.Tab;
-import MessageSender = browser.runtime.MessageSender;
+import { Injectable } from '@angular/core'
+import { BrowserService } from './browser.service'
+import { Message, MessageType } from '../types/messages'
+import { Settings } from '../types/settings'
+import Tab = browser.tabs.Tab
+import MessageSender = browser.runtime.MessageSender
 
 @Injectable({
   providedIn: 'root'
 })
 export class TestBrowserService extends BrowserService {
   loadSettings(): Promise<Settings> {
-    return new Promise(() => {});
+    return new Promise(() => {})
   }
 
-  addListener(f: (msg: Partial<Message>, listener: MessageSender, sendResponse: (response: object) => {}) => void): void {}
+  addListener(
+    f: (
+      msg: Partial<Message>,
+      listener: MessageSender,
+      sendResponse: (response: object) => {}
+    ) => void
+  ): void {}
 
   getActiveTab(): Promise<Tab> {
-    return new Promise(() => {});
+    return new Promise(() => {})
   }
 
-  sendMessageToTab<T>(tabId: number, message: Message): Promise<void | StringMessage> {
-    return new Promise(() => {});
+  sendMessageToBackground(msg: Message | MessageType): Promise<any> {
+    return Promise.resolve()
   }
 
-  saveSettings(settings: Settings): void {}
+  sendMessageToTab<T>(tabId: number, message: Message): Promise<void> {
+    return new Promise(() => {})
+  }
 
+  sendMessageToActiveTab(msg: Message | MessageType): Promise<any> {
+    return Promise.resolve()
+  }
+
+  getURL(thing: string): string {
+    return ''
+  }
+
+  save(obj: browser.storage.StorageObject): Promise<void> {
+    return Promise.resolve()
+  }
+
+  load(key: string): Promise<void | browser.storage.StorageObject> {
+    return Promise.resolve()
+  }
 }
