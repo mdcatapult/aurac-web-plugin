@@ -30,10 +30,8 @@ export class EntityMessengerService {
           body: stringifyWithTypes(change.entities)
         })
         .then(stringifiedTabEntities => {
-
           const tabEntities = parseWithTypes(stringifiedTabEntities) as TabEntities
           if (change.setterInfo !== 'isFilteredEntities') {
-
             // Use 'noPropagate' setter info so that we don't get into an infinite loop.
             this.entitiesService.setTabEntities(change.tabID, tabEntities, 'noPropagate')
             this.entitiesService.setFilteredEntities(change.tabID, tabEntities)
@@ -44,7 +42,7 @@ export class EntityMessengerService {
               body: stringifiedTabEntities
             })
           }
-          
+
           this.browserService.sendMessageToTab(change.tabID, 'content_script_open_sidebar')
         })
     })
@@ -54,12 +52,14 @@ export class EntityMessengerService {
         case 'entity_messenger_service_highlight_clicked':
           return this.highlightClicked(msg.body)
         case 'min_entity_length_changed':
+          this.browserService
+            .sendMessageToActiveTab('content_script_remove_highlights')
+            .then(() => {
+              const minEntityLength = msg.body
+              this.entitiesService.filterEntities(minEntityLength)
 
-          this.browserService.sendMessageToActiveTab('content_script_remove_highlights').then(() => {
-            const minEntityLength = msg.body
-            this.entitiesService.filterEntities(minEntityLength)
-            return Promise.resolve()
-          })
+              return Promise.resolve()
+            })
         default:
       }
     })

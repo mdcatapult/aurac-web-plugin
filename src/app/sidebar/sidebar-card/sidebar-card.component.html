@@ -1,10 +1,9 @@
 <article>
   <mat-card>
     <mat-card-title id="{{ card.entityID }}"
-      >{{ title }} 
-        <span *ngIf="nOccurrences > 0">({{ scrollIndex + 1 }} / {{ nOccurrences }} occurrences)</span>
-      </mat-card-title
-    >
+      >{{ title }}
+      <span *ngIf="nOccurrences > 0">({{ scrollIndex + 1 }} / {{ nOccurrences }} occurrences)</span>
+    </mat-card-title>
     <mat-card-subtitle>{{ synonyms.join(', ') }}.</mat-card-subtitle>
     <button (click)="arrowClicked('left')">Left</button>
     <button (click)="arrowClicked('right')">Right</button>

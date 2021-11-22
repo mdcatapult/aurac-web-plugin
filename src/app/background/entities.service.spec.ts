@@ -12,10 +12,7 @@ describe('EntitiesService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [
-        EntitiesService,  
-        { provide: BrowserService, useClass: TestBrowserService }
-      ]
+      providers: [EntitiesService, { provide: BrowserService, useClass: TestBrowserService }]
     })
     service = TestBed.inject(EntitiesService)
   })
@@ -25,31 +22,33 @@ describe('EntitiesService', () => {
   })
 
   describe('filter entities', () => {
-
     const tabID = 1
     const entityName = 'an-entity'
     const sixCharName = '123456'
     const fiveCharName = '12345'
     const entityMap = new Map<TabID, TabEntities>()
- 
+
     beforeEach(() => {
       entityMap.set(tabID, {
         'leadmine-proteins': {
           show: true,
           entities: new Map<string, Entity>([
-            [entityName, {
-              synonymToXPaths: new Map<string, string[]>([
-                [sixCharName, []],
-                [fiveCharName, []]
-              ])
-            }]
+            [
+              entityName,
+              {
+                synonymToXPaths: new Map<string, string[]>([
+                  [sixCharName, []],
+                  [fiveCharName, []]
+                ])
+              }
+            ]
           ])
         }
       })
-  
+
       service['entityMap'] = entityMap
     })
-    
+
     it('should contain neither synonym when min entity length is 7', () => {
       const minEntityLength = 7
       const filteredEntities = service.filterEntities(minEntityLength)
@@ -69,21 +68,20 @@ describe('EntitiesService', () => {
     })
 
     it('should contain five and six char synonyms when min entity length is 0', () => {
-      const minEntityLength = 0 
+      const minEntityLength = 0
       const filteredEntities = service.filterEntities(minEntityLength)
       expect(getNumberOfSynonyms(filteredEntities)).toBe(2)
     })
 
     it('should contain neither synonym when min entity length is 7', () => {
-      const minEntityLength = -1 
+      const minEntityLength = -1
       const filteredEntities = service.filterEntities(minEntityLength)
       expect(getNumberOfSynonyms(filteredEntities)).toBe(2)
     })
 
     function getNumberOfSynonyms(entityMap: Map<TabID, TabEntities>): number {
-      return entityMap.get(tabID)['leadmine-proteins'].entities.get(entityName)!.synonymToXPaths.size
+      return entityMap.get(tabID)['leadmine-proteins'].entities.get(entityName)!.synonymToXPaths
+        .size
     }
   })
-
-
 })

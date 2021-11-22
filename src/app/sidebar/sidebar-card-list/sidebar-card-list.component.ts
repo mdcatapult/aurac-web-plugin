@@ -12,7 +12,7 @@ export class SidebarCardListComponent {
   focusedCard: SidebarCard = {} as SidebarCard
 
   constructor(private sidebarDataService: SidebarDataService) {
-    this.sidebarDataService.cardsObservable.subscribe(cards => {    
+    this.sidebarDataService.cardsObservable.subscribe(cards => {
       this.cards = cards
     })
     this.sidebarDataService.focusedCardObservable.subscribe(card => {

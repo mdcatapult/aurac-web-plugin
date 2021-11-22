@@ -109,18 +109,17 @@ async function awaitSidebarReadiness(): Promise<void> {
 }
 
 function highlightEntities(tabEntities: TabEntities): Promise<string> {
-
   console.log('highlight entities called')
   console.log('highlightEntities: ', tabEntities)
+
   return new Promise((resolve, reject) => {
     Globals.browser
       .sendMessage({ type: 'settings_service_get_current_recogniser' })
       .then((recogniser: Recogniser) => {
         tabEntities[recogniser]!.entities.forEach((entity, entityName) => {
-
           entity.htmlTagIDs = []
           // if (entityName.length > minEntityLength) {
-          //   return 
+          //   return
           // }
 
           entity.synonymToXPaths.forEach((xpaths, synonymName) => {
@@ -206,11 +205,10 @@ function scrollToHighlight(id: string): void {
 }
 
 function removeHighlights(): void {
-  Array.from(Globals.document.getElementsByClassName(highlightClass))
-  .forEach(element => {
-    const childNodes = Array.from(element.childNodes);
-    element.replaceWith(...childNodes);
-  });
+  Array.from(Globals.document.getElementsByClassName(highlightClass)).forEach(element => {
+    const childNodes = Array.from(element.childNodes)
+    element.replaceWith(...childNodes)
+  })
 }
 
 Globals.browser.addListener((msg: Message): Promise<any> | undefined => {

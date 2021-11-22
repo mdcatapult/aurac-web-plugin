@@ -35,7 +35,6 @@ export class SidebarDataService {
             this.viewOrCreateCard(sidebarCard)
           case 'sidebar_data_update_cards':
             this.updateCards(parseWithTypes(msg.body) as TabEntities)
-
         }
       })
     })
@@ -52,18 +51,18 @@ export class SidebarDataService {
   }
 
   private updateCards(updatedEntities: TabEntities): void {
+    ;(Object.keys(updatedEntities) as Array<keyof TabEntities>).forEach(recogniser => {
+      ;(updatedEntities[recogniser] as RecogniserEntities).entities.forEach(
+        (entity, entityName) => {
+          const cardToReplace = this.cards.find(card => card.entityID === entityName)
 
-    (Object.keys(updatedEntities) as Array<keyof TabEntities>).forEach(recogniser => {
-      (updatedEntities[recogniser] as RecogniserEntities).entities.forEach((entity, entityName) => {
-        const cardToReplace = this.cards.find(card => card.entityID === entityName)
-                
-        if (!cardToReplace) {
-          return 
+          if (!cardToReplace) {
+            return
+          }
+
+          cardToReplace.entity.htmlTagIDs = entity.htmlTagIDs
         }
-
-        cardToReplace.entity.htmlTagIDs = entity.htmlTagIDs
-
-      })
+      )
     })
 
     this.cardsBehaviorSubject.next([...this.cards])

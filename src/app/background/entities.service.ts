@@ -19,12 +19,11 @@ import { SettingsService } from './settings.service'
   providedIn: 'root'
 })
 export class EntitiesService {
-
   // contains all entities on the page
   private entityMap: Map<TabID, TabEntities> = new Map()
 
   // maintaining a separate map is necessary because HTMLTagIDs are populated from the content script
-  // every time highlight is called. Therefore the results from the script need storing - it is not good enough 
+  // every time highlight is called. Therefore the results from the script need storing - it is not good enough
   // to simply filter entityMap each time we need filtered entities because the HTMLTagIDs need recalculating.
   private filteredEntities: Map<TabID, TabEntities> = new Map()
 
@@ -42,7 +41,6 @@ export class EntitiesService {
     this.updateStream(tabID, entities, setterInfo)
   }
 
-
   setFilteredEntities(tabID: TabID, entities: TabEntities): void {
     this.filteredEntities.set(tabID, entities)
   }
@@ -52,7 +50,6 @@ export class EntitiesService {
   }
 
   filterEntities(minEntityLength: number): Map<TabID, TabEntities> {
-
     const entityMap = new Map<TabID, TabEntities>()
 
     _.cloneDeep(this.entityMap).forEach((tabEntities, tabId) => {
@@ -65,23 +62,19 @@ export class EntitiesService {
   }
 
   private filterTabEntities(minEntityLength: number, tabEntities: TabEntities): TabEntities {
-
-    (Object.keys(tabEntities) as Array<keyof TabEntities>).forEach(recogniser => {
-
+    ;(Object.keys(tabEntities) as Array<keyof TabEntities>).forEach(recogniser => {
       const recogniserEntities = tabEntities[recogniser] as RecogniserEntities
 
       recogniserEntities.entities.forEach(entity => {
         const filteredSynonyms = new Map<string, string[]>()
 
         entity.synonymToXPaths.forEach((occurrences, synonym) => {
-
           if (synonym.length >= minEntityLength) {
             filteredSynonyms.set(synonym, occurrences)
           }
         })
 
         entity.synonymToXPaths = filteredSynonyms
-
       })
     })
 
@@ -94,7 +87,6 @@ export class EntitiesService {
     entities: RecogniserEntities,
     setterInfo?: SetterInfo
   ): void {
-
     const minEntityLength = this.settingsService.preferences.minEntityLength
 
     const tabEntities = this.entityMap.get(tabID)
@@ -112,19 +104,18 @@ export class EntitiesService {
       entityCopy = _.cloneDeep(tabEntities)
     }
     this.updateStream(tabID, this.filterTabEntities(minEntityLength, entityCopy), setterInfo)
-
   }
 
   getEntity(tabID: TabID, recogniser: Recogniser, entityID: EntityID): Entity | undefined {
     const tabEntities = this.entityMap.get(tabID)
- 
-    return tabEntities ? tabEntities[recogniser]?.entities?.get(entityID) : undefined 
+
+    return tabEntities ? tabEntities[recogniser]?.entities?.get(entityID) : undefined
   }
 
   getFilteredEntity(tabID: TabID, recogniser: Recogniser, entityID: EntityID): Entity | undefined {
     const tabEntities = this.filteredEntities.get(tabID)
- 
-    return tabEntities ? tabEntities[recogniser]?.entities?.get(entityID) : undefined 
+
+    return tabEntities ? tabEntities[recogniser]?.entities?.get(entityID) : undefined
   }
 
   private updateStream(tabID: TabID, entities: TabEntities, setterInfo?: SetterInfo): void {

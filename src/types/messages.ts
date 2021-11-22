@@ -34,7 +34,7 @@ export type MessageType =
   | 'sidebar_data_service_view_or_create_card'
   | 'sidebar_rendered'
   | 'x-ref_result'
-  
+
 // The receiver of the message must check the body to ensure it is the correct type based on the message type.
 export interface Message {
   type: MessageType

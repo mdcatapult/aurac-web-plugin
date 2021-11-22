@@ -72,7 +72,10 @@ export class SettingsComponent implements OnInit {
           .valueChanges.subscribe(minEntityLength => {
             if (this.valid()) {
               this.browserService
-                .sendMessageToBackground({type: 'min_entity_length_changed', body: minEntityLength})
+                .sendMessageToBackground({
+                  type: 'min_entity_length_changed',
+                  body: minEntityLength
+                })
                 .catch(error =>
                   console.error("couldn't send message 'min_entity_length_changed'", error)
                 )

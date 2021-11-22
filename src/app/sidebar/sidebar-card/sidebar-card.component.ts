@@ -24,19 +24,18 @@ export class SidebarCardComponent implements OnInit, OnChanges {
   scrollIndex: number = 0
 
   ngOnInit() {
-
     this.title = this.card.clickedSynonymName
-    
+
     if (this.inFocus) {
       this.scrollToMe(100)
     }
   }
-  
+
   ngOnChanges() {
     this.synonyms = Array.from(this.card.entity.synonymToXPaths.keys())
-  
+
     this.links = this.linksService.getLinks(this.card)
-  
+
     if (this.card.entity.identifierSourceToID) {
       const identifiers = Array.from(this.card.entity.identifierSourceToID.entries()).map(
         ([type, value]) => {
