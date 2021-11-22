@@ -187,6 +187,8 @@ function newHighlightElementCallback(
   synonymOccurrence: number
 ): (element: HTMLElement) => void {
   return (element: HTMLElement): void => {
+    // a tabIndex is required in order to make the highlight element focussable
+    element.tabIndex = -1
     element.id = highlightID(entityName, entityOccurrence, synonymName, synonymOccurrence)
     entity.htmlTagIDs = entity.htmlTagIDs ? entity.htmlTagIDs.concat([element.id]) : [element.id]
     element.addEventListener('click', (_event: Event): void => {
@@ -198,7 +200,9 @@ function newHighlightElementCallback(
 }
 
 function scrollToHighlight(id: string): void {
-  Globals.document.getElementById(id)!.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  const elementToHighlight = Globals.document.getElementById(id)
+  elementToHighlight!.focus({ preventScroll: true })
+  elementToHighlight!.scrollIntoView({ behavior: 'smooth', block: 'center' })
 }
 
 Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
