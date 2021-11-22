@@ -73,7 +73,7 @@ describe('EntitiesService', () => {
       expect(getNumberOfSynonyms(filteredEntities)).toBe(2)
     })
 
-    it('should contain neither synonym when min entity length is 7', () => {
+    it('should contain five and six char synonms when min entity length is negative', () => {
       const minEntityLength = -1
       const filteredEntities = service.filterEntities(minEntityLength)
       expect(getNumberOfSynonyms(filteredEntities)).toBe(2)

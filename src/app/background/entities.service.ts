@@ -1,7 +1,5 @@
-import { ConditionalExpr, ConstantPool } from '@angular/compiler'
 import { Injectable } from '@angular/core'
 import * as _ from 'lodash'
-import { filter, min } from 'lodash'
 import { Subject } from 'rxjs'
 import { Recogniser } from 'src/types/recognisers'
 import {
@@ -104,12 +102,6 @@ export class EntitiesService {
       entityCopy = _.cloneDeep(tabEntities)
     }
     this.updateStream(tabID, this.filterTabEntities(minEntityLength, entityCopy), setterInfo)
-  }
-
-  getEntity(tabID: TabID, recogniser: Recogniser, entityID: EntityID): Entity | undefined {
-    const tabEntities = this.entityMap.get(tabID)
-
-    return tabEntities ? tabEntities[recogniser]?.entities?.get(entityID) : undefined
   }
 
   getFilteredEntity(tabID: TabID, recogniser: Recogniser, entityID: EntityID): Entity | undefined {

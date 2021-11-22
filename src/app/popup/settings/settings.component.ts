@@ -1,6 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
+import { Component, EventEmitter, OnInit, Output } from '@angular/core'
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
-import { min } from 'lodash'
 import { timer } from 'rxjs'
 import { debounce } from 'rxjs/operators'
 import { defaultSettings, APIURLs, Settings } from 'src/types/settings'
@@ -58,7 +57,7 @@ export class SettingsComponent implements OnInit {
         this.xRefSources = settings.xRefSources
         this.settingsForm.reset(settings)
 
-        this.settingsForm.valueChanges.pipe(debounce(() => timer(500))).subscribe(v => {
+        this.settingsForm.valueChanges.pipe(debounce(() => timer(500))).subscribe(() => {
           if (this.valid()) {
             this.save()
           }

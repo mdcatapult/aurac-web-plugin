@@ -54,13 +54,13 @@ export class SidebarDataService {
     ;(Object.keys(updatedEntities) as Array<keyof TabEntities>).forEach(recogniser => {
       ;(updatedEntities[recogniser] as RecogniserEntities).entities.forEach(
         (entity, entityName) => {
-          const cardToReplace = this.cards.find(card => card.entityID === entityName)
+          const cardToUpdate = this.cards.find(card => card.entityID === entityName)
 
-          if (!cardToReplace) {
+          if (!cardToUpdate) {
             return
           }
 
-          cardToReplace.entity.htmlTagIDs = entity.htmlTagIDs
+          cardToUpdate.entity.htmlTagIDs = entity.htmlTagIDs
         }
       )
     })

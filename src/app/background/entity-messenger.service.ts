@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core'
-import { filter } from 'lodash'
 import { TabEntities, XRef } from 'src/types/entity'
 import { parseHighlightID } from 'src/types/highlights'
 import { parseWithTypes, stringifyWithTypes } from '../../json'
