@@ -56,7 +56,6 @@ export class LinksService {
           case chemical:
           case 'DictMol': {
             entityLinks = [
-              links.pubchem,
               links.drugBank,
               links.pubmed,
               links.dimensions,
