@@ -145,7 +145,27 @@ body.aurac-modal-open {
 }
 
 .aurac-highlight:focus {
-  background: lightblue;
+  background: rgb(253, 166, 79);
+  box-shadow: 0 0 0 0 rgba(246, 130, 5, 1);
+  transform: scale(1);
+  animation: pulse 1s 5;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(246, 130, 5, 0.7);
+  }
+
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(246, 130, 5, 0);
+  }
+
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(246, 130, 5, 0);
+  }
 }
 
 .aurac-close-button {
