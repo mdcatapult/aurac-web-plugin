@@ -10,6 +10,7 @@ import { highlightID } from '../types/highlights'
 Globals.document = document
 Globals.browser = new BrowserImplementation()
 
+const highlightClass = 'aurac-highlight'
 let SIDEBAR_IS_READY = false
 
 const sidebar = Globals.document.createElement('div')
@@ -101,10 +102,6 @@ function getPageContents(): string {
   return Globals.document.documentElement.outerHTML
 }
 
-function sidebarIsReady(): Promise<boolean> {
-  return Promise.resolve(SIDEBAR_IS_READY)
-}
-
 async function awaitSidebarReadiness(): Promise<void> {
   while (!SIDEBAR_IS_READY) {
     await new Promise(r => setTimeout(r, 100))
@@ -113,12 +110,14 @@ async function awaitSidebarReadiness(): Promise<void> {
   return
 }
 
-function highlightEntites(tabEntities: TabEntities): Promise<string> {
+function highlightEntities(tabEntities: TabEntities): Promise<string> {
   return new Promise((resolve, reject) => {
     Globals.browser
       .sendMessage({ type: 'settings_service_get_current_recogniser' })
       .then((recogniser: Recogniser) => {
         tabEntities[recogniser]!.entities.forEach((entity, entityName) => {
+          entity.htmlTagIDs = []
+
           entity.synonymToXPaths.forEach((xpaths, synonymName) => {
             let entityOccurrence = 0
             xpaths.forEach((xpath, synonymOccurrence) => {
@@ -164,7 +163,7 @@ function highlightText(
   let highlighter = new Mark(contextNode as HTMLElement)
   highlighter.mark(text, {
     element: 'span',
-    className: 'aurac-highlight',
+    className: highlightClass,
     accuracy: 'exactly',
     acrossElements: true,
     separateWordSearch: false,
@@ -205,6 +204,13 @@ function scrollToHighlight(id: string): void {
   elementToHighlight!.scrollIntoView({ behavior: 'smooth', block: 'center' })
 }
 
+function removeHighlights(): void {
+  Array.from(Globals.document.getElementsByClassName(highlightClass)).forEach(element => {
+    const childNodes = Array.from(element.childNodes)
+    element.replaceWith(...childNodes)
+  })
+}
+
 Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
   switch (msg.type) {
     case 'content_script_toggle_sidebar':
@@ -234,9 +240,12 @@ Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
     case 'content_script_highlight_entities':
       const tabEntities: TabEntities = parseWithTypes(msg.body)
 
-      return highlightEntites(tabEntities)
+      return highlightEntities(tabEntities)
 
     case 'content_script_scroll_to_highlight':
       return Promise.resolve(scrollToHighlight(msg.body))
+
+    case 'content_script_remove_highlights':
+      return Promise.resolve(removeHighlights())
   }
 })

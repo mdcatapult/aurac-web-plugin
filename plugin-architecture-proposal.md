@@ -61,9 +61,6 @@ Another big reason for this is that with iframes the sidebar and main content ca
     // Set dictionary entities. Set "show" to false for any other dictionary entities we may have (unless we're highlighting multiple dictionaries in future). Setters must set `this.lastAppliedChange` with the correct value.
     setDictionaryEntities(dictionaryId: DictionaryID, entities: DictionaryEntities);
 
-    // Get an entity.
-    getEntity(entityId: EntityID): Entity;
-
     // Set an entity. Setters must set `this.lastAppliedChange` with the correct value.
     setEntity(entityId: EntityID, entity: Entity): void;
 

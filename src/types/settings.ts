@@ -39,7 +39,7 @@ export const defaultSettings: Settings = {
   urls: environment.production ? productionAPIURLs : devAPIURLs,
   xRefSources: {},
   preferences: {
-    minEntityLength: 2,
+    minEntityLength: 3,
     recogniser: 'leadmine-proteins'
   }
 }

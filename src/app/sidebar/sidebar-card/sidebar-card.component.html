@@ -5,7 +5,7 @@
         <mat-icon>clear</mat-icon>
       </button>
       <div class="aurac-sidebar-arrow-buttons">
-        <p>
+        <p *ngIf="nOccurrences > 0">
           <em>{{ scrollIndex + 1 }} / {{ nOccurrences }}</em>
         </p>
         <button mat-icon-button aria-label="Left arrow button" (click)="arrowClicked('left')">

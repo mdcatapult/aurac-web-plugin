@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
+import { Component, EventEmitter, OnInit, Output } from '@angular/core'
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { timer } from 'rxjs'
 import { debounce } from 'rxjs/operators'
@@ -68,12 +68,15 @@ export class SettingsComponent implements OnInit {
         this.settingsForm
           .get('preferences')
           ?.get('minEntityLength')!
-          .valueChanges.subscribe(() => {
+          .valueChanges.subscribe(minEntityLength => {
             if (this.valid()) {
               this.browserService
-                .sendMessageToBackground('min-entity-length-changed')
+                .sendMessageToBackground({
+                  type: 'min_entity_length_changed',
+                  body: minEntityLength
+                })
                 .catch(error =>
-                  console.error("couldn't send message 'min-entity-length-changed'", error)
+                  console.error("couldn't send message 'min_entity_length_changed'", error)
                 )
             }
           })

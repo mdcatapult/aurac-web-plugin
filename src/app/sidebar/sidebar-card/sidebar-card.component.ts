@@ -15,19 +15,24 @@ import { Identifier, SidebarCard } from '../types'
 export class SidebarCardComponent implements OnInit, OnChanges {
   @Input() card: SidebarCard = {} as SidebarCard
   @Input() inFocus: boolean = false
+  @Input() nOccurrences: number = 0
+
   synonyms: string[] = []
   links: Link[] = []
   identifiers: Identifier[] = []
-  nOccurrences: number = 0
   title: string = ''
   scrollIndex: number = 0
 
   ngOnInit() {
     this.title = this.card.clickedSynonymName
 
-    this.synonyms = Array.from(this.card.entity.synonymToXPaths.keys())
+    if (this.inFocus) {
+      this.scrollToMe(100)
+    }
+  }
 
-    this.nOccurrences = this.card.entity.htmlTagIDs!.length
+  ngOnChanges() {
+    this.synonyms = Array.from(this.card.entity.synonymToXPaths.keys())
 
     this.links = this.linksService.getLinks(this.card)
 
@@ -40,12 +45,6 @@ export class SidebarCardComponent implements OnInit, OnChanges {
       this.identifiers = this.filterIdentifiers(identifiers)
     }
 
-    if (this.inFocus) {
-      this.scrollToMe(100)
-    }
-  }
-
-  ngOnChanges() {
     if (this.inFocus) {
       this.scrollToMe()
     }
