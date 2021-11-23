@@ -38,7 +38,6 @@ export const ensembl: Link = {
     `https://www.ensembl.org/Homo_sapiens/Gene/Summary?g=${identifier}`
 }
 
-
 // general
 
 export const pubmed: Link = {
