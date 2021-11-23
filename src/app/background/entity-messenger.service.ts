@@ -72,7 +72,13 @@ export class EntityMessengerService {
         tab.id!,
         this.settingsService.preferences.recogniser,
         entityID
-      )!
+      )
+
+      if (!entity) {
+        console.warn(`entity ${entityID} was clicked but does not exist in filtered entities!`)
+
+        return
+      }
 
       const getXrefs: Promise<XRef[]> = entity.xRefs
         ? Promise.resolve(entity.xRefs)
