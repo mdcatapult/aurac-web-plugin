@@ -241,21 +241,22 @@ describe('NerService', () => {
     })
   })
 
-  it('should construct correct query parameters and headers', () => {
+  fit('should construct correct query parameters and headers', () => {
     const [leadmineProteinParams, leadmineProteinHeaders] =
       service['constructRequestParametersAndHeaders']('leadmine-proteins')
     expect(leadmineProteinParams.toString()).toEqual('recogniser=leadmine-proteins')
-    expect(leadmineProteinHeaders).toEqual(new HttpHeaders())
+    expect(leadmineProteinHeaders.get('content-type')).toEqual('text/html')
 
     let [leadmineDiseasesParams, leadmineDiseasesHeaders] =
       service['constructRequestParametersAndHeaders']('leadmine-diseases')
     expect(leadmineDiseasesParams.toString()).toEqual('recogniser=leadmine-diseases')
-    expect(leadmineDiseasesHeaders).toEqual(new HttpHeaders())
+    expect(leadmineDiseasesHeaders.get('content-type')).toEqual('text/html')
 
     let [params, headers] = service['constructRequestParametersAndHeaders'](
       'leadmine-chemical-entities'
     )
     expect(params.toString()).toEqual('recogniser=leadmine-chemical-entities')
+    expect(headers.get('content-type')).toEqual('text/html')
     expect(headers.get('x-leadmine-chemical-entities')).toEqual(
       'eyJxdWVyeVBhcmFtZXRlcnMiOnsiaW5jaGlrZXkiOlsidHJ1ZSJdfX0='
     )
