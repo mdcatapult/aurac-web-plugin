@@ -42,6 +42,7 @@ export class SettingsService {
     this.browserService.addListener(msg => this.handleMessages(msg))
     this.loadFromBrowserStorage()
       .then(settings => {
+        console.log('loaded', settings)
         this.setAll(settings)
         this.refreshXRefSources(this.APIURLs.unichemURL).then(console.error)
       })
@@ -58,9 +59,23 @@ export class SettingsService {
             preferences: this.preferences
           })
         })
-      case 'settings_service_set_settings':
+      case 'settings_service_set_preferences':
         return new Promise(resolve => {
-          this.setAll(msg.body)
+          this.setPreferences(msg.body)
+          this.saveToBrowserStorage(this.getAll())
+          resolve(null)
+        })
+      case 'settings_service_set_urls':
+        return new Promise(resolve => {
+          console.log('saving URLS', msg.body)
+          this.setURLs(msg.body)
+          this.saveToBrowserStorage(this.getAll()).then(() => {
+            resolve(null)
+          })
+        })
+      case 'settings_service_set_xrefs':
+        return new Promise(resolve => {
+          this.setXrefs(msg.body)
           this.saveToBrowserStorage(this.getAll())
           resolve(null)
         })
@@ -85,6 +100,18 @@ export class SettingsService {
     return Object.keys(this.xRefSources).filter(xRef => this.xRefSources[xRef] === true)
   }
 
+  private setPreferences(pref: Preferences) {
+    this.preferencesBehaviorSubject.next(pref)
+  }
+
+  private setURLs(urls: APIURLs) {
+    this.APIURLsBehaviorSubject.next(urls)
+  }
+    
+  private setXrefs(xrefs: XRefSources) {
+    this.xRefSourcesBehaviorSubject.next(xrefs)
+  }
+  
   private setAll(settings: Settings): void {
     this.xRefSourcesBehaviorSubject.next(settings.xRefSources)
     this.preferencesBehaviorSubject.next(settings.preferences)
@@ -123,14 +150,24 @@ export class SettingsService {
    * @param onResolve callback for when settings have been retrived from browser strorage
    */
   private loadFromBrowserStorage(): Promise<Settings> {
-    return this.browserService.load('settings').then(settingsObj => {
-      const settings = (settingsObj as browser.storage.StorageObject)?.settings as Settings
+    console.log('raw promise', browser.storage.local.get('settings'))
+    browser.storage.local.get('settings').then(v => console.log('promise then', v))
 
-      return _.merge(settings, defaultSettings)
+    return browser.storage.local.get('settings').then(storageObj => {
+
+      console.log(1, storageObj)
+
+      const castSettings = storageObj.settings as Settings
+      console.log(2, castSettings)
+
+      const mergedSettings = _.merge(storageObj.settings as Settings, defaultSettings)
+      console.log(3, mergedSettings)
+      return Promise.resolve(mergedSettings)
     })
   }
 
   private saveToBrowserStorage(settings: Settings): Promise<void> {
+    console.log('saving to browser storage', settings)
     return this.browserService.save({ settings })
   }
 }

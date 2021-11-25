@@ -1,5 +1,5 @@
 <div class="form-container">
-  <form class="aurac-url-form" [formGroup]="urlsForm">
+  <form class="aurac-url-form" [formGroup]="form">
     <mat-form-field appearance="fill">
       <mat-label>NER URL</mat-label>
       <input
@@ -10,7 +10,7 @@
         matInput
         placeholder="Enter NER URL here"
       />
-      <mat-error *ngIf="urlsForm!.get(urlKeys.nerURL)!.invalid">Please enter a valid URL</mat-error>
+      <mat-error *ngIf="form!.get(urlKeys.nerURL)!.invalid">Please enter a valid URL</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="fill">
@@ -23,7 +23,7 @@
         matInput
         placeholder="Enter Compound Converter URL here"
       />
-      <mat-error *ngIf="urlsForm!.get(urlKeys.compoundConverterURL)!.invalid"
+      <mat-error *ngIf="form!.get(urlKeys.compoundConverterURL)!.invalid"
         >Please enter a valid URL</mat-error
       >
     </mat-form-field>
@@ -38,7 +38,7 @@
         matInput
         placeholder="Enter Unichem URL here"
       />
-      <mat-error *ngIf="urlsForm!.get(urlKeys.unichemURL)!.invalid"
+      <mat-error *ngIf="form!.get(urlKeys.unichemURL)!.invalid"
         >Please enter a valid URL</mat-error
       >
     </mat-form-field>
@@ -53,9 +53,10 @@
         matInput
         placeholder="Enter Unichem URL here"
       />
-      <mat-error *ngIf="urlsForm!.get(urlKeys.pdfConverterURL)!.invalid"
+      <mat-error *ngIf="form!.get(urlKeys.pdfConverterURL)!.invalid"
         >Please enter a valid URL</mat-error
       >
     </mat-form-field>
   </form>
 </div>
+<button (click)="save()">Save</button>

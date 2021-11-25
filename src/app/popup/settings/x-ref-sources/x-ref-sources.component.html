@@ -1,7 +1,7 @@
 <div *ngIf="hasXRefs()">
-  <form [formGroup]="sourcesForm">
+  <form [formGroup]="form">
     <ul>
-      <li *ngFor="let control of sourcesForm.value | keyvalue">
+      <li *ngFor="let control of form.value | keyvalue">
         <mat-checkbox [id]="control.key" [value]="control.value" [formControlName]="control.key">
           {{ control.key }}
         </mat-checkbox>
@@ -10,3 +10,4 @@
   </form>
 </div>
 <div *ngIf="!hasXRefs()">No sources available.</div>
+<button (click)="save()">Save</button>

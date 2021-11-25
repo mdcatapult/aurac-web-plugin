@@ -1,5 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core'
-import { FormGroup } from '@angular/forms'
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
+import { SettingsService } from 'src/app/background/settings.service'
+import { BrowserService } from 'src/app/browser.service'
+import { defaultSettings } from 'src/types/settings'
 import { allRecognisers } from '../../../../types/recognisers'
 
 @Component({
@@ -12,11 +15,33 @@ export class PreferencesComponent implements OnInit {
   isLoaded = false
   recognisers = allRecognisers()
 
-  @Input() preferencesForm?: FormGroup
+  private fb = new FormBuilder()
+  form = this.fb.group({
+    minEntityLength: new FormControl(
+      defaultSettings.preferences.minEntityLength,
+      Validators.required
+    ),
+    recogniser: new FormControl(defaultSettings.preferences.recogniser)
+  })
 
-  constructor() {}
+  constructor(private browserService: BrowserService, private settingsService: SettingsService) {}
 
   ngOnInit(): void {
     this.isLoaded = true
+
+    this.settingsService.preferencesObservable.subscribe(prefs => this.form.reset(prefs))
+  }
+
+  save(): void{
+    if (this.form.valid) {
+      this.browserService
+        .sendMessageToBackground({
+          type: 'settings_service_set_preferences',
+          body: this.form.value
+        })
+        .catch(error =>
+          console.error("couldn't send message 'settings_service_set_preferences'", error)
+        )
+    }
   }
 }

@@ -16,7 +16,7 @@
   <br />
 
   <div class="aurac-settings-button-container">
-    <button
+    <!-- <button
       mat-raised-button
       color="black"
       (click)="settingsClicked()"
@@ -27,7 +27,8 @@
     >
       <mat-icon inline="true">settings_suggest</mat-icon>
       Settings
-    </button>
+    </button> -->
+
     <button
       mat-raised-button
       color="black"
@@ -71,3 +72,7 @@
 <div class="aurac-pdf-selector" [hidden]="mode !== 'pdf'">
   <app-pdfselector (closed)="mode = 'menu'"></app-pdfselector>
 </div>
+
+<app-preferences></app-preferences>
+<app-urls></app-urls>
+<app-x-ref-sources></app-x-ref-sources>

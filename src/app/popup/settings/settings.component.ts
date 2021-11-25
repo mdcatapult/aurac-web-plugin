@@ -111,16 +111,16 @@ export class SettingsComponent implements OnInit {
   }
 
   save(): void {
-    if (this.valid()) {
-      this.browserService
-        .sendMessageToBackground({
-          type: 'settings_service_set_settings',
-          body: this.settingsForm.value
-        })
-        .catch(error =>
-          console.error("couldn't send message 'settings_service_set_settings'", error)
-        )
-    }
+    // if (this.valid()) {
+    //   this.browserService
+    //     .sendMessageToBackground({
+    //       type: 'settings_service_set_settings',
+    //       body: this.settingsForm.value
+    //     })
+    //     .catch(error =>
+    //       console.error("couldn't send message 'settings_service_set_settings'", error)
+    //     )
+    // }
   }
 
   reset(): void {
