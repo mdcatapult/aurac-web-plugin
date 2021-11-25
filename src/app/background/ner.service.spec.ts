@@ -241,7 +241,7 @@ describe('NerService', () => {
     })
   })
 
-  fit('should construct correct query parameters and headers', () => {
+  it('should construct correct query parameters and headers', () => {
     const [leadmineProteinParams, leadmineProteinHeaders] =
       service['constructRequestParametersAndHeaders']('leadmine-proteins')
     expect(leadmineProteinParams.toString()).toEqual('recogniser=leadmine-proteins')
