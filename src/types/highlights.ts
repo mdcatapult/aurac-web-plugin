@@ -19,7 +19,9 @@ export function parseHighlightID(
 }
 
 export function highlightFormat(synonym: string): RegExp {
-  const highlightingFormat = `(?<=\\W|^)${synonym}(?=\\W|$)`
+  // we need to escape special characters in the string first
+  const escapedSynonym = synonym.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
+  const highlightingFormat = `(?<=\\W|^)${escapedSynonym}(?=\\W|$)`
 
   return new RegExp(highlightingFormat)
 }
