@@ -60,8 +60,9 @@ export class SettingsService {
       case 'settings_service_set_preferences':
         return new Promise(resolve => {
           this.setPreferences(msg.body)
-          this.saveToBrowserStorage(this.getAll())
-          resolve(null)
+          this.saveToBrowserStorage(this.getAll()).then(() => {
+            resolve(null)
+          })
         })
       case 'settings_service_set_urls':
         return new Promise(resolve => {
@@ -120,10 +121,8 @@ export class SettingsService {
   }
 
   /**
-   * loadSettings calls browserService to load settings, then ensures that the retrieved object has all the correct
+   * loadFromBrowswerStorage calls browserService to load settings, then ensures that the retrieved object has all the correct
    * keys based on defaultSettings.
-   * @param browserService browserService implementation
-   * @param onResolve callback for when settings have been retrived from browser strorage
    */
   private loadFromBrowserStorage(): Promise<Settings> {
     return this.browserService.load('settings').then(settingsObj => {
