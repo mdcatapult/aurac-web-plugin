@@ -1,5 +1,5 @@
 <div class="form-container">
-  <form class="aurac-url-form" [formGroup]="form">
+  <form [formGroup]="form">
     <mat-form-field appearance="fill">
       <mat-label>NER URL</mat-label>
       <input
@@ -57,4 +57,4 @@
     </mat-form-field>
   </form>
 </div>
-<button (click)="save()">Save</button>
+<button mat-raised-button class="save-button" (click)="save()">Save</button>

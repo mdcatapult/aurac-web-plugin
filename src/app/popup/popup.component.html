@@ -1,5 +1,7 @@
-<div *ngIf="mode === 'menu'" class="aurac-popup-div">
-  <img src="./assets/head-brains.icon.128.png" alt="logo" class="aurac-popup-logo" />
+<div *ngIf="mode === 'menu'" class="aurac-popup">
+  <div class="aurac-popup-header">
+    <img src="./assets/head-brains.icon.128.png" alt="logo" class="aurac-popup-logo" />
+  </div>
 
   <div class="ner-button-container">
     <button
@@ -8,36 +10,12 @@
       matTooltip="Ask Aurac to highlight interesting things in the page"
       matTooltipPosition="above"
       aria-label="Button that highlights things of interest in the current page"
+      class="aurac-popup-button"
     >
       <mat-icon inline="true" class="aurac-ner-icon">manage_search</mat-icon>
       Highlight
     </button>
-  </div>
-  <br />
 
-  <div class="aurac-settings-button-container">
-    <button
-      mat-raised-button
-      color="black"
-      (click)="pdfClicked()"
-      matTooltip="Convert a PDF from a web address into a page you can highlight"
-      matTooltipPosition="above"
-      aria-label="Button which displays an input field where you can enter a URL to fetch a PDF and convert it into a web page for highlighting"
-    >
-      <mat-icon inline="true">picture_as_pdf</mat-icon>
-      PDF conversion
-    </button>
-    <button
-      mat-raised-button
-      color="black"
-      (click)="toggleSidebar()"
-      matTooltip="Close or open the Aurac sidebar"
-      matTooltipPosition="above"
-      aria-label="Button which closes or opens the Aurac sidebar where entities are displayed when you click on them"
-    >
-      <mat-icon inline="true">auto_stories</mat-icon>
-      Toggle Sidebar
-    </button>
     <button
       mat-raised-button
       color="black"
@@ -45,17 +23,51 @@
       matTooltip="Save all the results found by Aurac when highlighting as a CSV download"
       matTooltipPosition="above"
       aria-label="Button which allows you to save the entities found by Aurac as a CSV file"
+      class="aurac-popup-button"
     >
       <mat-icon inline="true">auto_stories</mat-icon>
       Download Results
     </button>
   </div>
-</div>
 
-<div class="aurac-pdf-selector" [hidden]="mode !== 'pdf'">
-  <app-pdfselector (closed)="mode = 'menu'"></app-pdfselector>
-</div>
+  <mat-accordion class="example-headers-align" multi="false">
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span class="pdf-logo">
+            <mat-icon inline="true">picture_as_pdf</mat-icon>
+          </span>
+          <span>PDF conversion</span>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-pdfselector (closed)="mode = 'menu'"></app-pdfselector>
+    </mat-expansion-panel>
 
-<app-preferences></app-preferences>
-<app-urls></app-urls>
-<app-x-ref-sources></app-x-ref-sources>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span>App Preferences</span>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-preferences></app-preferences>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span>URLs</span>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-urls></app-urls>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span>Link Sources</span>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-x-ref-sources></app-x-ref-sources>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>

@@ -1,22 +1,24 @@
 @import 'src/assets/stylingVariables';
 
-.settings {
-  width: 400px;
-  height: 400px;
-}
-
 .mat-raised-button:hover {
   background-color: lightgrey;
 }
 
-.aurac-popup-div {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: $aurac_background;
-  overflow: hidden;
+.aurac-popup {
   width: 400px;
-  height: 400px;
+  padding: 5px;
+  background-color: $aurac_background;
+}
+
+.aurac-popup-button {
+  display: inline-block;
+}
+
+.aurac-popup-header {
+  display: flex;
+  justify-content: center;
+  background-color: $aurac_background;
+  position: sticky;
 }
 
 .aurac-popup-logo {
@@ -32,9 +34,7 @@
 }
 
 .ner-button-container {
-  width: 95%;
-  padding: 5px;
-  background-color: rgb(226, 152, 71);
+  margin: 10px 0 10px 0;
 }
 
 .aurac-settings-button-container {
@@ -48,10 +48,10 @@ button {
   display: flex;
   width: 100%;
   margin-bottom: 3px;
+  font-size: 15px;
+  font-weight: 500;
 }
 
-.aurac-pdf-selector {
-  width: 400px;
-  height: 400px;
-  background-color: $aurac_background;
+.pdf-logo {
+  padding-right: 5px;
 }

@@ -7,7 +7,7 @@
 .form-container {
   display: flex;
   flex-direction: column;
-  background-color: $aurac_background;
+  //background-color: $aurac_background;
 }
 
 .mat-form-field {
@@ -15,6 +15,13 @@
   font-size: medium;
   margin: 2vw 2vw 0 2vw;
 }
-.aurac-url-form {
-  padding-top: 15px;
+
+.save-button {
+  width: 50%;
+  display: block;
+  margin: 0 auto 0;
+  background-color: $aurac_button;
+}
+.save-button:hover {
+  background-color: $aurac_button_hover;
 }
