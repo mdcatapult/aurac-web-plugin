@@ -40,13 +40,15 @@ export class SettingsService {
 
   constructor(private browserService: BrowserService, private httpClient: HttpClient) {
     this.browserService.addListener(msg => this.handleMessages(msg))
-    this.loadFromBrowserStorage()
-      .then(settings => {
-        console.log('loaded', settings)
-        this.setAll(settings)
-        this.refreshXRefSources(this.APIURLs.unichemURL).then(console.error)
-      })
-      .catch(console.error)
+
+    browser.storage.local.get('settings').then(storageObj => {
+     
+      const settings = storageObj.settings as Settings
+      _.defaultsDeep(settings, defaultSettings)
+      // const settings = _.merge(storageObj.settings as Settings, defaultSettings)
+      this.setAll(settings)
+      this.refreshXRefSources(this.APIURLs.unichemURL).then(console.error)
+    })
   }
 
   private handleMessages(msg: Partial<Message>): Promise<any> | void {

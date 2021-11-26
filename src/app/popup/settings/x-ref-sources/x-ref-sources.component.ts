@@ -13,6 +13,7 @@ export class XRefSourcesComponent {
   form = new FormGroup({})
 
   constructor(private browserService: BrowserService, private settingsService: SettingsService) {
+    this.settingsService.xRefSourcesObservable.subscribe(xrefs => this.form.reset(xrefs))
   }
   
   ngOnInit(){

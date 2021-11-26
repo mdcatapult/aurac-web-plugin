@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core'
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
+import { SettingsService } from 'src/app/background/settings.service'
 import { BrowserService } from 'src/app/browser.service'
 import { APIURLs, defaultSettings } from '../../../../types/settings'
 import { UrlValidator } from './url-validator'
@@ -11,7 +12,9 @@ import { UrlValidator } from './url-validator'
 })
 export class UrlsComponent {
 
-  constructor(private browserService: BrowserService){}
+  constructor(private browserService: BrowserService, private settingsService: SettingsService){
+    this.settingsService.APIURLsObservable.subscribe(urls => this.form.reset(urls))
+  }
 
   private fb = new FormBuilder()
   form = this.fb.group({

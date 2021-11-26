@@ -27,6 +27,8 @@ export class PreferencesComponent implements OnInit {
   constructor(private browserService: BrowserService, private settingsService: SettingsService) {}
 
   ngOnInit(): void {
+
+    //  no need for this
     this.isLoaded = true
 
     this.settingsService.preferencesObservable.subscribe(prefs => this.form.reset(prefs))
