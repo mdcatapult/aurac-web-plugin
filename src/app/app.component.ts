@@ -14,5 +14,9 @@ export class AppComponent {
       `dna_icon`,
       this.domSanitizer.bypassSecurityTrustResourceUrl('../assets/dna_icon.svg')
     )
+    this.matIconRegistry.addSvgIcon(
+      'save',
+      this.domSanitizer.bypassSecurityTrustResourceUrl('../assets/save.svg')
+    )
   }
 }

@@ -1,32 +1,27 @@
 <div *ngIf="isLoaded">
   <form [formGroup]="preferencesForm">
-    <label>Select your area of interest:</label>
-    <div class="dictionaries">
-      <mat-radio-group
-        aria-labelledby="radio-group-label"
-        class="radio-group"
-        formControlName="recogniser"
+    <mat-radio-group
+      aria-labelledby="radio-group-label"
+      class="aurac-radio-group"
+      formControlName="recogniser"
+    >
+      <mat-label class="aurac-prefs-label"><b>Select your area of interest</b></mat-label>
+      <mat-radio-button
+        *ngFor="let recogniser of recognisers"
+        class="aurac-radio-button"
+        [value]="recogniser"
       >
-        <div *ngFor="let recogniser of recognisers">
-          <mat-radio-button class="radio-button" [value]="recogniser">
-            {{ recogniser | recogniserName }}
-          </mat-radio-button>
-          <br />
-        </div>
-      </mat-radio-group>
-    </div>
+        {{ recogniser | recogniserName }}
+      </mat-radio-button>
+    </mat-radio-group>
 
-    <table class="table">
-      <tr>
-        <td>Minimum entity length</td>
-        <td>
-          <select [formControl]="preferencesForm!.get('minEntityLength')">
-            <option *ngFor="let length of minEntityLength" selected>
-              {{ length }}
-            </option>
-          </select>
-        </td>
-      </tr>
-    </table>
+    <mat-form-field appearance="fill" class="aurac-dropdown">
+      <mat-label>Select minimum entity length</mat-label>
+      <mat-select [formControl]="preferencesForm!.get('minEntityLength')">
+        <mat-option *ngFor="let length of minEntityLength" [value]="length">
+          {{ length }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
   </form>
 </div>

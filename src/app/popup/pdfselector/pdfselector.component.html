@@ -1,8 +1,22 @@
-<button class="close-button" (click)="closeSettings()">&#10060;</button>
+<button
+  class="aurac-close-button"
+  mat-icon-button
+  aria-label="Button that closes the pdf selector"
+  (click)="closeSettings()"
+>
+  <mat-icon>clear</mat-icon>
+</button>
+
+<div class="pdf-conversion-text">
+  <h1>PDF to HTML conversion</h1>
+  <p>
+    Enter a link to a PDF below and hit the convert button. The converted PDF will be rendered in a
+    new tab and can then be highlighted.
+  </p>
+</div>
 
 <mat-form-field class="link-control" appearance="fill">
-  <mat-label>Link to PDF:</mat-label>
-  <input matInput [formControl]="link" />
+  <input type="text" matInput [formControl]="link" placeholder="Enter link to PDF" />
 </mat-form-field>
 
 <div *ngIf="loadingHTML">HTML loading..</div>
@@ -10,4 +24,4 @@
   {{ pdfError }}
 </div>
 
-<button class="confirm" mat-raised-button (click)="linkSelected()">Confirm</button>
+<button class="confirm" mat-raised-button (click)="linkSelected()">Convert</button>

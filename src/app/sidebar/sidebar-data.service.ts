@@ -1,6 +1,7 @@
 import { Injectable, NgZone } from '@angular/core'
 import { BehaviorSubject, Observable, Subject } from 'rxjs'
 import { parseWithTypes } from 'src/json'
+import { RecogniserEntities, TabEntities } from 'src/types/entity'
 import { MessageType } from 'src/types/messages'
 import { BrowserService } from '../browser.service'
 import { SidebarCard } from './types'
@@ -32,6 +33,8 @@ export class SidebarDataService {
           case 'sidebar_data_service_view_or_create_card':
             const sidebarCard = parseWithTypes(msg.body) as SidebarCard
             this.viewOrCreateCard(sidebarCard)
+          case 'sidebar_data_update_cards':
+            this.updateCards(parseWithTypes(msg.body) as TabEntities)
         }
       })
     })
@@ -45,5 +48,23 @@ export class SidebarDataService {
     }
 
     this.focusedCardSubject.next(clickedCard)
+  }
+
+  private updateCards(updatedEntities: TabEntities): void {
+    const updatedEntitiesKeys = Object.keys(updatedEntities) as Array<keyof TabEntities>
+
+    updatedEntitiesKeys.forEach(recogniser => {
+      const recogniserEntities = updatedEntities[recogniser] as RecogniserEntities
+
+      recogniserEntities.entities.forEach((entity, entityName) => {
+        const cardToUpdate = this.cards.find(card => card.entityID === entityName)
+
+        if (cardToUpdate) {
+          cardToUpdate.entity.htmlTagIDs = entity.htmlTagIDs
+        }
+      })
+    })
+
+    this.cardsBehaviorSubject.next([...this.cards])
   }
 }

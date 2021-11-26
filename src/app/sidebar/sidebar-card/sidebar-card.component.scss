@@ -1,0 +1,17 @@
+.href-no-underline {
+  text-decoration: none;
+}
+
+.aurac-sidebar-card-button-container {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 -1rem -1rem -1rem;
+}
+
+mat-card {
+  padding-top: 0;
+}
+
+.aurac-sidebar-arrow-buttons {
+  display: flex;
+}

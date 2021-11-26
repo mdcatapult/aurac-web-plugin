@@ -38,13 +38,6 @@ export const ensembl: Link = {
     `https://www.ensembl.org/Homo_sapiens/Gene/Summary?g=${identifier}`
 }
 
-// chemistry
-
-export const pubchem: Link = {
-  resourceName: 'Pubchem',
-  createUrl: (identifier: string) => `https://pubchem.ncbi.nlm.nih.gov/#query=${identifier}`
-}
-
 // general
 
 export const pubmed: Link = {

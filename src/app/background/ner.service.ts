@@ -77,7 +77,7 @@ export class NerService {
     )
 
     return this.httpClient
-      .post<APIEntities>(`${this.settingsService.APIURLs.nerURL}/html/entities`, body, {
+      .post<APIEntities>(`${this.settingsService.APIURLs.nerURL}/entities`, body, {
         observe: 'response',
         params,
         headers
@@ -105,7 +105,7 @@ export class NerService {
     // HttpParams.set returns a copy but the original is unmodified - so be careful!
     const params = new HttpParams().set('recogniser', recogniser)
 
-    let headers = new HttpHeaders()
+    let headers = new HttpHeaders().set('content-type', 'text/html')
     if (recogniser === 'leadmine-chemical-entities') {
       // Recognition API expects a base64 encoded, json encoded "RecogniserOptions" object.
       // Currently there is only one key "queryParameters", which tells the api how to

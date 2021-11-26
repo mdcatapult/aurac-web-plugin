@@ -41,5 +41,7 @@ export interface EntityChange {
   setterInfo?: SetterInfo
 }
 
-// Sometimes we need to pass in extra information so that the setter doesn't get in a pickle!
-export type SetterInfo = 'noPropagate'
+// SetterInfo is used when emitting events from the EntityChangeObservable.
+// 'noPropagate' is usedto stop the event emission from emitting another event when it would cause an infinite loop.
+// 'isFilteredEntities' is used to update the filteredEntities map rather than the main entityMap.
+export type SetterInfo = 'noPropagate' | 'isFilteredEntities'

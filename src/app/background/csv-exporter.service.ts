@@ -45,18 +45,23 @@ export class CsvExporterService {
               }
 
               const CSVFormattedResults = this.leadmineToCSV(entitiesArray)
-              this.saveAsCSV(CSVFormattedResults, currentTab.url!, 'aurac_all_results_')
+              const fileName = 'aurac_all_results_' + this.sanitiseURL(currentTab.url!) + '.csv'
+              this.saveAsCSV(CSVFormattedResults, fileName)
           }
         }
       })
   }
 
-  private sanitiseURL(url: string): string {
+  sanitiseURL(url: string): string {
     return url!.replace(/^(https?|http):\/\//, '').split('#')[0]
   }
 
   // Converts the passed entities into a csv formatted string and appends headings to them
   leadmineToCSV(entities: Array<Entity>): string {
+    if (!entities.length) {
+      return ''
+    }
+
     const headings = [
       'Synonym',
       'Resolved Entity',
@@ -101,13 +106,8 @@ export class CsvExporterService {
     return text
   }
 
-  public saveAsCSV(
-    text: string,
-    currentURL: string,
-    prefix: 'aurac_all_results_' | 'aurac_sidebar_results_'
-  ): void {
-    const sanitisedURL = this.sanitiseURL(currentURL)
+  public saveAsCSV(text: string, fileName: string): void {
     const blob = new Blob([text], { type: 'text/csv;charset=utf-8' })
-    saveAs(blob, prefix + sanitisedURL + '.csv')
+    saveAs(blob, fileName)
   }
 }

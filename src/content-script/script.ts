@@ -11,16 +11,18 @@ import { highlightID } from '../types/highlights'
 Globals.document = document
 Globals.browser = new BrowserImplementation()
 
-// document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
+const highlightClass = 'aurac-highlight'
 let SIDEBAR_IS_READY = false
 
 const sidebar = Globals.document.createElement('div')
 sidebar.id = 'aurac-sidebar'
+sidebar.style.backgroundColor = 'rgb(192, 192, 192)'
 sidebar.className = 'aurac-transform aurac-sidebar aurac-sidebar--collapsed'
 
 const iframe = Globals.document.createElement('iframe')
 iframe.className = 'aurac-iframe'
-iframe.src = Globals.browser.getURL('index.html?page=sidebar')
+iframe.src = browser.runtime.getURL('index.html?page=sidebar')
+iframe.style.width = '20%'
 sidebar.appendChild(iframe)
 
 const buttonRoot = Globals.document.createElement('div')
@@ -53,7 +55,7 @@ const sidebarButton = Globals.document.createElement('button')
 shadowButtonRoot.appendChild(sidebarButton)
 
 const sidebarButtonLogo = Globals.document.createElement('img')
-sidebarButtonLogo.src = Globals.browser.getURL('assets/head-brains.icon.128.png')
+sidebarButtonLogo.src = browser.runtime.getURL('assets/head-brains.icon.128.png')
 sidebarButtonLogo.style.width = '80%'
 sidebarButton.appendChild(sidebarButtonLogo)
 
@@ -101,10 +103,6 @@ function getPageContents(): string {
   return Globals.document.documentElement.outerHTML
 }
 
-function sidebarIsReady(): Promise<boolean> {
-  return Promise.resolve(SIDEBAR_IS_READY)
-}
-
 async function awaitSidebarReadiness(): Promise<void> {
   while (!SIDEBAR_IS_READY) {
     await new Promise(r => setTimeout(r, 100))
@@ -113,12 +111,14 @@ async function awaitSidebarReadiness(): Promise<void> {
   return
 }
 
-function highlightEntites(tabEntities: TabEntities): Promise<string> {
+function highlightEntities(tabEntities: TabEntities): Promise<string> {
   return new Promise((resolve, reject) => {
     Globals.browser
       .sendMessage({ type: 'settings_service_get_current_recogniser' })
       .then((recogniser: Recogniser) => {
         tabEntities[recogniser]!.entities.forEach((entity, entityName) => {
+          entity.htmlTagIDs = []
+
           entity.synonymToXPaths.forEach((xpaths, synonymName) => {
             let highlightedEntityOccurrence = 0
             xpaths.forEach(xpath => {
@@ -174,7 +174,7 @@ export function highlightText(
 
   highlighter.markRegExp(termToHighlight, {
     element: 'span',
-    className: 'aurac-highlight',
+    className: highlightClass,
     acrossElements: true,
     exclude: ['a', '.tooltipped', '.tooltipped-click', '.aurac-highlight'],
     each: (element: HTMLElement) => {
@@ -198,6 +198,8 @@ function newHighlightElementCallback(
   synonymName: string
 ): (element: HTMLElement) => void {
   return (element: HTMLElement): void => {
+    // a tabIndex is required in order to make the highlight element focussable
+    element.tabIndex = -1
     element.id = highlightID(entityName, highlightedEntityOccurrence, synonymName)
     entity.htmlTagIDs = entity.htmlTagIDs ? entity.htmlTagIDs.concat([element.id]) : [element.id]
     element.addEventListener('click', (_event: Event): void => {
@@ -209,7 +211,16 @@ function newHighlightElementCallback(
 }
 
 function scrollToHighlight(id: string): void {
-  Globals.document.getElementById(id)!.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  const elementToHighlight = Globals.document.getElementById(id)
+  elementToHighlight!.focus({ preventScroll: true })
+  elementToHighlight!.scrollIntoView({ behavior: 'smooth', block: 'center' })
+}
+
+function removeHighlights(): void {
+  Array.from(Globals.document.getElementsByClassName(highlightClass)).forEach(element => {
+    const childNodes = Array.from(element.childNodes)
+    element.replaceWith(...childNodes)
+  })
 }
 
 Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
@@ -241,9 +252,12 @@ Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
     case 'content_script_highlight_entities':
       const tabEntities: TabEntities = parseWithTypes(msg.body)
 
-      return highlightEntites(tabEntities)
+      return highlightEntities(tabEntities)
 
     case 'content_script_scroll_to_highlight':
       return Promise.resolve(scrollToHighlight(msg.body))
+
+    case 'content_script_remove_highlights':
+      return Promise.resolve(removeHighlights())
   }
 })

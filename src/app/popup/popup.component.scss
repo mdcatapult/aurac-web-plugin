@@ -1,29 +1,31 @@
-@import 'src/app/utilities/stylingVariables';
+@import 'src/assets/stylingVariables';
 
 .settings {
   width: 400px;
+  height: 400px;
 }
 
 .mat-raised-button:hover {
   background-color: lightgrey;
 }
 
-.popup-div {
+.aurac-popup-div {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: $popup_default_background;
-  width: 180px;
+  background-color: $aurac_background;
   overflow: hidden;
+  width: 400px;
+  height: 400px;
 }
 
-.aurac-logo {
+.aurac-popup-logo {
   padding: 10px;
-  background-color: $popup_default_background;
+  background-color: $aurac_background;
 }
 
-.ner-icon {
-  color: $ner_icon;
+.aurac-ner-icon {
+  color: $aurac_button;
   height: 15px !important;
   width: 15px !important;
   display: inline-table;
@@ -35,11 +37,11 @@
   background-color: rgb(226, 152, 71);
 }
 
-.settings-button-container {
+.aurac-settings-button-container {
   padding: 0.3rem;
   display: flex;
   flex-wrap: wrap;
-  background-color: grey;
+  background-color: $aurac_background;
 }
 
 button {
@@ -48,16 +50,8 @@ button {
   margin-bottom: 3px;
 }
 
-.pdf-selector {
+.aurac-pdf-selector {
   width: 400px;
-}
-
-.radio-group {
-  display: flex;
-  flex-direction: column;
-  margin: 15px 0;
-}
-
-.radio-button {
-  margin-bottom: 2px;
+  height: 400px;
+  background-color: $aurac_background;
 }

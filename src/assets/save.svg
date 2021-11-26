@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Creator: CorelDRAW -->
+
+<svg
+   xml:space="preserve"
+   width="2048px"
+   height="2048px"
+   style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+   viewBox="0 0 2048 2048"
+   version="1.1"
+   id="svg4812"
+   sodipodi:docname="reshot-icon-save-9NHEYZK7WJ.svg"
+   inkscape:version="1.1 (c4e8f9e, 2021-05-24)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><sodipodi:namedview
+   id="namedview4814"
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1.0"
+   inkscape:pageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   showgrid="false"
+   inkscape:zoom="0.30517578"
+   inkscape:cx="1043.6608"
+   inkscape:cy="1024"
+   inkscape:window-width="1312"
+   inkscape:window-height="947"
+   inkscape:window-x="409"
+   inkscape:window-y="45"
+   inkscape:window-maximized="0"
+   inkscape:current-layer="Layer_x0020_1" />
+ <defs
+   id="defs4786">
+  <style
+   type="text/css"
+   id="style4784">
+   <![CDATA[
+    .fil5 {fill:none}
+    .fil0 {fill:#01579B}
+    .fil1 {fill:#0277BD}
+    .fil3 {fill:#424242}
+    .fil2 {fill:#EEEEEE}
+    .fil4 {fill:#757575;fill-rule:nonzero}
+   ]]>
+  </style>
+ </defs>
+ <g
+   id="Layer_x0020_1"
+   inkscape:label="Layer 1">
+  <metadata
+   id="CorelCorpID_0Corel-Layer" />
+  <path
+   class="fil0"
+   d="M331.788 255.999l1217.69 0 242.527 242.528 0 1217.68c0,41.6835 -34.1032,75.7879 -75.7879,75.7879l-1384.42 0c-41.6835,0 -75.7879,-34.1044 -75.7879,-75.7879l0 -1384.42c0,-41.6847 34.1044,-75.7879 75.7879,-75.7879z"
+   id="path4789"
+   style="fill:#323232;fill-opacity:1" />
+  <path
+   class="fil1"
+   d="M569.579 255.999l908.842 0 0 381.474c0,51.2953 -41.8618,93.1583 -93.1572,93.1583l-722.528 0c-51.2953,0 -93.1572,-41.863 -93.1572,-93.1583l0 -381.474z"
+   id="path4791"
+   style="fill:#c8c8c8;fill-opacity:1" />
+  <path
+   class="fil1"
+   d="M1486.32 1792l-924.631 0 0 -482.527c0,-55.6536 45.3992,-101.052 101.052,-101.052l722.528 0c55.6524,0 101.052,45.3981 101.052,101.052l0 482.527z"
+   id="path4793"
+   style="fill:#c8c8c8;fill-opacity:1" />
+  
+  
+  <rect
+   class="fil3"
+   x="1145.26"
+   y="255.999"
+   width="186.305"
+   height="363.789"
+   id="rect4799" />
+  <polygon
+   class="fil4"
+   points="720.843,1449 1327.16,1449 1327.16,1487.33 720.843,1487.33 "
+   id="polygon4801" />
+  <polygon
+   class="fil4"
+   points="720.843,1617.77 1327.16,1617.77 1327.16,1656.11 720.843,1656.11 "
+   id="polygon4803" />
+  <rect
+   class="fil5"
+   width="2048"
+   height="2048"
+   id="rect4805" />
+  <rect
+   class="fil5"
+   x="255.999"
+   y="255.999"
+   width="1536"
+   height="1536"
+   id="rect4807" />
+  <rect
+   class="fil5"
+   x="256"
+   y="256"
+   width="1536"
+   height="1536"
+   id="rect4809" />
+ </g>
+</svg>

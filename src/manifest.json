@@ -14,12 +14,7 @@
     {
       "matches": ["<all_urls>"],
       "js": ["browser-polyfill.min.js", "content.js"],
-      "css": [
-        "assets/styles.css",
-        "assets/tippy.css",
-        "assets/tippy-light-border.css",
-        "assets/tippy-shift-away.css"
-      ]
+      "css": ["assets/styles.scss"]
     }
   ],
   "permissions": ["tabs", "storage"],
