@@ -41,7 +41,6 @@ export class EntityMessengerService {
               body: stringifiedTabEntities
             })
           }
-
           this.browserService.sendMessageToTab(change.tabID, 'content_script_open_sidebar')
         })
     })
@@ -73,28 +72,33 @@ export class EntityMessengerService {
         this.settingsService.preferences.recogniser,
         entityID
       )
-
       if (!entity) {
         console.warn(`entity ${entityID} was clicked but does not exist in filtered entities!`)
-
         return
+      }
+
+      const sidebarCard: SidebarCard = {
+        recogniser: this.settingsService.preferences.recogniser,
+        entity,
+        entityID: entityID,
+        clickedEntityOccurrence: entityOccurrence,
+        clickedSynonymName: synonymName,
+        clickedSynonymOccurrence: synonymOccurrence
       }
 
       const getXrefs: Promise<XRef[]> = entity.xRefs
         ? Promise.resolve(entity.xRefs)
         : this.xRefService.get(entity)
 
-      getXrefs.then(xRefs => {
+      getXrefs
+      .then(xRefs => {
         entity.xRefs = xRefs
-        const sidebarCard: SidebarCard = {
-          recogniser: this.settingsService.preferences.recogniser,
-          entity,
-          entityID: entityID,
-          clickedEntityOccurrence: entityOccurrence,
-          clickedSynonymName: synonymName,
-          clickedSynonymOccurrence: synonymOccurrence
-        }
-
+      })
+      .catch(err => {
+        console.warn(err)
+        entity.xRefs = []
+      })
+      .finally(() => {
         this.browserService.sendMessageToTab(tab.id!, {
           type: 'sidebar_data_service_view_or_create_card',
           body: stringifyWithTypes(sidebarCard)
