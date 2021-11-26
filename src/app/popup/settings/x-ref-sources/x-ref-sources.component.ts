@@ -32,6 +32,7 @@ export class XRefSourcesComponent {
         this.form.reset(this.settingsService.xRefSources)
       })
 
+    // reset the form when xRefSourcesObservable emits
     this.settingsService.xRefSourcesObservable.subscribe(xrefs => this.form.reset(xrefs))
   }
 
