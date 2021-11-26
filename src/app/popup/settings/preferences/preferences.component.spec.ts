@@ -19,9 +19,6 @@ describe('PreferencesComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(PreferencesComponent)
     component = fixture.componentInstance
-    // component.preferencesForm = fb.group({
-    //   minEntityLength: new FormControl(defaultSettings.preferences.minEntityLength)
-    // })
     fixture.detectChanges()
   })
 

@@ -65,7 +65,6 @@ export class SettingsService {
         })
       case 'settings_service_set_urls':
         return new Promise(resolve => {
-          console.log('saving URLS', msg.body)
           this.setURLs(msg.body)
           this.saveToBrowserStorage(this.getAll()).then(() => {
             resolve(null)
