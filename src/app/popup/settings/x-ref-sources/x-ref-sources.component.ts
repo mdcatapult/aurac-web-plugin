@@ -9,42 +9,40 @@ import { BrowserService } from 'src/app/browser.service'
   styleUrls: ['./x-ref-sources.component.scss']
 })
 export class XRefSourcesComponent {
-  private xRefSources: {[key: string]: boolean} = {}
   form = new FormGroup({})
+  hasXRefs = false
 
-  constructor(private browserService: BrowserService, private settingsService: SettingsService) {
+  constructor(private browserService: BrowserService, private settingsService: SettingsService) {}
+
+  ngOnInit() {
+    this.browserService
+      .sendMessageToBackground({
+        type: 'settings_service_refresh_xref_sources',
+        body: this.settingsService.APIURLs.unichemURL
+      })
+      .then((xRefSources: string[]) => {
+        xRefSources.forEach(source => {
+          this.form.addControl(source, new FormControl(true))
+        })
+
+        if (xRefSources.length) {
+          this.hasXRefs = true
+        }
+
+        this.form.reset(this.settingsService.xRefSources)
+      })
+
     this.settingsService.xRefSourcesObservable.subscribe(xrefs => this.form.reset(xrefs))
   }
-  
-  ngOnInit(){
-    this.browserService
-    .sendMessageToBackground({
-      type: 'settings_service_refresh_xref_sources',
-      body: this.settingsService.APIURLs.unichemURL
-    })
-    .then(resp => {
-      this.xRefSources = resp as Record<string, boolean>
 
-      Object.entries(this.xRefSources).map(([key, value]) => {
-        this.form.addControl(key, new FormControl(value))
-      })
-    })
-  }
-
-  hasXRefs(): boolean {
-    return this.xRefSources && Object.keys(this.xRefSources).length > 0
-  }
-
-  save(): void{
+  save(): void {
     if (this.form.valid) {
       this.browserService
         .sendMessageToBackground({
           type: 'settings_service_set_xrefs',
           body: this.form.value
         })
-        .catch(error =>
-          console.error("couldn't send message 'settings_service_set_xrefs'", error)
-        )
+        .catch(error => console.error("couldn't send message 'settings_service_set_xrefs'", error))
     }
   }
 }

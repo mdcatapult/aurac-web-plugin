@@ -11,8 +11,7 @@ import { UrlValidator } from './url-validator'
   styleUrls: ['./urls.component.scss']
 })
 export class UrlsComponent {
-
-  constructor(private browserService: BrowserService, private settingsService: SettingsService){
+  constructor(private browserService: BrowserService, private settingsService: SettingsService) {
     this.settingsService.APIURLsObservable.subscribe(urls => this.form.reset(urls))
   }
 
@@ -46,16 +45,14 @@ export class UrlsComponent {
     pdfConverterURL: 'pdfConverterURL'
   }
 
-  save(): void{
+  save(): void {
     if (this.form.valid) {
       this.browserService
         .sendMessageToBackground({
           type: 'settings_service_set_urls',
           body: this.form.value
         })
-        .catch(error =>
-          console.error("couldn't send message 'settings_service_set_urls'", error)
-        )
+        .catch(error => console.error("couldn't send message 'settings_service_set_urls'", error))
     }
   }
 }
