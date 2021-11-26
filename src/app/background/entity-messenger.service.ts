@@ -74,6 +74,7 @@ export class EntityMessengerService {
       )
       if (!entity) {
         console.warn(`entity ${entityID} was clicked but does not exist in filtered entities!`)
+
         return
       }
 
@@ -91,19 +92,19 @@ export class EntityMessengerService {
         : this.xRefService.get(entity)
 
       getXrefs
-      .then(xRefs => {
-        entity.xRefs = xRefs
-      })
-      .catch(err => {
-        console.warn(err)
-        entity.xRefs = []
-      })
-      .finally(() => {
-        this.browserService.sendMessageToTab(tab.id!, {
-          type: 'sidebar_data_service_view_or_create_card',
-          body: stringifyWithTypes(sidebarCard)
+        .then(xRefs => {
+          entity.xRefs = xRefs
         })
-      })
+        .catch(err => {
+          console.warn(err)
+          entity.xRefs = []
+        })
+        .finally(() => {
+          this.browserService.sendMessageToTab(tab.id!, {
+            type: 'sidebar_data_service_view_or_create_card',
+            body: stringifyWithTypes(sidebarCard)
+          })
+        })
     })
   }
 }
