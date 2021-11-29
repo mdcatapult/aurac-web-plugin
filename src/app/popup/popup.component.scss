@@ -19,11 +19,15 @@
   justify-content: center;
   background-color: $aurac_background;
   position: sticky;
+  margin: 0.75vh;
 }
 
 .aurac-popup-logo {
-  padding: 10px;
-  background-color: $aurac_background;
+  //padding: 10px;
+  //background-color: $aurac_background;
+  width: 13em;
+  display: block;
+  margin: 1em auto 0.5em auto;
 }
 
 .aurac-ner-icon {
@@ -54,4 +58,8 @@ button {
 
 .pdf-logo {
   padding-right: 5px;
+}
+
+.aurac-link-sources {
+  margin-bottom: 5px;
 }

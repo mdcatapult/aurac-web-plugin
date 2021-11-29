@@ -1,6 +1,7 @@
 <div *ngIf="mode === 'menu'" class="aurac-popup">
+
   <div class="aurac-popup-header">
-    <img src="./assets/head-brains.icon.128.png" alt="logo" class="aurac-popup-logo" />
+    <img src="./assets/head-brains.png" alt="logo" class="aurac-popup-logo" />
   </div>
 
   <div class="ner-button-container">
@@ -20,7 +21,7 @@
       mat-raised-button
       color="black"
       (click)="exportResults()"
-      matTooltip="Save all the results found by Aurac when highlighting as a CSV download"
+      matTooltip="Save all the results found by Aurac to a CSV file"
       matTooltipPosition="above"
       aria-label="Button which allows you to save the entities found by Aurac as a CSV file"
       class="aurac-popup-button"
@@ -30,8 +31,25 @@
     </button>
   </div>
 
-  <mat-accordion class="example-headers-align" multi="false">
-    <mat-expansion-panel>
+  <mat-accordion class="aurac-popup-accordion" multi="false">
+    <mat-expansion-panel
+      matTooltip="Configure which terms will be highlighted by Aurac"
+      matTooltipPosition="above"
+      aria-label="Expands a panel containing preferences which allow the configuration of which terms will be highlighted by Aurac"
+    >
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span>Preferences</span>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-preferences></app-preferences>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel
+      matTooltip="Converts a PDF to HTML and opens it in a new browser tab ready for highlighting by Aurac"
+      matTooltipPosition="above"
+      aria-label="Expands a panel allowing a user to enter the URL of a PDF which will then be converted to HTML ready to be highlighted by Aurac"
+    >
       <mat-expansion-panel-header>
         <mat-panel-title>
           <span class="pdf-logo">
@@ -46,22 +64,13 @@
     <mat-expansion-panel>
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <span>App Preferences</span>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
-      <app-preferences></app-preferences>
-    </mat-expansion-panel>
-
-    <mat-expansion-panel>
-      <mat-expansion-panel-header>
-        <mat-panel-title>
           <span>URLs</span>
         </mat-panel-title>
       </mat-expansion-panel-header>
       <app-urls></app-urls>
     </mat-expansion-panel>
 
-    <mat-expansion-panel>
+    <mat-expansion-panel class="aurac-link-sources">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <span>Link Sources</span>
