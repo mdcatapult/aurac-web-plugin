@@ -1,11 +1,12 @@
 <article>
   <mat-card>
     <div class="aurac-sidebar-card-button-container">
-      <button mat-icon-button
-              aria-label="Close button for a sidebar card"
-              (click)="remove()"
-              matTooltip="Remove this card from the sidebar"
-              matTooltipPosition="above"
+      <button
+        mat-icon-button
+        aria-label="Close button for a sidebar card"
+        (click)="remove()"
+        matTooltip="Remove this card from the sidebar"
+        matTooltipPosition="above"
       >
         <mat-icon>clear</mat-icon>
       </button>
@@ -13,11 +14,12 @@
         <p *ngIf="nOccurrences > 0">
           <em>{{ scrollIndex + 1 }} / {{ nOccurrences }}</em>
         </p>
-        <button mat-icon-button
-                aria-label="Left arrow button"
-                (click)="arrowClicked('left')"
-                matTooltip="Scroll to previous highlighted occurrence"
-                matTooltipPosition="left"
+        <button
+          mat-icon-button
+          aria-label="Left arrow button"
+          (click)="arrowClicked('left')"
+          matTooltip="Scroll to previous highlighted occurrence"
+          matTooltipPosition="left"
         >
           <mat-icon>arrow_back</mat-icon>
         </button>

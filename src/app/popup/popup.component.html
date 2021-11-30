@@ -1,5 +1,4 @@
 <div *ngIf="mode === 'menu'" class="aurac-popup">
-
   <div class="aurac-popup-header">
     <img src="./assets/head-brains.png" alt="logo" class="aurac-popup-logo" />
   </div>
@@ -26,20 +25,20 @@
       aria-label="Button which allows you to save the entities found by Aurac as a CSV file"
       class="aurac-popup-button"
     >
-      <mat-icon inline="true">auto_stories</mat-icon>
+      <mat-icon inline="true">save</mat-icon>
       Download Results
     </button>
   </div>
 
   <mat-accordion class="aurac-popup-accordion" multi="false">
     <mat-expansion-panel
-      matTooltip="Configure which terms will be highlighted by Aurac"
+      matTooltip="Configure which sort of terms will be highlighted by Aurac"
       matTooltipPosition="above"
       aria-label="Expands a panel containing preferences which allow the configuration of which terms will be highlighted by Aurac"
     >
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <span>Preferences</span>
+          <span><mat-icon inline="true" class="pdf-logo">settings</mat-icon>Preferences</span>
         </mat-panel-title>
       </mat-expansion-panel-header>
       <app-preferences></app-preferences>
