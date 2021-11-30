@@ -121,7 +121,8 @@ function highlightEntities(tabEntities: TabEntities): Promise<string> {
 
           entity.synonymToXPaths.forEach((xpaths, synonymName) => {
             let highlightedEntityOccurrence = 0
-            xpaths.forEach(xpath => {
+            const uniqueXPaths = new Set(xpaths)
+            uniqueXPaths.forEach(xpath => {
               try {
                 const xpathNode = Globals.document.evaluate(
                   xpath,
