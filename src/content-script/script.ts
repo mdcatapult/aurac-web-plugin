@@ -5,6 +5,7 @@ import { Entity, TabEntities } from '../types/entity'
 import { Message } from '../types/messages'
 import { Recogniser } from '../types/recognisers'
 import * as Mark from 'mark.js'
+import * as Highlights from '../types/highlights'
 import { highlightID } from '../types/highlights'
 
 Globals.document = document
@@ -119,8 +120,9 @@ function highlightEntities(tabEntities: TabEntities): Promise<string> {
           entity.htmlTagIDs = []
 
           entity.synonymToXPaths.forEach((xpaths, synonymName) => {
-            let entityOccurrence = 0
-            xpaths.forEach((xpath, synonymOccurrence) => {
+            let highlightedEntityOccurrence = 0
+            const uniqueXPaths = new Set(xpaths)
+            uniqueXPaths.forEach(xpath => {
               try {
                 const xpathNode = Globals.document.evaluate(
                   xpath,
@@ -130,17 +132,13 @@ function highlightEntities(tabEntities: TabEntities): Promise<string> {
                 ).singleNodeValue
 
                 if (xpathNode) {
-                  const highlightElementCallback = newHighlightElementCallback(
+                  highlightedEntityOccurrence = highlightText(
                     entity,
-                    entityName,
-                    entityOccurrence,
                     synonymName,
-                    synonymOccurrence
+                    xpathNode,
+                    entityName,
+                    highlightedEntityOccurrence
                   )
-                  const success = highlightText(xpathNode, synonymName, highlightElementCallback)
-                  if (success) {
-                    entityOccurrence++
-                  }
                 }
               } catch (e) {
                 reject(e)
@@ -154,41 +152,56 @@ function highlightEntities(tabEntities: TabEntities): Promise<string> {
   })
 }
 
-function highlightText(
+/**
+ *
+ * @param entity {Entity}
+ * @param synonymName
+ * @param contextNode
+ * @param entityName
+ * @param {number} highlightedEntityOccurrence count of highlighted occurrences of a particular entity,
+ * rather than the total number of entities on the page
+ * */
+export function highlightText(
+  entity: Entity,
+  synonymName: string,
   contextNode: Node,
-  text: string,
-  callback: (element: HTMLElement) => void
-): boolean {
-  let success = true
+  entityName: string,
+  highlightedEntityOccurrence: number
+): number {
   let highlighter = new Mark(contextNode as HTMLElement)
-  highlighter.mark(text, {
+
+  // This regex will only highlight terms that either begin and end with its first and last letter or contain non word characters
+  let termToHighlight = Highlights.highlightFormat(synonymName)
+
+  highlighter.markRegExp(termToHighlight, {
     element: 'span',
     className: highlightClass,
-    accuracy: 'exactly',
     acrossElements: true,
-    separateWordSearch: false,
     exclude: ['a', '.tooltipped', '.tooltipped-click', '.aurac-highlight'],
-    filter: (_node, _term, countAtCall, _totalCount): boolean => countAtCall < 1,
-    each: callback,
-    noMatch: (_term: string) => {
-      success = false
+    each: (element: HTMLElement) => {
+      newHighlightElementCallback(
+        entity,
+        entityName,
+        highlightedEntityOccurrence,
+        synonymName
+      )(element)
+      highlightedEntityOccurrence++
     }
   })
 
-  return success
+  return highlightedEntityOccurrence
 }
 
 function newHighlightElementCallback(
   entity: Entity,
   entityName: string,
-  entityOccurrence: number,
-  synonymName: string,
-  synonymOccurrence: number
+  highlightedEntityOccurrence: number,
+  synonymName: string
 ): (element: HTMLElement) => void {
   return (element: HTMLElement): void => {
     // a tabIndex is required in order to make the highlight element focussable
     element.tabIndex = -1
-    element.id = highlightID(entityName, entityOccurrence, synonymName, synonymOccurrence)
+    element.id = highlightID(entityName, highlightedEntityOccurrence, synonymName)
     entity.htmlTagIDs = entity.htmlTagIDs ? entity.htmlTagIDs.concat([element.id]) : [element.id]
     element.addEventListener('click', (_event: Event): void => {
       Globals.browser
