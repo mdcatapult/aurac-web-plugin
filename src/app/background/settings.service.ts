@@ -121,7 +121,7 @@ export class SettingsService {
   }
 
   /**
-   * loadFromBrowswerStorage calls browserService to load settings, then ensures that the retrieved object has all the correct
+   * loadFromBrowserStorage calls browserService to load settings, then ensures that the retrieved object has all the correct
    * keys based on defaultSettings.
    */
   private loadFromBrowserStorage(): Promise<Settings> {
