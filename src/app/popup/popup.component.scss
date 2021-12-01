@@ -6,9 +6,7 @@
 
 .aurac-popup {
   width: 400px;
-  min-height: 601px;
-  height: auto; // this adds a scrollbar correctly but we don't have enough content to fill the popup
-  //overflow-y: scroll; // this adds a scrollbar, but when the popup window grows an extra one is added :(
+  height: auto;
   padding: 5px;
   background-color: $aurac_background;
 }
