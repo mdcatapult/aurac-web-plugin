@@ -25,6 +25,24 @@ iframe.src = browser.runtime.getURL('index.html?page=sidebar')
 iframe.style.width = '20%'
 sidebar.appendChild(iframe)
 
+const modalSpan = Globals.document.createElement('span')
+modalSpan.innerHTML = `
+<div class="aurac-modal-wrapper" id="aurac-modal-1">
+  <div class="aurac-modal">
+    <div class="aurac-modal-body" id="aurac-modal-body-1">
+    </div>
+  </div>
+  <div class="aurac-modal-background"></div>
+</div>
+`
+const closeModalButton = document.createElement('button')
+closeModalButton.insertAdjacentHTML('beforeend', 'Close')
+closeModalButton.addEventListener('click', () => closeModal())
+
+Globals.document.body.appendChild(modalSpan)
+const auracModalBody = Globals.document.getElementById('aurac-modal-body-1')
+auracModalBody!.append(closeModalButton)
+
 const buttonRoot = Globals.document.createElement('div')
 buttonRoot.style.position = 'absolute'
 buttonRoot.style.top = '0'
