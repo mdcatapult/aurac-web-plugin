@@ -129,6 +129,27 @@ async function awaitSidebarReadiness(): Promise<void> {
   return
 }
 
+let modalAvailibilty = true
+
+function openModal(chemblId: string) {
+  if (!modalAvailibilty) return
+  const modal = Globals.document.getElementById('aurac-modal-1')
+  modal!.style.display = 'block'
+
+  const auracBody = Globals.document.getElementById('aurac-modal-body-1')
+  auracBody!.insertAdjacentHTML('afterbegin', `<object id="compound-data" data="https://www.ebi.ac.uk/chembl/embed/#compound_report_card/${chemblId}/name_and_classification" width="100%" height="100%"></object>`!)
+  modalAvailibilty = false
+}
+
+function closeModal() {
+  const modal = Globals.document.getElementById('aurac-modal-1')
+  modal!.style.display = 'none'
+  Globals.document.body.classList.remove('aurac-modal-open');
+  const auracData = Globals.document.getElementById('compound-data')
+  auracData!.remove()
+  modalAvailibilty = true
+}
+
 function highlightEntities(tabEntities: TabEntities): Promise<string> {
   return new Promise((resolve, reject) => {
     Globals.browser
