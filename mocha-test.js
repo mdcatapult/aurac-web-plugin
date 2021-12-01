@@ -13,14 +13,6 @@ describe('Extension UI Testing', function () {
     await boot()
   })
 
-  describe('Settings Page', async function () {
-    it('Has restore defaults button', async function () {
-      await extensionPage.click('#aurac-settings-button')
-      let defaultsButton = await extensionPage.$('.restore-defaults-button-container')
-      assert.notStrictEqual(defaultsButton, null)
-    })
-  })
-
   after(async function () {
     await browser.close()
     xvfb.stop()

@@ -1,26 +1,49 @@
-import { Component, Input, OnChanges } from '@angular/core'
+import { Component } from '@angular/core'
 import { FormControl, FormGroup } from '@angular/forms'
+import { SettingsService } from 'src/app/background/settings.service'
+import { BrowserService } from 'src/app/browser.service'
 
 @Component({
   selector: 'app-x-ref-sources',
   templateUrl: './x-ref-sources.component.html',
   styleUrls: ['./x-ref-sources.component.scss']
 })
-export class XRefSourcesComponent implements OnChanges {
-  @Input() sourcesForm: FormGroup = new FormGroup({})
-  @Input() xRefSources: { [key: string]: boolean } = {}
+export class XRefSourcesComponent {
+  form = new FormGroup({})
+  hasXRefs = false
 
-  constructor() {}
+  constructor(private browserService: BrowserService, private settingsService: SettingsService) {}
 
-  ngOnChanges() {
-    if (!this.xRefSources) return
-    this.sourcesForm.controls = {}
-    Object.entries(this.xRefSources).map(([key, value]) => {
-      this.sourcesForm.addControl(key, new FormControl(value))
-    })
+  ngOnInit() {
+    this.browserService
+      .sendMessageToBackground({
+        type: 'settings_service_refresh_xref_sources',
+        body: this.settingsService.APIURLs.unichemURL
+      })
+      .then((xRefSources: string[]) => {
+        xRefSources.forEach(source => {
+          this.form.addControl(source, new FormControl(true))
+        })
+
+        if (xRefSources.length) {
+          this.hasXRefs = true
+        }
+
+        this.form.reset(this.settingsService.xRefSources)
+      })
+
+    // reset the form when xRefSourcesObservable emits
+    this.settingsService.xRefSourcesObservable.subscribe(xrefs => this.form.reset(xrefs))
   }
 
-  hasXRefs(): boolean {
-    return this.xRefSources && Object.keys(this.xRefSources).length > 0
+  save(): void {
+    if (this.form.valid) {
+      this.browserService
+        .sendMessageToBackground({
+          type: 'settings_service_set_xrefs',
+          body: this.form.value
+        })
+        .catch(error => console.error("couldn't send message 'settings_service_set_xrefs'", error))
+    }
   }
 }

@@ -43,7 +43,6 @@ export class SettingsService {
     this.loadFromBrowserStorage()
       .then(settings => {
         this.setAll(settings)
-        this.refreshXRefSources(this.APIURLs.unichemURL).then(console.error)
       })
       .catch(console.error)
   }
@@ -58,20 +57,28 @@ export class SettingsService {
             preferences: this.preferences
           })
         })
-      case 'settings_service_set_settings':
+      case 'settings_service_set_preferences':
         return new Promise(resolve => {
-          this.setAll(msg.body)
+          this.setPreferences(msg.body)
+          this.saveToBrowserStorage(this.getAll()).then(() => {
+            resolve(null)
+          })
+        })
+      case 'settings_service_set_urls':
+        return new Promise(resolve => {
+          this.setURLs(msg.body)
+          this.saveToBrowserStorage(this.getAll()).then(() => {
+            resolve(null)
+          })
+        })
+      case 'settings_service_set_xrefs':
+        return new Promise(resolve => {
+          this.setXrefs(msg.body)
           this.saveToBrowserStorage(this.getAll())
           resolve(null)
         })
       case 'settings_service_refresh_xref_sources':
         return this.refreshXRefSources(msg.body)
-          .then(() => {
-            this.saveToBrowserStorage(this.getAll())
-          })
-          .then(() => {
-            return this.xRefSources
-          })
       case 'settings_service_get_current_recogniser':
         return Promise.resolve(this.preferences.recogniser)
     }
@@ -85,31 +92,28 @@ export class SettingsService {
     return Object.keys(this.xRefSources).filter(xRef => this.xRefSources[xRef] === true)
   }
 
+  private setPreferences(pref: Preferences) {
+    this.preferencesBehaviorSubject.next(pref)
+  }
+
+  private setURLs(urls: APIURLs) {
+    this.APIURLsBehaviorSubject.next(urls)
+  }
+
+  private setXrefs(xrefs: XRefSources) {
+    this.xRefSourcesBehaviorSubject.next(xrefs)
+  }
   private setAll(settings: Settings): void {
     this.xRefSourcesBehaviorSubject.next(settings.xRefSources)
     this.preferencesBehaviorSubject.next(settings.preferences)
     this.APIURLsBehaviorSubject.next(settings.urls)
   }
 
-  private refreshXRefSources(unichemURL: string): Promise<void> {
+  private refreshXRefSources(unichemURL: string): Promise<string[]> {
     return this.httpClient
       .get<string[]>(`${unichemURL}/sources`)
       .toPromise()
-      .then(
-        unichemPlusSources => {
-          const xRefSources: Record<string, boolean> = {}
-          unichemPlusSources.forEach(source => {
-            // If source is already defined, use the existing value (true/false). If it isn't defined, set the
-            // value to be true. See "nullish coallescing operator".
-            xRefSources[source] = this.xRefSources[source] ?? true
-          })
-          this.xRefSourcesBehaviorSubject.next(xRefSources)
-        },
-        error => {
-          console.error(error)
-          this.xRefSourcesBehaviorSubject.next({})
-        }
-      )
+      .then(unichemPlusSources => Promise.resolve(unichemPlusSources))
   }
 
   static getXRefSources(httpClient: HttpClient, unichemURL: string): Observable<string[]> {
@@ -117,16 +121,14 @@ export class SettingsService {
   }
 
   /**
-   * loadSettings calls browserService to load settings, then ensures that the retrieved object has all the correct
+   * loadFromBrowserStorage calls browserService to load settings, then ensures that the retrieved object has all the correct
    * keys based on defaultSettings.
-   * @param browserService browserService implementation
-   * @param onResolve callback for when settings have been retrived from browser strorage
    */
   private loadFromBrowserStorage(): Promise<Settings> {
     return this.browserService.load('settings').then(settingsObj => {
       const settings = (settingsObj as browser.storage.StorageObject)?.settings as Settings
 
-      return _.merge(settings, defaultSettings)
+      return _.defaultsDeep(settings, defaultSettings)
     })
   }
 

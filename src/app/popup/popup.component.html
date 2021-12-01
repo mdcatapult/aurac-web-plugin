@@ -19,18 +19,6 @@
     <button
       mat-raised-button
       color="black"
-      (click)="settingsClicked()"
-      id="aurac-settings-button"
-      matTooltip="Change settings like the type of things to highlight"
-      matTooltipPosition="above"
-      aria-label="Button that selects the settings page where you can change the type of entities to be highlighted, the length of highlighted entities to be displayed the cross reference sources to be displayed and the URLs where Aurac gets its information from"
-    >
-      <mat-icon inline="true">settings_suggest</mat-icon>
-      Settings
-    </button>
-    <button
-      mat-raised-button
-      color="black"
       (click)="pdfClicked()"
       matTooltip="Convert a PDF from a web address into a page you can highlight"
       matTooltipPosition="above"
@@ -64,10 +52,10 @@
   </div>
 </div>
 
-<div class="settings" [hidden]="mode !== 'settings'">
-  <app-settings (closed)="mode = 'menu'"></app-settings>
-</div>
-
 <div class="aurac-pdf-selector" [hidden]="mode !== 'pdf'">
   <app-pdfselector (closed)="mode = 'menu'"></app-pdfselector>
 </div>
+
+<app-preferences></app-preferences>
+<app-urls></app-urls>
+<app-x-ref-sources></app-x-ref-sources>
