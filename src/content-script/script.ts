@@ -260,5 +260,19 @@ Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
 
     case 'content_script_remove_highlights':
       return Promise.resolve(removeHighlights())
+
+    case 'content_script_open_modal':
+      console.log(msg.body)
+      const xRefs: Array<any> = msg.body.xRefs
+      let chemblId: string = ''
+      xRefs.map(xref => {
+        if(xref.databaseName === 'chembl'){
+          const url: string = xref.url
+          const chemblIdList: string[] = url.split('/')
+          chemblId = chemblIdList[chemblIdList.length-1]
+        }
+      })
+
+      return Promise.resolve(openModal(chemblId))
   }
 })
