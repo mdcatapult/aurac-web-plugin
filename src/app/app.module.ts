@@ -13,7 +13,6 @@ import { HttpClientModule } from '@angular/common/http'
 import { UrlsComponent } from './popup/settings/urls/urls.component'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { XRefSourcesComponent } from './popup/settings/x-ref-sources/x-ref-sources.component'
-import { SettingsComponent } from './popup/settings/settings.component'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 import { MatTooltipModule } from '@angular/material/tooltip'
@@ -45,7 +44,6 @@ const routes: Routes = [{ path: '**', component: RouterComponent }]
     RouterComponent,
     UrlsComponent,
     XRefSourcesComponent,
-    SettingsComponent,
     PreferencesComponent,
     PDFSelectorComponent,
     SidebarComponent,

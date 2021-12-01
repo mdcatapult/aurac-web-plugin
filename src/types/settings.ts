@@ -6,7 +6,7 @@ export type Preferences = {
   recogniser: Recogniser
 }
 
-export type XRefSources = { [key: string]: boolean }
+export type XRefSources = Record<string, boolean>
 
 export type Settings = {
   urls: APIURLs
