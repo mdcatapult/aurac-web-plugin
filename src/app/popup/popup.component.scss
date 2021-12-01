@@ -6,7 +6,8 @@
 
 .aurac-popup {
   width: 400px;
-  height: 800px; // this adds a scrollbar correctly but we don't have enough content to fill the popup
+  min-height: 601px;
+  height: auto; // this adds a scrollbar correctly but we don't have enough content to fill the popup
   //overflow-y: scroll; // this adds a scrollbar, but when the popup window grows an extra one is added :(
   padding: 5px;
   background-color: $aurac_background;
@@ -27,18 +28,9 @@
 }
 
 .aurac-popup-logo {
-  //padding: 10px;
-  //background-color: $aurac_background;
   width: 13em;
   display: block;
   margin: 1em auto 0.5em auto;
-}
-
-.aurac-ner-icon {
-  color: $aurac_button;
-  height: 15px !important;
-  width: 15px !important;
-  display: inline-table;
 }
 
 .ner-button-container {
@@ -60,10 +52,18 @@ button {
   font-weight: 500;
 }
 
-.pdf-logo {
+.panel-icon {
   padding-right: 5px;
 }
 
 .aurac-link-sources {
   margin-bottom: 5px;
+}
+
+.ner-button {
+  display: inline-block;
+  background-color: $aurac_button;
+}
+.ner-button:hover {
+  background-color: $aurac_button_hover;
 }

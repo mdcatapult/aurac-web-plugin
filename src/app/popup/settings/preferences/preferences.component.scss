@@ -48,12 +48,13 @@
   margin-bottom: 20px;
 }
 
-.save-button {
+.aurac-save-button {
   width: 50%;
   display: block;
   margin: 0 auto 0;
   background-color: $aurac_button;
 }
-.save-button:hover {
+
+.aurac-save-button:hover {
   background-color: $aurac_button_hover;
 }

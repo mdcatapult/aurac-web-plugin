@@ -8,7 +8,7 @@
         matTooltip="Remove this card from the sidebar"
         matTooltipPosition="above"
       >
-        <mat-icon>clear</mat-icon>
+        <mat-icon>delete_outline</mat-icon>
       </button>
       <div class="aurac-sidebar-arrow-buttons">
         <p *ngIf="nOccurrences > 0">
@@ -49,7 +49,7 @@
         <!-- links and xrefs -->
         <mat-expansion-panel>
           <mat-expansion-panel-header>
-            <mat-panel-description>Explore</mat-panel-description>
+            <mat-panel-description><mat-icon inline="true">explore</mat-icon>Explore</mat-panel-description>
           </mat-expansion-panel-header>
           <mat-chip-list>
             <mat-chip *ngFor="let xRef of card.entity.xRefs">
