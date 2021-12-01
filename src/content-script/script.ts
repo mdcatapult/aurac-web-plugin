@@ -14,6 +14,8 @@ Globals.browser = new BrowserImplementation()
 const highlightClass = 'aurac-highlight'
 let SIDEBAR_IS_READY = false
 
+document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
+
 const sidebar = Globals.document.createElement('div')
 sidebar.id = 'aurac-sidebar'
 sidebar.style.backgroundColor = 'rgb(192, 192, 192)'
@@ -102,6 +104,7 @@ function closeSidebar(): void {
 function getPageContents(): string {
   return Globals.document.documentElement.outerHTML
 }
+
 
 async function awaitSidebarReadiness(): Promise<void> {
   while (!SIDEBAR_IS_READY) {
