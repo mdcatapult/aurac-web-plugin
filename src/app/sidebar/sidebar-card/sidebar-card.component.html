@@ -51,10 +51,15 @@
           </mat-chip-list>
         </mat-expansion-panel>
       </mat-accordion>
-      <br>
-    <button *ngIf="this.card.entity.xRefs!.length > 0" class="open-modal-button" mat-raised-button (click)="openModal()">
-      Structure
-    </button>
+      <br />
+      <button
+        *ngIf="this.card.entity.xRefs!.length > 0"
+        class="open-modal-button"
+        mat-raised-button
+        (click)="openModal()"
+      >
+        Structure
+      </button>
     </mat-card-content>
   </mat-card>
 </article>

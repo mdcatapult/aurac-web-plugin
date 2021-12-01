@@ -137,14 +137,17 @@ function openModal(chemblId: string) {
   modal!.style.display = 'block'
 
   const auracBody = Globals.document.getElementById('aurac-modal-body-1')
-  auracBody!.insertAdjacentHTML('afterbegin', `<object id="compound-data" data="https://www.ebi.ac.uk/chembl/embed/#compound_report_card/${chemblId}/name_and_classification" width="100%" height="100%"></object>`!)
+  auracBody!.insertAdjacentHTML(
+    'afterbegin',
+    `<object id="compound-data" data="https://www.ebi.ac.uk/chembl/embed/#compound_report_card/${chemblId}/name_and_classification" width="100%" height="100%"></object>`!
+  )
   modalAvailibilty = false
 }
 
 function closeModal() {
   const modal = Globals.document.getElementById('aurac-modal-1')
   modal!.style.display = 'none'
-  Globals.document.body.classList.remove('aurac-modal-open');
+  Globals.document.body.classList.remove('aurac-modal-open')
   const auracData = Globals.document.getElementById('compound-data')
   auracData!.remove()
   modalAvailibilty = true
@@ -305,10 +308,10 @@ Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
       const xRefs: Array<any> = msg.body.xRefs
       let chemblId: string = ''
       xRefs.map(xref => {
-        if(xref.databaseName === 'chembl'){
+        if (xref.databaseName === 'chembl') {
           const url: string = xref.url
           const chemblIdList: string[] = url.split('/')
-          chemblId = chemblIdList[chemblIdList.length-1]
+          chemblId = chemblIdList[chemblIdList.length - 1]
         }
       })
 
