@@ -101,20 +101,24 @@ function closeSidebar(): void {
   })
 }
 
-// let isCompressed = true
-
-function compressOrStickSidebar(isPageCompressed: boolean): boolean {
+function compressPageForSidebar(isPageCompressed: boolean): boolean {
   if (!!Globals.document.getElementsByClassName('aurac-sidebar--expanded').length) {
     closeSidebar()
   }
 
-  isPageCompressed
-    ? document.body.classList.remove('aurac-transform', 'aurac-body--sidebar-collapsed')
-    : document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
+  isPageCompressed ? removeAuracBodyFromPage() : addAuracBodyToPage()
 
   isPageCompressed = !isPageCompressed
 
   return isPageCompressed
+}
+
+function removeAuracBodyFromPage() {
+  document.body.classList.remove('aurac-transform', 'aurac-body--sidebar-collapsed')
+}
+
+function addAuracBodyToPage() {
+  document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
 }
 
 function getPageContents(): string {
@@ -280,6 +284,6 @@ Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
       return Promise.resolve(removeHighlights())
 
     case 'content_script_compress_page':
-      return Promise.resolve(compressOrStickSidebar(msg.body as boolean))
+      return Promise.resolve(compressPageForSidebar(msg.body as boolean))
   }
 })
