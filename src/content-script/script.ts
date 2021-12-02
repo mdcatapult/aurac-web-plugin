@@ -10,11 +10,10 @@ import { highlightID } from '../types/highlights'
 
 Globals.document = document
 Globals.browser = new BrowserImplementation()
+Globals.document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
 
 const highlightClass = 'aurac-highlight'
 let SIDEBAR_IS_READY = false
-
-document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
 
 const sidebar = Globals.document.createElement('div')
 sidebar.id = 'aurac-sidebar'
@@ -114,11 +113,11 @@ function pageCompressed(isPageCompressed: boolean): boolean {
 }
 
 function removeAuracBodyFromPage() {
-  document.body.classList.remove('aurac-transform', 'aurac-body--sidebar-collapsed')
+  Globals.document.body.classList.remove('aurac-transform', 'aurac-body--sidebar-collapsed')
 }
 
 function addAuracBodyToPage() {
-  document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
+  Globals.document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
 }
 
 function getPageContents(): string {
