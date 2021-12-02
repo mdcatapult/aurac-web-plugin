@@ -283,7 +283,7 @@ Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
     case 'content_script_remove_highlights':
       return Promise.resolve(removeHighlights())
 
-    case 'content_script_compress_page':
+    case 'content_script_is_page_compressed':
       return Promise.resolve(compressedOrStickySidebar(msg.body as boolean))
   }
 })

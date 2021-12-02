@@ -40,7 +40,10 @@ export class SidebarHeaderComponent {
 
   compressedOrStickySidebar() {
     this.browserService
-      .sendMessageToActiveTab({ type: 'content_script_compress_page', body: this.isPageCompressed })
+      .sendMessageToActiveTab({
+        type: 'content_script_is_page_compressed',
+        body: this.isPageCompressed
+      })
       .then(result => {
         this.isPageCompressed = result
       })
