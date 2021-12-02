@@ -8,9 +8,12 @@
       <button class="aurac-sidebar-header-button" mat-raised-button (click)="clearCards()">
         Clear
       </button>
-      <button class="aurac-sidebar-header-button" mat-raised-button (click)="compressOrClearSidebar()">
-        Compress/Stick
-      </button>
+      <button
+        class="aurac-sidebar-header-button"
+        [textContent]="isPageCompressed ? 'Compressed' : 'Sticky'"
+        mat-raised-button
+        (click)="compressedOrStickySidebar()"
+      ></button>
     </div>
   </nav>
 </header>
