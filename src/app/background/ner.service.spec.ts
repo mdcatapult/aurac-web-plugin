@@ -248,8 +248,8 @@ describe('NerService', () => {
     expect(leadmineProteinHeaders.get('content-type')).toEqual('text/html')
 
     let [leadmineDiseasesParams, leadmineDiseasesHeaders] =
-      service['constructRequestParametersAndHeaders']('leadmine-diseases')
-    expect(leadmineDiseasesParams.toString()).toEqual('recogniser=leadmine-diseases')
+      service['constructRequestParametersAndHeaders']('leadmine-disease')
+    expect(leadmineDiseasesParams.toString()).toEqual('recogniser=leadmine-disease')
     expect(leadmineDiseasesHeaders.get('content-type')).toEqual('text/html')
 
     let [params, headers] = service['constructRequestParametersAndHeaders'](

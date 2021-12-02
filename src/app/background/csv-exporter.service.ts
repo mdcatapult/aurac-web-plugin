@@ -36,7 +36,7 @@ export class CsvExporterService {
           switch (recogniser) {
             case 'leadmine-proteins':
             case 'leadmine-chemical-entities':
-            case 'leadmine-diseases':
+            case 'leadmine-disease':
               const entities: Map<string, Entity> = tabEntities[recogniser]!.entities
               const entitiesArray: Array<Entity> = Array.from(entities.values())
 

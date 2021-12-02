@@ -1,5 +1,7 @@
-<div *ngIf="mode === 'menu'" class="aurac-popup-div">
-  <img src="./assets/head-brains.icon.128.png" alt="logo" class="aurac-popup-logo" />
+<div *ngIf="mode === 'menu'" class="aurac-popup">
+  <div class="aurac-popup-header">
+    <img src="./assets/head-brains.png" alt="logo" class="aurac-popup-logo" />
+  </div>
 
   <div class="ner-button-container">
     <button
@@ -8,54 +10,72 @@
       matTooltip="Ask Aurac to highlight interesting things in the page"
       matTooltipPosition="above"
       aria-label="Button that highlights things of interest in the current page"
+      class="ner-button"
     >
-      <mat-icon inline="true" class="aurac-ner-icon">manage_search</mat-icon>
+      <mat-icon inline="true">manage_search</mat-icon>
       Highlight
     </button>
-  </div>
-  <br />
 
-  <div class="aurac-settings-button-container">
-    <button
-      mat-raised-button
-      color="black"
-      (click)="pdfClicked()"
-      matTooltip="Convert a PDF from a web address into a page you can highlight"
-      matTooltipPosition="above"
-      aria-label="Button which displays an input field where you can enter a URL to fetch a PDF and convert it into a web page for highlighting"
-    >
-      <mat-icon inline="true">picture_as_pdf</mat-icon>
-      PDF conversion
-    </button>
-    <button
-      mat-raised-button
-      color="black"
-      (click)="toggleSidebar()"
-      matTooltip="Close or open the Aurac sidebar"
-      matTooltipPosition="above"
-      aria-label="Button which closes or opens the Aurac sidebar where entities are displayed when you click on them"
-    >
-      <mat-icon inline="true">auto_stories</mat-icon>
-      Toggle Sidebar
-    </button>
     <button
       mat-raised-button
       color="black"
       (click)="exportResults()"
-      matTooltip="Save all the results found by Aurac when highlighting as a CSV download"
+      matTooltip="Save all the results found by Aurac to a CSV file"
       matTooltipPosition="above"
       aria-label="Button which allows you to save the entities found by Aurac as a CSV file"
+      class="aurac-popup-button"
     >
-      <mat-icon inline="true">auto_stories</mat-icon>
+      <mat-icon inline="true">save</mat-icon>
       Download Results
     </button>
   </div>
-</div>
 
-<div class="aurac-pdf-selector" [hidden]="mode !== 'pdf'">
-  <app-pdfselector (closed)="mode = 'menu'"></app-pdfselector>
-</div>
+  <mat-accordion class="aurac-popup-accordion" multi="false">
+    <mat-expansion-panel
+      matTooltip="Configure which sort of terms will be highlighted by Aurac"
+      matTooltipPosition="above"
+      aria-label="Expands a panel containing preferences which allow the configuration of which terms will be highlighted by Aurac"
+    >
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span><mat-icon inline="true" class="panel-icon">settings</mat-icon>Preferences</span>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-preferences></app-preferences>
+    </mat-expansion-panel>
 
-<app-preferences></app-preferences>
-<app-urls></app-urls>
-<app-x-ref-sources></app-x-ref-sources>
+    <mat-expansion-panel
+      matTooltip="Converts a PDF to HTML and opens it in a new browser tab ready for highlighting by Aurac"
+      matTooltipPosition="above"
+      aria-label="Expands a panel allowing a user to enter the URL of a PDF which will then be converted to HTML ready to be highlighted by Aurac"
+    >
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span class="panel-icon">
+            <mat-icon inline="true">picture_as_pdf</mat-icon>
+          </span>
+          <span>PDF conversion</span>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-pdfselector (closed)="mode = 'menu'"></app-pdfselector>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span>URLs</span>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-urls></app-urls>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel class="aurac-link-sources">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span>Link Sources</span>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-x-ref-sources></app-x-ref-sources>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>

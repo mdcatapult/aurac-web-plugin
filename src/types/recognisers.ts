@@ -5,7 +5,7 @@ export function allRecognisers(): Recogniser[] {
 const ALL_RECOGNISERS = [
   'leadmine-proteins',
   'leadmine-chemical-entities',
-  'leadmine-diseases'
+  'leadmine-disease'
 ] as const
 type RecognisersTuple = typeof ALL_RECOGNISERS
 export type Recogniser = RecognisersTuple[number]

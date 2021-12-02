@@ -1,40 +1,38 @@
 @import 'src/assets/stylingVariables';
 
-.settings {
-  width: 400px;
-  height: 400px;
-}
-
 .mat-raised-button:hover {
   background-color: lightgrey;
 }
 
-.aurac-popup-div {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: $aurac_background;
-  overflow: hidden;
+.aurac-popup {
   width: 400px;
-  height: 400px;
+  height: auto;
+  padding: 5px;
+  background-color: $aurac_background;
+}
+
+.aurac-popup-button {
+  display: inline-block;
+}
+
+.aurac-popup-header {
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  background-color: $aurac_background;
+  position: sticky;
+  top: 0;
+  margin: 0.75vh 0 0.75vh 0;
 }
 
 .aurac-popup-logo {
-  padding: 10px;
-  background-color: $aurac_background;
-}
-
-.aurac-ner-icon {
-  color: $aurac_button;
-  height: 15px !important;
-  width: 15px !important;
-  display: inline-table;
+  width: 13em;
+  display: block;
+  margin: 1em auto 0.5em auto;
 }
 
 .ner-button-container {
-  width: 95%;
-  padding: 5px;
-  background-color: rgb(226, 152, 71);
+  margin: 10px 0 10px 0;
 }
 
 .aurac-settings-button-container {
@@ -48,10 +46,22 @@ button {
   display: flex;
   width: 100%;
   margin-bottom: 3px;
+  font-size: 15px;
+  font-weight: 500;
 }
 
-.aurac-pdf-selector {
-  width: 400px;
-  height: 400px;
-  background-color: $aurac_background;
+.panel-icon {
+  padding-right: 5px;
+}
+
+.aurac-link-sources {
+  margin-bottom: 5px;
+}
+
+.ner-button {
+  display: inline-block;
+  background-color: $aurac_button;
+}
+.ner-button:hover {
+  background-color: $aurac_button_hover;
 }

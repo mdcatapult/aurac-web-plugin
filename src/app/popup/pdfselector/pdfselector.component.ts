@@ -48,10 +48,6 @@ export class PDFSelectorComponent {
       .catch(error => console.error("couldn't send message 'awaiting_response'", error))
   }
 
-  closeSettings(): void {
-    this.closed.emit(true)
-  }
-
   private linkValidator(control: AbstractControl): ValidationErrors | null {
     const link = control.value
     const isValid = UrlValidator.isValidURL(link) && link.slice(link.length - 4) === '.pdf'

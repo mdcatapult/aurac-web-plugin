@@ -168,7 +168,7 @@ export class NerService {
     response.forEach(recognisedEntity => {
       switch (recognisedEntity.recogniser) {
         case 'leadmine-chemical-entities':
-        case 'leadmine-diseases':
+        case 'leadmine-disease':
         case 'leadmine-proteins':
           // For all leadmine dictionaries, we will use the resolved entity
           // to determine whether two entities are synonyms of each other.
