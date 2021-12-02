@@ -14,7 +14,7 @@ export class LinksService {
 
     switch (card.recogniser) {
       case 'leadmine-chemical-entities':
-      case 'leadmine-diseases':
+      case 'leadmine-disease':
       case 'leadmine-proteins':
         if (!card.entity.metadata) {
           return entityLinks
