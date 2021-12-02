@@ -101,7 +101,7 @@ function closeSidebar(): void {
   })
 }
 
-function compressedOrStickySidebar(isPageCompressed: boolean): boolean {
+function pageCompressed(isPageCompressed: boolean): boolean {
   if (!!Globals.document.getElementsByClassName('aurac-sidebar--expanded').length) {
     closeSidebar()
   }
@@ -109,7 +109,6 @@ function compressedOrStickySidebar(isPageCompressed: boolean): boolean {
   isPageCompressed ? removeAuracBodyFromPage() : addAuracBodyToPage()
 
   isPageCompressed = !isPageCompressed
-
   return isPageCompressed
 }
 
@@ -284,6 +283,6 @@ Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
       return Promise.resolve(removeHighlights())
 
     case 'content_script_is_page_compressed':
-      return Promise.resolve(compressedOrStickySidebar(msg.body as boolean))
+      return Promise.resolve(pageCompressed(msg.body as boolean))
   }
 })

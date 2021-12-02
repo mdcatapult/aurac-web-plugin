@@ -38,7 +38,7 @@ export class SidebarHeaderComponent {
     this.sidebarDataService.setCards([])
   }
 
-  compressedOrStickySidebar() {
+  compressedOrFloatingSidebar() {
     this.browserService
       .sendMessageToActiveTab({
         type: 'content_script_is_page_compressed',
