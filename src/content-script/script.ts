@@ -109,6 +109,7 @@ function pageCompressed(isPageCompressed: boolean): boolean {
   isPageCompressed ? removeAuracBodyFromPage() : addAuracBodyToPage()
 
   isPageCompressed = !isPageCompressed
+
   return isPageCompressed
 }
 
