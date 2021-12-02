@@ -12,6 +12,7 @@ export type MessageType =
   | 'content_script_remove_highlights'
   | 'content_script_scroll_to_highlight'
   | 'content_script_set_sidebar_ready'
+  | 'content_script_compress_sidebar'
   | 'csv_exporter_service_export_csv'
   | 'entity_messenger_service_highlight_clicked'
   | 'export_csv'

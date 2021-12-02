@@ -35,4 +35,8 @@ export class SidebarHeaderComponent {
   clearCards() {
     this.sidebarDataService.setCards([])
   }
+
+  compressOrClearSidebar() {
+    this.browserService.sendMessageToActiveTab({ type: 'content_script_compress_sidebar' })
+  }
 }

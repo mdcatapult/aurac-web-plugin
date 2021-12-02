@@ -101,10 +101,22 @@ function closeSidebar(): void {
   })
 }
 
+let isCompressed = true
+
+function compressOrStickSidebar(): void {
+  if (!!Globals.document.getElementsByClassName('aurac-sidebar--expanded').length) {
+    closeSidebar()
+  }
+
+  isCompressed ? document.body.classList.remove('aurac-transform', 'aurac-body--sidebar-collapsed')
+    : document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
+
+  isCompressed = !isCompressed
+}
+
 function getPageContents(): string {
   return Globals.document.documentElement.outerHTML
 }
-
 
 async function awaitSidebarReadiness(): Promise<void> {
   while (!SIDEBAR_IS_READY) {
@@ -263,5 +275,8 @@ Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
 
     case 'content_script_remove_highlights':
       return Promise.resolve(removeHighlights())
+
+    case 'content_script_compress_sidebar':
+      return Promise.resolve(compressOrStickSidebar())
   }
 })
