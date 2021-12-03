@@ -1,4 +1,4 @@
-import { Component } from '@angular/core'
+import { Component, OnInit } from '@angular/core'
 import { FormControl, FormGroup } from '@angular/forms'
 import { SettingsService } from 'src/app/background/settings.service'
 import { BrowserService } from 'src/app/browser.service'
@@ -8,7 +8,7 @@ import { BrowserService } from 'src/app/browser.service'
   templateUrl: './x-ref-sources.component.html',
   styleUrls: ['./x-ref-sources.component.scss']
 })
-export class XRefSourcesComponent {
+export class XRefSourcesComponent implements OnInit {
   form = new FormGroup({})
   hasXRefs = false
 

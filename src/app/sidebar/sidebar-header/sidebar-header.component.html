@@ -20,6 +20,12 @@
       >
         Clear
       </button>
+      <button
+        class="aurac-sidebar-header-button"
+        [textContent]="isPageCompressed ? 'Float' : 'Compressed'"
+        mat-raised-button
+        (click)="compressedOrFloatingSidebar()"
+      ></button>
     </div>
   </nav>
 </header>
