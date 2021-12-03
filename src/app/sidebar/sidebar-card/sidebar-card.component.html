@@ -55,10 +55,13 @@
       <button
         *ngIf="this.card.entity.xRefs!.length > 0"
         class="open-modal-button"
+        aria-label="Open modal button"
         mat-raised-button
         (click)="openModal()"
+        matTooltip="Button to display a chemical structure"
+        matTooltipPosition="right"
       >
-        Structure
+      <img class="structure-image"src="https://img.icons8.com/ios/50/000000/peptide.png"/>
       </button>
     </mat-card-content>
   </mat-card>

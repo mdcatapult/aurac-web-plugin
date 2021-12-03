@@ -1,3 +1,4 @@
+import { XRef } from './../types/entity';
 import { Globals } from './globals'
 import { BrowserImplementation } from './browser-implementation'
 import { parseWithTypes, stringifyWithTypes } from '../json'
@@ -38,6 +39,7 @@ modalSpan.innerHTML = `
 const closeModalButton = document.createElement('button')
 closeModalButton.insertAdjacentHTML('beforeend', 'Close')
 closeModalButton.addEventListener('click', () => closeModal())
+closeModalButton.className = 'close-modal-button'
 
 Globals.document.body.appendChild(modalSpan)
 const auracModalBody = Globals.document.getElementById('aurac-modal-body-1')
@@ -129,10 +131,10 @@ async function awaitSidebarReadiness(): Promise<void> {
   return
 }
 
-let modalAvailibilty = true
+let modalCanOpen = true
 
 function openModal(chemblId: string) {
-  if (!modalAvailibilty) return
+  if (!modalCanOpen) return
   const modal = Globals.document.getElementById('aurac-modal-1')
   modal!.style.display = 'block'
 
@@ -141,7 +143,7 @@ function openModal(chemblId: string) {
     'afterbegin',
     `<object id="compound-data" data="https://www.ebi.ac.uk/chembl/embed/#compound_report_card/${chemblId}/name_and_classification" width="100%" height="100%"></object>`!
   )
-  modalAvailibilty = false
+  modalCanOpen = false
 }
 
 function closeModal() {
@@ -150,7 +152,7 @@ function closeModal() {
   Globals.document.body.classList.remove('aurac-modal-open')
   const auracData = Globals.document.getElementById('compound-data')
   auracData!.remove()
-  modalAvailibilty = true
+  modalCanOpen = true
 }
 
 function highlightEntities(tabEntities: TabEntities): Promise<string> {
@@ -304,16 +306,15 @@ Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
       return Promise.resolve(removeHighlights())
 
     case 'content_script_open_modal':
-      console.log(msg.body)
-      const xRefs: Array<any> = msg.body.xRefs
+      const xRefs: Array<XRef> = msg.body.xRefs
       let chemblId: string = ''
-      xRefs.map(xref => {
-        if (xref.databaseName === 'chembl') {
-          const url: string = xref.url
-          const chemblIdList: string[] = url.split('/')
-          chemblId = chemblIdList[chemblIdList.length - 1]
-        }
-      })
+      xRefs.filter(xref => xref.databaseName === 'chembl').forEach(xref => {
+        const url: string = xref.url
+        const chemblIdList: string[] = url.split('/')
+        chemblId = chemblIdList[chemblIdList.length - 1]
+        return 
+    })
+
 
       return Promise.resolve(openModal(chemblId))
   }

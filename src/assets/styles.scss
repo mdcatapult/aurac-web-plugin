@@ -98,6 +98,11 @@ body {
   height: 80%;
 }
 
+.aurac-modal-body button {
+  position: relative;
+  bottom: 10px;
+}
+
 .aurac-modal-background {
   position: fixed;
   top: 0;
@@ -112,6 +117,8 @@ body {
 body.aurac-modal-open {
   overflow: hidden;
 }
+
+.close-modal-button
 
 #aurac-loading-icon {
   display: none;
