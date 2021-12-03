@@ -1,4 +1,12 @@
 <header>
+  <div>
+    <mat-slide-toggle
+      (change)="compressedOrFloatingSidebar($event)"
+      matTooltip="Toggle whether the sidebar sits over or next to the current webpage"
+      matTooltipPosition="above"
+      >Float sidebar</mat-slide-toggle
+    >
+  </div>
   <img [src]="imgSrc | safeResource" />
   <nav>
     <div class="aurac-sidebar-header-button-container">
@@ -20,12 +28,6 @@
       >
         Clear
       </button>
-      <button
-        class="aurac-sidebar-header-button"
-        [textContent]="isPageCompressed ? 'Float' : 'Compressed'"
-        mat-raised-button
-        (click)="compressedOrFloatingSidebar()"
-      ></button>
     </div>
   </nav>
 </header>

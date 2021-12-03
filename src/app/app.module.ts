@@ -33,6 +33,7 @@ import { MatExpansionModule } from '@angular/material/expansion'
 import { MatChipsModule } from '@angular/material/chips'
 import { MatCheckboxModule } from '@angular/material/checkbox'
 import { MatSelectModule } from '@angular/material/select'
+import { MatSlideToggleModule } from '@angular/material/slide-toggle'
 
 const routes: Routes = [{ path: '**', component: RouterComponent }]
 
@@ -76,7 +77,8 @@ const routes: Routes = [{ path: '**', component: RouterComponent }]
     MatExpansionModule,
     MatChipsModule,
     MatCheckboxModule,
-    MatSelectModule
+    MatSelectModule,
+    MatSlideToggleModule
   ],
   providers: [
     {
