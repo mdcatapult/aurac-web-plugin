@@ -25,14 +25,14 @@ mat-card {
 }
 
 .open-modal-button:hover {
-  background-color: $aurac_button_hover;}
+  background-color: $aurac_button_hover;
+}
 
-
-.open-modal-button img{
+.open-modal-button img {
   margin: 0;
   position: absolute;
   top: 50%;
   left: 50%;
   margin-right: -50%;
-  transform: translate(-50%, -50%)
+  transform: translate(-50%, -50%);
 }

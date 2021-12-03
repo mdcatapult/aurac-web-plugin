@@ -1,4 +1,4 @@
-import { XRef } from './../types/entity';
+import { XRef } from './../types/entity'
 import { Globals } from './globals'
 import { BrowserImplementation } from './browser-implementation'
 import { parseWithTypes, stringifyWithTypes } from '../json'
@@ -308,13 +308,15 @@ Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
     case 'content_script_open_modal':
       const xRefs: Array<XRef> = msg.body.xRefs
       let chemblId: string = ''
-      xRefs.filter(xref => xref.databaseName === 'chembl').forEach(xref => {
-        const url: string = xref.url
-        const chemblIdList: string[] = url.split('/')
-        chemblId = chemblIdList[chemblIdList.length - 1]
-        return 
-    })
+      xRefs
+        .filter(xref => xref.databaseName === 'chembl')
+        .forEach(xref => {
+          const url: string = xref.url
+          const chemblIdList: string[] = url.split('/')
+          chemblId = chemblIdList[chemblIdList.length - 1]
 
+          return
+        })
 
       return Promise.resolve(openModal(chemblId))
   }
