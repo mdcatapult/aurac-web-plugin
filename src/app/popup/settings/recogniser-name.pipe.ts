@@ -11,7 +11,7 @@ export class RecogniserNamePipe implements PipeTransform {
         return 'Chemical Entities'
       case 'leadmine-proteins':
         return 'Genes and Proteins'
-      case 'leadmine-diseases':
+      case 'leadmine-disease':
         return 'Diseases'
       default:
         throw new Error('unknown recogniser')

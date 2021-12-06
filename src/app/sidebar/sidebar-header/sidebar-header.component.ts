@@ -1,7 +1,8 @@
-import { Component } from '@angular/core'
+import { Component, OnInit } from '@angular/core'
 import { BrowserService } from 'src/app/browser.service'
 import { SidebarDataService } from '../sidebar-data.service'
 import { CsvExporterService } from '../../background/csv-exporter.service'
+import { MatSlideToggle, MatSlideToggleChange } from '@angular/material/slide-toggle'
 
 @Component({
   selector: 'app-sidebar-header',
@@ -10,6 +11,8 @@ import { CsvExporterService } from '../../background/csv-exporter.service'
 })
 export class SidebarHeaderComponent {
   imgSrc = ''
+  isPageCompressed = true
+
   constructor(
     private browserService: BrowserService,
     private sidebarDataService: SidebarDataService,
@@ -34,5 +37,14 @@ export class SidebarHeaderComponent {
 
   clearCards() {
     this.sidebarDataService.setCards([])
+  }
+
+  compressedOrFloatingSidebar($event: MatSlideToggleChange) {
+    this.browserService
+      .sendMessageToActiveTab({
+        type: 'content_script_is_page_compressed',
+        body: $event.checked
+      })
+      .then(result => (this.isPageCompressed = result))
   }
 }

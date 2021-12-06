@@ -6,6 +6,7 @@ export type MessageType =
   | 'content_script_close_sidebar'
   | 'content_script_get_page_contents'
   | 'content_script_highlight_entities'
+  | 'content_script_is_page_compressed'
   | 'content_script_toggle_sidebar'
   | 'content_script_open_loading_icon'
   | 'content_script_open_modal'

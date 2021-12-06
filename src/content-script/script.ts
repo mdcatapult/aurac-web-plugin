@@ -11,6 +11,7 @@ import { highlightID } from '../types/highlights'
 
 Globals.document = document
 Globals.browser = new BrowserImplementation()
+Globals.document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
 
 const highlightClass = 'aurac-highlight'
 let SIDEBAR_IS_READY = false
@@ -117,6 +118,26 @@ function closeSidebar(): void {
   Array.from(Globals.document.getElementsByClassName('aurac-transform')).forEach(e => {
     e.className = e.className.replace('expanded', 'collapsed')
   })
+}
+
+function toggleCompression(isPageCompressed: boolean): boolean {
+  if (!!Globals.document.getElementsByClassName('aurac-sidebar--expanded').length) {
+    closeSidebar()
+  }
+
+  isPageCompressed ? removeAuracBodyFromPage() : addAuracBodyToPage()
+
+  isPageCompressed = !isPageCompressed
+
+  return isPageCompressed
+}
+
+function removeAuracBodyFromPage() {
+  Globals.document.body.classList.remove('aurac-transform', 'aurac-body--sidebar-collapsed')
+}
+
+function addAuracBodyToPage() {
+  Globals.document.body.classList.add('aurac-transform', 'aurac-body--sidebar-collapsed')
 }
 
 function getPageContents(): string {
@@ -319,5 +340,8 @@ Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
         })
 
       return Promise.resolve(openModal(chemblId))
+
+    case 'content_script_is_page_compressed':
+      return Promise.resolve(toggleCompression(msg.body as boolean))
   }
 })

@@ -1,11 +1,31 @@
 <header>
+  <div>
+    <mat-slide-toggle
+      (change)="compressedOrFloatingSidebar($event)"
+      matTooltip="Toggle whether the sidebar sits over or next to the current webpage"
+      matTooltipPosition="above"
+      >Float sidebar</mat-slide-toggle
+    >
+  </div>
   <img [src]="imgSrc | safeResource" />
   <nav>
     <div class="aurac-sidebar-header-button-container">
-      <button class="aurac-sidebar-header-button" mat-raised-button (click)="exportCSV()">
+      <button
+        class="aurac-sidebar-header-button"
+        mat-raised-button
+        (click)="exportCSV()"
+        matTooltip="Save the results for the cards currently in the sidebar to a CSV file"
+        matTooltipPosition="above"
+      >
         Download
       </button>
-      <button class="aurac-sidebar-header-button" mat-raised-button (click)="clearCards()">
+      <button
+        class="aurac-sidebar-header-button"
+        mat-raised-button
+        (click)="clearCards()"
+        matTooltip="Remove all cards from the sidebar"
+        matTooltipPosition="above"
+      >
         Clear
       </button>
     </div>

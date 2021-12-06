@@ -38,9 +38,23 @@
 .aurac-radio-group {
   display: flex;
   flex-direction: column;
-  padding: 15px;
+  padding: 0 15px 15px 15px;
 }
 
 .aurac-radio-button .aurac-prefs-label {
   margin: 5px;
+}
+.aurac-prefs-label {
+  margin-bottom: 20px;
+}
+
+.aurac-save-button {
+  width: 50%;
+  display: block;
+  margin: 0 auto 0;
+  background-color: $aurac_button;
+}
+
+.aurac-save-button:hover {
+  background-color: $aurac_button_hover;
 }
