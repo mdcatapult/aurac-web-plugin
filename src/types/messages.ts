@@ -9,6 +9,7 @@ export type MessageType =
   | 'content_script_is_page_compressed'
   | 'content_script_toggle_sidebar'
   | 'content_script_open_loading_icon'
+  | 'content_script_open_modal'
   | 'content_script_open_sidebar'
   | 'content_script_remove_highlights'
   | 'content_script_scroll_to_highlight'

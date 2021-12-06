@@ -1,3 +1,4 @@
+import { XRef } from './../types/entity'
 import { Globals } from './globals'
 import { BrowserImplementation } from './browser-implementation'
 import { parseWithTypes, stringifyWithTypes } from '../json'
@@ -25,6 +26,25 @@ iframe.className = 'aurac-iframe'
 iframe.src = browser.runtime.getURL('index.html?page=sidebar')
 iframe.style.width = '20%'
 sidebar.appendChild(iframe)
+
+const modalSpan = Globals.document.createElement('span')
+modalSpan.innerHTML = `
+<div class="aurac-modal-wrapper" id="aurac-modal-1">
+  <div class="aurac-modal">
+    <div class="aurac-modal-body" id="aurac-modal-body-1">
+    </div>
+  </div>
+  <div class="aurac-modal-background"></div>
+</div>
+`
+const closeModalButton = document.createElement('button')
+closeModalButton.insertAdjacentHTML('beforeend', 'Close')
+closeModalButton.addEventListener('click', () => closeModal())
+closeModalButton.className = 'close-modal-button'
+
+Globals.document.body.appendChild(modalSpan)
+const auracModalBody = Globals.document.getElementById('aurac-modal-body-1')
+auracModalBody!.append(closeModalButton)
 
 const buttonRoot = Globals.document.createElement('div')
 buttonRoot.style.position = 'absolute'
@@ -130,6 +150,29 @@ async function awaitSidebarReadiness(): Promise<void> {
   }
 
   return
+}
+
+let modalCanOpen = true
+
+function openModal(chemblId: string) {
+  if (!modalCanOpen) return
+  const modal = Globals.document.getElementById('aurac-modal-1')
+  modal!.style.display = 'block'
+
+  const auracBody = Globals.document.getElementById('aurac-modal-body-1')
+  auracBody!.insertAdjacentHTML(
+    'afterbegin',
+    `<object id="compound-data" data="https://www.ebi.ac.uk/chembl/embed/#compound_report_card/${chemblId}/name_and_classification" width="100%" height="100%"></object>`!
+  )
+  modalCanOpen = false
+}
+
+function closeModal() {
+  const modal = Globals.document.getElementById('aurac-modal-1')
+  modal!.style.display = 'none'
+  const auracData = Globals.document.getElementById('compound-data')
+  auracData!.remove()
+  modalCanOpen = true
 }
 
 function highlightEntities(tabEntities: TabEntities): Promise<string> {
@@ -245,6 +288,19 @@ function removeHighlights(): void {
   })
 }
 
+function generateChemblId(xRefs: Array<XRef>): string {
+  let chemblId: string = ''
+  xRefs
+    .filter(xref => xref.databaseName === 'chembl')
+    .forEach(xref => {
+      const url: string = xref.url
+      const chemblIdList: string[] = url.split('/')
+      chemblId = chemblIdList[chemblIdList.length - 1]
+    })
+
+  return chemblId
+}
+
 Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
   switch (msg.type) {
     case 'content_script_toggle_sidebar':
@@ -281,6 +337,11 @@ Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
 
     case 'content_script_remove_highlights':
       return Promise.resolve(removeHighlights())
+
+    case 'content_script_open_modal':
+      const chemblId = generateChemblId(msg.body.xRefs)
+
+      return Promise.resolve(openModal(chemblId))
 
     case 'content_script_is_page_compressed':
       return Promise.resolve(toggleCompression(msg.body as boolean))

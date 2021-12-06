@@ -99,4 +99,11 @@ export class SidebarCardComponent implements OnInit, OnChanges {
       this.sidebarDataService.cards.filter(entity => entity.entityID !== this.card.entityID)
     )
   }
+
+  openModal() {
+    this.browserService.sendMessageToActiveTab({
+      type: 'content_script_open_modal',
+      body: this.card.entity
+    })
+  }
 }

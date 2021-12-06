@@ -1,3 +1,5 @@
+@import 'src/assets/stylingVariables';
+
 .href-no-underline {
   text-decoration: none;
 }
@@ -16,6 +18,24 @@ mat-card {
   display: flex;
 }
 
+.open-modal-button {
+  height: 55px;
+  width: 55px;
+  background-color: $aurac_button;
+}
+
+.open-modal-button:hover {
+  background-color: $aurac_button_hover;
+}
+
+.open-modal-button img {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+}
 mat-icon {
   padding-right: 3px;
 }
