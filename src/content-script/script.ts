@@ -170,7 +170,6 @@ function openModal(chemblId: string) {
 function closeModal() {
   const modal = Globals.document.getElementById('aurac-modal-1')
   modal!.style.display = 'none'
-  Globals.document.body.classList.remove('aurac-modal-open')
   const auracData = Globals.document.getElementById('compound-data')
   auracData!.remove()
   modalCanOpen = true
@@ -289,6 +288,19 @@ function removeHighlights(): void {
   })
 }
 
+function generateChemblId(xRefs: Array<XRef>): string {
+  let chemblId: string = ''
+  xRefs
+    .filter(xref => xref.databaseName === 'chembl')
+    .forEach(xref => {
+      const url: string = xref.url
+      const chemblIdList: string[] = url.split('/')
+      chemblId = chemblIdList[chemblIdList.length - 1]
+    })
+
+  return chemblId
+}
+
 Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
   switch (msg.type) {
     case 'content_script_toggle_sidebar':
@@ -327,17 +339,7 @@ Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
       return Promise.resolve(removeHighlights())
 
     case 'content_script_open_modal':
-      const xRefs: Array<XRef> = msg.body.xRefs
-      let chemblId: string = ''
-      xRefs
-        .filter(xref => xref.databaseName === 'chembl')
-        .forEach(xref => {
-          const url: string = xref.url
-          const chemblIdList: string[] = url.split('/')
-          chemblId = chemblIdList[chemblIdList.length - 1]
-
-          return
-        })
+      const chemblId = generateChemblId(msg.body.xRefs)
 
       return Promise.resolve(openModal(chemblId))
 
