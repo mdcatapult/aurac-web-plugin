@@ -18,7 +18,7 @@ export class EntityMessengerService {
     private entitiesService: EntitiesService,
     private settingsService: SettingsService,
     private xRefService: XRefService,
-    private linksService: LinksService,
+    private linksService: LinksService
   ) {
     this.entitiesService.entityChangeObservable.subscribe(change => {
       if (change.setterInfo === 'noPropagate') {
