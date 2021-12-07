@@ -1,4 +1,5 @@
 import { Recogniser } from './recognisers'
+import { Link } from '../app/sidebar/links'
 
 // This is tab.id from the browser extension API
 export type TabID = number
@@ -21,6 +22,7 @@ export interface Entity {
   metadata?: any
   htmlTagIDs?: Array<string>
   xRefs?: Array<XRef>
+  links?: Link[]
 }
 
 // Contains all the entities for a particular recogniser in the tab.
