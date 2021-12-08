@@ -1,6 +1,5 @@
 import * as links from './links'
 import { Injectable } from '@angular/core'
-import { Entity } from 'src/types/entity'
 import { SidebarCard } from './types'
 
 @Injectable({
