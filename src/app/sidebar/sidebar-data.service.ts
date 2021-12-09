@@ -32,7 +32,6 @@ export class SidebarDataService {
 
   constructor(private browserService: BrowserService, private zone: NgZone) {
     this.browserService.addListener((msg: any) => {
-      console.log(msg.type, 'message type in sidebar data service')
       this.zone.run(() => {
         switch (msg.type as MessageType) {
           case 'sidebar_data_service_view_or_create_card':
@@ -43,7 +42,6 @@ export class SidebarDataService {
             this.updateCards(parseWithTypes(msg.body) as TabEntities)
             break
           case 'sidebar_data_total_count':
-            console.log(msg.body)
             this.totalCountInfoSubject.next(msg.body)
             break
         }

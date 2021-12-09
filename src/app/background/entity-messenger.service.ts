@@ -7,6 +7,7 @@ import { SidebarCard } from '../sidebar/types'
 import { EntitiesService } from './entities.service'
 import { SettingsService } from './settings.service'
 import { XRefService } from './x-ref.service'
+import { waitForAsync } from '@angular/core/testing'
 
 @Injectable({
   providedIn: 'root'
@@ -44,23 +45,17 @@ export class EntityMessengerService {
           this.browserService
             .sendMessageToTab(change.tabID, 'content_script_open_sidebar')
             .then(() => {
-              this.browserService
-                .sendMessageToTab(change.tabID, {
-                  type: 'sidebar_data_total_count',
-                  body: { totalCount: this.getCounts(tabEntities), error: '' }
-                })
-                .catch(e => console.log('error?', e))
+              // without waiting the message is never received at the other end...
+              setTimeout(() => {
+                this.browserService
+                  .sendMessageToTab(change.tabID, {
+                    type: 'sidebar_data_total_count',
+                    body: { totalCount: this.getCounts(tabEntities), error: '' }
+                  })
+                  .catch(console.error)
+              }, 100)
             })
-
-          // return tabEntities
         })
-      // .then(tabEntities => {
-      //   this.browserService.sendMessageToTab(change.tabID, {
-      //     type: 'sidebar_data_total_count',
-      //     body: { totalCount: this.getCounts(tabEntities), error: '' }
-      //   })
-      //     .catch(e => console.log('error?', e))
-      // })
     })
 
     this.browserService.addListener(msg => {
