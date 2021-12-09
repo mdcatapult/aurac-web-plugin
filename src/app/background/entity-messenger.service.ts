@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { RecogniserEntities, TabEntities, XRef } from 'src/types/entity'
+import { TabEntities, XRef } from 'src/types/entity'
 import { parseHighlightID } from 'src/types/highlights'
 import { parseWithTypes, stringifyWithTypes } from '../../json'
 import { BrowserService } from '../browser.service'
@@ -7,12 +7,14 @@ import { SidebarCard } from '../sidebar/types'
 import { EntitiesService } from './entities.service'
 import { SettingsService } from './settings.service'
 import { XRefService } from './x-ref.service'
-import { waitForAsync } from '@angular/core/testing'
 
 @Injectable({
   providedIn: 'root'
 })
 export class EntityMessengerService {
+
+  private isFirstHighlight = true
+
   constructor(
     private browserService: BrowserService,
     private entitiesService: EntitiesService,
@@ -42,19 +44,9 @@ export class EntityMessengerService {
               body: stringifiedTabEntities
             })
           }
-          this.browserService
-            .sendMessageToTab(change.tabID, 'content_script_open_sidebar')
-            .then(() => {
-              // without waiting the message is never received at the other end...
-              setTimeout(() => {
-                this.browserService
-                  .sendMessageToTab(change.tabID, {
-                    type: 'sidebar_data_total_count',
-                    body: { totalCount: this.getCounts(tabEntities), error: '' }
-                  })
-                  .catch(console.error)
-              }, 100)
-            })
+          
+          this.openSidebar(change.tabID, tabEntities)
+
         })
     })
 
@@ -121,7 +113,29 @@ export class EntityMessengerService {
     })
   }
 
-  getCounts(tabEntities: TabEntities): number {
+  private openSidebar(tabID: number, entites: TabEntities): void {
+
+    // if sidebar is not initialized, we must wait a short time for the sidebar to initialize before sending data to it
+    const sidebarWaitTime = this.isFirstHighlight ? 100 : 0
+
+    this.isFirstHighlight = false
+
+    this.browserService
+    .sendMessageToTab(tabID, 'content_script_open_sidebar')
+    .then(() => {
+
+      setTimeout(() => {
+        this.browserService
+          .sendMessageToTab(tabID, {
+            type: 'sidebar_data_total_count',
+            body: { totalCount: this.getCounts(entites), error: '' }
+          })
+      }, sidebarWaitTime)
+
+    })
+  }
+
+  private getCounts(tabEntities: TabEntities): number {
     let count = 0
     if (tabEntities === undefined) {
       console.error('tab entities is undefined')
