@@ -64,15 +64,7 @@ export class CsvExporterService {
 
     const headings = [
       'Synonym',
-      'Resolved Entity',
-      'Entity Group',
-      'Enforce Bracketing',
-      'Entity Type',
-      'HTML Color',
-      'Maximum Correction Distance',
-      'Minimum Corrected Entity Length',
-      'Minimum Entity Length',
-      'Source'
+      'Identifier',
     ]
 
     let text = headings.join(',') + '\n'
@@ -83,22 +75,6 @@ export class CsvExporterService {
           `"${synonymName}"` +
           ',' +
           entity.identifierSourceToID?.get('resolvedEntity') +
-          ',' +
-          entity.metadata.entityGroup! +
-          ',' +
-          entity.metadata.RecognisingDict.enforceBracketing +
-          ',' +
-          entity.metadata.RecognisingDict.entityType +
-          ',' +
-          entity.metadata.RecognisingDict.htmlColor +
-          ',' +
-          entity.metadata.RecognisingDict.maxCorrectionDistance +
-          ',' +
-          entity.metadata.RecognisingDict.minimumCorrectedEntityLength +
-          ',' +
-          entity.metadata.RecognisingDict.minimumEntityLength +
-          ',' +
-          entity.metadata.RecognisingDict.source +
           '\n'
       })
     })
