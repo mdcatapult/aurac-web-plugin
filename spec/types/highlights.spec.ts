@@ -85,7 +85,7 @@ describe('highlightFormat', () => {
   })
 })
 
-fdescribe('unmarkHiddenEntities', () => {
+describe('unmarkHiddenEntities', () => {
   Util.setup([])
 
   it('should return an array with zero elements given no aurac elements have ids', () => {
