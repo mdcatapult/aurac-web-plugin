@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { TabEntities, XRef } from 'src/types/entity'
+import { RecogniserEntities, TabEntities, XRef } from 'src/types/entity'
 import { parseHighlightID } from 'src/types/highlights'
 import { parseWithTypes, stringifyWithTypes } from '../../json'
 import { BrowserService } from '../browser.service'
@@ -41,8 +41,26 @@ export class EntityMessengerService {
               body: stringifiedTabEntities
             })
           }
-          this.browserService.sendMessageToTab(change.tabID, 'content_script_open_sidebar')
+          this.browserService
+            .sendMessageToTab(change.tabID, 'content_script_open_sidebar')
+            .then(() => {
+              this.browserService
+                .sendMessageToTab(change.tabID, {
+                  type: 'sidebar_data_total_count',
+                  body: { totalCount: this.getCounts(tabEntities), error: '' }
+                })
+                .catch(e => console.log('error?', e))
+            })
+
+          // return tabEntities
         })
+      // .then(tabEntities => {
+      //   this.browserService.sendMessageToTab(change.tabID, {
+      //     type: 'sidebar_data_total_count',
+      //     body: { totalCount: this.getCounts(tabEntities), error: '' }
+      //   })
+      //     .catch(e => console.log('error?', e))
+      // })
     })
 
     this.browserService.addListener(msg => {
@@ -106,5 +124,21 @@ export class EntityMessengerService {
           })
         })
     })
+  }
+
+  getCounts(tabEntities: TabEntities): number {
+    let count = 0
+    if (tabEntities === undefined) {
+      console.error('tab entities is undefined')
+
+      return 0
+    }
+    const tabEntityKeys = Object.keys(tabEntities) as Array<keyof TabEntities>
+    tabEntityKeys.forEach(recogniser => {
+      const recogniserCount = tabEntities[recogniser]?.entities.size
+      count += recogniserCount ?? 0
+    })
+
+    return count
   }
 }

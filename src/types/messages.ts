@@ -34,6 +34,7 @@ export type MessageType =
   | 'settings_service_set_urls'
   | 'settings_service_set_xrefs'
   | 'sidebar_component_set_entities'
+  | 'sidebar_data_total_count'
   | 'sidebar_data_update_cards'
   | 'sidebar_data_service_view_or_create_card'
   | 'sidebar_rendered'
