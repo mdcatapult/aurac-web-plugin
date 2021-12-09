@@ -29,7 +29,9 @@ export class XRefSourcesComponent implements OnInit {
           this.hasXRefs = true
         }
 
-        this.form.reset(this.settingsService.xRefSources)
+        if (Object.keys(this.settingsService.xRefSources).length) {
+          this.form.reset(this.settingsService.xRefSources)
+        }
       })
 
     // reset the form when xRefSourcesObservable emits
