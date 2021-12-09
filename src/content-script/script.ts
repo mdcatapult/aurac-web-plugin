@@ -195,7 +195,7 @@ function highlightEntities(tabEntities: TabEntities): Promise<string> {
                   XPathResult.FIRST_ORDERED_NODE_TYPE
                 ).singleNodeValue
 
-                if (xpathNode && synonymName === 'VPS35') {
+                if (xpathNode) {
                   highlightedEntityOccurrence = highlightText(
                     entity,
                     synonymName,
@@ -214,12 +214,12 @@ function highlightEntities(tabEntities: TabEntities): Promise<string> {
         unmarkHiddenEntities()
         resolve(stringifyWithTypes(tabEntities))
       })
-
   })
 }
 
-function unmarkHiddenEntities(): void {
+function unmarkHiddenEntities(): Element[] {
   let allAuracElements = Array.from(Globals.document.getElementsByClassName(highlightClass))
+  let unmarkedElements: Element[] = []
 
   allAuracElements.forEach(element => {
     let value = element as HTMLElement
@@ -227,8 +227,11 @@ function unmarkHiddenEntities(): void {
 
     if (!element.id) {
       unhighlighter.unmark(element)
+      unmarkedElements.push(element)
     }
   })
+
+  return unmarkedElements
 }
 
 /**
@@ -259,7 +262,7 @@ export function highlightText(
     exclude: ['a', '.tooltipped', '.tooltipped-click', '.aurac-highlight'],
     each: (element: HTMLElement) => {
       // When you find the element, check to see if it has an ancestor parent of 'display:none', if it does, it will return
-      // null
+      // null. So we check against it to make sure that it isn't null
       if (!element.offsetParent) {
         return
       }
