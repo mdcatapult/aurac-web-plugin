@@ -195,7 +195,7 @@ function highlightEntities(tabEntities: TabEntities): Promise<string> {
                   XPathResult.FIRST_ORDERED_NODE_TYPE
                 ).singleNodeValue
 
-                if (xpathNode) {
+                if (xpathNode && synonymName === 'VPS35') {
                   highlightedEntityOccurrence = highlightText(
                     entity,
                     synonymName,
@@ -211,8 +211,23 @@ function highlightEntities(tabEntities: TabEntities): Promise<string> {
           })
         })
         showLoadingIcon(false)
+        unmarkHiddenEntities()
         resolve(stringifyWithTypes(tabEntities))
       })
+
+  })
+}
+
+function unmarkHiddenEntities(): void {
+  let allAuracElements = Array.from(Globals.document.getElementsByClassName(highlightClass))
+
+  allAuracElements.forEach(element => {
+    let value = element as HTMLElement
+    let unhighlighter = new Mark(value)
+
+    if (!element.id) {
+      unhighlighter.unmark(element)
+    }
   })
 }
 
@@ -243,6 +258,11 @@ export function highlightText(
     acrossElements: true,
     exclude: ['a', '.tooltipped', '.tooltipped-click', '.aurac-highlight'],
     each: (element: HTMLElement) => {
+      // When you find the element, check to see if it has an ancestor parent of 'display:none', if it does, it will return
+      // null
+      if (!element.offsetParent) {
+        return
+      }
       newHighlightElementCallback(
         entity,
         entityName,
