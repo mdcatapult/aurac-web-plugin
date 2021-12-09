@@ -1,4 +1,8 @@
 import * as Highlights from '../../src/types/highlights'
+import { Globals } from '../../src/content-script/globals'
+import document = Globals.document
+import * as Util from '../../spec/util'
+import { APIEntity } from '../../src/app/background/ner.service'
 
 describe('highlightFormat', () => {
   const simpleTerm = 'OPG'
@@ -77,4 +81,17 @@ describe('highlightFormat', () => {
       expect(result.test(`Hello this is an!${synonym}!nice to meet you`)).toBeTrue()
     })
   })
+})
+
+fdescribe('unmarkHiddenEntities', () => {
+  const APIEntities: APIEntity = { name: '', position: 0, recogniser: undefined, xpath: '' }
+  const APIEntityList: APIEntity[] = [APIEntities]
+
+  var document = Util.setup(APIEntityList)
+
+  let auracElement = document.createElement('div')
+  document.body.appendChild(auracElement)
+
+  auracElement.className = 'aurac-highlight'
+  console.log(auracElement.className)
 })

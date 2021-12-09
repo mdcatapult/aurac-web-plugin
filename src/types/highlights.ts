@@ -1,3 +1,6 @@
+import { Globals } from '../content-script/globals'
+import * as Mark from 'mark.js'
+
 export const HIGHLIGHTED_ELEMENT_ID_DELIMITER = '_'
 
 export function highlightID(
@@ -24,4 +27,21 @@ export function highlightFormat(synonym: string): RegExp {
   const highlightingFormat = `(?<=\\W|^)${escapedSynonym}(?=\\W|$)`
 
   return new RegExp(highlightingFormat)
+}
+
+export function unmarkHiddenEntities(): Element[] {
+  let allAuracElements = Array.from(Globals.document.getElementsByClassName('aurac-highlight'))
+  let unmarkedElements: Element[] = []
+
+  allAuracElements.forEach(element => {
+    let value = element as HTMLElement
+    let unhighlighter = new Mark(value)
+
+    if (!element.id) {
+      unhighlighter.unmark(element)
+      unmarkedElements.push(element)
+    }
+  })
+
+  return unmarkedElements
 }

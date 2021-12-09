@@ -211,27 +211,10 @@ function highlightEntities(tabEntities: TabEntities): Promise<string> {
           })
         })
         showLoadingIcon(false)
-        unmarkHiddenEntities()
+        Highlights.unmarkHiddenEntities()
         resolve(stringifyWithTypes(tabEntities))
       })
   })
-}
-
-function unmarkHiddenEntities(): Element[] {
-  let allAuracElements = Array.from(Globals.document.getElementsByClassName(highlightClass))
-  let unmarkedElements: Element[] = []
-
-  allAuracElements.forEach(element => {
-    let value = element as HTMLElement
-    let unhighlighter = new Mark(value)
-
-    if (!element.id) {
-      unhighlighter.unmark(element)
-      unmarkedElements.push(element)
-    }
-  })
-
-  return unmarkedElements
 }
 
 /**
