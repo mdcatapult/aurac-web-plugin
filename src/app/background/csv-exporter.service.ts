@@ -62,10 +62,7 @@ export class CsvExporterService {
       return ''
     }
 
-    const headings = [
-      'Synonym',
-      'Identifier',
-    ]
+    const headings = ['Synonym', 'Identifier']
 
     let text = headings.join(',') + '\n'
     entities.forEach(entity => {
