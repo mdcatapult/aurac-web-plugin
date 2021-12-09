@@ -11,7 +11,7 @@ import { Entity } from 'src/types/entity'
 describe('CsvExporterService', () => {
   let service: CsvExporterService
 
-  const headerText = `Synonym,Resolved Entity,Entity Group,Enforce Bracketing,Entity Type,HTML Color,Maximum Correction Distance,Minimum Corrected Entity Length,Minimum Entity Length,Source`
+  const headerText = `Synonym,Identifier`
 
   beforeEach(
     waitForAsync(() => {
@@ -51,7 +51,7 @@ describe('CsvExporterService', () => {
     const entities: Array<Entity> = [entity]
     const actual = service.leadmineToCSV(entities)
 
-    const entityInfo = `"K12",HGNC:6414,Gene or Protein,false,GeneOrProteinMDC,pink,0,9,0,/srv/config/common/mdc/dictionary/mdc_gene_protein.cfx`
+    const entityInfo = `"K12",HGNC:6414`
     const expected = headerText + '\n' + entityInfo + '\n'
 
     expect(actual).toEqual(expected)
