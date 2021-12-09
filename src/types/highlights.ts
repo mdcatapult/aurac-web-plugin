@@ -32,13 +32,13 @@ export function highlightFormat(synonym: string): RegExp {
 
 // if an element has a class of aurac-highlight but no id that means its parent has a display none. we want to remove
 // the highlight from these elements as they are not visible on the page
-export function unmarkHiddenEntities(marker: (element: HTMLElement) => void): Element[] {
+export function unmarkHiddenEntities(unmarker: (element: HTMLElement) => void): Element[] {
   return Array.from(Globals.document.getElementsByClassName('aurac-highlight'))
     .filter(element => {
       return !element.id
     })
     .map(element => {
-      marker(element as HTMLElement)
+      unmarker(element as HTMLElement)
 
       return element
     })
