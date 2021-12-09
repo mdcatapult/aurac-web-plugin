@@ -1,8 +1,10 @@
 import * as Highlights from '../../src/types/highlights'
 import { Globals } from '../../src/content-script/globals'
 import document = Globals.document
+import * as jsdom from 'jsdom'
 import * as Util from '../../spec/util'
 import { APIEntity } from '../../src/app/background/ner.service'
+const { JSDOM } = jsdom
 
 describe('highlightFormat', () => {
   const simpleTerm = 'OPG'
@@ -84,14 +86,26 @@ describe('highlightFormat', () => {
 })
 
 fdescribe('unmarkHiddenEntities', () => {
-  const APIEntities: APIEntity = { name: '', position: 0, recogniser: undefined, xpath: '' }
-  const APIEntityList: APIEntity[] = [APIEntities]
+  Util.setup([])
 
-  var document = Util.setup(APIEntityList)
+  it('should return an array with zero elements given no aurac elements have ids', () => {
+    let auracElement = Globals.document.createElement('div')
+    Globals.document.body.appendChild(auracElement)
 
-  let auracElement = document.createElement('div')
-  document.body.appendChild(auracElement)
+    auracElement.className = 'aurac-highlight'
+    auracElement.id = '123'
 
-  auracElement.className = 'aurac-highlight'
-  console.log(auracElement.className)
+    let result = Highlights.unmarkHiddenEntities(() => {})
+    expect(result).toEqual([])
+  })
+
+  it('should return an array with one elements given array has element with', () => {
+    let auracElement = Globals.document.createElement('div')
+    Globals.document.body.appendChild(auracElement)
+
+    auracElement.className = 'aurac-highlight'
+
+    let result = Highlights.unmarkHiddenEntities(() => {})
+    expect(result.length).toEqual(1)
+  })
 })

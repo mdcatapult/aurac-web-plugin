@@ -8,6 +8,7 @@ import { Recogniser } from '../types/recognisers'
 import * as Mark from 'mark.js'
 import * as Highlights from '../types/highlights'
 import { highlightID } from '../types/highlights'
+import { element } from 'protractor'
 
 Globals.document = document
 Globals.browser = new BrowserImplementation()
@@ -211,7 +212,11 @@ function highlightEntities(tabEntities: TabEntities): Promise<string> {
           })
         })
         showLoadingIcon(false)
-        Highlights.unmarkHiddenEntities()
+        const unmarker = (element: HTMLElement) => {
+          let unhighlighter = new Mark(element as HTMLElement)
+          unhighlighter.unmark(element)
+        }
+        Highlights.unmarkHiddenEntities(unmarker)
         resolve(stringifyWithTypes(tabEntities))
       })
   })

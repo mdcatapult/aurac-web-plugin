@@ -1,5 +1,6 @@
 import { Globals } from '../content-script/globals'
 import * as Mark from 'mark.js'
+import { element } from 'protractor'
 
 export const HIGHLIGHTED_ELEMENT_ID_DELIMITER = '_'
 
@@ -29,19 +30,16 @@ export function highlightFormat(synonym: string): RegExp {
   return new RegExp(highlightingFormat)
 }
 
-export function unmarkHiddenEntities(): Element[] {
-  let allAuracElements = Array.from(Globals.document.getElementsByClassName('aurac-highlight'))
-  let unmarkedElements: Element[] = []
+// if an element has a class of aurac-highlight but no id that means its parent has a display none. we want to remove
+// the highlight from these elements as they are not visible on the page
+export function unmarkHiddenEntities(marker: (element: HTMLElement) => void): Element[] {
+  return Array.from(Globals.document.getElementsByClassName('aurac-highlight'))
+    .filter(element => {
+      return !element.id
+    })
+    .map(element => {
+      marker(element as HTMLElement)
 
-  allAuracElements.forEach(element => {
-    let value = element as HTMLElement
-    let unhighlighter = new Mark(value)
-
-    if (!element.id) {
-      unhighlighter.unmark(element)
-      unmarkedElements.push(element)
-    }
-  })
-
-  return unmarkedElements
+      return element
+    })
 }
