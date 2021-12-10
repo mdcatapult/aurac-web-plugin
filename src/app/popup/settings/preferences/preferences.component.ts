@@ -32,7 +32,7 @@ export class PreferencesComponent implements OnInit {
     this.form.valueChanges.subscribe(preferences => this.save(preferences))
   }
 
-  save(preferences: {minEntityLength: number, recogniser: string}): void {
+  save(preferences: { minEntityLength: number; recogniser: string }): void {
     this.browserService
       .sendMessageToBackground({
         type: 'settings_service_set_preferences',
