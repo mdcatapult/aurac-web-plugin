@@ -1,8 +1,8 @@
 <section>
-  <p *ngIf="totalHighlights !== undefined">{{ totalHighlights }} terms highlighted on the page</p>
-  <p *ngIf="cards.length === 0">
+  <p *ngIf="cards.length === 0 && totalHighlights && totalHighlights > 0">
     Click on a highlighted entity to display further information and links below...
   </p>
+  <p *ngIf="totalHighlights === 0">Nothing found on this page!</p>
 
   <app-sidebar-card
     *ngFor="let card of cards"

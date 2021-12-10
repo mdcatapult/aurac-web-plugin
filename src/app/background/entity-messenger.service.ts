@@ -3,7 +3,7 @@ import { TabEntities, XRef } from 'src/types/entity'
 import { parseHighlightID } from 'src/types/highlights'
 import { parseWithTypes, stringifyWithTypes } from '../../json'
 import { BrowserService } from '../browser.service'
-import { SidebarCard } from '../sidebar/types'
+import { highlightCountInfo, SidebarCard } from '../sidebar/types'
 import { EntitiesService } from './entities.service'
 import { SettingsService } from './settings.service'
 import { XRefService } from './x-ref.service'
@@ -13,7 +13,7 @@ import { LinksService } from '../sidebar/links.service'
   providedIn: 'root'
 })
 export class EntityMessengerService {
-  private isFirstHighlight = true
+  // private isFirstHighlight = true
 
   constructor(
     private browserService: BrowserService,
@@ -116,33 +116,36 @@ export class EntityMessengerService {
 
   private openSidebar(tabID: number, entites: TabEntities): void {
     // if sidebar is not initialized, we must wait a short time for the sidebar to initialize before sending data to it
-    const sidebarWaitTime = this.isFirstHighlight ? 100 : 0
-
-    this.isFirstHighlight = false
+    const sidebarWaitTime = 200
 
     this.browserService.sendMessageToTab(tabID, 'content_script_open_sidebar').then(() => {
       setTimeout(() => {
         this.browserService.sendMessageToTab(tabID, {
           type: 'sidebar_data_total_count',
-          body: { totalCount: this.getCounts(entites), error: '' }
+          body: this.getCounts(entites)
         })
       }, sidebarWaitTime)
     })
   }
 
-  private getCounts(tabEntities: TabEntities): number {
+  private getCounts(tabEntities: TabEntities): highlightCountInfo {
     let count = 0
-    if (tabEntities === undefined) {
-      console.error('tab entities is undefined')
+    try {
+      const tabEntityKeys = Object.keys(tabEntities) as Array<keyof TabEntities>
+      tabEntityKeys.forEach(recogniser => {
+        const recogniserCount = tabEntities[recogniser]?.entities.size
+        count += recogniserCount ?? 0
+      })
 
-      return 0
+      return {
+        totalCount: count,
+        error: ''
+      }
+    } catch (err) {
+      return {
+        totalCount: 0,
+        error: err
+      }
     }
-    const tabEntityKeys = Object.keys(tabEntities) as Array<keyof TabEntities>
-    tabEntityKeys.forEach(recogniser => {
-      const recogniserCount = tabEntities[recogniser]?.entities.size
-      count += recogniserCount ?? 0
-    })
-
-    return count
   }
 }

@@ -11,7 +11,6 @@ export class SidebarCardListComponent {
   cards: Array<SidebarCard> = []
   focusedCard: SidebarCard = {} as SidebarCard
   totalHighlights?: number
-  error?: string
 
   constructor(private sidebarDataService: SidebarDataService) {
     this.sidebarDataService.cardsObservable.subscribe(cards => {
@@ -21,7 +20,6 @@ export class SidebarCardListComponent {
       this.focusedCard = card
     })
     this.sidebarDataService.totalCountInfoObservable.subscribe(info => {
-      console.log(info, 'info in sidebar card list')
       this.totalHighlights = info.totalCount
     })
   }

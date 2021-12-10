@@ -12,6 +12,8 @@ import { MatSlideToggle, MatSlideToggleChange } from '@angular/material/slide-to
 export class SidebarHeaderComponent {
   imgSrc = ''
   isPageCompressed = true
+  totalHighlights?: number
+  error?: string
 
   constructor(
     private browserService: BrowserService,
@@ -19,6 +21,10 @@ export class SidebarHeaderComponent {
     private csvExporterService: CsvExporterService
   ) {
     this.imgSrc = this.browserService.getURL('assets/head-brains.png')
+    this.sidebarDataService.totalCountInfoObservable.subscribe(info => {
+      this.totalHighlights = info.totalCount
+      this.error = info.error
+    })
   }
 
   exportCSV() {
