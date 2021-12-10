@@ -133,8 +133,9 @@ export class EntityMessengerService {
     try {
       const tabEntityKeys = Object.keys(tabEntities) as Array<keyof TabEntities>
       tabEntityKeys.forEach(recogniser => {
-        const recogniserCount = tabEntities[recogniser]?.entities.size
-        count += recogniserCount ?? 0
+        tabEntities[recogniser]?.entities.forEach(
+          entity => (count += entity.htmlTagIDs?.length ?? 0)
+        )
       })
 
       return {

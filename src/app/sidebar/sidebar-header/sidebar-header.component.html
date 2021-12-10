@@ -18,9 +18,9 @@
       *ngIf="totalHighlights !== undefined"
       class="aurac-count"
       matBadge="{{ totalHighlights }}"
-      matTooltip="{{ totalHighlights }} unique {{
+      matTooltip="{{ totalHighlights }} {{
         totalHighlights === 1 ? 'entity' : 'entities'
-      }} found on the current page"
+      }} highlighted on the current page"
       matTooltipPosition="above"
     >
       assignment_turned_in
