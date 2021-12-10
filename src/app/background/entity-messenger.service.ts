@@ -128,23 +128,14 @@ export class EntityMessengerService {
 
   private getCounts(tabEntities: TabEntities): HighlightCountInfo {
     let count = 0
-    try {
-      const tabEntityKeys = Object.keys(tabEntities) as Array<keyof TabEntities>
-      tabEntityKeys.forEach(recogniser => {
-        tabEntities[recogniser]!.entities.forEach(
-          entity => (count += entity.htmlTagIDs?.length ?? 0)
-        )
-      })
+    const tabEntityKeys = Object.keys(tabEntities) as Array<keyof TabEntities>
+    tabEntityKeys.forEach(recogniser => {
+      tabEntities[recogniser]!.entities.forEach(entity => (count += entity.htmlTagIDs?.length ?? 0))
+    })
 
-      return {
-        totalCount: count,
-        error: ''
-      }
-    } catch (err) {
-      return {
-        totalCount: 0,
-        error: err
-      }
+    return {
+      totalCount: count,
+      error: ''
     }
   }
 }
