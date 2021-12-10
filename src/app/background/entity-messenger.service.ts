@@ -12,7 +12,6 @@ import { XRefService } from './x-ref.service'
   providedIn: 'root'
 })
 export class EntityMessengerService {
-
   private isFirstHighlight = true
 
   constructor(
@@ -44,9 +43,8 @@ export class EntityMessengerService {
               body: stringifiedTabEntities
             })
           }
-          
-          this.openSidebar(change.tabID, tabEntities)
 
+          this.openSidebar(change.tabID, tabEntities)
         })
     })
 
@@ -114,24 +112,18 @@ export class EntityMessengerService {
   }
 
   private openSidebar(tabID: number, entites: TabEntities): void {
-
     // if sidebar is not initialized, we must wait a short time for the sidebar to initialize before sending data to it
     const sidebarWaitTime = this.isFirstHighlight ? 100 : 0
 
     this.isFirstHighlight = false
 
-    this.browserService
-    .sendMessageToTab(tabID, 'content_script_open_sidebar')
-    .then(() => {
-
+    this.browserService.sendMessageToTab(tabID, 'content_script_open_sidebar').then(() => {
       setTimeout(() => {
-        this.browserService
-          .sendMessageToTab(tabID, {
-            type: 'sidebar_data_total_count',
-            body: { totalCount: this.getCounts(entites), error: '' }
-          })
+        this.browserService.sendMessageToTab(tabID, {
+          type: 'sidebar_data_total_count',
+          body: { totalCount: this.getCounts(entites), error: '' }
+        })
       }, sidebarWaitTime)
-
     })
   }
 
