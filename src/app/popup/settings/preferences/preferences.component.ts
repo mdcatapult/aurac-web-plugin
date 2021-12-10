@@ -28,18 +28,18 @@ export class PreferencesComponent implements OnInit {
 
   ngOnInit(): void {
     this.settingsService.preferencesObservable.subscribe(prefs => this.form.reset(prefs))
+
+    this.form.valueChanges.subscribe(preferences => this.save(preferences))
   }
 
-  save(): void {
-    if (this.form.valid) {
-      this.browserService
-        .sendMessageToBackground({
-          type: 'settings_service_set_preferences',
-          body: this.form.value
-        })
-        .catch(error =>
-          console.error("couldn't send message 'settings_service_set_preferences'", error)
-        )
-    }
+  save(preferences: {minEntityLength: number, recogniser: string}): void {
+    this.browserService
+      .sendMessageToBackground({
+        type: 'settings_service_set_preferences',
+        body: preferences
+      })
+      .catch(error =>
+        console.error("couldn't send message 'settings_service_set_preferences'", error)
+      )
   }
 }
