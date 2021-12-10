@@ -2,8 +2,6 @@ import { DOCUMENT } from '@angular/common'
 import { Component, Inject, Input, OnChanges, OnInit } from '@angular/core'
 import { PageScrollService } from 'ngx-page-scroll-core'
 import { BrowserService } from 'src/app/browser.service'
-import { Link } from '../links'
-import { LinksService } from '../links.service'
 import { SidebarDataService } from '../sidebar-data.service'
 import { Identifier, SidebarCard } from '../types'
 
@@ -18,7 +16,6 @@ export class SidebarCardComponent implements OnInit, OnChanges {
   @Input() nOccurrences: number = 0
 
   synonyms: string[] = []
-  links: Link[] = []
   identifiers: Identifier[] = []
   title: string = ''
   scrollIndex: number = 0
@@ -33,8 +30,6 @@ export class SidebarCardComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     this.synonyms = Array.from(this.card.entity.synonymToXPaths.keys())
-
-    this.links = this.linksService.getLinks(this.card)
 
     if (this.card.entity.identifierSourceToID) {
       const identifiers = Array.from(this.card.entity.identifierSourceToID.entries()).map(
@@ -53,7 +48,6 @@ export class SidebarCardComponent implements OnInit, OnChanges {
   constructor(
     private browserService: BrowserService,
     private sidebarDataService: SidebarDataService,
-    private linksService: LinksService,
     private pageScrollService: PageScrollService,
     @Inject(DOCUMENT) private document: any
   ) {}

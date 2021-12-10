@@ -69,7 +69,7 @@
                 xRef.databaseName | titlecase
               }}</a>
             </mat-chip>
-            <mat-chip *ngFor="let link of links">
+            <mat-chip *ngFor="let link of card.entity.links">
               <a href="{{ link.url }}" target="_blank" class="href-no-underline">{{
                 link.resourceName
               }}</a>

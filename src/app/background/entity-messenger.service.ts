@@ -7,6 +7,7 @@ import { SidebarCard } from '../sidebar/types'
 import { EntitiesService } from './entities.service'
 import { SettingsService } from './settings.service'
 import { XRefService } from './x-ref.service'
+import { LinksService } from '../sidebar/links.service'
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,8 @@ export class EntityMessengerService {
     private browserService: BrowserService,
     private entitiesService: EntitiesService,
     private settingsService: SettingsService,
-    private xRefService: XRefService
+    private xRefService: XRefService,
+    private linksService: LinksService
   ) {
     this.entitiesService.entityChangeObservable.subscribe(change => {
       if (change.setterInfo === 'noPropagate') {
@@ -103,6 +105,7 @@ export class EntityMessengerService {
           entity.xRefs = []
         })
         .finally(() => {
+          sidebarCard.entity.links = this.linksService.getLinks(sidebarCard)
           this.browserService.sendMessageToTab(tab.id!, {
             type: 'sidebar_data_service_view_or_create_card',
             body: stringifyWithTypes(sidebarCard)
