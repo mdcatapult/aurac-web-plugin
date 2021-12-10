@@ -15,7 +15,7 @@ export interface Identifier {
   value: string
 }
 
-export type highlightCountInfo = {
+export type HighlightCountInfo = {
   totalCount: number
   error: string
 }

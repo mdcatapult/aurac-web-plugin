@@ -3,7 +3,7 @@ import { TabEntities, XRef } from 'src/types/entity'
 import { parseHighlightID } from 'src/types/highlights'
 import { parseWithTypes, stringifyWithTypes } from '../../json'
 import { BrowserService } from '../browser.service'
-import { highlightCountInfo, SidebarCard } from '../sidebar/types'
+import { HighlightCountInfo, SidebarCard } from '../sidebar/types'
 import { EntitiesService } from './entities.service'
 import { SettingsService } from './settings.service'
 import { XRefService } from './x-ref.service'
@@ -13,8 +13,6 @@ import { LinksService } from '../sidebar/links.service'
   providedIn: 'root'
 })
 export class EntityMessengerService {
-  // private isFirstHighlight = true
-
   constructor(
     private browserService: BrowserService,
     private entitiesService: EntitiesService,
@@ -128,12 +126,12 @@ export class EntityMessengerService {
     })
   }
 
-  private getCounts(tabEntities: TabEntities): highlightCountInfo {
+  private getCounts(tabEntities: TabEntities): HighlightCountInfo {
     let count = 0
     try {
       const tabEntityKeys = Object.keys(tabEntities) as Array<keyof TabEntities>
       tabEntityKeys.forEach(recogniser => {
-        tabEntities[recogniser]?.entities.forEach(
+        tabEntities[recogniser]!.entities.forEach(
           entity => (count += entity.htmlTagIDs?.length ?? 0)
         )
       })
