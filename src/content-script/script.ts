@@ -211,6 +211,12 @@ function highlightEntities(tabEntities: TabEntities): Promise<string> {
           })
         })
         showLoadingIcon(false)
+
+        const unmarker = (element: HTMLElement) => {
+          let unhighlighter = new Mark(element as HTMLElement)
+          unhighlighter.unmark(element)
+        }
+        Highlights.unmarkHiddenEntities(unmarker)
         resolve(stringifyWithTypes(tabEntities))
       })
   })
@@ -243,6 +249,11 @@ export function highlightText(
     acrossElements: true,
     exclude: ['a', '.tooltipped', '.tooltipped-click', '.aurac-highlight'],
     each: (element: HTMLElement) => {
+      // When you find the element, check to see if it has an ancestor parent of 'display:none', if it does, it will return
+      // null. So we check against it to make sure that it isn't null
+      if (!element.offsetParent) {
+        return
+      }
       newHighlightElementCallback(
         entity,
         entityName,
