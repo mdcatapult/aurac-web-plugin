@@ -1,4 +1,6 @@
 import * as Highlights from '../../src/types/highlights'
+import { Globals } from '../../src/content-script/globals'
+import * as Util from '../../spec/util'
 
 describe('highlightFormat', () => {
   const simpleTerm = 'OPG'
@@ -76,5 +78,43 @@ describe('highlightFormat', () => {
       const result = Highlights.highlightFormat(synonym)
       expect(result.test(`Hello this is an!${synonym}!nice to meet you`)).toBeTrue()
     })
+  })
+})
+
+describe('unmarkHiddenEntities', () => {
+  beforeEach(() => {
+    Util.setup([])
+  })
+
+  it('should return an array with zero elements given an aurac element with id', () => {
+    const auracElement = Globals.document.createElement('div')
+    Globals.document.body.appendChild(auracElement)
+
+    auracElement.className = 'aurac-highlight'
+    auracElement.id = '123'
+
+    const result = Highlights.unmarkHiddenEntities(() => {})
+    expect(result).toEqual([])
+  })
+
+  it('should return an array with one element given an aurac element with no id', () => {
+    const auracElement = Globals.document.createElement('div')
+    Globals.document.body.appendChild(auracElement)
+
+    auracElement.className = 'aurac-highlight'
+
+    const result = Highlights.unmarkHiddenEntities(() => {})
+    expect(result.length).toEqual(1)
+  })
+
+  it('should return an array with one element given an aurac element with empty string id', () => {
+    const auracElement = Globals.document.createElement('div')
+    Globals.document.body.appendChild(auracElement)
+
+    auracElement.className = 'aurac-highlight'
+    auracElement.id = ''
+
+    const result = Highlights.unmarkHiddenEntities(() => {})
+    expect(result.length).toEqual(1)
   })
 })

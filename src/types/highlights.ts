@@ -1,3 +1,5 @@
+import { Globals } from '../content-script/globals'
+
 export const HIGHLIGHTED_ELEMENT_ID_DELIMITER = '_'
 
 export function highlightID(
@@ -24,4 +26,18 @@ export function highlightFormat(synonym: string): RegExp {
   const highlightingFormat = `(?<=\\W|^)${escapedSynonym}(?=\\W|$)`
 
   return new RegExp(highlightingFormat)
+}
+
+// if an element has a class of aurac-highlight but no id that means its parent has a display none. we want to remove
+// the highlight from these elements as they are not visible on the page
+export function unmarkHiddenEntities(unmarker: (element: HTMLElement) => void): Element[] {
+  return Array.from(Globals.document.getElementsByClassName('aurac-highlight'))
+    .filter(element => {
+      return !element.id
+    })
+    .map(element => {
+      unmarker(element as HTMLElement)
+
+      return element
+    })
 }
