@@ -180,6 +180,7 @@ function highlightEntities(tabEntities: TabEntities): Promise<string> {
     Globals.browser
       .sendMessage({ type: 'settings_service_get_current_recogniser' })
       .then((recogniser: Recogniser) => {
+        console.log('recogniser')
         tabEntities[recogniser]!.entities.forEach((entity, entityName) => {
           entity.htmlTagIDs = []
 
@@ -340,7 +341,7 @@ Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
 
     case 'content_script_highlight_entities':
       const tabEntities: TabEntities = parseWithTypes(msg.body)
-
+      console.log('tab entities', tabEntities)
       return highlightEntities(tabEntities)
 
     case 'content_script_scroll_to_highlight':
