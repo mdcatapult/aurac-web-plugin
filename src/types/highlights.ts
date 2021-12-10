@@ -1,6 +1,4 @@
 import { Globals } from '../content-script/globals'
-import * as Mark from 'mark.js'
-import { element } from 'protractor'
 
 export const HIGHLIGHTED_ELEMENT_ID_DELIMITER = '_'
 
