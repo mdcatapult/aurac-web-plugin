@@ -243,12 +243,16 @@ describe('NerService', () => {
   it('should construct correct query parameters and headers', () => {
     const [leadmineProteinParams, leadmineProteinHeaders] =
       service['constructRequestParametersAndHeaders']('leadmine-proteins')
-    expect(leadmineProteinParams.toString()).toEqual('recogniser=leadmine-proteins&exact-match=true')
+    expect(leadmineProteinParams.toString()).toEqual(
+      'recogniser=leadmine-proteins&exact-match=true'
+    )
     expect(leadmineProteinHeaders.get('content-type')).toEqual('text/html')
 
     let [leadmineDiseasesParams, leadmineDiseasesHeaders] =
       service['constructRequestParametersAndHeaders']('leadmine-disease')
-    expect(leadmineDiseasesParams.toString()).toEqual('recogniser=leadmine-disease&exact-match=true')
+    expect(leadmineDiseasesParams.toString()).toEqual(
+      'recogniser=leadmine-disease&exact-match=true'
+    )
     expect(leadmineDiseasesHeaders.get('content-type')).toEqual('text/html')
 
     let [params, headers] = service['constructRequestParametersAndHeaders'](
