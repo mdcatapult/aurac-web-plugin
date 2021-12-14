@@ -112,7 +112,7 @@ export class EntityMessengerService {
     })
   }
 
-  private openSidebar(tabID: number, entites: TabEntities): void {
+  private openSidebar(tabID: number, entities: TabEntities): void {
     // if sidebar is not initialized, we must wait a short time for the sidebar to initialize before sending data to it
     const sidebarWaitTime = 250
 
@@ -120,7 +120,7 @@ export class EntityMessengerService {
       setTimeout(() => {
         this.browserService.sendMessageToTab(tabID, {
           type: 'sidebar_data_total_count',
-          body: this.getCounts(entites)
+          body: this.getCounts(entities)
         })
       }, sidebarWaitTime)
     })
