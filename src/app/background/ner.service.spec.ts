@@ -5,7 +5,6 @@ import { TestBrowserService } from '../test-browser.service'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 
 import { NerService, APIEntities, APIEntity } from './ner.service'
-import { HttpHeaders, HttpParams } from '@angular/common/http'
 
 describe('NerService', () => {
   let service: NerService
@@ -244,18 +243,22 @@ describe('NerService', () => {
   it('should construct correct query parameters and headers', () => {
     const [leadmineProteinParams, leadmineProteinHeaders] =
       service['constructRequestParametersAndHeaders']('leadmine-proteins')
-    expect(leadmineProteinParams.toString()).toEqual('recogniser=leadmine-proteins')
+    expect(leadmineProteinParams.toString()).toEqual(
+      'recogniser=leadmine-proteins&exact-match=true'
+    )
     expect(leadmineProteinHeaders.get('content-type')).toEqual('text/html')
 
     let [leadmineDiseasesParams, leadmineDiseasesHeaders] =
       service['constructRequestParametersAndHeaders']('leadmine-disease')
-    expect(leadmineDiseasesParams.toString()).toEqual('recogniser=leadmine-disease')
+    expect(leadmineDiseasesParams.toString()).toEqual(
+      'recogniser=leadmine-disease&exact-match=true'
+    )
     expect(leadmineDiseasesHeaders.get('content-type')).toEqual('text/html')
 
     let [params, headers] = service['constructRequestParametersAndHeaders'](
       'leadmine-chemical-entities'
     )
-    expect(params.toString()).toEqual('recogniser=leadmine-chemical-entities')
+    expect(params.toString()).toEqual('recogniser=leadmine-chemical-entities&exact-match=true')
     expect(headers.get('content-type')).toEqual('text/html')
     expect(headers.get('x-leadmine-chemical-entities')).toEqual(
       'eyJxdWVyeVBhcmFtZXRlcnMiOnsiaW5jaGlrZXkiOlsidHJ1ZSJdfX0='
