@@ -94,9 +94,14 @@ export class NerService {
 
         return response.body!
       })
+      .catch(() => {
+        browser.runtime.sendMessage('popup_error')
+        this.browserService.getActiveTab().then(tabID => this.closeLoadingIcon(tabID.id!))
+      })
   }
 
   private handleAPIError(tabId: number, error: Error) {
+    console.log('in handleAPIError')
     this.closeLoadingIcon(tabId)
     throw error
   }

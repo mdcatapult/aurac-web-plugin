@@ -1,4 +1,4 @@
-import { Component } from '@angular/core'
+import { Component, NgZone } from '@angular/core'
 import { BrowserService } from '../browser.service'
 
 @Component({
@@ -9,7 +9,18 @@ import { BrowserService } from '../browser.service'
 export class PopupComponent {
   mode: 'menu' | 'settings' | 'pdf' = 'menu'
 
-  constructor(private browserService: BrowserService) {}
+  nerError = false
+
+  constructor(private browserService: BrowserService, private ngZone: NgZone) {
+    this.browserService.addListener(msg => {
+      switch (msg) {
+        case 'popup_error':
+          this.ngZone.run(() => {
+            this.nerError = true
+          })
+      }
+    })
+  }
 
   nerCurrentPage(): void {
     this.browserService

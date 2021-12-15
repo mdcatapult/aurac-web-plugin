@@ -12,8 +12,15 @@
       aria-label="Button that highlights things of interest in the current page"
       class="ner-button"
     >
+      <span
+        matBadge="!"
+        [matBadgeHidden]="!nerError"
+        matBadgeColor="warn"
+        matBadgeSize="small"
+      >
       <mat-icon inline="true">manage_search</mat-icon>
       Highlight
+        </span>
     </button>
 
     <button
