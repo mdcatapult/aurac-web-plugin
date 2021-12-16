@@ -19,8 +19,8 @@ export class SidebarCardListComponent {
     this.sidebarDataService.focusedCardObservable.subscribe(card => {
       this.focusedCard = card
     })
-    this.sidebarDataService.totalCountInfoObservable.subscribe(info => {
-      this.totalHighlights = info.totalCount
+    this.sidebarDataService.totalCountInfoObservable.subscribe(count => {
+      this.totalHighlights = count
     })
   }
 }

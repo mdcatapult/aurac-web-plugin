@@ -4,7 +4,7 @@ import { parseWithTypes } from 'src/json'
 import { RecogniserEntities, TabEntities } from 'src/types/entity'
 import { MessageType } from 'src/types/messages'
 import { BrowserService } from '../browser.service'
-import { HighlightCountInfo, SidebarCard } from './types'
+import { SidebarCard } from './types'
 
 @Injectable({
   providedIn: 'root'
@@ -26,9 +26,8 @@ export class SidebarDataService {
   private focusedCardSubject: Subject<SidebarCard> = new Subject()
   readonly focusedCardObservable: Observable<SidebarCard> = this.focusedCardSubject.asObservable()
 
-  private totalCountInfoSubject: Subject<HighlightCountInfo> = new Subject()
-  readonly totalCountInfoObservable: Observable<HighlightCountInfo> =
-    this.totalCountInfoSubject.asObservable()
+  private totalCountInfoSubject: Subject<number> = new Subject()
+  readonly totalCountInfoObservable: Observable<number> = this.totalCountInfoSubject.asObservable()
 
   constructor(private browserService: BrowserService, private zone: NgZone) {
     this.browserService.addListener((msg: any) => {

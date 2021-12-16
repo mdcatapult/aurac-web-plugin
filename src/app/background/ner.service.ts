@@ -55,6 +55,7 @@ export class NerService {
             this.settingsService.preferences.recogniser,
             recogniserEntities
           )
+          browser.runtime.sendMessage('popup_api_success')
         })
     })
   }
@@ -85,23 +86,29 @@ export class NerService {
       .toPromise()
       .then(response => {
         if (response?.status !== 200) {
-          throw new Error('api request failed')
+          const apiRequestFailedError = new Error('api request failed')
+          this.browserService
+            .getActiveTab()
+            .then(tabID => this.handleAPIError(tabID.id!, apiRequestFailedError))
+          throw apiRequestFailedError
         }
-
         if (!response?.body) {
-          throw new Error('api response has no contents')
+          const noContentError = new Error('api response has no contents')
+          this.browserService
+            .getActiveTab()
+            .then(tabID => this.handleAPIError(tabID.id!, noContentError))
+          throw noContentError
         }
 
         return response.body!
       })
-      .catch(() => {
-        browser.runtime.sendMessage('popup_error')
-        this.browserService.getActiveTab().then(tabID => this.closeLoadingIcon(tabID.id!))
+      .catch(error => {
+        this.browserService.getActiveTab().then(tabID => this.handleAPIError(tabID.id!, error))
       })
   }
 
   private handleAPIError(tabId: number, error: Error) {
-    console.log('in handleAPIError')
+    browser.runtime.sendMessage('popup_api_error')
     this.closeLoadingIcon(tabId)
     throw error
   }

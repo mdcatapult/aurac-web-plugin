@@ -21,9 +21,8 @@ export class SidebarHeaderComponent {
     private csvExporterService: CsvExporterService
   ) {
     this.imgSrc = this.browserService.getURL('assets/head-brains.png')
-    this.sidebarDataService.totalCountInfoObservable.subscribe(info => {
-      this.totalHighlights = info.totalCount
-      this.error = info.error
+    this.sidebarDataService.totalCountInfoObservable.subscribe(count => {
+      this.totalHighlights = count
     })
   }
 
