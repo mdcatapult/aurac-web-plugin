@@ -79,7 +79,6 @@ export class SettingsService {
         })
       case 'settings_service_refresh_xref_sources':
         return this.refreshXRefSources(msg.body)
-      
     }
   }
 

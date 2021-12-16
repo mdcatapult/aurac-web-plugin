@@ -28,7 +28,10 @@ export class EntityMessengerService {
       this.browserService
         .sendMessageToTab(change.tabID, {
           type: 'content_script_highlight_entities',
-          body: {entities: stringifyWithTypes(change.entities), recogniser: this.settingsService.preferences.recogniser}
+          body: {
+            entities: stringifyWithTypes(change.entities),
+            recogniser: this.settingsService.preferences.recogniser
+          }
         })
         .then(stringifiedTabEntities => {
           const tabEntities = parseWithTypes(stringifiedTabEntities) as TabEntities
