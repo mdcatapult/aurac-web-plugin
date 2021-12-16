@@ -12,9 +12,9 @@ export class PopupComponent {
   nerError = false
   sourcesError = false
 
-  constructor(private browserService: BrowserService, private ngZone: NgZone) {
+  constructor(private browserService: BrowserService, private zone: NgZone) {
     this.browserService.addListener(msg => {
-      this.ngZone.run(() => {
+      this.zone.run(() => {
         switch (msg) {
           case 'popup_api_error':
             this.nerError = true

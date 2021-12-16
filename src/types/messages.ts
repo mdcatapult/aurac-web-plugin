@@ -26,6 +26,7 @@ export type MessageType =
   | 'ner_service_process_current_page'
   | 'open_modal'
   | 'popup_api_error'
+  | 'popup_api_success'
   | 'settings-changed'
   | 'settings_clicked'
   | 'settings_service_get_current_recogniser'
