@@ -79,8 +79,7 @@ export class SettingsService {
         })
       case 'settings_service_refresh_xref_sources':
         return this.refreshXRefSources(msg.body)
-      case 'settings_service_get_current_recogniser':
-        return Promise.resolve(this.preferences.recogniser)
+      
     }
   }
 

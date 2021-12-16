@@ -177,48 +177,44 @@ function closeModal() {
 
 function highlightEntities(tabEntities: TabEntities, recogniser: Recogniser): Promise<string> {
   return new Promise((resolve, reject) => {
-    Globals.browser
-      .sendMessage({ type: 'settings_service_get_current_recogniser' })
-      .then(_ => {
-        tabEntities[recogniser]!.entities.forEach((entity, entityName) => {
-          entity.htmlTagIDs = []
+    tabEntities[recogniser]!.entities.forEach((entity, entityName) => {
+      entity.htmlTagIDs = []
 
-          entity.synonymToXPaths.forEach((xpaths, synonymName) => {
-            let highlightedEntityOccurrence = 0
-            const uniqueXPaths = new Set(xpaths)
-            uniqueXPaths.forEach(xpath => {
-              try {
-                const xpathNode = Globals.document.evaluate(
-                  xpath,
-                  Globals.document,
-                  null,
-                  XPathResult.FIRST_ORDERED_NODE_TYPE
-                ).singleNodeValue
+      entity.synonymToXPaths.forEach((xpaths, synonymName) => {
+        let highlightedEntityOccurrence = 0
+        const uniqueXPaths = new Set(xpaths)
+        uniqueXPaths.forEach(xpath => {
+          try {
+            const xpathNode = Globals.document.evaluate(
+              xpath,
+              Globals.document,
+              null,
+              XPathResult.FIRST_ORDERED_NODE_TYPE
+            ).singleNodeValue
 
-                if (xpathNode) {
-                  highlightedEntityOccurrence = highlightText(
-                    entity,
-                    synonymName,
-                    xpathNode,
-                    entityName,
-                    highlightedEntityOccurrence
-                  )
-                }
-              } catch (e) {
-                reject(e)
-              }
-            })
-          })
+            if (xpathNode) {
+              highlightedEntityOccurrence = highlightText(
+                entity,
+                synonymName,
+                xpathNode,
+                entityName,
+                highlightedEntityOccurrence
+              )
+            }
+          } catch (e) {
+            reject(e)
+          }
         })
-        showLoadingIcon(false)
-
-        const unmarker = (element: HTMLElement) => {
-          let unhighlighter = new Mark(element as HTMLElement)
-          unhighlighter.unmark(element)
-        }
-        Highlights.unmarkHiddenEntities(unmarker)
-        resolve(stringifyWithTypes(tabEntities))
       })
+    })
+    showLoadingIcon(false)
+
+    const unmarker = (element: HTMLElement) => {
+      let unhighlighter = new Mark(element as HTMLElement)
+      unhighlighter.unmark(element)
+    }
+    Highlights.unmarkHiddenEntities(unmarker)
+    resolve(stringifyWithTypes(tabEntities))
   })
 }
 
