@@ -175,11 +175,11 @@ function closeModal() {
   modalCanOpen = true
 }
 
-function highlightEntities(tabEntities: TabEntities): Promise<string> {
+function highlightEntities(tabEntities: TabEntities, recogniser: Recogniser): Promise<string> {
   return new Promise((resolve, reject) => {
     Globals.browser
       .sendMessage({ type: 'settings_service_get_current_recogniser' })
-      .then((recogniser: Recogniser) => {
+      .then(_ => {
         tabEntities[recogniser]!.entities.forEach((entity, entityName) => {
           entity.htmlTagIDs = []
 
@@ -339,9 +339,10 @@ Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
       return Promise.resolve(showLoadingIcon(false))
 
     case 'content_script_highlight_entities':
-      const tabEntities: TabEntities = parseWithTypes(msg.body)
+      const tabEntities: TabEntities = parseWithTypes(msg.body.entities)
+      const recogniser: Recogniser = msg.body.recogniser
 
-      return highlightEntities(tabEntities)
+      return highlightEntities(tabEntities, recogniser)
 
     case 'content_script_scroll_to_highlight':
       return Promise.resolve(scrollToHighlight(msg.body))
