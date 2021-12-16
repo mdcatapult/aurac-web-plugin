@@ -115,7 +115,7 @@ export class NerService {
 
   private constructRequestParametersAndHeaders(recogniser: Recogniser): [HttpParams, HttpHeaders] {
     // HttpParams.set returns a copy but the original is unmodified - so be careful!
-    const params = new HttpParams().set('recogniser', recogniser)
+    const params = new HttpParams().set('recogniser', recogniser).set('exact-match', true)
 
     let headers = new HttpHeaders().set('content-type', 'text/html')
     if (recogniser === 'leadmine-chemical-entities') {
