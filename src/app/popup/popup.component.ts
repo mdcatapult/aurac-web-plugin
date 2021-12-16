@@ -10,16 +10,20 @@ export class PopupComponent {
   mode: 'menu' | 'settings' | 'pdf' = 'menu'
 
   nerError = false
+  sourcesError = false
 
   constructor(private browserService: BrowserService, private ngZone: NgZone) {
     this.browserService.addListener(msg => {
-      switch (msg) {
-        case 'popup_api_error':
-          this.ngZone.run(() => (this.nerError = true))
-          break
-        case 'popup_api_success':
-          this.ngZone.run(() => (this.nerError = false))
-      }
+      this.ngZone.run(() => {
+        switch (msg) {
+          case 'popup_api_error':
+            this.nerError = true
+            break
+          case 'popup_api_success':
+            this.nerError = false
+            break
+        }
+      })
     })
   }
 
@@ -41,7 +45,7 @@ export class PopupComponent {
       .catch(console.error)
   }
 
-  getTooltipText(): string {
+  getHighlightTooltipText(): string {
     if (this.nerError) {
       return `An error has occurred: please ensure you are connected to the VPN,
       reload the page and re-click highlight.  If the problem persists please
