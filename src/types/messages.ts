@@ -29,7 +29,6 @@ export type MessageType =
   | 'popup_api_success'
   | 'settings-changed'
   | 'settings_clicked'
-  | 'settings_service_get_current_recogniser'
   | 'settings_service_get_settings'
   | 'settings_service_refresh_xref_sources'
   | 'settings_service_set_preferences'
