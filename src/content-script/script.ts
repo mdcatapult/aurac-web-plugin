@@ -175,50 +175,46 @@ function closeModal() {
   modalCanOpen = true
 }
 
-function highlightEntities(tabEntities: TabEntities): Promise<string> {
+function highlightEntities(tabEntities: TabEntities, recogniser: Recogniser): Promise<string> {
   return new Promise((resolve, reject) => {
-    Globals.browser
-      .sendMessage({ type: 'settings_service_get_current_recogniser' })
-      .then((recogniser: Recogniser) => {
-        tabEntities[recogniser]!.entities.forEach((entity, entityName) => {
-          entity.htmlTagIDs = []
+    tabEntities[recogniser]!.entities.forEach((entity, entityName) => {
+      entity.htmlTagIDs = []
 
-          entity.synonymToXPaths.forEach((xpaths, synonymName) => {
-            let highlightedEntityOccurrence = 0
-            const uniqueXPaths = new Set(xpaths)
-            uniqueXPaths.forEach(xpath => {
-              try {
-                const xpathNode = Globals.document.evaluate(
-                  xpath,
-                  Globals.document,
-                  null,
-                  XPathResult.FIRST_ORDERED_NODE_TYPE
-                ).singleNodeValue
+      entity.synonymToXPaths.forEach((xpaths, synonymName) => {
+        let highlightedEntityOccurrence = 0
+        const uniqueXPaths = new Set(xpaths)
+        uniqueXPaths.forEach(xpath => {
+          try {
+            const xpathNode = Globals.document.evaluate(
+              xpath,
+              Globals.document,
+              null,
+              XPathResult.FIRST_ORDERED_NODE_TYPE
+            ).singleNodeValue
 
-                if (xpathNode) {
-                  highlightedEntityOccurrence = highlightText(
-                    entity,
-                    synonymName,
-                    xpathNode,
-                    entityName,
-                    highlightedEntityOccurrence
-                  )
-                }
-              } catch (e) {
-                reject(e)
-              }
-            })
-          })
+            if (xpathNode) {
+              highlightedEntityOccurrence = highlightText(
+                entity,
+                synonymName,
+                xpathNode,
+                entityName,
+                highlightedEntityOccurrence
+              )
+            }
+          } catch (e) {
+            reject(e)
+          }
         })
-        showLoadingIcon(false)
-
-        const unmarker = (element: HTMLElement) => {
-          let unhighlighter = new Mark(element as HTMLElement)
-          unhighlighter.unmark(element)
-        }
-        Highlights.unmarkHiddenEntities(unmarker)
-        resolve(stringifyWithTypes(tabEntities))
       })
+    })
+    showLoadingIcon(false)
+
+    const unmarker = (element: HTMLElement) => {
+      let unhighlighter = new Mark(element as HTMLElement)
+      unhighlighter.unmark(element)
+    }
+    Highlights.unmarkHiddenEntities(unmarker)
+    resolve(stringifyWithTypes(tabEntities))
   })
 }
 
@@ -339,9 +335,10 @@ Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
       return Promise.resolve(showLoadingIcon(false))
 
     case 'content_script_highlight_entities':
-      const tabEntities: TabEntities = parseWithTypes(msg.body)
+      const tabEntities: TabEntities = parseWithTypes(msg.body.entities)
+      const recogniser: Recogniser = msg.body.recogniser
 
-      return highlightEntities(tabEntities)
+      return highlightEntities(tabEntities, recogniser)
 
     case 'content_script_scroll_to_highlight':
       return Promise.resolve(scrollToHighlight(msg.body))
