@@ -1,0 +1,42 @@
+@import 'src/assets/stylingVariables';
+
+img {
+  width: 13em;
+  display: block;
+  margin: 0 auto 0.5em auto;
+}
+
+header {
+  margin: 0.75vh;
+}
+
+.aurac-sidebar-header-button-container {
+  display: flex;
+}
+
+.aurac-sidebar-header-button {
+  margin: 0.25em;
+  flex: fit-content;
+  background-color: $aurac_button;
+  font-weight: bold;
+}
+
+.aurac-sidebar-header-button:hover {
+  background-color: $aurac_button_hover;
+}
+
+button {
+  white-space: pre-wrap;
+}
+
+:host ::ng-deep .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-bar {
+  background-color: $aurac_button;
+}
+
+:host ::ng-deep .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-thumb {
+  background-color: $aurac_button_hover;
+}
+
+:host ::ng-deep .mat-ripple-element {
+  display: none !important;
+}

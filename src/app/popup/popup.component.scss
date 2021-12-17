@@ -1,64 +1,67 @@
-@import "src/app/utilities/stylingVariables";
-
-.settings {
-  width: 400px;
-}
+@import 'src/assets/stylingVariables';
 
 .mat-raised-button:hover {
   background-color: lightgrey;
 }
 
-.popup-div {
+.aurac-popup {
+  width: 400px;
+  height: auto;
+  padding-bottom: 10px;
+  background-color: $aurac_background;
+}
+
+.aurac-popup-button {
+  display: inline-block;
+}
+
+.aurac-popup-header {
+  z-index: 1000;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: $popup_default_background;
-  width: 180px;
-  overflow: hidden;
+  justify-content: center;
+  background-color: $aurac_background;
+  position: sticky;
+  top: 0;
+  margin: 0.75vh 0 0.75vh 0;
 }
 
-.aurac-logo {
-  padding: 10px;
-  background-color: $popup_default_background;
-}
-
-.ner-icon {
-  color: $ner_icon;
-  height: 15px !important;
-  width: 15px !important;
-  display: inline-table;
+.aurac-popup-logo {
+  width: 13em;
+  display: block;
+  margin: 1em auto 0.5em auto;
 }
 
 .ner-button-container {
-  width: 95%;
-  padding: 5px;
-  background-color: rgb(226, 152, 71);
+  margin: 10px 0 10px 0;
 }
 
-.settings-button-container {
+.aurac-settings-button-container {
   padding: 0.3rem;
   display: flex;
   flex-wrap: wrap;
-  background-color: grey;
+  background-color: $aurac_background;
 }
 
 button {
   display: flex;
   width: 100%;
   margin-bottom: 3px;
+  font-size: 15px;
+  font-weight: 500;
 }
 
-.pdf-selector {
-  width: 400px;
+.panel-icon {
+  padding-right: 5px;
 }
 
-.radio-group {
-  display: flex;
-  flex-direction: column;
-  margin: 15px 0;
+.aurac-link-sources {
+  margin-bottom: 5px;
 }
 
-.radio-button {
-  margin-bottom: 2px;
+.ner-button {
+  display: inline-block;
+  background-color: $aurac_button;
 }
-
+.ner-button:hover {
+  background-color: $aurac_button_hover;
+}

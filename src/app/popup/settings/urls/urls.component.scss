@@ -1,0 +1,23 @@
+@import 'src/assets/stylingVariables';
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.mat-form-field {
+  display: block;
+  font-size: medium;
+  margin: 2vw 2vw 0 2vw;
+}
+
+.aurac-save-button {
+  width: 50%;
+  display: block;
+  margin: 0 auto 0;
+  background-color: $aurac_button;
+}
+
+.aurac-save-button:hover {
+  background-color: $aurac_button_hover;
+}

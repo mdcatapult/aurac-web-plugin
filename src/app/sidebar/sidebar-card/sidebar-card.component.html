@@ -1,0 +1,95 @@
+<article>
+  <mat-card>
+    <div class="aurac-sidebar-card-button-container">
+      <button
+        mat-icon-button
+        aria-label="Close button for a sidebar card"
+        (click)="remove()"
+        matTooltip="Remove this card from the sidebar"
+        matTooltipPosition="above"
+      >
+        <mat-icon>delete_outline</mat-icon>
+      </button>
+      <div class="aurac-sidebar-arrow-buttons">
+        <p *ngIf="nOccurrences > 0">
+          <em>{{ scrollIndex + 1 }} / {{ nOccurrences }}</em>
+        </p>
+        <button
+          mat-icon-button
+          aria-label="Left arrow button"
+          (click)="arrowClicked('left')"
+          matTooltip="Scroll to previous highlighted occurrence"
+          matTooltipPosition="above"
+        >
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <button
+          class="arrow-buttons"
+          mat-icon-button
+          aria-label="Right arrow button"
+          (click)="arrowClicked('right')"
+          matTooltip="Scroll to next highlighted occurrence"
+          matTooltipPosition="above"
+        >
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </div>
+    </div>
+    <mat-card-header>
+      <mat-card-title id="{{ card.entityID }}">
+        <p>
+          {{ title }}
+        </p>
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-accordion>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-description>
+              <mat-icon inline="true">view_headline</mat-icon>
+              Synonyms
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <p>{{ synonyms.join(', ') }}</p>
+        </mat-expansion-panel>
+
+        <!-- links and xrefs -->
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-description>
+              <mat-icon inline="true">explore</mat-icon>
+              Explore
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <mat-chip-list>
+            <mat-chip *ngFor="let xRef of card.entity.xRefs">
+              <a href="{{ xRef.url }}" target="_blank" class="href-no-underline">{{
+                xRef.databaseName | titlecase
+              }}</a>
+            </mat-chip>
+            <mat-chip *ngFor="let link of card.entity.links">
+              <a href="{{ link.url }}" target="_blank" class="href-no-underline">{{
+                link.resourceName
+              }}</a>
+            </mat-chip>
+          </mat-chip-list>
+        </mat-expansion-panel>
+      </mat-accordion>
+      <br />
+      <button
+        *ngIf="this.card.entity.xRefs?.length"
+        class="open-modal-button"
+        aria-label="Open modal button"
+        mat-raised-button
+        (click)="openModal()"
+        matTooltip="Button to display a chemical structure"
+        matTooltipPosition="right"
+      >
+        <img class="structure-image" src="https://img.icons8.com/ios/50/000000/peptide.png" />
+      </button>
+    </mat-card-content>
+  </mat-card>
+</article>
+<br />

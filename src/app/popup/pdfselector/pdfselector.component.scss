@@ -1,0 +1,28 @@
+@import 'src/assets/stylingVariables';
+
+.link-control {
+  margin: 10px;
+  width: 95%;
+}
+
+.pdf-conversion-text {
+  width: 95%;
+  margin: auto;
+}
+
+.confirm {
+  width: 50%;
+  display: block;
+  margin: 0 auto 15px;
+  background-color: $aurac_button;
+}
+
+.confirm:hover {
+  background-color: $aurac_button_hover;
+}
+
+.error {
+  color: red;
+  display: block;
+  margin: 0 auto 5px;
+}

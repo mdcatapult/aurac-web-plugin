@@ -33,9 +33,7 @@
                 "output": "."
               }
             ],
-            "styles": [
-              "src/styles.scss"
-            ],
+            "styles": ["src/assets/styles.scss"],
             "scripts": []
           },
           "configurations": {
@@ -94,27 +92,15 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
-            "styles": [
-              "src/styles.scss"
-            ],
+            "assets": ["src/favicon.ico", "src/assets"],
+            "styles": ["src/assets/styles.scss"],
             "scripts": []
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": [
-              "tsconfig.app.json",
-              "tsconfig.spec.json",
-              "e2e/tsconfig.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
           }
         },
         "e2e": {
@@ -130,6 +116,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "browser-plugin"
+    }
+  },
+  "defaultProject": "browser-plugin",
+  "cli": {
+    "defaultCollection": "@angular-eslint/schematics"
+  }
 }

@@ -1,0 +1,17 @@
+<div class="pdf-conversion-text">
+  <p>
+    Enter a link to a PDF below and hit the convert button. The converted PDF will be rendered in a
+    new tab and can then be highlighted.
+  </p>
+</div>
+
+<mat-form-field class="link-control" appearance="fill">
+  <input type="text" matInput [formControl]="link" placeholder="Enter link to PDF" />
+</mat-form-field>
+
+<div *ngIf="loadingHTML">HTML loading..</div>
+<div *ngIf="pdfError" class="error">
+  {{ pdfError }}
+</div>
+
+<button class="confirm" mat-raised-button (click)="linkSelected()">Convert</button>

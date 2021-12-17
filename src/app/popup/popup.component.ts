@@ -1,8 +1,5 @@
-import {Component} from '@angular/core';
-import {LogService} from './log.service';
-import {validDict} from '../background/types';
-import {BrowserService} from '../browser.service';
-import { TitleCasePipe } from '@angular/common';
+import { Component } from '@angular/core'
+import { BrowserService } from '../browser.service'
 
 @Component({
   selector: 'app-popup',
@@ -10,27 +7,16 @@ import { TitleCasePipe } from '@angular/common';
   styleUrls: ['./popup.component.scss']
 })
 export class PopupComponent {
-
   mode: 'menu' | 'settings' | 'pdf' = 'menu'
 
-  constructor(private log: LogService, private browserService: BrowserService) {
-  }
-
-  settingsClicked() {
-    this.mode = 'settings'
-  }
+  constructor(private browserService: BrowserService) {}
 
   nerCurrentPage(): void {
-    this.browserService.loadSettings().then(settings => {
-      this.log.Log('Sending message to background page...');
-      this.browserService.sendMessage('ner_current_page', settings.preferences.dictionary)
-        .catch(e => this.log.Error(`Couldn't send message to background page: ${JSON.stringify(e)}`));
-    })
-  }
-
-  toggleSidebar(): void {
-    this.browserService.sendMessageToActiveTab({type: 'toggle_sidebar'})
-      .catch(e => this.log.Error(`Couldn't send message of type 'toggle_sidebar' : ${JSON.stringify(e)}`));
+    this.browserService
+      .sendMessageToBackground('ner_service_process_current_page')
+      .catch(error =>
+        console.error("couldn't send message 'ner_service_process_current_page'", error)
+      )
   }
 
   pdfClicked(): void {
@@ -38,6 +24,8 @@ export class PopupComponent {
   }
 
   exportResults(): void {
-    this.browserService.sendMessage('export_csv')
+    this.browserService
+      .sendMessageToBackground('csv_exporter_service_export_csv')
+      .catch(console.error)
   }
 }

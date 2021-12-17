@@ -1,0 +1,41 @@
+@import 'src/assets/stylingVariables';
+
+.href-no-underline {
+  text-decoration: none;
+}
+
+.aurac-sidebar-card-button-container {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 -1rem -1rem -1rem;
+}
+
+mat-card {
+  padding-top: 0;
+}
+
+.aurac-sidebar-arrow-buttons {
+  display: flex;
+}
+
+.open-modal-button {
+  height: 55px;
+  width: 55px;
+  background-color: $aurac_button;
+}
+
+.open-modal-button:hover {
+  background-color: $aurac_button_hover;
+}
+
+.open-modal-button img {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+}
+mat-icon {
+  padding-right: 3px;
+}

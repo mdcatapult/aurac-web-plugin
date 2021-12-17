@@ -1,0 +1,13 @@
+<div *ngIf="hasXRefs">
+  <form [formGroup]="form">
+    <ul>
+      <li *ngFor="let control of form.value | keyvalue">
+        <mat-checkbox [id]="control.key" [value]="control.value" [formControlName]="control.key">
+          {{ control.key }}
+        </mat-checkbox>
+      </li>
+    </ul>
+  </form>
+</div>
+<div *ngIf="!hasXRefs">No sources available.</div>
+<button mat-raised-button class="aurac-save-button" (click)="save()">Save</button>

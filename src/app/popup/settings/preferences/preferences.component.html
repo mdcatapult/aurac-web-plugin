@@ -1,0 +1,27 @@
+<div>
+  <form [formGroup]="form">
+    <mat-radio-group
+      aria-labelledby="radio-group-label"
+      class="aurac-radio-group"
+      formControlName="recogniser"
+    >
+      <mat-label class="aurac-prefs-label"><b>Select your area of interest</b></mat-label>
+      <mat-radio-button
+        *ngFor="let recogniser of recognisers"
+        class="aurac-radio-button"
+        [value]="recogniser"
+      >
+        {{ recogniser | recogniserName }}
+      </mat-radio-button>
+    </mat-radio-group>
+
+    <mat-form-field appearance="fill" class="aurac-dropdown">
+      <mat-label>Select minimum entity length</mat-label>
+      <mat-select [formControl]="form!.get('minEntityLength')">
+        <mat-option *ngFor="let length of minEntityLength" [value]="length">
+          {{ length }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+</div>
