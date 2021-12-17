@@ -8,6 +8,7 @@ import { EntitiesService } from './entities.service'
 import { SettingsService } from './settings.service'
 import { XRefService } from './x-ref.service'
 import { LinksService } from '../sidebar/links.service'
+import { Recogniser } from '../../types/recognisers'
 
 @Injectable({
   providedIn: 'root'
@@ -47,7 +48,7 @@ export class EntityMessengerService {
             })
           }
 
-          this.openSidebar(change.tabID, tabEntities)
+          this.openSidebar(change.tabID, tabEntities, this.settingsService.preferences.recogniser)
         })
     })
 
@@ -115,7 +116,7 @@ export class EntityMessengerService {
     })
   }
 
-  private openSidebar(tabID: number, entities: TabEntities): void {
+  private openSidebar(tabID: number, entities: TabEntities, recogniser: Recogniser): void {
     // if sidebar is not initialized, we must wait a short time for the sidebar to initialize before sending data to it
     const sidebarWaitTime = 250
 
@@ -123,18 +124,17 @@ export class EntityMessengerService {
       setTimeout(() => {
         this.browserService.sendMessageToTab(tabID, {
           type: 'sidebar_data_total_count',
-          body: this.getCounts(entities)
+          body: this.getCount(entities)
         })
       }, sidebarWaitTime)
     })
   }
 
-  private getCounts(tabEntities: TabEntities): number {
+  private getCount(tabEntities: TabEntities): number {
     let count = 0
-    const tabEntityKeys = Object.keys(tabEntities) as Array<keyof TabEntities>
-    tabEntityKeys.forEach(recogniser => {
-      tabEntities[recogniser]!.entities.forEach(entity => (count += entity.htmlTagIDs?.length ?? 0))
-    })
+    tabEntities[this.settingsService.preferences.recogniser]!.entities.forEach(
+      entity => (count += entity.htmlTagIDs?.length ?? 0)
+    )
 
     return count
   }
