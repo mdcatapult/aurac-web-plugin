@@ -91,22 +91,21 @@ function showLoadingIcon(on: boolean): void {
   loadingIcon!.style.display = on ? 'block' : 'none'
 }
 
-async function injectSidebar() {
+function injectSidebar() {
   Globals.document.body.appendChild(sidebar)
-  await new Promise(r => setTimeout(r, 100))
 }
 
-async function toggleSidebar() {
+function toggleSidebar() {
   if (!!Globals.document.getElementsByClassName('aurac-sidebar--expanded').length) {
     closeSidebar()
   } else {
-    await openSidebar()
+    openSidebar()
   }
 }
 
-async function openSidebar() {
+function openSidebar() {
   if (!Globals.document.getElementById('aurac-sidebar')) {
-    await injectSidebar()
+    injectSidebar()
   }
 
   Array.from(Globals.document.getElementsByClassName('aurac-transform')).forEach(e => {
@@ -311,10 +310,10 @@ function generateChemblId(xRefs: Array<XRef>): string {
 Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
   switch (msg.type) {
     case 'content_script_toggle_sidebar':
-      return toggleSidebar()
+      return Promise.resolve(toggleSidebar())
 
     case 'content_script_open_sidebar':
-      return openSidebar()
+      return Promise.resolve(openSidebar())
 
     case 'content_script_close_sidebar':
       return Promise.resolve(closeSidebar())

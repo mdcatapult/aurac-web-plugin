@@ -34,6 +34,8 @@ import { MatChipsModule } from '@angular/material/chips'
 import { MatCheckboxModule } from '@angular/material/checkbox'
 import { MatSelectModule } from '@angular/material/select'
 import { MatSlideToggleModule } from '@angular/material/slide-toggle'
+import { MatToolbarModule } from '@angular/material/toolbar'
+import { MatBadgeModule } from '@angular/material/badge'
 
 const routes: Routes = [{ path: '**', component: RouterComponent }]
 
@@ -78,7 +80,9 @@ const routes: Routes = [{ path: '**', component: RouterComponent }]
     MatChipsModule,
     MatCheckboxModule,
     MatSelectModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatToolbarModule,
+    MatBadgeModule
   ],
   providers: [
     {

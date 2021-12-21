@@ -7,22 +7,7 @@ img {
 }
 
 header {
-  margin: 0.75vh;
-}
-
-.aurac-sidebar-header-button-container {
-  display: flex;
-}
-
-.aurac-sidebar-header-button {
-  margin: 0.25em;
-  flex: fit-content;
-  background-color: $aurac_button;
-  font-weight: bold;
-}
-
-.aurac-sidebar-header-button:hover {
-  background-color: $aurac_button_hover;
+  margin: 0 0 0.75vh 0;
 }
 
 button {
@@ -39,4 +24,37 @@ button {
 
 :host ::ng-deep .mat-ripple-element {
   display: none !important;
+}
+
+.aurac-spacer {
+  flex: 1 1 auto;
+}
+
+.aurac-download-icon {
+  transform: rotate(180deg);
+}
+
+.aurac-delete-icon,
+.aurac-download-icon {
+  color: $aurac_button;
+}
+
+.aurac-delete-icon:hover,
+.aurac-download-icon:hover {
+  color: $aurac_button_hover;
+}
+
+.aurac-toolbar {
+  border-radius: 4px;
+  background-color: white;
+}
+
+.aurac-count {
+  padding: 0 0 0 10px;
+  color: $aurac_button;
+}
+
+.aurac-error {
+  padding: 0 0 0 10px;
+  color: darkred;
 }

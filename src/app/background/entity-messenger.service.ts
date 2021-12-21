@@ -8,6 +8,7 @@ import { EntitiesService } from './entities.service'
 import { SettingsService } from './settings.service'
 import { XRefService } from './x-ref.service'
 import { LinksService } from '../sidebar/links.service'
+import { Recogniser } from '../../types/recognisers'
 
 @Injectable({
   providedIn: 'root'
@@ -46,7 +47,8 @@ export class EntityMessengerService {
               body: stringifiedTabEntities
             })
           }
-          this.browserService.sendMessageToTab(change.tabID, 'content_script_open_sidebar')
+
+          this.openSidebar(change.tabID, tabEntities, this.settingsService.preferences.recogniser)
         })
     })
 
@@ -112,5 +114,28 @@ export class EntityMessengerService {
           })
         })
     })
+  }
+
+  private openSidebar(tabID: number, entities: TabEntities, recogniser: Recogniser): void {
+    // if sidebar is not initialized, we must wait a short time for the sidebar to initialize before sending data to it
+    const sidebarWaitTime = 250
+
+    this.browserService.sendMessageToTab(tabID, 'content_script_open_sidebar').then(() => {
+      setTimeout(() => {
+        this.browserService.sendMessageToTab(tabID, {
+          type: 'sidebar_data_total_count',
+          body: this.getCount(entities)
+        })
+      }, sidebarWaitTime)
+    })
+  }
+
+  private getCount(tabEntities: TabEntities): number {
+    let count = 0
+    tabEntities[this.settingsService.preferences.recogniser]!.entities.forEach(
+      entity => (count += entity.htmlTagIDs?.length ?? 0)
+    )
+
+    return count
   }
 }

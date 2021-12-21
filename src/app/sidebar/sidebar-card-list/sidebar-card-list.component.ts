@@ -10,6 +10,7 @@ import { SidebarCard } from '../types'
 export class SidebarCardListComponent {
   cards: Array<SidebarCard> = []
   focusedCard: SidebarCard = {} as SidebarCard
+  totalHighlights?: number
 
   constructor(private sidebarDataService: SidebarDataService) {
     this.sidebarDataService.cardsObservable.subscribe(cards => {
@@ -17,6 +18,9 @@ export class SidebarCardListComponent {
     })
     this.sidebarDataService.focusedCardObservable.subscribe(card => {
       this.focusedCard = card
+    })
+    this.sidebarDataService.totalCountInfoObservable.subscribe(count => {
+      this.totalHighlights = count
     })
   }
 }
