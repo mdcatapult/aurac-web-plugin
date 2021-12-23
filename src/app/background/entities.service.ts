@@ -35,8 +35,13 @@ export class EntitiesService {
     return _.cloneDeep(this.entityMap.get(tab))
   }
 
+  getEntities(tab: TabID, recogniser: Recogniser): RecogniserEntities | undefined {
+    return _.cloneDeep(this.entityMap.get(tab)!['leadmine-proteins'])
+  }
+
   setTabEntities(tabID: TabID, entities: TabEntities, setterInfo?: SetterInfo): void {
     this.entityMap.set(tabID, entities)
+    console.log('tab entities after being updated')
     this.updateStream(tabID, entities, setterInfo)
   }
 

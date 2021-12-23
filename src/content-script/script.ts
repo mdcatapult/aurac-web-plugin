@@ -174,10 +174,33 @@ function closeModal() {
   modalCanOpen = true
 }
 
+function getHighlitedEntities(): Element[] {
+  return Array.from(Globals.document.getElementsByClassName('aurac-highlight')).filter(element => {
+    return element.id
+  })
+}
+
 function highlightEntities(tabEntities: TabEntities, recogniser: Recogniser): Promise<string> {
   return new Promise((resolve, reject) => {
+    let highlightedEntities = getHighlitedEntities()
+
     tabEntities[recogniser]!.entities.forEach((entity, entityName) => {
-      entity.htmlTagIDs = []
+      // if we have already run highlight and we have html tag ids and there is highlight on the page, we DONT want to reset
+      // the number of html tag ids back to an empty array as this is incorrect
+      if (entity.htmlTagIDs && highlightedEntities.length) {
+        console.log(
+          'we dont want to change the value of entity.htmlTagIDs here but we still want it to find other entites that' +
+            'havent been marked up'
+        )
+      } else if (entity.htmlTagIDs && !highlightedEntities.length) {
+        // We need to reset the value of HTMLTagIDs if we click highlight, save to tab entities and refresh the
+        // page, on the second call it will get the IDs that have been saved in the tab entities but it will then see that
+        // theres no markup on the page, attempt to do markup and duplicate the ids
+        entity.htmlTagIDs = []
+      } else {
+        //on the first call where both conditions are not true, we need to have the tag ids as zero
+        entity.htmlTagIDs = []
+      }
 
       entity.synonymToXPaths.forEach((xpaths, synonymName) => {
         let highlightedEntityOccurrence = 0
@@ -336,6 +359,8 @@ Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
     case 'content_script_highlight_entities':
       const tabEntities: TabEntities = parseWithTypes(msg.body.entities)
       const recogniser: Recogniser = msg.body.recogniser
+
+      console.log('returning tab entities', highlightEntities(tabEntities, recogniser))
 
       return highlightEntities(tabEntities, recogniser)
 

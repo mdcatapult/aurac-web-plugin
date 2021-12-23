@@ -9,6 +9,7 @@ import { SettingsService } from './settings.service'
 import { XRefService } from './x-ref.service'
 import { LinksService } from '../sidebar/links.service'
 import { Recogniser } from '../../types/recognisers'
+import tabId = browser.devtools.inspectedWindow.tabId
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,7 @@ export class EntityMessengerService {
       if (change.setterInfo === 'noPropagate') {
         return
       }
-
+      console.log('change entities received', change.entities)
       this.browserService
         .sendMessageToTab(change.tabID, {
           type: 'content_script_highlight_entities',
@@ -35,7 +36,9 @@ export class EntityMessengerService {
           }
         })
         .then(stringifiedTabEntities => {
+          console.log('response back from content script', stringifiedTabEntities)
           const tabEntities = parseWithTypes(stringifiedTabEntities) as TabEntities
+
           if (change.setterInfo !== 'isFilteredEntities') {
             // Use 'noPropagate' setter info so that we don't get into an infinite loop.
             this.entitiesService.setTabEntities(change.tabID, tabEntities, 'noPropagate')
