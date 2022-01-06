@@ -236,7 +236,7 @@ describe('NerService', () => {
         ])
       }
 
-      // expect(service['transformAPIResponse'](recognisedEntities)).toEqual(recogniserEntities)
+      expect(service['transformAPIResponse'](recognisedEntities, 0)).toEqual(recogniserEntities)
     })
   })
 
