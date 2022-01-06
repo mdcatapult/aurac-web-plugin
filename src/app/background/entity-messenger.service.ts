@@ -135,10 +135,15 @@ export class EntityMessengerService {
 
   private getCount(tabEntities: TabEntities): number {
     let count = 0
-    tabEntities[this.settingsService.preferences.recogniser]!.entities.forEach(
-      entity => (count += entity.htmlTagIDs?.length ?? 0)
-    )
+    const tabEntityKeys = Object.keys(tabEntities) as Array<keyof TabEntities>
 
+    tabEntityKeys.map(recogniser => {
+      count += Array.from(tabEntities[recogniser]!.entities)
+      .map(entity => entity[1]) // return only the entity part of the tuple
+      .filter(entity => entity.htmlTagIDs.length)
+      .length
+    })
+  
     return count
   }
 }
