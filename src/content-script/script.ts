@@ -180,25 +180,19 @@ function getHighlightedEntities(): Element[] {
   })
 }
 
-function highlightEntities(tabEntities: TabEntities, recogniser: Recogniser): Promise<string> {
+function highlightEntities(
+  tabEntities: TabEntities,
+  recogniser: Recogniser
+): Promise<{ tabEntities: string; entityCount: number }> {
   return new Promise((resolve, reject) => {
     let highlightedEntities = getHighlightedEntities()
 
     tabEntities[recogniser]!.entities.forEach((entity, entityName) => {
-      // if we have already run highlight and we have html tag ids and there is highlight on the page, we DONT want to reset
-      // the number of html tag ids back to an empty array as this is incorrect
-      if (entity.htmlTagIDs && highlightedEntities.length) {
-        console.log(
-          'we dont want to change the value of entity.htmlTagIDs here but we still want it to find other entites that' +
-            'havent been marked up'
-        )
-      } else if (entity.htmlTagIDs && !highlightedEntities.length) {
-        // We need to reset the value of HTMLTagIDs if we click highlight, save to tab entities and refresh the
-        // page, on the second call it will get the IDs that have been saved in the tab entities but it will then see that
-        // theres no markup on the page, attempt to do markup and duplicate the ids
-        entity.htmlTagIDs = []
-      } else {
-        //on the first call where both conditions are not true, we need to have the tag ids as zero
+      const pageHighlighted = entity.htmlTagIDs && highlightedEntities.length
+
+      // If the page has previously been marked up but there is no longer highlight (page refresh) then we need to reset
+      // the number of htmlTagIds back to zero so that it can add them again.
+      if (!pageHighlighted) {
         entity.htmlTagIDs = []
       }
 
@@ -235,8 +229,12 @@ function highlightEntities(tabEntities: TabEntities, recogniser: Recogniser): Pr
       let unhighlighter = new Mark(element as HTMLElement)
       unhighlighter.unmark(element)
     }
+
     Highlights.unmarkHiddenEntities(unmarker)
-    resolve(stringifyWithTypes(tabEntities))
+    resolve({
+      tabEntities: stringifyWithTypes(tabEntities),
+      entityCount: highlightedEntities.length
+    })
   })
 }
 

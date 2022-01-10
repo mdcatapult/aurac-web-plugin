@@ -35,8 +35,8 @@ export class EntityMessengerService {
             recogniser: this.settingsService.preferences.recogniser
           }
         })
-        .then(stringifiedTabEntities => {
-          console.log('response back from content script', stringifiedTabEntities)
+        .then((result: { tabEntities: string; entityCount: number }) => {
+          const stringifiedTabEntities = result.tabEntities
           const tabEntities = parseWithTypes(stringifiedTabEntities) as TabEntities
 
           if (change.setterInfo !== 'isFilteredEntities') {
@@ -51,7 +51,7 @@ export class EntityMessengerService {
             })
           }
 
-          this.openSidebar(change.tabID, tabEntities, this.settingsService.preferences.recogniser)
+          this.openSidebar(change.tabID, result.entityCount)
         })
     })
 
@@ -119,7 +119,7 @@ export class EntityMessengerService {
     })
   }
 
-  private openSidebar(tabID: number, entities: TabEntities, recogniser: Recogniser): void {
+  private openSidebar(tabID: number, highlightCount: number): void {
     // if sidebar is not initialized, we must wait a short time for the sidebar to initialize before sending data to it
     const sidebarWaitTime = 250
 
@@ -127,22 +127,9 @@ export class EntityMessengerService {
       setTimeout(() => {
         this.browserService.sendMessageToTab(tabID, {
           type: 'sidebar_data_total_count',
-          body: this.getCount(entities)
+          body: highlightCount
         })
       }, sidebarWaitTime)
     })
-  }
-
-  private getCount(tabEntities: TabEntities): number {
-    let count = 0
-    const tabEntityKeys = Object.keys(tabEntities) as Array<keyof TabEntities>
-
-    tabEntityKeys.map(recogniser => {
-      count += Array.from(tabEntities[recogniser]!.entities)
-        .map(entity => entity[1]) // return only the entity part of the tuple
-        .filter(entity => entity.htmlTagIDs!.length).length
-    })
-
-    return count
   }
 }
