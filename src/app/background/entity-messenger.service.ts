@@ -140,10 +140,10 @@ export class EntityMessengerService {
     tabEntityKeys.map(recogniser => {
       count += Array.from(tabEntities[recogniser]!.entities)
       .map(entity => entity[1]) // return only the entity part of the tuple
-      .filter(entity => entity.htmlTagIDs.length)
+      .filter(entity => entity.htmlTagIDs!.length)
       .length
     })
-  
+
     return count
   }
 }

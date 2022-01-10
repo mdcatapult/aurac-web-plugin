@@ -174,7 +174,7 @@ function closeModal() {
   modalCanOpen = true
 }
 
-function getHighlitedEntities(): Element[] {
+function getHighlightedEntities(): Element[] {
   return Array.from(Globals.document.getElementsByClassName('aurac-highlight')).filter(element => {
     return element.id
   })
@@ -182,7 +182,7 @@ function getHighlitedEntities(): Element[] {
 
 function highlightEntities(tabEntities: TabEntities, recogniser: Recogniser): Promise<string> {
   return new Promise((resolve, reject) => {
-    let highlightedEntities = getHighlitedEntities()
+    let highlightedEntities = getHighlightedEntities()
 
     tabEntities[recogniser]!.entities.forEach((entity, entityName) => {
       // if we have already run highlight and we have html tag ids and there is highlight on the page, we DONT want to reset
