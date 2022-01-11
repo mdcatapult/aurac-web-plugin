@@ -197,7 +197,6 @@ describe('NerService', () => {
 
       const recogniserEntities: RecogniserEntities = {
         show: true,
-        // entities: new Map<string,Entity>([["s", {synonyms: }]])
         entities: new Map<string, Entity>([
           [
             'HGNC:8644',
@@ -236,7 +235,7 @@ describe('NerService', () => {
         ])
       }
 
-      expect(service['transformAPIResponse'](recognisedEntities)).toEqual(recogniserEntities)
+      expect(service['transformAPIResponse'](recognisedEntities, 0)).toEqual(recogniserEntities)
     })
   })
 

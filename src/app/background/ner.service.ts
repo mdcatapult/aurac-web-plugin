@@ -49,12 +49,13 @@ export class NerService {
           error => this.handleAPIError(tab.id!, error)
         )
         .then(response => {
-          const recogniserEntities = this.transformAPIResponse(response as APIEntities)
+          const recogniserEntities = this.transformAPIResponse(response as APIEntities, tab.id!)
           this.entitiesService.setRecogniserEntities(
             tab.id!,
             this.settingsService.preferences.recogniser,
             recogniserEntities
           )
+
           browser.runtime.sendMessage('popup_api_success')
         })
     })
@@ -171,37 +172,45 @@ export class NerService {
     }
   }
 
-  private transformAPIResponse(response: APIEntities): RecogniserEntities {
-    let recogniserEntities: RecogniserEntities = {
+  private transformAPIResponse(response: APIEntities, tabID: number): RecogniserEntities {
+    let recogniserEntities = this.entitiesService.getTabEntities(tabID)?.[
+      this.settingsService.preferences.recogniser
+    ]! ?? {
       show: true,
       entities: new Map<string, Entity>()
     }
 
-    response.forEach(recognisedEntity => {
-      switch (recognisedEntity.recogniser) {
-        case 'leadmine-chemical-entities':
-        case 'leadmine-disease':
-        case 'leadmine-proteins':
-          // For all leadmine dictionaries, we will use the resolved entity
-          // to determine whether two entities are synonyms of each other.
-          const resolvedEntity: string = recognisedEntity.identifiers?.resolvedEntity
+    if (
+      this.entitiesService.getTabEntities(tabID)?.[this.settingsService.preferences.recogniser]!
+    ) {
+      return recogniserEntities!
+    } else {
+      response.forEach(recognisedEntity => {
+        switch (recognisedEntity.recogniser) {
+          case 'leadmine-chemical-entities':
+          case 'leadmine-disease':
+          case 'leadmine-proteins':
+            // For all leadmine dictionaries, we will use the resolved entity
+            // to determine whether two entities are synonyms of each other.
+            const resolvedEntity: string = recognisedEntity.identifiers?.resolvedEntity
 
-          if (resolvedEntity) {
-            this.setOrUpdateEntity(recogniserEntities, resolvedEntity, recognisedEntity)
-          } else {
-            // If there is no resolved entity, just use the entity text (lowercased) to determine synonyms.
-            // (This means the synonyms will be identical except for their casing).
-            this.setOrUpdateEntity(
-              recogniserEntities,
-              recognisedEntity.name.toLowerCase(),
-              recognisedEntity
-            )
-          }
+            if (resolvedEntity) {
+              this.setOrUpdateEntity(recogniserEntities!, resolvedEntity, recognisedEntity)
+            } else {
+              // If there is no resolved entity, just use the entity text (lowercased) to determine synonyms.
+              // (This means the synonyms will be identical except for their casing).
+              this.setOrUpdateEntity(
+                recogniserEntities!,
+                recognisedEntity.name.toLowerCase(),
+                recognisedEntity
+              )
+            }
 
-          break
-      }
-    })
+            break
+        }
+      })
+    }
 
-    return recogniserEntities
+    return recogniserEntities!
   }
 }

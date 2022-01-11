@@ -174,11 +174,19 @@ function closeModal() {
   modalCanOpen = true
 }
 
-function highlightEntities(tabEntities: TabEntities, recogniser: Recogniser): Promise<string> {
+function getHighlightedEntities(): Element[] {
+  return Array.from(Globals.document.getElementsByClassName('aurac-highlight')).filter(element => {
+    return element.id
+  })
+}
+
+function highlightEntities(
+  tabEntities: TabEntities,
+  recogniser: Recogniser
+): Promise<{ tabEntities: string; entityCount: number }> {
   return new Promise((resolve, reject) => {
     tabEntities[recogniser]!.entities.forEach((entity, entityName) => {
       entity.htmlTagIDs = []
-
       entity.synonymToXPaths.forEach((xpaths, synonymName) => {
         let highlightedEntityOccurrence = 0
         const uniqueXPaths = new Set(xpaths)
@@ -212,8 +220,14 @@ function highlightEntities(tabEntities: TabEntities, recogniser: Recogniser): Pr
       let unhighlighter = new Mark(element as HTMLElement)
       unhighlighter.unmark(element)
     }
+
     Highlights.unmarkHiddenEntities(unmarker)
-    resolve(stringifyWithTypes(tabEntities))
+    const highlightedEntities = getHighlightedEntities()
+
+    resolve({
+      tabEntities: stringifyWithTypes(tabEntities),
+      entityCount: highlightedEntities.length
+    })
   })
 }
 
@@ -336,6 +350,8 @@ Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
     case 'content_script_highlight_entities':
       const tabEntities: TabEntities = parseWithTypes(msg.body.entities)
       const recogniser: Recogniser = msg.body.recogniser
+
+      removeHighlights()
 
       return highlightEntities(tabEntities, recogniser)
 

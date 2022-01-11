@@ -8,7 +8,6 @@ import { EntitiesService } from './entities.service'
 import { SettingsService } from './settings.service'
 import { XRefService } from './x-ref.service'
 import { LinksService } from '../sidebar/links.service'
-import { Recogniser } from '../../types/recognisers'
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +24,6 @@ export class EntityMessengerService {
       if (change.setterInfo === 'noPropagate') {
         return
       }
-
       this.browserService
         .sendMessageToTab(change.tabID, {
           type: 'content_script_highlight_entities',
@@ -34,8 +32,10 @@ export class EntityMessengerService {
             recogniser: this.settingsService.preferences.recogniser
           }
         })
-        .then(stringifiedTabEntities => {
+        .then((result: { tabEntities: string; entityCount: number }) => {
+          const stringifiedTabEntities = result.tabEntities
           const tabEntities = parseWithTypes(stringifiedTabEntities) as TabEntities
+
           if (change.setterInfo !== 'isFilteredEntities') {
             // Use 'noPropagate' setter info so that we don't get into an infinite loop.
             this.entitiesService.setTabEntities(change.tabID, tabEntities, 'noPropagate')
@@ -48,7 +48,7 @@ export class EntityMessengerService {
             })
           }
 
-          this.openSidebar(change.tabID, tabEntities, this.settingsService.preferences.recogniser)
+          this.openSidebar(change.tabID, result.entityCount)
         })
     })
 
@@ -116,7 +116,7 @@ export class EntityMessengerService {
     })
   }
 
-  private openSidebar(tabID: number, entities: TabEntities, recogniser: Recogniser): void {
+  private openSidebar(tabID: number, entityCount: number): void {
     // if sidebar is not initialized, we must wait a short time for the sidebar to initialize before sending data to it
     const sidebarWaitTime = 250
 
@@ -124,18 +124,9 @@ export class EntityMessengerService {
       setTimeout(() => {
         this.browserService.sendMessageToTab(tabID, {
           type: 'sidebar_data_total_count',
-          body: this.getCount(entities)
+          body: entityCount
         })
       }, sidebarWaitTime)
     })
-  }
-
-  private getCount(tabEntities: TabEntities): number {
-    let count = 0
-    tabEntities[this.settingsService.preferences.recogniser]!.entities.forEach(
-      entity => (count += entity.htmlTagIDs?.length ?? 0)
-    )
-
-    return count
   }
 }
