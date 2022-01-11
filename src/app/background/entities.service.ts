@@ -37,7 +37,6 @@ export class EntitiesService {
 
   setTabEntities(tabID: TabID, entities: TabEntities, setterInfo?: SetterInfo): void {
     this.entityMap.set(tabID, entities)
-    console.log('tab entities after being updated')
     this.updateStream(tabID, entities, setterInfo)
   }
 

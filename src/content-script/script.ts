@@ -222,7 +222,7 @@ function highlightEntities(
     }
 
     Highlights.unmarkHiddenEntities(unmarker)
-    let highlightedEntities = getHighlightedEntities()
+    const highlightedEntities = getHighlightedEntities()
 
     resolve({
       tabEntities: stringifyWithTypes(tabEntities),

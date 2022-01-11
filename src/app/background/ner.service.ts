@@ -5,7 +5,6 @@ import { Recogniser } from 'src/types/recognisers'
 import { BrowserService } from '../browser.service'
 import { EntitiesService } from './entities.service'
 import { SettingsService } from './settings.service'
-import tabId = browser.devtools.inspectedWindow.tabId
 
 export type APIEntity = {
   name: string

@@ -24,7 +24,6 @@ export class EntityMessengerService {
       if (change.setterInfo === 'noPropagate') {
         return
       }
-      console.log('change entities received', change.entities)
       this.browserService
         .sendMessageToTab(change.tabID, {
           type: 'content_script_highlight_entities',
