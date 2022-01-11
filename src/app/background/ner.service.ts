@@ -176,14 +176,14 @@ export class NerService {
   private transformAPIResponse(response: APIEntities, tabID: number): RecogniserEntities {
     let recogniserEntities = this.entitiesService.getTabEntities(tabID)?.[
       this.settingsService.preferences.recogniser
-    ]!
-      ? this.entitiesService.getTabEntities(tabID)?.[this.settingsService.preferences.recogniser]!
-      : {
-          show: true,
-          entities: new Map<string, Entity>()
-        }
+    ]! ?? {
+      show: true,
+      entities: new Map<string, Entity>()
+    }
 
-    if (this.entitiesService.getTabEntities(tabID)?.[this.settingsService.preferences.recogniser]) {
+    if (
+      this.entitiesService.getTabEntities(tabID)?.[this.settingsService.preferences.recogniser]!
+    ) {
       return recogniserEntities!
     } else {
       response.forEach(recognisedEntity => {
