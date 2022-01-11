@@ -174,21 +174,10 @@ export class NerService {
   }
 
   private transformAPIResponse(response: APIEntities, tabID: number): RecogniserEntities {
-    // recogniser entities will always construct a new entity object per request, the problem with this is that we do not
-    // create a HTMLTagId as this is something that is only created in the script. Also, we only incremenent HTMLTagID
-    // if there has been no highlight done.
-
-    // The problem with this approach is that when we make a second request which then doesn't have the previous HTMLTag
-    // Id's but all the page has been marked up we lose this value and cannot regenerate it as the markup has already happened
-    // we update this value on the tabEntities where we save it on setTabEntities,which gets called in the EntityMessengerService
-    // after it receives them from the content script
-
-    // instead we say has this recogniser already been saved to the map?, if so we should use this entity instead as it will
-    // have the HTMLTagID within
     let recogniserEntities = this.entitiesService.getTabEntities(tabID)?.[
       this.settingsService.preferences.recogniser
-    ]
-      ? this.entitiesService.getTabEntities(tabID)?.[this.settingsService.preferences.recogniser]
+    ]!
+      ? this.entitiesService.getTabEntities(tabID)?.[this.settingsService.preferences.recogniser]!
       : {
           show: true,
           entities: new Map<string, Entity>()

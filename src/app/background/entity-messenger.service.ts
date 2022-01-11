@@ -8,8 +8,6 @@ import { EntitiesService } from './entities.service'
 import { SettingsService } from './settings.service'
 import { XRefService } from './x-ref.service'
 import { LinksService } from '../sidebar/links.service'
-import { Recogniser } from '../../types/recognisers'
-import tabId = browser.devtools.inspectedWindow.tabId
 
 @Injectable({
   providedIn: 'root'

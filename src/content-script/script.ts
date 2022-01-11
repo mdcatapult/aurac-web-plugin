@@ -185,17 +185,8 @@ function highlightEntities(
   recogniser: Recogniser
 ): Promise<{ tabEntities: string; entityCount: number }> {
   return new Promise((resolve, reject) => {
-    let highlightedEntities = getHighlightedEntities()
-
     tabEntities[recogniser]!.entities.forEach((entity, entityName) => {
-      const pageHighlighted = entity.htmlTagIDs && highlightedEntities.length
-
-      // If the page has previously been marked up but there is no longer highlight (page refresh) then we need to reset
-      // the number of htmlTagIds back to zero so that it can add them again.
-      if (!pageHighlighted) {
-        entity.htmlTagIDs = []
-      }
-
+      entity.htmlTagIDs = []
       entity.synonymToXPaths.forEach((xpaths, synonymName) => {
         let highlightedEntityOccurrence = 0
         const uniqueXPaths = new Set(xpaths)
@@ -231,6 +222,8 @@ function highlightEntities(
     }
 
     Highlights.unmarkHiddenEntities(unmarker)
+    let highlightedEntities = getHighlightedEntities()
+
     resolve({
       tabEntities: stringifyWithTypes(tabEntities),
       entityCount: highlightedEntities.length
@@ -358,7 +351,7 @@ Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
       const tabEntities: TabEntities = parseWithTypes(msg.body.entities)
       const recogniser: Recogniser = msg.body.recogniser
 
-      console.log('returning tab entities', highlightEntities(tabEntities, recogniser))
+      removeHighlights()
 
       return highlightEntities(tabEntities, recogniser)
 
