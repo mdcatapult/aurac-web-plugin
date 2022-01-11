@@ -197,7 +197,6 @@ describe('NerService', () => {
 
       const recogniserEntities: RecogniserEntities = {
         show: true,
-        // entities: new Map<string,Entity>([["s", {synonyms: }]])
         entities: new Map<string, Entity>([
           [
             'HGNC:8644',
