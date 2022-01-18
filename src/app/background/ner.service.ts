@@ -142,7 +142,12 @@ export class NerService {
     if (recognisedEntity.metadata) {
       // API returns metadata as a base64 encoded json blob (because grpc has problems dealing with "any").
       // Convert it and parse it to get something useful.
-      entity.metadata = JSON.parse(atob(recognisedEntity.metadata!))
+      try {
+        entity.metadata = JSON.parse(atob(recognisedEntity.metadata!))
+      } catch (err) {
+        // TODO fix problem with the encoding/decoding of metadata from the swissprot recogniser
+        console.info(`metadata could not be decoded: ${err}`)
+      }
     }
 
     if (recognisedEntity.identifiers) {
@@ -205,7 +210,21 @@ export class NerService {
                 recognisedEntity
               )
             }
+            break
+          case 'swissprot-genes-proteins':
+            const accession: string = recognisedEntity.identifiers?.Accession
 
+            if (accession) {
+              this.setOrUpdateEntity(recogniserEntities!, accession, recognisedEntity)
+            } else {
+              // If there is no resolved entity, just use the entity text (lowercased) to determine synonyms.
+              // (This means the synonyms will be identical except for their casing).
+              this.setOrUpdateEntity(
+                recogniserEntities!,
+                recognisedEntity.name.toLowerCase(),
+                recognisedEntity
+              )
+            }
             break
         }
       })
