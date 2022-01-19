@@ -29,7 +29,7 @@ describe('NerService', () => {
       recogniser: 'leadmine-proteins',
       identifiers: { resolvedEntity: 'HGNC:8544' },
       metadata:
-      "{\"entityGroup\":\"Gene or Protein\",\"recognisingDict\":{\"enforceBracketing\":false,\"entityType\":\"Gene\",\"htmlColor\":\"blue\",\"maxCorrectionDistance\":1,\"minimumCorrectedEntityLength\":4,\"minimumEntityLength\":6,\"source\":\"/srv/config/genes.cfx\"}}"
+        '{"entityGroup":"Gene or Protein","recognisingDict":{"enforceBracketing":false,"entityType":"Gene","htmlColor":"blue","maxCorrectionDistance":1,"minimumCorrectedEntityLength":4,"minimumEntityLength":6,"source":"/srv/config/genes.cfx"}}'
     }
     const entity: Entity = {
       synonymToXPaths: new Map([['Gene name', ['/html/*[1]/*[1]']]]),
