@@ -214,18 +214,7 @@ export class NerService {
             break
           case 'swissprot-genes-proteins':
             const accession: string = recognisedEntity.identifiers?.Accession
-
-            if (accession) {
-              this.setOrUpdateEntity(recogniserEntities!, accession, recognisedEntity)
-            } else {
-              // If there is no resolved entity, just use the entity text (lowercased) to determine synonyms.
-              // (This means the synonyms will be identical except for their casing).
-              this.setOrUpdateEntity(
-                recogniserEntities!,
-                recognisedEntity.name.toLowerCase(),
-                recognisedEntity
-              )
-            }
+            this.setOrUpdateEntity(recogniserEntities!, accession, recognisedEntity)
             break
         }
       })

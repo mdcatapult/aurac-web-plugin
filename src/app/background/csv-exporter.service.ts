@@ -34,10 +34,9 @@ export class CsvExporterService {
       .then(({ currentTab, tabEntities }) => {
         if (!!tabEntities) {
           const recogniser = this.settingsService.preferences.recogniser
-          const entities: Map<string, Entity> = tabEntities[recogniser]!.entities
-          const entitiesArray: Array<Entity> = Array.from(entities.values())
+          const entitiesArray = Array.from(tabEntities[recogniser]!.entities.values())
 
-          if (entities.size < 1) {
+          if (!entitiesArray.length) {
             return
           }
 
