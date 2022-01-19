@@ -140,13 +140,9 @@ export class NerService {
     }
 
     if (recognisedEntity.metadata) {
-      // API returns metadata as a base64 encoded json blob (because grpc has problems dealing with "any").
-      // Convert it and parse it to get something useful.
       try {
         entity.metadata = JSON.parse(recognisedEntity.metadata!)
       } catch (err) {
-        // TODO fix problem with the encoding/decoding of metadata from the swissprot recogniser;
-        //  how will / can we use this metadata?
         console.info(`metadata for ${recognisedEntity.name} could not be decoded: ${err}`)
       }
     }
