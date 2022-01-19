@@ -64,7 +64,7 @@ describe('CsvExporterService', () => {
       identifierSourceToID: new Map([['Accession', 'Q77Q38']])
     }
     const entities: Array<Entity> = [entity]
-    const actual = service.entitiesToCSV(entities, 'leadmine-proteins')
+    const actual = service.entitiesToCSV(entities, 'swissprot-genes-proteins')
 
     const entityInfo = `"K12",Q77Q38`
     const expected = headerText + '\n' + entityInfo + '\n'
