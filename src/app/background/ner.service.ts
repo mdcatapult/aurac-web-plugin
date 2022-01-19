@@ -200,21 +200,21 @@ export class NerService {
             // to determine whether two entities are synonyms of each other.
             const resolvedEntity: string = recognisedEntity.identifiers?.resolvedEntity
 
-            if (resolvedEntity) {
-              this.setOrUpdateEntity(recogniserEntities!, resolvedEntity, recognisedEntity)
-            } else {
-              // If there is no resolved entity, just use the entity text (lowercased) to determine synonyms.
-              // (This means the synonyms will be identical except for their casing).
-              this.setOrUpdateEntity(
-                recogniserEntities!,
-                recognisedEntity.name.toLowerCase(),
-                recognisedEntity
-              )
-            }
+            // If there is no resolved entity, just use the entity text (lowercased) to determine synonyms.
+            // (This means the synonyms will be identical except for their casing).
+            this.setOrUpdateEntity(
+              recogniserEntities!,
+              resolvedEntity || recognisedEntity.name.toLowerCase(),
+              recognisedEntity
+            )
+
             break
           case 'swissprot-genes-proteins':
+            // For the swissprot recogniser we will use the Accession, which is present for every entity.
+            // This is different to Leadmine where an entity may not have a resolved entity.
             const accession: string = recognisedEntity.identifiers?.Accession
             this.setOrUpdateEntity(recogniserEntities!, accession, recognisedEntity)
+
             break
         }
       })
