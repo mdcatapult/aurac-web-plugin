@@ -145,8 +145,9 @@ export class NerService {
       try {
         entity.metadata = JSON.parse(atob(recognisedEntity.metadata!))
       } catch (err) {
-        // TODO fix problem with the encoding/decoding of metadata from the swissprot recogniser
-        console.info(`metadata could not be decoded: ${err}`)
+        // TODO fix problem with the encoding/decoding of metadata from the swissprot recogniser;
+        //  how will / can we use this metadata?
+        console.info(`metadata for ${recognisedEntity.name} could not be decoded: ${err}`)
       }
     }
 

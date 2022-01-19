@@ -31,7 +31,7 @@ describe('CsvExporterService', () => {
     expect(service).toBeTruthy()
   })
 
-  it('should return a string containing column headers and relevant entity data', () => {
+  it('should return a string containing column headers and relevant entity data for Leadmine recogniser', () => {
     const entity: Entity = {
       metadata: {
         entityGroup: 'Gene or Protein',
@@ -49,7 +49,7 @@ describe('CsvExporterService', () => {
       identifierSourceToID: new Map([['resolvedEntity', 'HGNC:6414']])
     }
     const entities: Array<Entity> = [entity]
-    const actual = service.leadmineToCSV(entities)
+    const actual = service.entitiesToCSV(entities, 'leadmine-proteins')
 
     const entityInfo = `"K12",HGNC:6414`
     const expected = headerText + '\n' + entityInfo + '\n'
@@ -57,7 +57,22 @@ describe('CsvExporterService', () => {
     expect(actual).toEqual(expected)
   })
 
+  it('should return a string containing column headers and relevant entity data for swissprot recogniser', () => {
+    const entity: Entity = {
+      metadata: {},
+      synonymToXPaths: new Map([['K12', ['']]]),
+      identifierSourceToID: new Map([['Accession', 'Q77Q38']])
+    }
+    const entities: Array<Entity> = [entity]
+    const actual = service.entitiesToCSV(entities, 'leadmine-proteins')
+
+    const entityInfo = `"K12",Q77Q38`
+    const expected = headerText + '\n' + entityInfo + '\n'
+
+    expect(actual).toEqual(expected)
+  })
+
   it('should return an empty string if passed an empty array', () => {
-    expect(service.leadmineToCSV([])).toEqual('')
+    expect(service.entitiesToCSV([], 'leadmine-proteins')).toEqual('')
   })
 })
