@@ -4,30 +4,55 @@
       (change)="compressedOrFloatingSidebar($event)"
       matTooltip="Toggle whether the sidebar sits over or next to the current webpage"
       matTooltipPosition="above"
-      >Float sidebar</mat-slide-toggle
     >
+      Float sidebar
+    </mat-slide-toggle>
   </div>
+
   <img [src]="imgSrc | safeResource" />
-  <nav>
-    <div class="aurac-sidebar-header-button-container">
-      <button
-        class="aurac-sidebar-header-button"
-        mat-raised-button
-        (click)="exportCSV()"
-        matTooltip="Save the results for the cards currently in the sidebar to a CSV file"
-        matTooltipPosition="above"
-      >
-        Download
-      </button>
-      <button
-        class="aurac-sidebar-header-button"
-        mat-raised-button
-        (click)="clearCards()"
-        matTooltip="Remove all cards from the sidebar"
-        matTooltipPosition="above"
-      >
-        Clear
-      </button>
-    </div>
-  </nav>
+
+  <mat-toolbar class="aurac-toolbar">
+    <span>Aurac</span>
+
+    <mat-icon
+      *ngIf="totalHighlights !== undefined"
+      class="aurac-count"
+      matBadge="{{ totalHighlights }}"
+      matTooltip="{{ totalHighlights }} {{
+        totalHighlights === 1 ? 'entity' : 'entities'
+      }} highlighted on the current page"
+      matTooltipPosition="above"
+    >
+      assignment_turned_in
+    </mat-icon>
+
+    <mat-icon
+      *ngIf="error && error !== ''"
+      class="aurac-error"
+      matTooltip="Couldn't get occurrence count: {{ error }}"
+      matTooltipPosition="above"
+    >
+      error
+    </mat-icon>
+
+    <span class="aurac-spacer"></span>
+
+    <button
+      mat-icon-button
+      (click)="exportCSV()"
+      matTooltip="Download the results for the cards currently in the sidebar to a CSV file"
+      matTooltipPosition="above"
+    >
+      <mat-icon class="aurac-download-icon">publish</mat-icon>
+    </button>
+
+    <button
+      mat-icon-button
+      (click)="clearCards()"
+      matTooltip="Remove all cards from the sidebar"
+      matTooltipPosition="above"
+    >
+      <mat-icon class="aurac-delete-icon">delete</mat-icon>
+    </button>
+  </mat-toolbar>
 </header>

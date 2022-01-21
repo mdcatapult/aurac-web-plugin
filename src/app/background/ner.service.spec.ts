@@ -29,7 +29,7 @@ describe('NerService', () => {
       recogniser: 'leadmine-proteins',
       identifiers: { resolvedEntity: 'HGNC:8544' },
       metadata:
-        'eyJlbnRpdHlHcm91cCI6IkdlbmUgb3IgUHJvdGVpbiIsInJlY29nbmlzaW5nRGljdCI6eyJlbmZvcmNlQnJhY2tldGluZyI6ZmFsc2UsImVudGl0eVR5cGUiOiJHZW5lIiwiaHRtbENvbG9yIjoiYmx1ZSIsIm1heENvcnJlY3Rpb25EaXN0YW5jZSI6MSwibWluaW11bUNvcnJlY3RlZEVudGl0eUxlbmd0aCI6NCwibWluaW11bUVudGl0eUxlbmd0aCI6Niwic291cmNlIjoiL3Nydi9jb25maWcvZ2VuZXMuY2Z4In19Cg=='
+        '{"entityGroup":"Gene or Protein","recognisingDict":{"enforceBracketing":false,"entityType":"Gene","htmlColor":"blue","maxCorrectionDistance":1,"minimumCorrectedEntityLength":4,"minimumEntityLength":6,"source":"/srv/config/genes.cfx"}}'
     }
     const entity: Entity = {
       synonymToXPaths: new Map([['Gene name', ['/html/*[1]/*[1]']]]),
@@ -197,7 +197,6 @@ describe('NerService', () => {
 
       const recogniserEntities: RecogniserEntities = {
         show: true,
-        // entities: new Map<string,Entity>([["s", {synonyms: }]])
         entities: new Map<string, Entity>([
           [
             'HGNC:8644',
@@ -236,7 +235,7 @@ describe('NerService', () => {
         ])
       }
 
-      expect(service['transformAPIResponse'](recognisedEntities)).toEqual(recogniserEntities)
+      expect(service['transformAPIResponse'](recognisedEntities, 0)).toEqual(recogniserEntities)
     })
   })
 

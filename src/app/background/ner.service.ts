@@ -49,12 +49,14 @@ export class NerService {
           error => this.handleAPIError(tab.id!, error)
         )
         .then(response => {
-          const recogniserEntities = this.transformAPIResponse(response as APIEntities)
+          const recogniserEntities = this.transformAPIResponse(response as APIEntities, tab.id!)
           this.entitiesService.setRecogniserEntities(
             tab.id!,
             this.settingsService.preferences.recogniser,
             recogniserEntities
           )
+
+          browser.runtime.sendMessage('popup_api_success')
         })
     })
   }
@@ -85,18 +87,29 @@ export class NerService {
       .toPromise()
       .then(response => {
         if (response?.status !== 200) {
-          throw new Error('api request failed')
+          const apiRequestFailedError = new Error('api request failed')
+          this.browserService
+            .getActiveTab()
+            .then(tabID => this.handleAPIError(tabID.id!, apiRequestFailedError))
+          throw apiRequestFailedError
         }
-
         if (!response?.body) {
-          throw new Error('api response has no contents')
+          const noContentError = new Error('api response has no contents')
+          this.browserService
+            .getActiveTab()
+            .then(tabID => this.handleAPIError(tabID.id!, noContentError))
+          throw noContentError
         }
 
         return response.body!
       })
+      .catch(error => {
+        this.browserService.getActiveTab().then(tabID => this.handleAPIError(tabID.id!, error))
+      })
   }
 
   private handleAPIError(tabId: number, error: Error) {
+    browser.runtime.sendMessage('popup_api_error')
     this.closeLoadingIcon(tabId)
     throw error
   }
@@ -127,9 +140,11 @@ export class NerService {
     }
 
     if (recognisedEntity.metadata) {
-      // API returns metadata as a base64 encoded json blob (because grpc has problems dealing with "any").
-      // Convert it and parse it to get something useful.
-      entity.metadata = JSON.parse(atob(recognisedEntity.metadata!))
+      try {
+        entity.metadata = JSON.parse(recognisedEntity.metadata!)
+      } catch (err) {
+        console.info(`metadata for ${recognisedEntity.name} could not be decoded: ${err}`)
+      }
     }
 
     if (recognisedEntity.identifiers) {
@@ -159,37 +174,48 @@ export class NerService {
     }
   }
 
-  private transformAPIResponse(response: APIEntities): RecogniserEntities {
-    let recogniserEntities: RecogniserEntities = {
+  private transformAPIResponse(response: APIEntities, tabID: number): RecogniserEntities {
+    let recogniserEntities = this.entitiesService.getTabEntities(tabID)?.[
+      this.settingsService.preferences.recogniser
+    ]! ?? {
       show: true,
       entities: new Map<string, Entity>()
     }
 
-    response.forEach(recognisedEntity => {
-      switch (recognisedEntity.recogniser) {
-        case 'leadmine-chemical-entities':
-        case 'leadmine-disease':
-        case 'leadmine-proteins':
-          // For all leadmine dictionaries, we will use the resolved entity
-          // to determine whether two entities are synonyms of each other.
-          const resolvedEntity: string = recognisedEntity.identifiers?.resolvedEntity
+    if (
+      this.entitiesService.getTabEntities(tabID)?.[this.settingsService.preferences.recogniser]!
+    ) {
+      return recogniserEntities!
+    } else {
+      response.forEach(recognisedEntity => {
+        switch (recognisedEntity.recogniser) {
+          case 'leadmine-chemical-entities':
+          case 'leadmine-disease':
+          case 'leadmine-proteins':
+            // For all leadmine dictionaries, we will use the resolved entity
+            // to determine whether two entities are synonyms of each other.
+            const resolvedEntity: string = recognisedEntity.identifiers?.resolvedEntity
 
-          if (resolvedEntity) {
-            this.setOrUpdateEntity(recogniserEntities, resolvedEntity, recognisedEntity)
-          } else {
             // If there is no resolved entity, just use the entity text (lowercased) to determine synonyms.
             // (This means the synonyms will be identical except for their casing).
             this.setOrUpdateEntity(
-              recogniserEntities,
-              recognisedEntity.name.toLowerCase(),
+              recogniserEntities!,
+              resolvedEntity || recognisedEntity.name.toLowerCase(),
               recognisedEntity
             )
-          }
 
-          break
-      }
-    })
+            break
+          case 'swissprot-genes-proteins':
+            // For the swissprot recogniser we will use the Accession, which is present for every entity.
+            // This is different to Leadmine where an entity may not have a resolved entity.
+            const accession: string = recognisedEntity.identifiers?.Accession
+            this.setOrUpdateEntity(recogniserEntities!, accession, recognisedEntity)
 
-    return recogniserEntities
+            break
+        }
+      })
+    }
+
+    return recogniserEntities!
   }
 }

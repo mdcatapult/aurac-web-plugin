@@ -91,22 +91,21 @@ function showLoadingIcon(on: boolean): void {
   loadingIcon!.style.display = on ? 'block' : 'none'
 }
 
-async function injectSidebar() {
+function injectSidebar() {
   Globals.document.body.appendChild(sidebar)
-  await new Promise(r => setTimeout(r, 100))
 }
 
-async function toggleSidebar() {
+function toggleSidebar() {
   if (!!Globals.document.getElementsByClassName('aurac-sidebar--expanded').length) {
     closeSidebar()
   } else {
-    await openSidebar()
+    openSidebar()
   }
 }
 
-async function openSidebar() {
+function openSidebar() {
   if (!Globals.document.getElementById('aurac-sidebar')) {
-    await injectSidebar()
+    injectSidebar()
   }
 
   Array.from(Globals.document.getElementsByClassName('aurac-transform')).forEach(e => {
@@ -175,11 +174,19 @@ function closeModal() {
   modalCanOpen = true
 }
 
-function highlightEntities(tabEntities: TabEntities, recogniser: Recogniser): Promise<string> {
+function getHighlightedEntities(): Element[] {
+  return Array.from(Globals.document.getElementsByClassName('aurac-highlight')).filter(element => {
+    return element.id
+  })
+}
+
+function highlightEntities(
+  tabEntities: TabEntities,
+  recogniser: Recogniser
+): Promise<{ tabEntities: string; entityCount: number }> {
   return new Promise((resolve, reject) => {
     tabEntities[recogniser]!.entities.forEach((entity, entityName) => {
       entity.htmlTagIDs = []
-
       entity.synonymToXPaths.forEach((xpaths, synonymName) => {
         let highlightedEntityOccurrence = 0
         const uniqueXPaths = new Set(xpaths)
@@ -213,8 +220,14 @@ function highlightEntities(tabEntities: TabEntities, recogniser: Recogniser): Pr
       let unhighlighter = new Mark(element as HTMLElement)
       unhighlighter.unmark(element)
     }
+
     Highlights.unmarkHiddenEntities(unmarker)
-    resolve(stringifyWithTypes(tabEntities))
+    const highlightedEntities = getHighlightedEntities()
+
+    resolve({
+      tabEntities: stringifyWithTypes(tabEntities),
+      entityCount: highlightedEntities.length
+    })
   })
 }
 
@@ -311,10 +324,10 @@ function generateChemblId(xRefs: Array<XRef>): string {
 Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
   switch (msg.type) {
     case 'content_script_toggle_sidebar':
-      return toggleSidebar()
+      return Promise.resolve(toggleSidebar())
 
     case 'content_script_open_sidebar':
-      return openSidebar()
+      return Promise.resolve(openSidebar())
 
     case 'content_script_close_sidebar':
       return Promise.resolve(closeSidebar())
@@ -337,6 +350,8 @@ Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
     case 'content_script_highlight_entities':
       const tabEntities: TabEntities = parseWithTypes(msg.body.entities)
       const recogniser: Recogniser = msg.body.recogniser
+
+      removeHighlights()
 
       return highlightEntities(tabEntities, recogniser)
 

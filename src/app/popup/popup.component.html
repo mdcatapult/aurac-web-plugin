@@ -7,13 +7,21 @@
     <button
       mat-raised-button
       (click)="nerCurrentPage()"
-      matTooltip="Ask Aurac to highlight interesting things in the page"
+      [matTooltip]="getHighlightTooltipText()"
       matTooltipPosition="above"
       aria-label="Button that highlights things of interest in the current page"
       class="ner-button"
     >
       <mat-icon inline="true">manage_search</mat-icon>
       Highlight
+      <span
+        matBadge="!"
+        [matBadgeHidden]="!nerError"
+        matBadgeColor="warn"
+        matBadgeSize="small"
+        matBadgeOverlap="false"
+      >
+      </span>
     </button>
 
     <button

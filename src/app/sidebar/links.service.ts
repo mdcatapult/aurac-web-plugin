@@ -70,6 +70,21 @@ export class LinksService {
         entityLinks.map(link => (link.url = link.createUrl(card.clickedSynonymName)))
 
         break
+      case 'swissprot-genes-proteins':
+        entityLinks = [
+          links.ncbi,
+          links.geneNames,
+          links.genecards,
+          links.ensembl,
+          links.antibodies,
+          links.pubmed,
+          links.dimensions,
+          links.addGene,
+          links.patents,
+          links.geneProteinChemicalClinicalTrial
+        ]
+        entityLinks.map(link => (link.url = link.createUrl(card.clickedSynonymName)))
+        break
     }
 
     return entityLinks

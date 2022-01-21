@@ -26,6 +26,9 @@ export class SidebarDataService {
   private focusedCardSubject: Subject<SidebarCard> = new Subject()
   readonly focusedCardObservable: Observable<SidebarCard> = this.focusedCardSubject.asObservable()
 
+  private totalCountInfoSubject: Subject<number> = new Subject()
+  readonly totalCountInfoObservable: Observable<number> = this.totalCountInfoSubject.asObservable()
+
   constructor(private browserService: BrowserService, private zone: NgZone) {
     this.browserService.addListener((msg: any) => {
       this.zone.run(() => {
@@ -33,8 +36,13 @@ export class SidebarDataService {
           case 'sidebar_data_service_view_or_create_card':
             const sidebarCard = parseWithTypes(msg.body) as SidebarCard
             this.viewOrCreateCard(sidebarCard)
+            break
           case 'sidebar_data_update_cards':
             this.updateCards(parseWithTypes(msg.body) as TabEntities)
+            break
+          case 'sidebar_data_total_count':
+            this.totalCountInfoSubject.next(msg.body)
+            break
         }
       })
     })

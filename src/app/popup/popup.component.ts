@@ -1,4 +1,4 @@
-import { Component } from '@angular/core'
+import { Component, NgZone } from '@angular/core'
 import { BrowserService } from '../browser.service'
 
 @Component({
@@ -9,7 +9,23 @@ import { BrowserService } from '../browser.service'
 export class PopupComponent {
   mode: 'menu' | 'settings' | 'pdf' = 'menu'
 
-  constructor(private browserService: BrowserService) {}
+  nerError = false
+  sourcesError = false
+
+  constructor(private browserService: BrowserService, private zone: NgZone) {
+    this.browserService.addListener(msg => {
+      this.zone.run(() => {
+        switch (msg) {
+          case 'popup_api_error':
+            this.nerError = true
+            break
+          case 'popup_api_success':
+            this.nerError = false
+            break
+        }
+      })
+    })
+  }
 
   nerCurrentPage(): void {
     this.browserService
@@ -27,5 +43,15 @@ export class PopupComponent {
     this.browserService
       .sendMessageToBackground('csv_exporter_service_export_csv')
       .catch(console.error)
+  }
+
+  getHighlightTooltipText(): string {
+    if (this.nerError) {
+      return `An error has occurred: please ensure you are connected to the VPN,
+      reload the page and re-click highlight.  If the problem persists please
+      contact Software Engineering`
+    } else {
+      return 'Ask Aurac to highlight interesting things on the page'
+    }
   }
 }
