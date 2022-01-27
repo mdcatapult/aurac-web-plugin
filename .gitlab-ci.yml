@@ -5,46 +5,46 @@
 # Note that environment variables can be set in several places
 # See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
 stages:
-- test-lint-build
-- release
-- test
+  - test-lint-build
+  - release
+  - test
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
 test-lint-build:
   stage: test-lint-build
   image: registry.mdcatapult.io/informatics/docker-images/ci/node
   tags:
-  - wopr
+    - wopr
   artifacts:
     paths:
-    - dist/*
+      - dist/*
   before_script:
-  - apt-get -yqq update && apt-get upgrade -yqq chromium libxss1 xvfb
-  - export CHROME_BIN=/usr/bin/chromium
-  - npm install
+    - apt-get -yqq update && apt-get upgrade -yqq chromium libxss1 xvfb
+    - export CHROME_BIN=/usr/bin/chromium
+    - npm install
   script:
-  - npm run test:ci
-  - npm run lint
-  - npm run build
-  - npm run mocha
-  - npm run package
+    - npm run test:ci
+    - npm run lint
+    - npm run build
+    - npm run mocha
+    - npm run package
   coverage: "/Lines\\s+:\\s(\\d+\\.?\\d*)%\\s\\(\\s\\d+\\/\\d+\\s\\)/"
   except:
     variables:
-    - "$CI_COMMIT_MESSAGE =~ /^Setting version to.*/"
+      - '$CI_COMMIT_MESSAGE =~ /^Setting version to.*/'
 release:
   stage: release
   image: registry.mdcatapult.io/informatics/docker-images/ci/node
   tags:
-  - wopr
+    - wopr
   script:
-  - "/scripts/release.sh -b -r develop -u 'dist/browser-plugin/web-ext-artifacts/aurac-*.zip'"
+    - "/scripts/release.sh -b -r develop -u 'dist/browser-plugin/web-ext-artifacts/aurac-*.zip'"
   only:
-  - master
+    - master
   except:
     variables:
-    - "$CI_COMMIT_MESSAGE =~ /^Setting version to.*/"
+      - '$CI_COMMIT_MESSAGE =~ /^Setting version to.*/'
 sast:
   stage: test
 include:
-- template: Security/SAST.gitlab-ci.yml
+  - template: Security/SAST.gitlab-ci.yml
