@@ -29,16 +29,16 @@ export class PDFSelectorComponent {
       this.http
         .post(`${pdfURL}`, null, { params: { url: `${this.link.value}` }, responseType: 'text' })
         .subscribe(
-          converterResponse => {
+          () => {
             this.loadingHTML = false
-            browser.tabs.create({ url: `${pdfURL}?url=${this.link.value}`, active: true })
             this.browser
-              .sendMessageToActiveTab({ type: 'awaiting_response', body: false })
-              .catch(error => console.error("couldn't send message 'awaiting_response'", error))
+              .sendMessageToActiveTab({ type: 'content_script_awaiting_response', body: false }).then(() => {
+                browser.tabs.create({ url: `${pdfURL}?url=${this.link.value}`, active: true })
+            }).catch(error => console.error("couldn't send message 'awaiting_response'", error))
           },
           err => {
             this.browser
-              .sendMessageToActiveTab({ type: 'awaiting_response', body: false })
+              .sendMessageToActiveTab({ type: 'content_script_awaiting_response', body: false })
               .catch(error => console.error("couldn't send message 'awaiting_response'", error))
             this.loadingHTML = false
             this.pdfError = err.error.error
@@ -46,7 +46,7 @@ export class PDFSelectorComponent {
         )
     })
     this.browser
-      .sendMessageToActiveTab({ type: 'awaiting_response', body: true })
+      .sendMessageToActiveTab({ type: 'content_script_awaiting_response', body: true })
       .catch(error => console.error("couldn't send message 'awaiting_response'", error))
   }
 

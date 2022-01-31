@@ -1,5 +1,5 @@
 export type MessageType =
-  | 'awaiting_response'
+  | 'content_script_awaiting_response'
   | 'compound_x-refs'
   | 'content_script_await_sidebar_readiness'
   | 'content_script_close_loading_icon'
