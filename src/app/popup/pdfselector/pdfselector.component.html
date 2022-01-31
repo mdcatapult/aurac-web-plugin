@@ -9,7 +9,7 @@
   <input type="text" matInput [formControl]="link" placeholder="Enter link to PDF" />
 </mat-form-field>
 
-<div *ngIf="loadingHTML">HTML loading..</div>
+<div *ngIf="loadingHTML">HTML loading, do not close this window</div>
 <div *ngIf="pdfError" class="error">
   {{ pdfError }}
 </div>

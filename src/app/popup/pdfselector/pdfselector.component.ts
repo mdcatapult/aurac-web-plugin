@@ -31,23 +31,23 @@ export class PDFSelectorComponent {
         .subscribe(
           () => {
             this.browser
-              .sendMessageToActiveTab({ type: 'content_script_awaiting_response', body: false }).then(() => {
+              .sendMessageToActiveTab({ type: 'content_script_close_loading_icon', body: false }).then(() => {
                 this.loadingHTML = false
                 browser.tabs.create({ url: `${pdfURL}?url=${this.link.value}`, active: true })
-            }).catch(error => console.error("couldn't send message 'awaiting_response'", error))
+            }).catch(error => console.error("could not send message 'content_script_close_loading_icon'", error))
           },
           err => {
             this.browser
-              .sendMessageToActiveTab({ type: 'content_script_awaiting_response', body: false })
-              .catch(error => console.error("couldn't send message 'awaiting_response'", error))
+              .sendMessageToActiveTab({ type: 'content_script_close_loading_icon', body: false })
+              .catch(error => console.error("could not send message 'content_script_close_loading_icon'", error))
             this.loadingHTML = false
             this.pdfError = err.error.error
           }
         )
     })
     this.browser
-      .sendMessageToActiveTab({ type: 'content_script_awaiting_response', body: true })
-      .catch(error => console.error("couldn't send message 'awaiting_response'", error))
+      .sendMessageToActiveTab({ type: 'content_script_open_loading_icon', body: true })
+      .catch(error => console.error("could not send message 'content_script_open_loading_icon'", error))
   }
 
   private linkValidator(control: AbstractControl): ValidationErrors | null {

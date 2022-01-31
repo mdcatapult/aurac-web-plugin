@@ -368,9 +368,5 @@ Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
 
     case 'content_script_is_page_compressed':
       return Promise.resolve(toggleCompression(msg.body as boolean))
-
-    case 'content_script_awaiting_response':
-      showLoadingIcon(msg.body as boolean)
-
   }
 })
