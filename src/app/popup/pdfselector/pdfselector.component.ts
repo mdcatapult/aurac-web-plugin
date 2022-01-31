@@ -27,12 +27,12 @@ export class PDFSelectorComponent {
       this.pdfError = ''
       const pdfURL = settings.urls.pdfConverterURL || defaultSettings.urls.pdfConverterURL
       this.http
-        .post(`${pdfURL}`, null, { params: { url: `${this.link.value}` }, responseType: 'text' })
+        .post(pdfURL, null, { params: { url: `${this.link.value}` }, responseType: 'text' })
         .subscribe(
           () => {
-            this.loadingHTML = false
             this.browser
               .sendMessageToActiveTab({ type: 'content_script_awaiting_response', body: false }).then(() => {
+                this.loadingHTML = false
                 browser.tabs.create({ url: `${pdfURL}?url=${this.link.value}`, active: true })
             }).catch(error => console.error("couldn't send message 'awaiting_response'", error))
           },
