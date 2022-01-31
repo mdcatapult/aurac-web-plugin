@@ -146,7 +146,7 @@ body.aurac-modal-open {
 .aurac-highlight {
   background: plum;
   color: black;
-  cursor: pointer;
+  cursor: pointer !important;
 }
 
 .aurac-highlight:focus {
