@@ -26,22 +26,24 @@ export class PDFSelectorComponent {
       this.loadingHTML = true
       this.pdfError = ''
       const pdfURL = settings.urls.pdfConverterURL || defaultSettings.urls.pdfConverterURL
-      this.http.post<{ id: string }>(pdfURL, null, { params: { url: this.link.value } }).subscribe(
-        (converterResponse: { id: string }) => {
-          this.browser
-            .sendMessageToActiveTab({ type: 'awaiting_response', body: false })
-            .catch(error => console.error("couldn't send message 'awaiting_response'", error))
-          this.loadingHTML = false
-          browser.tabs.create({ url: `${pdfURL}/${converterResponse.id}`, active: true })
-        },
-        err => {
-          this.browser
-            .sendMessageToActiveTab({ type: 'awaiting_response', body: false })
-            .catch(error => console.error("couldn't send message 'awaiting_response'", error))
-          this.loadingHTML = false
-          this.pdfError = err.error.error
-        }
-      )
+      this.http
+        .post(`${pdfURL}`, null, { params: { url: `${this.link.value}` }, responseType: 'text' })
+        .subscribe(
+          converterResponse => {
+            this.loadingHTML = false
+            browser.tabs.create({ url: `${pdfURL}?url=${this.link.value}`, active: true })
+            this.browser
+              .sendMessageToActiveTab({ type: 'awaiting_response', body: false })
+              .catch(error => console.error("couldn't send message 'awaiting_response'", error))
+          },
+          err => {
+            this.browser
+              .sendMessageToActiveTab({ type: 'awaiting_response', body: false })
+              .catch(error => console.error("couldn't send message 'awaiting_response'", error))
+            this.loadingHTML = false
+            this.pdfError = err.error.error
+          }
+        )
     })
     this.browser
       .sendMessageToActiveTab({ type: 'awaiting_response', body: true })
