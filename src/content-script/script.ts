@@ -224,7 +224,8 @@ function highlightEntities(
     Highlights.unmarkHiddenEntities(unmarker)
     const highlightedEntities = getHighlightedEntities() as Array<HTMLElement>
 
-    if (window.location.href.startsWith('http://localhost:8000/', 0)) {
+    if (window.location.href.endsWith('.pdf')) {
+      // Give PDF highlights a brighter background colour as opacity is lower on pdf-js
       highlightedEntities.forEach(entity => {
         entity.style.background = '#ff00ff'
       })
@@ -255,6 +256,7 @@ export function highlightText(
 ): number {
   let highlighter = new Mark(contextNode as HTMLElement)
 
+  highlightClass
   // This regex will only highlight terms that either begin and end with its first and last letter or contain non word characters
   let termToHighlight = Highlights.highlightFormat(synonymName)
 
