@@ -224,7 +224,7 @@ function highlightEntities(
     Highlights.unmarkHiddenEntities(unmarker)
     const highlightedEntities = getHighlightedEntities() as Array<HTMLElement>
 
-    if (window.location.href.startsWith('http://localhost:8000/',0)) {
+    if (window.location.href.startsWith('http://localhost:8000/', 0)) {
       highlightedEntities.forEach(entity => {
         entity.style.background = '#ff00ff'
       })

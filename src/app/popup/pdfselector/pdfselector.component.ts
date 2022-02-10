@@ -26,28 +26,35 @@ export class PDFSelectorComponent {
       this.loadingHTML = true
       this.pdfError = ''
       const pdfURL = settings.urls.pdfConverterURL || defaultSettings.urls.pdfConverterURL
-      this.http
-        .post(pdfURL, null, { params: { url: `${this.link.value}` }, responseType: 'text' })
-        .subscribe(
-          () => {
-            this.browser
-              .sendMessageToActiveTab({ type: 'content_script_close_loading_icon', body: false }).then(() => {
-                this.loadingHTML = false
-                browser.tabs.create({ url: `${pdfURL}?url=${this.link.value}`, active: true })
-            }).catch(error => console.error("could not send message 'content_script_close_loading_icon'", error))
-          },
-          err => {
-            this.browser
-              .sendMessageToActiveTab({ type: 'content_script_close_loading_icon', body: false })
-              .catch(error => console.error("could not send message 'content_script_close_loading_icon'", error))
-            this.loadingHTML = false
-            this.pdfError = err.error.error
-          }
-        )
+
+      this.http.get(pdfURL, { params: { url: this.link.value }, responseType: 'text' }).subscribe(
+        () => {
+          this.browser
+            .sendMessageToActiveTab({ type: 'content_script_close_loading_icon', body: false })
+            .then(() => {
+              this.loadingHTML = false
+              browser.tabs.create({ url: `${pdfURL}/?url=${this.link.value}` })
+            })
+            .catch(error =>
+              console.error("could not send message 'content_script_close_loading_icon'", error)
+            )
+        },
+        err => {
+          this.browser
+            .sendMessageToActiveTab({ type: 'content_script_close_loading_icon', body: false })
+            .catch(error =>
+              console.error("could not send message 'content_script_close_loading_icon'", error)
+            )
+          this.loadingHTML = false
+          this.pdfError = err.error.error
+        }
+      )
     })
     this.browser
       .sendMessageToActiveTab({ type: 'content_script_open_loading_icon', body: true })
-      .catch(error => console.error("could not send message 'content_script_open_loading_icon'", error))
+      .catch(error =>
+        console.error("could not send message 'content_script_open_loading_icon'", error)
+      )
   }
 
   private linkValidator(control: AbstractControl): ValidationErrors | null {
