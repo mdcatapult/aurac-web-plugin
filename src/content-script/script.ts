@@ -256,7 +256,6 @@ export function highlightText(
 ): number {
   let highlighter = new Mark(contextNode as HTMLElement)
 
-  highlightClass
   // This regex will only highlight terms that either begin and end with its first and last letter or contain non word characters
   let termToHighlight = Highlights.highlightFormat(synonymName)
 
