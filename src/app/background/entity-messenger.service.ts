@@ -14,6 +14,8 @@ import { HttpClient } from '@angular/common/http'
   providedIn: 'root'
 })
 export class EntityMessengerService {
+  currentTabID: any
+
   constructor(
     private browserService: BrowserService,
     private entitiesService: EntitiesService,
@@ -67,17 +69,27 @@ export class EntityMessengerService {
 
               return Promise.resolve()
             })
+          break
         case 'entity_messenger_service_convert_pdf':
+          console.log('received response from popup', msg.body)
+          this.currentTabID = msg.body.id
+
           this.http
             .get(msg.body.pdfURL, { params: { url: msg.body.param }, responseType: 'text' })
             .subscribe(() => {
               browser.tabs
                 .create({ url: `${msg.body.pdfURL}/?url=${msg.body.param}` })
-
+                .then(() => {
+                  this.browserService.sendMessageToTab(
+                    this.currentTabID,
+                    'content_script_close_loading_icon'
+                  )
+                })
                 .catch(error =>
                   console.error("could not send message 'content_script_close_loading_icon'", error)
                 )
             })
+          break
         default:
       }
     })

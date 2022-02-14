@@ -4,6 +4,7 @@ import { AbstractControl, FormControl, ValidationErrors } from '@angular/forms'
 import { defaultSettings } from 'src/types/settings'
 import { BrowserService } from '../../browser.service'
 import { UrlValidator } from '../settings/urls/url-validator'
+import Tab = browser.tabs.Tab
 
 @Component({
   selector: 'app-pdfselector',
@@ -15,6 +16,7 @@ export class PDFSelectorComponent {
   link = new FormControl('', this.linkValidator)
   loadingHTML = false
   pdfError = ''
+  currentTabID = 0
 
   constructor(private http: HttpClient, private browser: BrowserService) {}
 
@@ -27,14 +29,15 @@ export class PDFSelectorComponent {
       this.pdfError = ''
       const pdfURL = settings.urls.pdfConverterURL || defaultSettings.urls.pdfConverterURL
 
-      this.browser
-        .sendMessageToBackground({
-          type: 'entity_messenger_service_convert_pdf',
-          body: { pdfURL: pdfURL, param: this.link.value }
-        })
-        .then(
-          () => {},
-          err => {
+      this.browser.getActiveTab().then(response => {
+        this.currentTabID = response.id!
+
+        this.browser
+          .sendMessageToBackground({
+            type: 'entity_messenger_service_convert_pdf',
+            body: { pdfURL: pdfURL, param: this.link.value, id: this.currentTabID }
+          })
+          .catch(err => {
             this.browser
               .sendMessageToActiveTab({ type: 'content_script_close_loading_icon', body: false })
               .catch(error =>
@@ -42,14 +45,14 @@ export class PDFSelectorComponent {
               )
             this.loadingHTML = false
             this.pdfError = err.error.error
-          }
+          })
+      })
+      this.browser
+        .sendMessageToActiveTab({ type: 'content_script_open_loading_icon', body: true })
+        .catch(error =>
+          console.error("could not send message 'content_script_open_loading_icon'", error)
         )
     })
-    this.browser
-      .sendMessageToActiveTab({ type: 'content_script_open_loading_icon', body: true })
-      .catch(error =>
-        console.error("could not send message 'content_script_open_loading_icon'", error)
-      )
   }
 
   private linkValidator(control: AbstractControl): ValidationErrors | null {

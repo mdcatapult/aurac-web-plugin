@@ -46,5 +46,5 @@ export type MessageType =
 export interface Message {
   type: MessageType
   body?: any
-  pdf_url?: { url: any; param: any }
+  pdf_url?: { url: any; param: any; id: any }
 }
