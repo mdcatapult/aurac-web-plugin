@@ -40,9 +40,11 @@ export type MessageType =
   | 'sidebar_data_service_view_or_create_card'
   | 'sidebar_rendered'
   | 'x-ref_result'
+  | 'entity_messenger_service_convert_pdf'
 
 // The receiver of the message must check the body to ensure it is the correct type based on the message type.
 export interface Message {
   type: MessageType
   body?: any
+  pdf_url?: { url: any; param: any }
 }

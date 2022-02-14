@@ -8,6 +8,7 @@ import { EntitiesService } from './entities.service'
 import { SettingsService } from './settings.service'
 import { XRefService } from './x-ref.service'
 import { LinksService } from '../sidebar/links.service'
+import { HttpClient } from '@angular/common/http'
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,8 @@ export class EntityMessengerService {
     private entitiesService: EntitiesService,
     private settingsService: SettingsService,
     private xRefService: XRefService,
-    private linksService: LinksService
+    private linksService: LinksService,
+    private http: HttpClient
   ) {
     this.entitiesService.entityChangeObservable.subscribe(change => {
       if (change.setterInfo === 'noPropagate') {
@@ -64,6 +66,17 @@ export class EntityMessengerService {
               this.entitiesService.filterEntities(minEntityLength)
 
               return Promise.resolve()
+            })
+        case 'entity_messenger_service_convert_pdf':
+          this.http
+            .get(msg.body.pdfURL, { params: { url: msg.body.param }, responseType: 'text' })
+            .subscribe(() => {
+              browser.tabs
+                .create({ url: `${msg.body.pdfURL}/?url=${msg.body.param}` })
+
+                .catch(error =>
+                  console.error("could not send message 'content_script_close_loading_icon'", error)
+                )
             })
         default:
       }

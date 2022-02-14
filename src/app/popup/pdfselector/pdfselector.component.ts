@@ -27,28 +27,23 @@ export class PDFSelectorComponent {
       this.pdfError = ''
       const pdfURL = settings.urls.pdfConverterURL || defaultSettings.urls.pdfConverterURL
 
-      this.http.get(pdfURL, { params: { url: this.link.value }, responseType: 'text' }).subscribe(
-        () => {
-          this.browser
-            .sendMessageToActiveTab({ type: 'content_script_close_loading_icon', body: false })
-            .then(() => {
-              this.loadingHTML = false
-              browser.tabs.create({ url: `${pdfURL}/?url=${this.link.value}` })
-            })
-            .catch(error =>
-              console.error("could not send message 'content_script_close_loading_icon'", error)
-            )
-        },
-        err => {
-          this.browser
-            .sendMessageToActiveTab({ type: 'content_script_close_loading_icon', body: false })
-            .catch(error =>
-              console.error("could not send message 'content_script_close_loading_icon'", error)
-            )
-          this.loadingHTML = false
-          this.pdfError = err.error.error
-        }
-      )
+      this.browser
+        .sendMessageToBackground({
+          type: 'entity_messenger_service_convert_pdf',
+          body: { pdfURL: pdfURL, param: this.link.value }
+        })
+        .then(
+          () => {},
+          err => {
+            this.browser
+              .sendMessageToActiveTab({ type: 'content_script_close_loading_icon', body: false })
+              .catch(error =>
+                console.error("could not send message 'content_script_close_loading_icon'", error)
+              )
+            this.loadingHTML = false
+            this.pdfError = err.error.error
+          }
+        )
     })
     this.browser
       .sendMessageToActiveTab({ type: 'content_script_open_loading_icon', body: true })
