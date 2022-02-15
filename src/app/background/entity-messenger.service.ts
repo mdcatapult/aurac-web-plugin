@@ -14,7 +14,9 @@ import { HttpClient } from '@angular/common/http'
   providedIn: 'root'
 })
 export class EntityMessengerService {
-  currentTabID: any
+  //When someone makes a request to the pdf js service. We'll keep track of the tab the user was on so we know which page
+  // we need to turn off the loading icon when the request is complete
+  pdfRequestTabID: number = 0
 
   constructor(
     private browserService: BrowserService,
@@ -71,8 +73,7 @@ export class EntityMessengerService {
             })
           break
         case 'entity_messenger_service_convert_pdf':
-          console.log('received response from popup', msg.body)
-          this.currentTabID = msg.body.id
+          this.pdfRequestTabID = msg.body.id
 
           this.http
             .get(msg.body.pdfURL, { params: { url: msg.body.param }, responseType: 'text' })
@@ -81,7 +82,7 @@ export class EntityMessengerService {
                 .create({ url: `${msg.body.pdfURL}/?url=${msg.body.param}` })
                 .then(() => {
                   this.browserService.sendMessageToTab(
-                    this.currentTabID,
+                    this.pdfRequestTabID,
                     'content_script_close_loading_icon'
                   )
                 })
