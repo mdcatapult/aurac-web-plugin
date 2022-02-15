@@ -77,19 +77,27 @@ export class EntityMessengerService {
 
           this.http
             .get(msg.body.pdfURL, { params: { url: msg.body.param }, responseType: 'text' })
-            .subscribe(() => {
-              browser.tabs
-                .create({ url: `${msg.body.pdfURL}/?url=${msg.body.param}` })
-                .then(() => {
-                  this.browserService.sendMessageToTab(
-                    this.pdfRequestTabID,
-                    'content_script_close_loading_icon'
+            .subscribe(
+              () => {
+                browser.tabs
+                  .create({ url: `${msg.body.pdfURL}/?url=${msg.body.param}` })
+                  .then(() => {
+                    this.browserService.sendMessageToTab(
+                      this.pdfRequestTabID,
+                      'content_script_close_loading_icon'
+                    )
+                  })
+                  .catch(error =>
+                    console.error(
+                      "could not send message 'content_script_close_loading_icon'",
+                      error
+                    )
                   )
-                })
-                .catch(error =>
-                  console.error("could not send message 'content_script_close_loading_icon'", error)
-                )
-            })
+              },
+              err => {
+                console.log(err.error)
+              }
+            )
           break
         default:
       }

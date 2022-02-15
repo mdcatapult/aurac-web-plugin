@@ -44,7 +44,7 @@ export class PDFSelectorComponent {
                 console.error("could not send message 'content_script_close_loading_icon'", error)
               )
             this.loadingHTML = false
-            this.pdfError = err.error.error
+            this.pdfError = err.error
           })
       })
       this.browser
