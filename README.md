@@ -152,5 +152,3 @@ However, if you attempt to use this pdf conversion while on any of the pages bel
 ### Credits
 
 Designed using elements from Heroicon and Vecteezy.com.
-
-
