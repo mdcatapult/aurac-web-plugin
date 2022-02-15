@@ -144,3 +144,11 @@ There are various convenience scripts inside the `package.json` that can be run 
 ### Credits
 
 Designed using elements from Heroicon and Vecteezy.com.
+
+### PDF Conversion
+
+There is a feature in Aurac that let's you put in the URL of an online PDF and convert it into HTML format which can then be NER'd. 
+However, if you attempt to use this pdf conversion while on any of the pages below it will not work: 
+
+- `about:debugging` on Firefox settings
+- any page that begins with `chrome://`
