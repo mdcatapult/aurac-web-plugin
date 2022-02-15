@@ -8,17 +8,23 @@ import { EntitiesService } from './entities.service'
 import { SettingsService } from './settings.service'
 import { XRefService } from './x-ref.service'
 import { LinksService } from '../sidebar/links.service'
+import { HttpClient } from '@angular/common/http'
 
 @Injectable({
   providedIn: 'root'
 })
 export class EntityMessengerService {
+  //When someone makes a request to the pdf js service. We'll keep track of the tab the user was on so we know which page
+  // we need to turn off the loading icon when the request is complete
+  pdfRequestTabID: number = 0
+
   constructor(
     private browserService: BrowserService,
     private entitiesService: EntitiesService,
     private settingsService: SettingsService,
     private xRefService: XRefService,
-    private linksService: LinksService
+    private linksService: LinksService,
+    private http: HttpClient
   ) {
     this.entitiesService.entityChangeObservable.subscribe(change => {
       if (change.setterInfo === 'noPropagate') {
@@ -65,6 +71,34 @@ export class EntityMessengerService {
 
               return Promise.resolve()
             })
+          break
+        case 'entity_messenger_service_convert_pdf':
+          this.pdfRequestTabID = msg.body.id
+
+          this.http
+            .get(msg.body.pdfURL, { params: { url: msg.body.param }, responseType: 'text' })
+            .subscribe(
+              () => {
+                browser.tabs
+                  .create({ url: `${msg.body.pdfURL}/?url=${msg.body.param}` })
+                  .then(() => {
+                    this.browserService.sendMessageToTab(
+                      this.pdfRequestTabID,
+                      'content_script_close_loading_icon'
+                    )
+                  })
+                  .catch(error =>
+                    console.error(
+                      "could not send message 'content_script_close_loading_icon'",
+                      error
+                    )
+                  )
+              },
+              err => {
+                console.log(err.error)
+              }
+            )
+          break
         default:
       }
     })

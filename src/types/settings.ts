@@ -25,14 +25,14 @@ const devAPIURLs: APIURLs = {
   nerURL: 'http://localhost:8080',
   unichemURL: 'http://localhost:8081',
   compoundConverterURL: 'http://localhost:8082/convert',
-  pdfConverterURL: 'http://localhost:8083/html'
+  pdfConverterURL: 'http://localhost:8000/html'
 }
 
 const productionAPIURLs: APIURLs = {
   nerURL: 'https://ner-api.wopr.inf.mdc',
   compoundConverterURL: 'https://compound-converter.wopr.inf.mdc/convert',
   unichemURL: 'https://unichem-plus.wopr.inf.mdc',
-  pdfConverterURL: 'https://pdf.wopr.inf.mdc/html'
+  pdfConverterURL: 'https://pdf-js.wopr.inf.mdc/html'
 }
 
 export const defaultSettings: Settings = {

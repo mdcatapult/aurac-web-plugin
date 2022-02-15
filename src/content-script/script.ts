@@ -222,7 +222,14 @@ function highlightEntities(
     }
 
     Highlights.unmarkHiddenEntities(unmarker)
-    const highlightedEntities = getHighlightedEntities()
+    const highlightedEntities = getHighlightedEntities() as Array<HTMLElement>
+
+    if (window.location.href.endsWith('.pdf')) {
+      // Give PDF highlights a brighter background colour as opacity is lower on pdf-js
+      highlightedEntities.forEach(entity => {
+        entity.style.background = '#ff00ff'
+      })
+    }
 
     resolve({
       tabEntities: stringifyWithTypes(tabEntities),
