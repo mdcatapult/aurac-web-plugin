@@ -41,7 +41,7 @@ export class PDFSelectorComponent {
             this.browser
               .sendMessageToActiveTab({ type: 'content_script_close_loading_icon', body: false })
               .catch(error =>
-                console.error("could not send message 'content_script_close_loading_icon'", error)
+                console.error("could not send message 'content_script_close_loading_icon'", JSON.stringify(error))
               )
             this.loadingHTML = false
             this.pdfError = err.error
@@ -50,7 +50,7 @@ export class PDFSelectorComponent {
       this.browser
         .sendMessageToActiveTab({ type: 'content_script_open_loading_icon', body: true })
         .catch(error =>
-          console.error("could not send message 'content_script_open_loading_icon'", error)
+          console.error("could not send message 'content_script_open_loading_icon'", JSON.stringify(error))
         )
     })
   }
