@@ -74,7 +74,6 @@ export class EntityMessengerService {
           break
         case 'entity_messenger_service_convert_pdf':
           this.pdfRequestTabID = msg.body.id
-
           this.http
             .get(msg.body.pdfURL, { params: { url: msg.body.param }, responseType: 'text' })
             .subscribe(
@@ -111,11 +110,21 @@ export class EntityMessengerService {
             })
 
           return Promise.resolve(isPageCompressed)
+
         case 'entity_messenger_service_scroll_to_highlight':
           this.browserService.sendMessageToActiveTab({
             type: 'content_script_scroll_to_highlight',
             body: msg.body
           })
+          break
+        case 'entity_messenger_service_get_active_tab':
+          let activeTab: any
+          this.browserService.getActiveTab().then(result => {
+            activeTab = result
+            console.log('active tab', activeTab)
+          })
+
+          return Promise.resolve(activeTab)
           break
         default:
       }

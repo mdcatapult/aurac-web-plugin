@@ -36,15 +36,18 @@ export class SidebarHeaderComponent {
     )
 
     if (csvText) {
-      this.browserService.getActiveTab().then(tab => {
-        const fileName =
-          'aurac_sidebar_results_' +
-          recogniser +
-          '_' +
-          this.csvExporterService.sanitiseURL(tab.url!) +
-          '.csv'
-        this.csvExporterService.saveAsCSV(csvText, fileName)
-      })
+      this.browserService
+        .sendMessageToBackground('entity_messenger_service_get_active_tab')
+        .then(tab => {
+          console.log('tab', tab as string)
+          const fileName =
+            'aurac_sidebar_results_' +
+            recogniser +
+            '_' +
+            this.csvExporterService.sanitiseURL(tab.url!) +
+            '.csv'
+          this.csvExporterService.saveAsCSV(csvText, fileName)
+        })
     }
   }
 

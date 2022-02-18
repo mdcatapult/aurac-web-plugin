@@ -17,6 +17,7 @@ export type MessageType =
   | 'csv_exporter_service_export_csv'
   | 'entity_messenger_service_highlight_clicked'
   | 'entity_messenger_service_is_page_compressed'
+  | 'entity_messenger_service_get_active_tab'
   | 'entity_messenger_service_scroll_to_highlight'
   | 'entity_messenger_service_convert_pdf'
   | 'export_csv'
