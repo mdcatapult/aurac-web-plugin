@@ -16,6 +16,9 @@ export type MessageType =
   | 'content_script_set_sidebar_ready'
   | 'csv_exporter_service_export_csv'
   | 'entity_messenger_service_highlight_clicked'
+  | 'entity_messenger_service_is_page_compressed'
+  | 'entity_messenger_service_scroll_to_highlight'
+  | 'entity_messenger_service_convert_pdf'
   | 'export_csv'
   | 'get_page_contents'
   | 'log'
@@ -40,7 +43,6 @@ export type MessageType =
   | 'sidebar_data_service_view_or_create_card'
   | 'sidebar_rendered'
   | 'x-ref_result'
-  | 'entity_messenger_service_convert_pdf'
 
 // The receiver of the message must check the body to ensure it is the correct type based on the message type.
 export interface Message {

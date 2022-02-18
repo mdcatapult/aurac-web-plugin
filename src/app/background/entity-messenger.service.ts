@@ -99,6 +99,24 @@ export class EntityMessengerService {
               }
             )
           break
+        case 'entity_messenger_service_is_page_compressed':
+          let isPageCompressed
+          this.browserService
+            .sendMessageToActiveTab({
+              type: 'content_script_is_page_compressed',
+              body: msg.body as boolean
+            })
+            .then(result => {
+              isPageCompressed = result
+            })
+
+          return Promise.resolve(isPageCompressed)
+        case 'entity_messenger_service_scroll_to_highlight':
+          this.browserService.sendMessageToActiveTab({
+            type: 'content_script_scroll_to_highlight',
+            body: msg.body
+          })
+          break
         default:
       }
     })
