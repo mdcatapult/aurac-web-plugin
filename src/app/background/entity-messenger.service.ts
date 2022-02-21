@@ -9,6 +9,7 @@ import { SettingsService } from './settings.service'
 import { XRefService } from './x-ref.service'
 import { LinksService } from '../sidebar/links.service'
 import { HttpClient } from '@angular/common/http'
+import MessageSender = browser.runtime.MessageSender
 
 @Injectable({
   providedIn: 'root'
@@ -58,77 +59,77 @@ export class EntityMessengerService {
         })
     })
 
-    this.browserService.addListener(msg => {
-      switch (msg.type) {
-        case 'entity_messenger_service_highlight_clicked':
-          return this.highlightClicked(msg.body)
-        case 'min_entity_length_changed':
-          this.browserService
-            .sendMessageToActiveTab('content_script_remove_highlights')
-            .then(() => {
-              const minEntityLength = msg.body
-              this.entitiesService.filterEntities(minEntityLength)
+    this.browserService.addListener(
+      (msg, listener: MessageSender, sendResponse: (response: any) => {}) => {
+        switch (msg.type) {
+          case 'entity_messenger_service_highlight_clicked':
+            return this.highlightClicked(msg.body)
+          case 'min_entity_length_changed':
+            this.browserService
+              .sendMessageToActiveTab('content_script_remove_highlights')
+              .then(() => {
+                const minEntityLength = msg.body
+                this.entitiesService.filterEntities(minEntityLength)
 
-              return Promise.resolve()
-            })
-          break
-        case 'entity_messenger_service_convert_pdf':
-          this.pdfRequestTabID = msg.body.id
-          this.http
-            .get(msg.body.pdfURL, { params: { url: msg.body.param }, responseType: 'text' })
-            .subscribe(
-              () => {
-                browser.tabs
-                  .create({ url: `${msg.body.pdfURL}/?url=${msg.body.param}` })
-                  .then(() => {
-                    this.browserService.sendMessageToTab(
-                      this.pdfRequestTabID,
-                      'content_script_close_loading_icon'
+                return Promise.resolve()
+              })
+            break
+          case 'entity_messenger_service_convert_pdf':
+            this.pdfRequestTabID = msg.body.id
+            this.http
+              .get(msg.body.pdfURL, { params: { url: msg.body.param }, responseType: 'text' })
+              .subscribe(
+                () => {
+                  browser.tabs
+                    .create({ url: `${msg.body.pdfURL}/?url=${msg.body.param}` })
+                    .then(() => {
+                      this.browserService.sendMessageToTab(
+                        this.pdfRequestTabID,
+                        'content_script_close_loading_icon'
+                      )
+                    })
+                    .catch(error =>
+                      console.error(
+                        "could not send message 'content_script_close_loading_icon'",
+                        error
+                      )
                     )
-                  })
-                  .catch(error =>
-                    console.error(
-                      "could not send message 'content_script_close_loading_icon'",
-                      error
-                    )
-                  )
-              },
-              err => {
-                console.log(err.error)
-              }
-            )
-          break
-        case 'entity_messenger_service_is_page_compressed':
-          let isPageCompressed
-          this.browserService
-            .sendMessageToActiveTab({
+                },
+                err => {
+                  console.log(err.error)
+                }
+              )
+            break
+          case 'entity_messenger_service_is_page_compressed':
+            const isPageCompressed = this.browserService.sendMessageToActiveTab({
               type: 'content_script_is_page_compressed',
               body: msg.body as boolean
             })
-            .then(result => {
-              isPageCompressed = result
+
+            isPageCompressed.then(result => {
+              sendResponse(result)
             })
 
-          return Promise.resolve(isPageCompressed)
+            return true
 
-        case 'entity_messenger_service_scroll_to_highlight':
-          this.browserService.sendMessageToActiveTab({
-            type: 'content_script_scroll_to_highlight',
-            body: msg.body
-          })
-          break
-        case 'entity_messenger_service_get_active_tab':
-          let activeTab: any
-          this.browserService.getActiveTab().then(result => {
-            activeTab = result
-            console.log('active tab', activeTab)
-          })
+          case 'entity_messenger_service_scroll_to_highlight':
+            this.browserService.sendMessageToActiveTab({
+              type: 'content_script_scroll_to_highlight',
+              body: msg.body
+            })
+            break
+          case 'entity_messenger_service_get_active_tab':
+            const activeTab = this.browserService.getActiveTab()
 
-          return Promise.resolve(activeTab)
-          break
-        default:
+            activeTab.then(result => {
+              sendResponse(result)
+            })
+
+            return true
+          default:
+        }
       }
-    })
+    )
   }
 
   highlightClicked(elementID: string): Promise<void> {

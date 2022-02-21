@@ -39,7 +39,7 @@ export class SidebarHeaderComponent {
       this.browserService
         .sendMessageToBackground('entity_messenger_service_get_active_tab')
         .then(tab => {
-          console.log('tab', tab as string)
+          console.log('tab', tab)
           const fileName =
             'aurac_sidebar_results_' +
             recogniser +
