@@ -60,6 +60,9 @@ export class EntityMessengerService {
     })
 
     this.browserService.addListener(
+      // We need to use sendResponse to return data back to the sender, currently Promise.resolve only works for chrome and
+      // not FF, potentially due to polyfill issues. To work around this, we instead return sendResponse which does work but is
+      // deprecated, see https://github.com/mozilla/webextension-polyfill/issues/172#issuecomment-457286111
       (msg, listener: MessageSender, sendResponse: (response: any) => {}) => {
         switch (msg.type) {
           case 'entity_messenger_service_highlight_clicked':
