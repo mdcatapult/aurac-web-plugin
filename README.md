@@ -141,6 +141,14 @@ There are various convenience scripts inside the `package.json` that can be run 
 - mocha - tests the popup via [mocha](https://mochajs.org/) & [puppeteer](https://github.com/puppeteer/puppeteer) in a headless chrome browser. Tests and setup are in `mocha-test.js`. Uses the compiled plugin code so needs a recent `npm run build` first.
 - unopt - builds unoptimized/unminified version of the app. Makes it easier to debug in the browser
 
+### PDF Conversion
+
+There is a feature in Aurac that let's you put in the URL of an online PDF and convert it into HTML format which can then be NER'd.
+However, if you attempt to use this pdf conversion while on any of the pages below it will not work:
+
+- `about:debugging` on Firefox settings
+- any page that begins with `chrome://`
+
 ### Credits
 
 Designed using elements from Heroicon and Vecteezy.com.
