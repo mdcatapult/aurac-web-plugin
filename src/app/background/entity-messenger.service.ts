@@ -89,6 +89,7 @@ export class EntityMessengerService {
             isPageCompressed.then(result => {
               sendResponse(result)
             })
+
             return true
           case 'entity_messenger_service_scroll_to_highlight':
             this.browserService.sendMessageToActiveTab({
@@ -101,6 +102,7 @@ export class EntityMessengerService {
             activeTab.then(result => {
               sendResponse(result)
             })
+
             return true
           default:
         }
