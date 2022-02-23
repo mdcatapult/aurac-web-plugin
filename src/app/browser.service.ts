@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core'
 import { Message, MessageType } from 'src/types/messages'
 import Tab = browser.tabs.Tab
+import MessageSender = browser.runtime.MessageSender
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +22,9 @@ export class BrowserService {
     return browser.runtime.sendMessage<Message>(this.makeValidMessage(msg))
   }
 
-  addListener(f: (msg: Partial<Message>) => void): void {
+  addListener(
+    f: (msg: Partial<Message>, listener: MessageSender, sendResponse: any) => void
+  ): void {
     browser.runtime.onMessage.addListener(f)
   }
 
