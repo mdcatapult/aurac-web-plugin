@@ -86,11 +86,9 @@ export class EntityMessengerService {
               type: 'content_script_is_page_compressed',
               body: msg.body as boolean
             })
-
             isPageCompressed.then(result => {
               sendResponse(result)
             })
-
             return true
           case 'entity_messenger_service_scroll_to_highlight':
             this.browserService.sendMessageToActiveTab({
@@ -100,11 +98,9 @@ export class EntityMessengerService {
             break
           case 'entity_messenger_service_get_active_tab':
             const activeTab = this.browserService.getActiveTab()
-
             activeTab.then(result => {
               sendResponse(result)
             })
-
             return true
           default:
         }
