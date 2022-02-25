@@ -22,12 +22,6 @@ test-lint-build:
     - apt-get -yqq update && apt-get upgrade -yqq chromium libxss1 xvfb
     - export CHROME_BIN=/usr/bin/chromium
     - npm install
-    - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.36.0/install.sh | bash
-    - '. ~/.nvm/nvm.sh'
-    - nvm install 16.10
-    - nvm use 16.10
-    - npx browserslist --update-db
-
   script:
     - npm run test:ci
     - npm run lint
