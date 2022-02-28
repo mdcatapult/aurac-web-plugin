@@ -82,8 +82,8 @@ export class SidebarCardComponent implements OnInit, OnChanges {
     // This modulo operation means the scroll index with circle back to zero.
     this.scrollIndex = ((i % n) + n) % n
 
-    this.browserService.sendMessageToActiveTab({
-      type: 'content_script_scroll_to_highlight',
+    this.browserService.sendMessageToBackground({
+      type: 'entity_messenger_service_scroll_to_highlight',
       body: htmlTagIDs[this.scrollIndex]
     })
   }
