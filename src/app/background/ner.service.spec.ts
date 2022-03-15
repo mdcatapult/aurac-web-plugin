@@ -24,10 +24,12 @@ describe('NerService', () => {
   it('should create an entity from an API response entity', () => {
     const recognisedEntity: APIEntity = {
       name: 'Gene name',
-      positions: [{
-        xpath: '/html/*[1]/*[1]',
-        position: 5
-      }],
+      positions: [
+        {
+          xpath: '/html/*[1]/*[1]',
+          position: 5
+        }
+      ],
       recogniser: 'leadmine-proteins',
       identifiers: { resolvedEntity: 'HGNC:8544' },
       metadata:
@@ -85,10 +87,12 @@ describe('NerService', () => {
       }
       service['setOrUpdateEntity'](recogniserEntities, 'HGNC:8744', {
         name: 'new synonym',
-        positions: [{
-          xpath: '/html/*[2]',
-          position: 3
-        }],
+        positions: [
+          {
+            xpath: '/html/*[2]',
+            position: 3
+          }
+        ],
         recogniser: 'leadmine-proteins'
       })
 
@@ -112,10 +116,12 @@ describe('NerService', () => {
       }
       service['setOrUpdateEntity'](recogniserEntities, 'HGNC:8644', {
         name: 'new synonym',
-        positions: [{
-          xpath: '/html/*[2]',
-          position: 3
-        }],
+        positions: [
+          {
+            xpath: '/html/*[2]',
+            position: 3
+          }
+        ],
         recogniser: 'leadmine-proteins'
       })
 
@@ -138,10 +144,12 @@ describe('NerService', () => {
       }
       service['setOrUpdateEntity'](recogniserEntities, 'HGNC:8644', {
         name: 'existing synonym',
-        positions: [{
-          xpath: '/html/*[2]',
-          position: 3
-        }],
+        positions: [
+          {
+            xpath: '/html/*[2]',
+            position: 3
+          }
+        ],
         recogniser: 'leadmine-proteins'
       })
 
@@ -154,64 +162,78 @@ describe('NerService', () => {
       const recognisedEntities: APIEntities = [
         {
           name: 'entity1',
-          positions: [{
-            xpath: '/html/*[1]',
-            position: 2
-          }],
+          positions: [
+            {
+              xpath: '/html/*[1]',
+              position: 2
+            }
+          ],
           recogniser: 'leadmine-proteins',
           identifiers: { resolvedEntity: 'HGNC:8644' }
         },
         {
           name: 'entity2',
-          positions: [{
-            xpath: '/html/*[2]',
-            position: 2
-          }],
+          positions: [
+            {
+              xpath: '/html/*[2]',
+              position: 2
+            }
+          ],
           recogniser: 'leadmine-proteins',
           identifiers: { resolvedEntity: 'HGNC:8644' }
         },
         {
           name: 'entity3',
-          positions: [{
-            xpath: '/html/*[3]',
-            position: 2
-          }],
+          positions: [
+            {
+              xpath: '/html/*[3]',
+              position: 2
+            }
+          ],
           recogniser: 'leadmine-proteins',
           identifiers: { resolvedEntity: '' }
         },
         {
           name: 'ENTITY3',
-          positions: [{
-            xpath: '/html/*[4]',
-            position: 2
-          }],
+          positions: [
+            {
+              xpath: '/html/*[4]',
+              position: 2
+            }
+          ],
           recogniser: 'leadmine-proteins',
           identifiers: { resolvedEntity: '' }
         },
         {
           name: 'entity5',
-          positions: [{
-            xpath: '/html/*[5]',
-            position: 2
-          }],
+          positions: [
+            {
+              xpath: '/html/*[5]',
+              position: 2
+            }
+          ],
           recogniser: 'leadmine-proteins',
           identifiers: { resolvedEntity: '' }
         },
         {
           name: 'entity6',
-          positions: [{
-            xpath: '/html/*[6]',
-            position: 2
-          }],
+          positions: [
+            {
+              xpath: '/html/*[6]',
+              position: 2
+            }
+          ],
           recogniser: 'leadmine-proteins',
           identifiers: { resolvedEntity: 'HGNC:8633' }
         },
         {
           name: 'entity1',
-          positions: [{
-            xpath: '/html/*[7]',
-            position: 2
-          }],
+          positions: [
+            {
+              xpath: '/html/*[7]',
+              position: 2
+            }
+          ],
           recogniser: 'leadmine-proteins',
           identifiers: { resolvedEntity: 'HGNC:8644' }
         }

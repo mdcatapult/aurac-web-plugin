@@ -143,7 +143,10 @@ export class NerService {
       synonymToXPaths: new Map()
     }
 
-    entity.synonymToXPaths.set(recognisedEntity.name, recognisedEntity.positions.map(pos => pos.xpath))
+    entity.synonymToXPaths.set(
+      recognisedEntity.name,
+      recognisedEntity.positions.map(pos => pos.xpath)
+    )
 
     if (recognisedEntity.metadata) {
       try {
@@ -173,7 +176,10 @@ export class NerService {
       if (xpaths) {
         recognisedEntity.positions.forEach(pos => xpaths.push(pos.xpath))
       } else {
-        entity.synonymToXPaths.set(recognisedEntity.name, recognisedEntity.positions.map(pos => pos.xpath))
+        entity.synonymToXPaths.set(
+          recognisedEntity.name,
+          recognisedEntity.positions.map(pos => pos.xpath)
+        )
       }
     } else {
       recogniserEntities.entities.set(key, this.entityFromAPIEntity(recognisedEntity))
