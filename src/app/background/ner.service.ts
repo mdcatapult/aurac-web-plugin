@@ -8,13 +8,13 @@ import { SettingsService } from './settings.service'
 
 export type APIEntity = {
   name: string
-  positions: position[]
+  positions: Position[]
   recogniser: Recogniser
   identifiers?: any
   metadata?: string
 }
 
-type position = {
+type Position = {
   xpath: string
   position: number
 }
