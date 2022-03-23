@@ -149,6 +149,8 @@ export class EntityMessengerService {
         return
       }
 
+      console.log(entity)
+
       const sidebarCard: SidebarCard = {
         recogniser: this.settingsService.preferences.recogniser,
         entity,
