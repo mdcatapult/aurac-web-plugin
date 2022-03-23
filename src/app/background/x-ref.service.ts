@@ -63,7 +63,7 @@ export class XRefService {
 
   private SMILEStoInchi(entity: string): Promise<ConverterResult> {
     const encodedEntity = encodeURIComponent(entity)
-    const converterURL = `${this.settingsService.APIURLs.compoundConverterURL}/${encodedEntity}?from=SMILES&to=inchikey`
+    const converterURL = `${this.settingsService.APIURLs.compoundConverterURL}?entity=${encodedEntity}&from=SMILES&to=inchikey`
 
     return this.client.get<ConverterResult>(converterURL).toPromise()
   }
