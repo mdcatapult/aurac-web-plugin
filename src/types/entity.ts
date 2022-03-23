@@ -23,6 +23,7 @@ export interface Entity {
   htmlTagIDs?: Array<string>
   xRefs?: Array<XRef>
   links?: Link[]
+  speciesName?: string
 }
 
 // Contains all the entities for a particular recogniser in the tab.

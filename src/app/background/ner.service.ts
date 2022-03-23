@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http'
 import { Injectable } from '@angular/core'
+import { uniqueId } from 'lodash'
 import { RecogniserEntities, Entity } from 'src/types/entity'
 import { Recogniser } from 'src/types/recognisers'
 import { BrowserService } from '../browser.service'
@@ -10,7 +11,7 @@ export type APIEntity = {
   name: string
   positions: Position[]
   recogniser: Recogniser
-  identifiers?: any
+  identifiers?: Record<string, string> | {[speciesName: string]: Record<string, string>}
   metadata?: string
 }
 
@@ -53,7 +54,9 @@ export class NerService {
           error => this.handleAPIError(tab.id!, error)
         )
         .then(response => {
+          console.log(response)
           const recogniserEntities = this.transformAPIResponse(response as APIEntities, tab.id!)
+          console.log(recogniserEntities)
           this.entitiesService.setRecogniserEntities(
             tab.id!,
             this.settingsService.preferences.recogniser,
@@ -138,9 +141,10 @@ export class NerService {
     return [params, headers]
   }
 
-  private entityFromAPIEntity(recognisedEntity: APIEntity): Entity {
+  private entityFromAPIEntity(recognisedEntity: APIEntity, speciesName?: string): Entity {
     const entity: Entity = {
-      synonymToXPaths: new Map()
+      synonymToXPaths: new Map(),
+      speciesName: speciesName
     }
 
     entity.synonymToXPaths.set(
@@ -168,7 +172,8 @@ export class NerService {
   private setOrUpdateEntity(
     recogniserEntities: RecogniserEntities,
     key: string,
-    recognisedEntity: APIEntity
+    recognisedEntity: APIEntity,
+    speciesName?: string
   ): void {
     const entity = recogniserEntities.entities.get(key)
     if (entity) {
@@ -182,7 +187,7 @@ export class NerService {
         )
       }
     } else {
-      recogniserEntities.entities.set(key, this.entityFromAPIEntity(recognisedEntity))
+      recogniserEntities.entities.set(key, this.entityFromAPIEntity(recognisedEntity, speciesName))
     }
   }
 
@@ -206,13 +211,13 @@ export class NerService {
           case 'leadmine-proteins':
             // For all leadmine dictionaries, we will use the resolved entity
             // to determine whether two entities are synonyms of each other.
-            const resolvedEntity: string = recognisedEntity.identifiers?.resolvedEntity
+            const resolvedEntity = recognisedEntity.identifiers?.resolvedEntity
 
             // If there is no resolved entity, just use the entity text (lowercased) to determine synonyms.
             // (This means the synonyms will be identical except for their casing).
             this.setOrUpdateEntity(
               recogniserEntities!,
-              resolvedEntity || recognisedEntity.name.toLowerCase(),
+              (resolvedEntity as string) || recognisedEntity.name.toLowerCase(),
               recognisedEntity
             )
 
@@ -220,8 +225,29 @@ export class NerService {
           case 'swissprot-genes-proteins':
             // For the swissprot recogniser we will use the Accession, which is present for every entity.
             // This is different to Leadmine where an entity may not have a resolved entity.
-            const accession: string = recognisedEntity.identifiers?.Accession
-            this.setOrUpdateEntity(recogniserEntities!, accession, recognisedEntity)
+            // const accession = recognisedEntity.identifiers?.Accession
+            // this.setOrUpdateEntity(recogniserEntities!, accession, recognisedEntity)
+
+
+
+            // const uuid = new
+            // this.setOrUpdateEntity(recogniserEntities!, identifier, recognisedEntity, speciesName)
+
+
+            for (const speciesName in recognisedEntity.identifiers) {
+              const identifierString = recognisedEntity.identifiers[speciesName]
+              let identifier: any
+
+              try {
+                identifier = JSON.parse(identifierString as string)["Accession"]
+              } catch {
+                identifier = identifierString
+              }
+
+              this.setOrUpdateEntity(recogniserEntities!, identifier, recognisedEntity, speciesName)
+            }
+
+            
 
             break
         }
