@@ -68,7 +68,7 @@ export class EntityMessengerService {
         switch (msg.type) {
           case 'entity_messenger_service_highlight_clicked':
             return this.highlightClicked(msg.body)
-          case 'min_entity_length_changed':
+          case 'entity_messenger_service_filters_changed':
             this.browserService
               .sendMessageToActiveTab('content_script_remove_highlights')
               .then(() => {

@@ -47,8 +47,5 @@ export class SidebarCardListComponent {
     })
   }
 
-  isSwissprot(): boolean {
-    // check length first; every returns true for empty array
-    return !!this.cards.length && this.cards.every(card => card.recogniser === 'swissprot-genes-proteins')
-  }
+
 }
