@@ -84,6 +84,7 @@ export class EntitiesService {
         })
 
         entity.synonymToXPaths = filteredSynonyms
+
       })
     })
 

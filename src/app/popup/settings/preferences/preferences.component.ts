@@ -1,5 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core'
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
+import { combineLatest } from 'rxjs'
+import {skip} from 'rxjs/operators'
 import { SettingsService } from 'src/app/background/settings.service'
 import { BrowserService } from 'src/app/browser.service'
 import { defaultSettings, Preferences } from 'src/types/settings'
@@ -24,7 +26,7 @@ export class PreferencesComponent implements OnInit {
       Validators.required
     ),
     recogniser: new FormControl(defaultSettings.preferences.recogniser),
-    species: new FormControl('Homo sapiens')
+    species: new FormControl(defaultSettings.preferences.species)
   })
 
   constructor(private browserService: BrowserService, private settingsService: SettingsService) {}
@@ -34,8 +36,22 @@ export class PreferencesComponent implements OnInit {
 
     this.form.valueChanges.subscribe(preferences => this.save(preferences))
 
-    
+
+    combineLatest([
+      this.form.get('minEntityLength')!.valueChanges,
+      this.form.get('species')!.valueChanges,
+    ]).pipe(
+      skip(1)
+    ).subscribe(([minEntityLength, species]) => {
+
+      console.log(minEntityLength, species)
+      this.browserService.sendMessageToBackground({
+        type: 'entity_messenger_service_filters_changed',
+        body: {minEntityLength: minEntityLength, species: species},
+      })
+    })
   }
+  
 
   save(preferences: Preferences): void {
     this.browserService
@@ -53,3 +69,5 @@ export class PreferencesComponent implements OnInit {
   }
 
 }
+
+
