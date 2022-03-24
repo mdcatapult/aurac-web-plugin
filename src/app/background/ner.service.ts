@@ -144,9 +144,9 @@ export class NerService {
   private entityFromAPIEntity(recognisedEntity: APIEntity): Entity {
     const entity: Entity = {
       synonymToXPaths: new Map(),
-      speciesNames: 
+      speciesNames:
       this.settingsService.preferences.recogniser === 'swissprot-genes-proteins'
-      ? Object.keys(recognisedEntity.identifiers!) : []
+      ? Object.keys(recognisedEntity.identifiers!) : undefined
     }
 
     entity.synonymToXPaths.set(
@@ -243,7 +243,7 @@ export class NerService {
               this.setOrUpdateEntity(recogniserEntities!, identifier, recognisedEntity)
             }
 
-            
+
 
             break
         }
