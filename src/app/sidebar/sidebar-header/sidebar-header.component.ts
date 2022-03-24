@@ -27,10 +27,7 @@ export class SidebarHeaderComponent {
     this.sidebarDataService.totalCountInfoObservable.subscribe(count => {
       this.totalHighlights = count
     })
-
-
   }
-
 
   exportCSV() {
     const recogniser = this.settingsService.preferences.recogniser

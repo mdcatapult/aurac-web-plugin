@@ -64,7 +64,11 @@ export class EntitiesService {
     return entityMap
   }
 
-  private filterTabEntities(minEntityLength: number, tabEntities: TabEntities, species?: Species): TabEntities {
+  private filterTabEntities(
+    minEntityLength: number,
+    tabEntities: TabEntities,
+    species?: Species
+  ): TabEntities {
     const tabEntityKeys = Object.keys(tabEntities) as Array<keyof TabEntities>
 
     tabEntityKeys.forEach(recogniser => {
@@ -74,7 +78,6 @@ export class EntitiesService {
         const filteredSynonyms = new Map<string, string[]>()
 
         entity.synonymToXPaths.forEach((occurrences, synonym) => {
-
           const hasLength = synonym.length >= minEntityLength
           const hasSpecies = species && Object.keys(entity.metadata).includes(species)
 
@@ -84,7 +87,6 @@ export class EntitiesService {
         })
 
         entity.synonymToXPaths = filteredSynonyms
-
       })
     })
 

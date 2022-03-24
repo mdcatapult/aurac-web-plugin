@@ -11,7 +11,7 @@ export type APIEntity = {
   name: string
   positions: Position[]
   recogniser: Recogniser
-  identifiers?: Record<string, string> | {[speciesName: string]: Record<string, string>}
+  identifiers?: Record<string, string> | { [speciesName: string]: Record<string, string> }
   metadata?: string
 }
 
@@ -145,8 +145,9 @@ export class NerService {
     const entity: Entity = {
       synonymToXPaths: new Map(),
       speciesNames:
-      this.settingsService.preferences.recogniser === 'swissprot-genes-proteins'
-      ? Object.keys(recognisedEntity.identifiers!) : undefined
+        this.settingsService.preferences.recogniser === 'swissprot-genes-proteins'
+          ? Object.keys(recognisedEntity.identifiers!)
+          : undefined
     }
 
     entity.synonymToXPaths.set(
@@ -229,21 +230,18 @@ export class NerService {
             // const accession = recognisedEntity.identifiers?.Accession
             // this.setOrUpdateEntity(recogniserEntities!, accession, recognisedEntity)
 
-
             for (const speciesName in recognisedEntity.identifiers) {
               const identifierString = recognisedEntity.identifiers[speciesName]
               let identifier: any
 
               try {
-                identifier = JSON.parse(identifierString as string)["Accession"]
+                identifier = JSON.parse(identifierString as string)['Accession']
               } catch {
                 identifier = identifierString
               }
 
               this.setOrUpdateEntity(recogniserEntities!, identifier, recognisedEntity)
             }
-
-
 
             break
         }

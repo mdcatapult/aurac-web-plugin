@@ -3,7 +3,6 @@ import { SidebarDataService } from '../sidebar-data.service'
 import { SidebarCard } from '../types'
 import { FormControl } from '@angular/forms'
 
-
 @Component({
   selector: 'app-sidebar-card-list',
   templateUrl: './sidebar-card-list.component.html',
@@ -30,14 +29,12 @@ export class SidebarCardListComponent {
     })
 
     this.sidebarDataService.cardsObservable.subscribe(cards => {
-
       this.allSpecies = new Set<string>(['None'])
       cards.forEach(card => {
-        (card.entity.speciesNames || []).forEach(species => {
+        ;(card.entity.speciesNames || []).forEach(species => {
           this.allSpecies.add(species)
         })
       })
-      
     })
 
     this.speciesControl.valueChanges.subscribe(selectedSpecies => {
@@ -46,6 +43,4 @@ export class SidebarCardListComponent {
       })
     })
   }
-
-
 }

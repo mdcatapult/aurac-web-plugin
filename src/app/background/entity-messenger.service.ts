@@ -72,8 +72,11 @@ export class EntityMessengerService {
             this.browserService
               .sendMessageToActiveTab('content_script_remove_highlights')
               .then(() => {
-                const {minEntityLength, species} = msg.body
-                const speciesArg = this.settingsService.preferences.recogniser === 'swissprot-genes-proteins' ? species : undefined
+                const { minEntityLength, species } = msg.body
+                const speciesArg =
+                  this.settingsService.preferences.recogniser === 'swissprot-genes-proteins'
+                    ? species
+                    : undefined
                 this.entitiesService.filterEntities(minEntityLength, speciesArg)
 
                 return Promise.resolve()
