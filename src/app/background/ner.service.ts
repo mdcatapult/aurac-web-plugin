@@ -141,10 +141,12 @@ export class NerService {
     return [params, headers]
   }
 
-  private entityFromAPIEntity(recognisedEntity: APIEntity, speciesName?: string): Entity {
+  private entityFromAPIEntity(recognisedEntity: APIEntity): Entity {
     const entity: Entity = {
       synonymToXPaths: new Map(),
-      speciesName: speciesName
+      speciesNames: 
+      this.settingsService.preferences.recogniser === 'swissprot-genes-proteins'
+      ? Object.keys(recognisedEntity.identifiers!) : []
     }
 
     entity.synonymToXPaths.set(
@@ -172,8 +174,7 @@ export class NerService {
   private setOrUpdateEntity(
     recogniserEntities: RecogniserEntities,
     key: string,
-    recognisedEntity: APIEntity,
-    speciesName?: string
+    recognisedEntity: APIEntity
   ): void {
     const entity = recogniserEntities.entities.get(key)
     if (entity) {
@@ -187,7 +188,7 @@ export class NerService {
         )
       }
     } else {
-      recogniserEntities.entities.set(key, this.entityFromAPIEntity(recognisedEntity, speciesName))
+      recogniserEntities.entities.set(key, this.entityFromAPIEntity(recognisedEntity))
     }
   }
 
@@ -229,11 +230,6 @@ export class NerService {
             // this.setOrUpdateEntity(recogniserEntities!, accession, recognisedEntity)
 
 
-
-            // const uuid = new
-            // this.setOrUpdateEntity(recogniserEntities!, identifier, recognisedEntity, speciesName)
-
-
             for (const speciesName in recognisedEntity.identifiers) {
               const identifierString = recognisedEntity.identifiers[speciesName]
               let identifier: any
@@ -244,7 +240,7 @@ export class NerService {
                 identifier = identifierString
               }
 
-              this.setOrUpdateEntity(recogniserEntities!, identifier, recognisedEntity, speciesName)
+              this.setOrUpdateEntity(recogniserEntities!, identifier, recognisedEntity)
             }
 
             

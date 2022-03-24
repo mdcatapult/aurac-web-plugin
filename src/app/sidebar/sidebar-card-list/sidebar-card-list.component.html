@@ -1,11 +1,13 @@
-<mat-form-field appearance="fill" class="aurac-dropdown">
-  <mat-label>Select species</mat-label>
-  <mat-select [formControl]="speciesControl">
-    <mat-option *ngFor="let species of allSpecies" [value]="species">
-      {{ species }}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
+<div *ngIf="isSwissprot()">
+  <mat-form-field appearance="fill" class="aurac-dropdown">
+    <mat-label>Select species</mat-label>
+    <mat-select [formControl]="speciesControl">
+      <mat-option *ngFor="let species of allSpecies" [value]="species">
+        {{ species }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
 
 <section>
   <p *ngIf="filteredCards.length === 0 && totalHighlights && totalHighlights > 0">

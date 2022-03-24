@@ -30,9 +30,10 @@ export class SidebarCardListComponent {
     })
 
     this.sidebarDataService.cardsObservable.subscribe(cards => {
+
       this.allSpecies = new Set<string>(['None'])
       cards.forEach(card => {
-        Object.keys(card.entity.metadata).forEach(species => {
+        (card.entity.speciesNames || []).forEach(species => {
           this.allSpecies.add(species)
         })
       })
@@ -44,5 +45,10 @@ export class SidebarCardListComponent {
         return Object.keys(card.entity.metadata).some(species => species === selectedSpecies)
       })
     })
+  }
+
+  isSwissprot(): boolean {
+    // check length first; every returns true for empty array
+    return !!this.cards.length && this.cards.every(card => card.recogniser === 'swissprot-genes-proteins')
   }
 }
