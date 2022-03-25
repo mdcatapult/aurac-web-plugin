@@ -84,6 +84,9 @@ export class LinksService {
           links.geneProteinChemicalClinicalTrial
         ]
         entityLinks.map(link => (link.url = link.createUrl(card.clickedSynonymName)))
+        let swissprotEntityLinks = [
+          links.bioGrid
+        ]
         break
     }
 

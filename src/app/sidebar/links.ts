@@ -1,7 +1,7 @@
 export type Link = {
   resourceName: string
   url?: string
-  createUrl: (id: string) => string
+  createUrl: ((id: string) => string) & ((speciesName: string, primaryGeneName: string) => string)
 }
 
 export const geneNames: Link = {
@@ -37,6 +37,79 @@ export const ensembl: Link = {
   createUrl: (identifier: string) =>
     `https://www.ensembl.org/Homo_sapiens/Gene/Summary?g=${identifier}`
 }
+
+export const bioGrid: Link = {
+  resourceName: 'BioGRID',
+  createUrl: (identifier: string, speciesName: string, primaryGeneName: string) =>
+    `https://thebiogrid.org/${identifier}/summary/${speciesName}/${primaryGeneName}.html`
+}
+
+export const intAct: Link = {
+  resourceName: 'IntAct',
+  createUrl: (identifier: string) =>
+    `http`
+}
+
+export const openTargets: Link = {
+  resourceName: 'OpenTargets',
+  createUrl: (identifier: string) =>
+    `http`
+}
+
+export const disGeNet: Link = {
+  resourceName: 'DisGeNET',
+  createUrl: (identifier: string) =>
+    `http`
+}
+
+export const proteomicsDB: Link = {
+  resourceName: 'ProteomicsDB',
+  createUrl: (identifier: string) =>
+    `http`
+}
+
+export const antibodyPedia: Link = {
+  resourceName: 'AntibodyPedia',
+  createUrl: (identifier: string) =>
+    `http`
+}
+
+export const pfam: Link = {
+  resourceName: 'Pfam',
+  createUrl: (identifier: string) =>
+    `http`
+}
+
+export const refSeq: Link = {
+  resourceName: 'RefSeq',
+  createUrl: (identifier: string) =>
+    `http`
+}
+
+export const kegg: Link = {
+  resourceName: 'KEGG',
+  createUrl: (identifier: string) =>
+    `http`
+}
+
+export const interPro: Link = {
+  resourceName: 'InterPro',
+  createUrl: (identifier: string) =>
+    `http`
+}
+
+export const geneTree: Link = {
+  resourceName: 'Genetree',
+  createUrl: (identifier: string) =>
+    `http`
+}
+
+export const expressionAtlas: Link = {
+  resourceName: 'ExpressionAtlas',
+  createUrl: (identifier: string) =>
+    `http`
+}
+
 
 // general
 
