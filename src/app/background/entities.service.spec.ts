@@ -103,7 +103,8 @@ describe('EntitiesService', () => {
                 entityName,
                 {
                   synonymToXPaths: new Map<string, string[]>([
-                    [entityName, []]
+                    [entityName, []],
+                    ['averyverylongsynonym', []]
                   ]),
                   speciesNames: ["Homo sapiens"]
                 }
@@ -128,7 +129,7 @@ describe('EntitiesService', () => {
         const species = 'Homo sapiens'
         const filteredTabEntities = service.filterEntities(minEntityLength, species)
         const filteredEntities = filteredTabEntities.get(tabID)["swissprot-genes-proteins"].entities
-        expect( filteredEntities.size === 1)
+        expect(filteredEntities.size === 1)
         expect(filteredEntities.get(entityName).speciesNames[0] === "Homo sapiens")
       })
 
@@ -137,7 +138,7 @@ describe('EntitiesService', () => {
         const species = 'Rattus norvegicus'
         const filteredTabEntities = service.filterEntities(minEntityLength, species)
         const filteredEntities = filteredTabEntities.get(tabID)["swissprot-genes-proteins"].entities
-        expect( filteredEntities.size === 0)
+        expect(filteredEntities.size === 0)
       })
 
       it('should return 2 entities when no species is specified', () => {
@@ -145,12 +146,21 @@ describe('EntitiesService', () => {
         const species = 'Homo sapiens'
         const filteredTabEntities = service.filterEntities(minEntityLength, species)
         const filteredEntities = filteredTabEntities.get(tabID)["swissprot-genes-proteins"].entities
-        expect( filteredEntities.size === 2)
+        expect(filteredEntities.size === 2)
+      })
+
+      it('should return a single entity when species and minimum entity length are present', () => {
+        const minEntityLength = 10
+        const species = 'Homo sapiens'
+        const filteredTabEntities = service.filterEntities(minEntityLength, species)
+        const filteredEntities = filteredTabEntities.get(tabID)["swissprot-genes-proteins"].entities
+        expect(filteredEntities.get(entityName).speciesNames[0] === 'Homo sapiens')
+        expect(filteredEntities.get(entityName).synonymToXPaths.size === 1)
+        expect(filteredEntities.get(entityName).synonymToXPaths.has('averyverylongsynonym'))
+
       })
 
     })
-
-
 
   })
 })
