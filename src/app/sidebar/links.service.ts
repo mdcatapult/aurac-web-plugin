@@ -81,12 +81,21 @@ export class LinksService {
           links.dimensions,
           links.addGene,
           links.patents,
-          links.geneProteinChemicalClinicalTrial
+          links.geneProteinChemicalClinicalTrial,
+          links.kegg,
+          links.pfam,
+          links.intAct,
+          links.interPro,
+          links.proteomicsDB,
         ]
         entityLinks.map(link => (link.url = link.createUrl(card.clickedSynonymName)))
-        let swissprotEntityLinks = [
-          links.bioGrid
-        ]
+        
+        const speciesIdentifiers = JSON.parse(card.entity.identifierSourceToID!.get("Homo sapiens")!)
+      
+        entityLinks.push({
+          ...links.uniProt,
+          url: links.uniProt.createUrl(speciesIdentifiers['Accession'])
+        })
         break
     }
 

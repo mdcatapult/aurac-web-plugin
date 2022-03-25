@@ -1,3 +1,5 @@
+import { Species } from "src/types/species"
+
 export type Link = {
   resourceName: string
   url?: string
@@ -40,14 +42,14 @@ export const ensembl: Link = {
 
 export const bioGrid: Link = {
   resourceName: 'BioGRID',
-  createUrl: (identifier: string, speciesName: string, primaryGeneName: string) =>
-    `https://thebiogrid.org/${identifier}/summary/${speciesName}/${primaryGeneName}.html`
+  createUrl: (identifier: string) =>
+    `https://thebiogrid.org/${identifier}`
 }
 
 export const intAct: Link = {
   resourceName: 'IntAct',
   createUrl: (identifier: string) =>
-    `http`
+    `https://www.ebi.ac.uk/intact/search?query=${identifier}`
 }
 
 export const openTargets: Link = {
@@ -65,7 +67,7 @@ export const disGeNet: Link = {
 export const proteomicsDB: Link = {
   resourceName: 'ProteomicsDB',
   createUrl: (identifier: string) =>
-    `http`
+    `https://www.proteomicsdb.org/proteomicsdb/#protein/proteinDetails/${identifier}/summary`
 }
 
 export const antibodyPedia: Link = {
@@ -77,31 +79,25 @@ export const antibodyPedia: Link = {
 export const pfam: Link = {
   resourceName: 'Pfam',
   createUrl: (identifier: string) =>
-    `http`
+    `http://pfam.xfam.org/family/${identifier}`
 }
 
 export const refSeq: Link = {
   resourceName: 'RefSeq',
   createUrl: (identifier: string) =>
-    `http`
+    `https://www.ncbi.nlm.nih.gov/search/all/?term=${identifier}`
 }
 
 export const kegg: Link = {
   resourceName: 'KEGG',
   createUrl: (identifier: string) =>
-    `http`
+    `https://www.genome.jp/entry/${identifier}`
 }
 
 export const interPro: Link = {
   resourceName: 'InterPro',
   createUrl: (identifier: string) =>
-    `http`
-}
-
-export const geneTree: Link = {
-  resourceName: 'Genetree',
-  createUrl: (identifier: string) =>
-    `http`
+    `https://www.ebi.ac.uk/interpro/entry/InterPro/${identifier}/`
 }
 
 export const expressionAtlas: Link = {
@@ -109,7 +105,12 @@ export const expressionAtlas: Link = {
   createUrl: (identifier: string) =>
     `http`
 }
-
+  
+export const uniProt: Link = {
+  resourceName: 'Uniprot',
+  createUrl: (identifier: string) =>
+    `https://www.uniprot.org/uniprot/${identifier}`
+}
 
 // general
 
@@ -134,6 +135,8 @@ export const geneProteinChemicalClinicalTrial: Link = {
   createUrl: (identifier: string) =>
     `https://clinicaltrials.gov/ct2/results?cond=&term=${identifier}&cntry=&state=&city=&dist=`
 }
+
+
 
 // disease
 
