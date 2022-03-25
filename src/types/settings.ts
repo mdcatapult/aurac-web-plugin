@@ -1,10 +1,11 @@
 import { environment } from '../environments/environment'
 import { Recogniser } from './recognisers'
+import { Species } from './species'
 
 export type Preferences = {
   minEntityLength: number
   recogniser: Recogniser
-  species: string
+  species: Species
 }
 
 export type XRefSources = Record<string, boolean>

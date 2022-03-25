@@ -1,6 +1,7 @@
 import * as links from './links'
 import { Injectable } from '@angular/core'
 import { SidebarCard } from './types'
+import { link } from 'fs'
 
 @Injectable({
   providedIn: 'root'
@@ -90,11 +91,15 @@ export class LinksService {
         ]
         entityLinks.map(link => (link.url = link.createUrl(card.clickedSynonymName)))
         
-        const speciesIdentifiers = JSON.parse(card.entity.identifierSourceToID!.get("Homo sapiens")!)
+        const speciesIdentifiers = card.entity.identifierSourceToID!.get(card.selectedSpecies!)
+        if (!speciesIdentifiers) {
+          break
+        }
+        
       
         entityLinks.push({
           ...links.uniProt,
-          url: links.uniProt.createUrl(speciesIdentifiers['Accession'])
+          url: links.uniProt.createUrl(JSON.parse(speciesIdentifiers)['Accession'])
         })
         break
     }

@@ -153,15 +153,14 @@ export class EntityMessengerService {
         return
       }
 
-      console.log(entity)
-
       const sidebarCard: SidebarCard = {
         recogniser: this.settingsService.preferences.recogniser,
         entity,
         entityID: entityID,
         clickedEntityOccurrence: entityOccurrence,
         clickedSynonymName: synonymName,
-        clickedSynonymOccurrence: synonymOccurrence
+        clickedSynonymOccurrence: synonymOccurrence,
+        selectedSpecies: this.settingsService.preferences.recogniser === 'swissprot-genes-proteins' ? this.settingsService.preferences.species : undefined
       }
 
       const getXrefs: Promise<XRef[]> = entity.xRefs

@@ -1,5 +1,6 @@
 import { Entity, EntityID } from 'src/types/entity'
 import { Recogniser } from 'src/types/recognisers'
+import { Species } from 'src/types/species'
 
 export interface SidebarCard {
   clickedSynonymName: string
@@ -8,6 +9,7 @@ export interface SidebarCard {
   entityID: EntityID
   entity: Entity
   recogniser: Recogniser
+  selectedSpecies?: Species
 }
 
 export interface Identifier {
