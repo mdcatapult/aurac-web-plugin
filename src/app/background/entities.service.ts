@@ -79,7 +79,7 @@ export class EntitiesService {
 
         entity.synonymToXPaths.forEach((occurrences, synonym) => {
           const hasLength = synonym.length >= minEntityLength
-          const hasSpecies = species && Object.keys(entity.metadata).includes(species)
+          const hasSpecies = species && entity.speciesNames?.includes(species)
 
           if (hasLength && (!species || hasSpecies)) {
             filteredSynonyms.set(synonym, occurrences)
