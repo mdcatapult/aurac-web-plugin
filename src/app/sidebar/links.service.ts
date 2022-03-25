@@ -1,7 +1,6 @@
 import * as links from './links'
 import { Injectable } from '@angular/core'
 import { SidebarCard } from './types'
-import { link } from 'fs'
 
 @Injectable({
   providedIn: 'root'
@@ -83,11 +82,6 @@ export class LinksService {
           links.addGene,
           links.patents,
           links.geneProteinChemicalClinicalTrial,
-          links.kegg,
-          links.pfam,
-          links.intAct,
-          links.interPro,
-          links.proteomicsDB,
         ]
         entityLinks.map(link => (link.url = link.createUrl(card.clickedSynonymName)))
         
@@ -96,11 +90,21 @@ export class LinksService {
           break
         }
         
+        entityLinks = entityLinks.concat(
+          [links.intAct,
+          links.interPro,
+          links.proteomicsDB,
+          links.pfam,
+          links.uniProt,
+          links.kegg
+        ].map(link => {
+            return {
+              ...link,
+              url: link.createUrl(JSON.parse(speciesIdentifiers)[link.resourceName])
+            }
+          })
+        )
       
-        entityLinks.push({
-          ...links.uniProt,
-          url: links.uniProt.createUrl(JSON.parse(speciesIdentifiers)['Accession'])
-        })
         break
     }
 

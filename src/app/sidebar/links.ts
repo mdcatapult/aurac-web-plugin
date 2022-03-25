@@ -1,9 +1,8 @@
-import { Species } from "src/types/species"
-
 export type Link = {
   resourceName: string
   url?: string
-  createUrl: ((id: string) => string) & ((speciesName: string, primaryGeneName: string) => string)
+  label?: string
+  createUrl: (id: string) => string
 }
 
 export const geneNames: Link = {
@@ -107,7 +106,8 @@ export const expressionAtlas: Link = {
 }
   
 export const uniProt: Link = {
-  resourceName: 'Uniprot',
+  resourceName: 'Accession',
+  label: 'Uniprot',
   createUrl: (identifier: string) =>
     `https://www.uniprot.org/uniprot/${identifier}`
 }
