@@ -81,30 +81,31 @@ export class LinksService {
           links.dimensions,
           links.addGene,
           links.patents,
-          links.geneProteinChemicalClinicalTrial,
+          links.geneProteinChemicalClinicalTrial
         ]
         entityLinks.map(link => (link.url = link.createUrl(card.clickedSynonymName)))
-        
+
         const speciesIdentifiers = card.entity.identifierSourceToID!.get(card.selectedSpecies!)
         if (!speciesIdentifiers) {
           break
         }
-        
+
         entityLinks = entityLinks.concat(
-          [links.intAct,
-          links.interPro,
-          links.proteomicsDB,
-          links.pfam,
-          links.uniProt,
-          links.kegg
-        ].map(link => {
+          [
+            links.intAct,
+            links.interPro,
+            links.proteomicsDB,
+            links.pfam,
+            links.uniProt,
+            links.kegg
+          ].map(link => {
             return {
               ...link,
               url: link.createUrl(JSON.parse(speciesIdentifiers)[link.resourceName])
             }
           })
         )
-      
+
         break
     }
 

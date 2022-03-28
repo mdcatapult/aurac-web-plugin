@@ -102,10 +102,12 @@ export class SidebarCardComponent implements OnInit, OnChanges {
   }
 
   hasSequence(): boolean {
-    return this.card.selectedSpecies && this.card.entity.metadata?.[this.card.selectedSpecies]?.sequence
+    return (
+      this.card.selectedSpecies && this.card.entity.metadata?.[this.card.selectedSpecies]?.sequence
+    )
   }
 
   getSwissprotMetadata(property: string): string {
-    return this.card.entity.metadata[this.card.selectedSpecies!][property]
+    return this.card.selectedSpecies ? this.card.entity.metadata[this.card.selectedSpecies][property] : ''
   }
 }

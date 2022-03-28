@@ -86,11 +86,10 @@
             Gene Sequence
           </mat-panel-description>
         </mat-expansion-panel-header>
-        <p>Genentic sequence: {{ getSwissprotMetadata('sequence')}}</p>
-        <p>Sequence length: {{ getSwissprotMetadata('sequence length')}}</p>
-        <p>Sequence mass: {{ getSwissprotMetadata('sequence mass')}}</p>
+        <p>Genentic sequence: {{ getSwissprotMetadata('sequence') }}</p>
+        <p>Sequence length: {{ getSwissprotMetadata('sequence length') }}</p>
+        <p>Sequence mass: {{ getSwissprotMetadata('sequence mass') }}</p>
       </mat-expansion-panel>
-
 
       <mat-expansion-panel *ngIf="getSwissprotMetadata('subcellular location')">
         <mat-expansion-panel-header>
@@ -99,7 +98,7 @@
             General
           </mat-panel-description>
         </mat-expansion-panel-header>
-        <p>Subcellular locations: {{getSwissprotMetadata('subcellular location')}}</p>
+        <p>Subcellular locations: {{ getSwissprotMetadata('subcellular location') }}</p>
       </mat-expansion-panel>
 
       <br />

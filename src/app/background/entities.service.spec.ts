@@ -1,10 +1,10 @@
-import {HttpClientTestingModule} from '@angular/common/http/testing'
-import {TestBed} from '@angular/core/testing'
-import {Entity, TabEntities, TabID} from 'src/types/entity'
-import {BrowserService} from '../browser.service'
-import {TestBrowserService} from '../test-browser.service'
+import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { TestBed } from '@angular/core/testing'
+import { Entity, TabEntities, TabID } from 'src/types/entity'
+import { BrowserService } from '../browser.service'
+import { TestBrowserService } from '../test-browser.service'
 
-import {EntitiesService} from './entities.service'
+import { EntitiesService } from './entities.service'
 
 describe('EntitiesService', () => {
   let service: EntitiesService
@@ -12,7 +12,7 @@ describe('EntitiesService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [EntitiesService, {provide: BrowserService, useClass: TestBrowserService}]
+      providers: [EntitiesService, { provide: BrowserService, useClass: TestBrowserService }]
     })
     service = TestBed.inject(EntitiesService)
   })
@@ -21,9 +21,7 @@ describe('EntitiesService', () => {
     expect(service).toBeTruthy()
   })
 
-
   describe('filter entities', () => {
-
     describe('minimum entity length', () => {
       const tabID = 1
       const entityName = 'an-entity'
@@ -106,18 +104,16 @@ describe('EntitiesService', () => {
                     [entityName, []],
                     ['averyverylongsynonym', []]
                   ]),
-                  speciesNames: ["Homo sapiens"]
+                  speciesNames: ['Homo sapiens']
                 }
               ],
               [
                 entityName2,
                 {
-                  synonymToXPaths: new Map<string, string[]>([
-                    [entityName2, []]
-                  ]),
-                  speciesNames: ["Mus musculus"]
+                  synonymToXPaths: new Map<string, string[]>([[entityName2, []]]),
+                  speciesNames: ['Mus musculus']
                 }
-              ],
+              ]
             ])
           }
         })
@@ -128,16 +124,16 @@ describe('EntitiesService', () => {
         const minEntityLength = 1
         const species = 'Homo sapiens'
         const filteredTabEntities = service.filterEntities(minEntityLength, species)
-        const filteredEntities = filteredTabEntities.get(tabID)["swissprot-genes-proteins"].entities
+        const filteredEntities = filteredTabEntities.get(tabID)['swissprot-genes-proteins'].entities
         expect(filteredEntities.size === 1)
-        expect(filteredEntities.get(entityName).speciesNames[0] === "Homo sapiens")
+        expect(filteredEntities.get(entityName).speciesNames[0] === 'Homo sapiens')
       })
 
       it('should return no entities when species is "Rattus norvegicus"', () => {
         const minEntityLength = 1
         const species = 'Rattus norvegicus'
         const filteredTabEntities = service.filterEntities(minEntityLength, species)
-        const filteredEntities = filteredTabEntities.get(tabID)["swissprot-genes-proteins"].entities
+        const filteredEntities = filteredTabEntities.get(tabID)['swissprot-genes-proteins'].entities
         expect(filteredEntities.size === 0)
       })
 
@@ -145,7 +141,7 @@ describe('EntitiesService', () => {
         const minEntityLength = 1
         const species = 'Homo sapiens'
         const filteredTabEntities = service.filterEntities(minEntityLength, species)
-        const filteredEntities = filteredTabEntities.get(tabID)["swissprot-genes-proteins"].entities
+        const filteredEntities = filteredTabEntities.get(tabID)['swissprot-genes-proteins'].entities
         expect(filteredEntities.size === 2)
       })
 
@@ -153,14 +149,11 @@ describe('EntitiesService', () => {
         const minEntityLength = 10
         const species = 'Homo sapiens'
         const filteredTabEntities = service.filterEntities(minEntityLength, species)
-        const filteredEntities = filteredTabEntities.get(tabID)["swissprot-genes-proteins"].entities
+        const filteredEntities = filteredTabEntities.get(tabID)['swissprot-genes-proteins'].entities
         expect(filteredEntities.get(entityName).speciesNames[0] === 'Homo sapiens')
         expect(filteredEntities.get(entityName).synonymToXPaths.size === 1)
         expect(filteredEntities.get(entityName).synonymToXPaths.has('averyverylongsynonym'))
-
       })
-
     })
-
   })
 })
