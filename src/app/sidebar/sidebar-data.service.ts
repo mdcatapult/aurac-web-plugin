@@ -49,8 +49,6 @@ export class SidebarDataService {
   }
 
   private viewOrCreateCard(clickedCard: SidebarCard): void {
-
-    console.log(clickedCard)
     const cardExists = this.cards.some(card => card.entityID === clickedCard.entityID)
 
     if (!cardExists) {
