@@ -160,7 +160,10 @@ export class EntityMessengerService {
         clickedEntityOccurrence: entityOccurrence,
         clickedSynonymName: synonymName,
         clickedSynonymOccurrence: synonymOccurrence,
-        selectedSpecies: this.settingsService.preferences.recogniser === 'swissprot-genes-proteins' ? this.settingsService.preferences.species : undefined
+        selectedSpecies:
+          this.settingsService.preferences.recogniser === 'swissprot-genes-proteins'
+            ? this.settingsService.preferences.species
+            : undefined
       }
 
       const getXrefs: Promise<XRef[]> = entity.xRefs

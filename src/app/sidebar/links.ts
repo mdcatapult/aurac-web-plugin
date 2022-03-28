@@ -41,26 +41,22 @@ export const ensembl: Link = {
 
 export const bioGrid: Link = {
   resourceName: 'BioGRID',
-  createUrl: (identifier: string) =>
-    `https://thebiogrid.org/${identifier}`
+  createUrl: (identifier: string) => `https://thebiogrid.org/${identifier}`
 }
 
 export const intAct: Link = {
   resourceName: 'IntAct',
-  createUrl: (identifier: string) =>
-    `https://www.ebi.ac.uk/intact/search?query=${identifier}`
+  createUrl: (identifier: string) => `https://www.ebi.ac.uk/intact/search?query=${identifier}`
 }
 
 export const openTargets: Link = {
   resourceName: 'OpenTargets',
-  createUrl: (identifier: string) =>
-    `http`
+  createUrl: (identifier: string) => `http`
 }
 
 export const disGeNet: Link = {
   resourceName: 'DisGeNET',
-  createUrl: (identifier: string) =>
-    `http`
+  createUrl: (identifier: string) => `http`
 }
 
 export const proteomicsDB: Link = {
@@ -71,45 +67,38 @@ export const proteomicsDB: Link = {
 
 export const antibodyPedia: Link = {
   resourceName: 'AntibodyPedia',
-  createUrl: (identifier: string) =>
-    `http`
+  createUrl: (identifier: string) => `http`
 }
 
 export const pfam: Link = {
   resourceName: 'Pfam',
-  createUrl: (identifier: string) =>
-    `http://pfam.xfam.org/family/${identifier}`
+  createUrl: (identifier: string) => `http://pfam.xfam.org/family/${identifier}`
 }
 
 export const refSeq: Link = {
   resourceName: 'RefSeq',
-  createUrl: (identifier: string) =>
-    `https://www.ncbi.nlm.nih.gov/search/all/?term=${identifier}`
+  createUrl: (identifier: string) => `https://www.ncbi.nlm.nih.gov/search/all/?term=${identifier}`
 }
 
 export const kegg: Link = {
   resourceName: 'KEGG',
-  createUrl: (identifier: string) =>
-    `https://www.genome.jp/entry/${identifier}`
+  createUrl: (identifier: string) => `https://www.genome.jp/entry/${identifier}`
 }
 
 export const interPro: Link = {
   resourceName: 'InterPro',
-  createUrl: (identifier: string) =>
-    `https://www.ebi.ac.uk/interpro/entry/InterPro/${identifier}/`
+  createUrl: (identifier: string) => `https://www.ebi.ac.uk/interpro/entry/InterPro/${identifier}/`
 }
 
 export const expressionAtlas: Link = {
   resourceName: 'ExpressionAtlas',
-  createUrl: (identifier: string) =>
-    `http`
+  createUrl: (identifier: string) => `http`
 }
-  
+
 export const uniProt: Link = {
   resourceName: 'Accession',
   label: 'Uniprot',
-  createUrl: (identifier: string) =>
-    `https://www.uniprot.org/uniprot/${identifier}`
+  createUrl: (identifier: string) => `https://www.uniprot.org/uniprot/${identifier}`
 }
 
 // general
@@ -135,8 +124,6 @@ export const geneProteinChemicalClinicalTrial: Link = {
   createUrl: (identifier: string) =>
     `https://clinicaltrials.gov/ct2/results?cond=&term=${identifier}&cntry=&state=&city=&dist=`
 }
-
-
 
 // disease
 
