@@ -54,9 +54,7 @@ export class NerService {
           error => this.handleAPIError(tab.id!, error)
         )
         .then(response => {
-          console.log(response)
           const recogniserEntities = this.transformAPIResponse(response as APIEntities, tab.id!)
-          console.log(recogniserEntities)
           this.entitiesService.setRecogniserEntities(
             tab.id!,
             this.settingsService.preferences.recogniser,
