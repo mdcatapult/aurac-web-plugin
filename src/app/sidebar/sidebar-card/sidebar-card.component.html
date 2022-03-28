@@ -79,7 +79,7 @@
       </mat-accordion>
 
       <!--- Sequence data -->
-      <mat-expansion-panel *ngIf="card.recogniser==='swissprot-genes-proteins' && card.selectedSpecies">
+      <mat-expansion-panel *ngIf="hasSequence()">
         <mat-expansion-panel-header>
           <mat-panel-description>
             <mat-icon inline="true">view_headline</mat-icon>
@@ -89,6 +89,17 @@
         <p>Genentic sequence: {{ getSwissprotMetadata('sequence')}}</p>
         <p>Sequence length: {{ getSwissprotMetadata('sequence length')}}</p>
         <p>Sequence mass: {{ getSwissprotMetadata('sequence mass')}}</p>
+      </mat-expansion-panel>
+
+
+      <mat-expansion-panel *ngIf="getSwissprotMetadata('subcellular location')">
+        <mat-expansion-panel-header>
+          <mat-panel-description>
+            <mat-icon inline="true">view_headline</mat-icon>
+            General
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <p>Subcellular locations: {{getSwissprotMetadata('subcellular location')}}</p>
       </mat-expansion-panel>
 
       <br />

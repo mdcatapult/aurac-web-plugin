@@ -79,7 +79,7 @@ export class SidebarCardComponent implements OnInit, OnChanges {
     const i = this.scrollIndex
     const n = htmlTagIDs.length
 
-    // This modulo operation means the scroll index with circle back to zero.
+    // This modulo operation means the scroll index will circle back to zero.
     this.scrollIndex = ((i % n) + n) % n
 
     this.browserService.sendMessageToBackground({
@@ -99,6 +99,10 @@ export class SidebarCardComponent implements OnInit, OnChanges {
       type: 'content_script_open_modal',
       body: this.card.entity
     })
+  }
+
+  hasSequence(): boolean {
+    return this.card.selectedSpecies && this.card.entity.metadata?.[this.card.selectedSpecies]?.sequence
   }
 
   getSwissprotMetadata(property: string): string {
