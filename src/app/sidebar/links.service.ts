@@ -91,19 +91,18 @@ export class LinksService {
         }
 
         entityLinks = entityLinks.concat(
-          [
-            links.intAct,
-            links.interPro,
-            links.proteomicsDB,
-            links.pfam,
-            links.uniProt,
-            links.kegg
-          ].map(link => {
-            return {
-              ...link,
-              url: link.createUrl(JSON.parse(speciesIdentifiers)[link.resourceName])
-            }
-          })
+          [links.intAct, links.interPro, links.proteomicsDB, links.pfam, links.uniProt, links.kegg]
+            .filter(link => {
+              const linkIdentifier = JSON.parse(speciesIdentifiers)[link.resourceName]
+
+              return linkIdentifier && !linkIdentifier.includes(', ') // filter out cases with lists of identifiers
+            })
+            .map(link => {
+              return {
+                ...link,
+                url: link.createUrl(JSON.parse(speciesIdentifiers)[link.resourceName])
+              }
+            })
         )
 
         break
