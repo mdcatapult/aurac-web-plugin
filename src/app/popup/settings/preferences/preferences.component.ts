@@ -1,7 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core'
+import { Component, Input, OnInit, OptionalDecorator } from '@angular/core'
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
+import { minBy } from 'lodash'
 import { combineLatest } from 'rxjs'
-import { skip } from 'rxjs/operators'
+import { map, pairwise, skip, tap } from 'rxjs/operators'
 import { SettingsService } from 'src/app/background/settings.service'
 import { BrowserService } from 'src/app/browser.service'
 import { defaultSettings, Preferences } from 'src/types/settings'
@@ -40,9 +41,19 @@ export class PreferencesComponent implements OnInit {
       this.form.get('minEntityLength')!.valueChanges,
       this.form.get('species')!.valueChanges
     ])
-      .pipe(skip(1))
+      .pipe(
+        pairwise(),
+        map((values: [[number, string], [number, string]]) => {
+          const [[oldMinEntityLength, oldSpecies], [newMinEntityLength, newSpecies]] = values
+          if (newSpecies !== oldSpecies) {
+            this.browserService.sendMessageToBackground('sidebar_data_remove_cards')
+          }
+
+          return [newMinEntityLength, newSpecies]
+        })
+      )
       .subscribe(([minEntityLength, species]) => {
-        console.log(minEntityLength, species)
+        console.log('subscribe', minEntityLength, species)
         this.browserService.sendMessageToBackground({
           type: 'entity_messenger_service_filters_changed',
           body: { minEntityLength: minEntityLength, species: species }
