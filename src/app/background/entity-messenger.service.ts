@@ -108,7 +108,6 @@ export class EntityMessengerService {
             })
 
             return true
-          // case 'entity_messenger_service_clear_sidebar':
 
           default:
         }

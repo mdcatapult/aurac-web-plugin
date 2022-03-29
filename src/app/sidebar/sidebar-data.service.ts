@@ -44,7 +44,6 @@ export class SidebarDataService {
             this.totalCountInfoSubject.next(msg.body)
             break
           case 'sidebar_data_remove_cards':
-            console.log('sidebar removing cards!')
             this.cards.length = 0
             break
         }

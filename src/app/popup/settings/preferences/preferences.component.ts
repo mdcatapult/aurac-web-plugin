@@ -1,8 +1,7 @@
-import { Component, Input, OnInit, OptionalDecorator } from '@angular/core'
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
-import { minBy } from 'lodash'
+import { Component, OnInit } from '@angular/core'
+import { FormBuilder, FormControl, Validators } from '@angular/forms'
 import { combineLatest } from 'rxjs'
-import { map, pairwise, skip, tap } from 'rxjs/operators'
+import { map, pairwise } from 'rxjs/operators'
 import { SettingsService } from 'src/app/background/settings.service'
 import { BrowserService } from 'src/app/browser.service'
 import { defaultSettings, Preferences } from 'src/types/settings'
@@ -53,7 +52,6 @@ export class PreferencesComponent implements OnInit {
         })
       )
       .subscribe(([minEntityLength, species]) => {
-        console.log('subscribe', minEntityLength, species)
         this.browserService.sendMessageToBackground({
           type: 'entity_messenger_service_filters_changed',
           body: { minEntityLength: minEntityLength, species: species }
