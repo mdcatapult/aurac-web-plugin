@@ -82,9 +82,11 @@
           <mat-expansion-panel-header>
             <mat-panel-description>
               <mat-icon inline="true">gesture</mat-icon>
-              Gene Sequence
+              Protein Sequence
             </mat-panel-description>
           </mat-expansion-panel-header>
+          <p><b>Sequence length:</b> {{ getSwissprotMetadata('sequence length') }}</p>
+          <p><b>Sequence mass:</b> {{ getSwissprotMetadata('sequence mass') }}</p>
           <div style="display: flex">
             <p><b>Genetic sequence:</b></p>
             <span class="aurac-spacer"></span>
@@ -101,8 +103,6 @@
           <p class="aurac-sequence">
             {{ getSwissprotMetadata('sequence') }}
           </p>
-          <p><b>Sequence length:</b> {{ getSwissprotMetadata('sequence length') }}</p>
-          <p><b>Sequence mass:</b> {{ getSwissprotMetadata('sequence mass') }}</p>
         </mat-expansion-panel>
 
         <!--- General data --->

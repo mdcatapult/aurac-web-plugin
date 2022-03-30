@@ -42,6 +42,8 @@ mat-icon {
 
 .aurac-sequence {
   overflow-wrap: break-word;
+  max-height: 20vh;
+  overflow: auto;
 }
 
 .aurac-clipboard {
