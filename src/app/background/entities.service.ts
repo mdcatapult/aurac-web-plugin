@@ -100,6 +100,10 @@ export class EntitiesService {
     setterInfo?: SetterInfo
   ): void {
     const minEntityLength = this.settingsService.preferences.minEntityLength
+    const species =
+      recogniser === 'swissprot-genes-proteins'
+        ? this.settingsService.preferences.species
+        : undefined
 
     const tabEntities = this.entityMap.get(tabID)
 
@@ -115,7 +119,11 @@ export class EntitiesService {
       this.entityMap.set(tabID, tabEntities)
       entityCopy = _.cloneDeep(tabEntities)
     }
-    this.updateStream(tabID, this.filterTabEntities(minEntityLength, entityCopy), setterInfo)
+    this.updateStream(
+      tabID,
+      this.filterTabEntities(minEntityLength, entityCopy, species),
+      setterInfo
+    )
   }
 
   getFilteredEntity(tabID: TabID, recogniser: Recogniser, entityID: EntityID): Entity | undefined {

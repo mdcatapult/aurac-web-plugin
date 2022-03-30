@@ -29,7 +29,7 @@ export class SidebarCardListComponent {
     })
 
     this.sidebarDataService.cardsObservable.subscribe(cards => {
-      this.allSpecies = new Set<string>(['None'])
+      this.allSpecies = new Set<string>()
       cards.forEach(card => {
         ;(card.entity.speciesNames || []).forEach(species => {
           this.allSpecies.add(species)

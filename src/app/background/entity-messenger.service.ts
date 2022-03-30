@@ -108,6 +108,7 @@ export class EntityMessengerService {
             })
 
             return true
+
           default:
         }
       }

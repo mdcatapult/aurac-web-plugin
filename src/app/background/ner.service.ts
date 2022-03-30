@@ -225,8 +225,6 @@ export class NerService {
           case 'swissprot-genes-proteins':
             // For the swissprot recogniser we will use the Accession, which is present for every entity.
             // This is different to Leadmine where an entity may not have a resolved entity.
-            // const accession = recognisedEntity.identifiers?.Accession
-            // this.setOrUpdateEntity(recogniserEntities!, accession, recognisedEntity)
 
             for (const speciesName in recognisedEntity.identifiers) {
               const identifierString = recognisedEntity.identifiers[speciesName]
