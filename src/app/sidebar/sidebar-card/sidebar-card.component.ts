@@ -4,6 +4,7 @@ import { PageScrollService } from 'ngx-page-scroll-core'
 import { BrowserService } from 'src/app/browser.service'
 import { SidebarDataService } from '../sidebar-data.service'
 import { Identifier, SidebarCard } from '../types'
+import { Clipboard } from '@angular/cdk/clipboard';
 
 @Component({
   selector: 'app-sidebar-card',
@@ -49,8 +50,13 @@ export class SidebarCardComponent implements OnInit, OnChanges {
     private browserService: BrowserService,
     private sidebarDataService: SidebarDataService,
     private pageScrollService: PageScrollService,
+    private clipboard: Clipboard,
     @Inject(DOCUMENT) private document: any
   ) {}
+
+  copyText(text: string) {
+    this.clipboard.copy(text);
+  }
 
   private scrollToMe(delayMs?: number) {
     // This still requires a timeout in order to work in ngOnInit.
