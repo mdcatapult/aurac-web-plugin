@@ -68,12 +68,16 @@ export class EntityMessengerService {
         switch (msg.type) {
           case 'entity_messenger_service_highlight_clicked':
             return this.highlightClicked(msg.body)
-          case 'min_entity_length_changed':
+          case 'entity_messenger_service_filters_changed':
             this.browserService
               .sendMessageToActiveTab('content_script_remove_highlights')
               .then(() => {
-                const minEntityLength = msg.body
-                this.entitiesService.filterEntities(minEntityLength)
+                const { minEntityLength, species } = msg.body
+                const speciesArg =
+                  this.settingsService.preferences.recogniser === 'swissprot-genes-proteins'
+                    ? species
+                    : undefined
+                this.entitiesService.filterEntities(minEntityLength, speciesArg)
 
                 return Promise.resolve()
               })
@@ -104,6 +108,7 @@ export class EntityMessengerService {
             })
 
             return true
+
           default:
         }
       }
@@ -155,7 +160,11 @@ export class EntityMessengerService {
         entityID: entityID,
         clickedEntityOccurrence: entityOccurrence,
         clickedSynonymName: synonymName,
-        clickedSynonymOccurrence: synonymOccurrence
+        clickedSynonymOccurrence: synonymOccurrence,
+        selectedSpecies:
+          this.settingsService.preferences.recogniser === 'swissprot-genes-proteins'
+            ? this.settingsService.preferences.species
+            : undefined
       }
 
       const getXrefs: Promise<XRef[]> = entity.xRefs

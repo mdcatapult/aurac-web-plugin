@@ -4,6 +4,7 @@ import { SidebarDataService } from '../sidebar-data.service'
 import { CsvExporterService } from '../../background/csv-exporter.service'
 import { MatSlideToggleChange } from '@angular/material/slide-toggle'
 import { SettingsService } from '../../background/settings.service'
+import { SidebarCard } from '../types'
 
 @Component({
   selector: 'app-sidebar-header',

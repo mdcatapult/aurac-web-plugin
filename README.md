@@ -15,15 +15,9 @@ cause Aurac to use that dictionary for NER. Each dictionary corresponds to a spe
 - Genes/Proteins
 - Diseases
 - Chemicals(SMILES)
-- General - the general purpose Leadmine config provided by NextMove which covers:
-  - Chemicals
-  - Diseases
-  - Genes / Proteins
-  - Chemical Reactions
-  - Patent Identifiers
-  - Antibodies
-  - Mass Spec
-  - Organisms
+- Swissprot
+
+Swissprot data is broken down by species. When this dictionary is selected, a dropdown menu containing a sample of different species will appear, allowing the user to filter highlights by their species. For example, selecting "Homo Sapiens" will only highlight entities which relate to "Homo Sapiens".
 
 ## Settings and Preferences
 

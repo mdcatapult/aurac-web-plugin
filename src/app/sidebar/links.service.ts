@@ -84,6 +84,27 @@ export class LinksService {
           links.geneProteinChemicalClinicalTrial
         ]
         entityLinks.map(link => (link.url = link.createUrl(card.clickedSynonymName)))
+
+        const speciesIdentifiers = card.entity.identifierSourceToID!.get(card.selectedSpecies!)
+        if (!speciesIdentifiers) {
+          break
+        }
+
+        entityLinks = entityLinks.concat(
+          [links.intAct, links.interPro, links.proteomicsDB, links.pfam, links.uniProt, links.kegg]
+            .filter(link => {
+              const linkIdentifier = JSON.parse(speciesIdentifiers)[link.resourceName]
+
+              return linkIdentifier && !linkIdentifier.includes(', ') // filter out cases with lists of identifiers
+            })
+            .map(link => {
+              return {
+                ...link,
+                url: link.createUrl(JSON.parse(speciesIdentifiers)[link.resourceName])
+              }
+            })
+        )
+
         break
     }
 

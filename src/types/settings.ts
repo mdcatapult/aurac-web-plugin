@@ -1,9 +1,11 @@
 import { environment } from '../environments/environment'
 import { Recogniser } from './recognisers'
+import { Species } from './species'
 
 export type Preferences = {
   minEntityLength: number
   recogniser: Recogniser
+  species: Species
 }
 
 export type XRefSources = Record<string, boolean>
@@ -40,6 +42,7 @@ export const defaultSettings: Settings = {
   xRefSources: {},
   preferences: {
     minEntityLength: 3,
-    recogniser: 'leadmine-proteins'
+    recogniser: 'leadmine-proteins',
+    species: 'Homo sapiens'
   }
 }

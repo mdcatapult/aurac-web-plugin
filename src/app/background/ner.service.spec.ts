@@ -37,6 +37,7 @@ describe('NerService', () => {
     }
     const entity: Entity = {
       synonymToXPaths: new Map([['Gene name', ['/html/*[1]/*[1]']]]),
+      speciesNames: undefined,
       identifierSourceToID: new Map([['resolvedEntity', 'HGNC:8544']]),
       metadata: {
         entityGroup: 'Gene or Protein',
@@ -64,7 +65,8 @@ describe('NerService', () => {
           [
             'HGNC:8644',
             {
-              synonymToXPaths: new Map<string, string[]>([['existing synonym', ['/html/*[1]']]])
+              synonymToXPaths: new Map<string, string[]>([['existing synonym', ['/html/*[1]']]]),
+              speciesNames: undefined
             }
           ]
         ])
@@ -77,11 +79,17 @@ describe('NerService', () => {
         entities: new Map<string, Entity>([
           [
             'HGNC:8644',
-            { synonymToXPaths: new Map<string, string[]>([['existing synonym', ['/html/*[1]']]]) }
+            {
+              synonymToXPaths: new Map<string, string[]>([['existing synonym', ['/html/*[1]']]]),
+              speciesNames: undefined
+            }
           ],
           [
             'HGNC:8744',
-            { synonymToXPaths: new Map<string, string[]>([['new synonym', ['/html/*[2]']]]) }
+            {
+              synonymToXPaths: new Map<string, string[]>([['new synonym', ['/html/*[2]']]]),
+              speciesNames: undefined
+            }
           ]
         ])
       }
@@ -109,7 +117,8 @@ describe('NerService', () => {
               synonymToXPaths: new Map<string, string[]>([
                 ['existing synonym', ['/html/*[1]']],
                 ['new synonym', ['/html/*[2]']]
-              ])
+              ]),
+              speciesNames: undefined
             }
           ]
         ])
@@ -137,7 +146,8 @@ describe('NerService', () => {
             {
               synonymToXPaths: new Map<string, string[]>([
                 ['existing synonym', ['/html/*[1]', '/html/*[2]']]
-              ])
+              ]),
+              speciesNames: undefined
             }
           ]
         ])
@@ -249,6 +259,7 @@ describe('NerService', () => {
                 ['entity1', ['/html/*[1]', '/html/*[7]']],
                 ['entity2', ['/html/*[2]']]
               ]),
+              speciesNames: undefined,
               identifierSourceToID: new Map<string, string>([['resolvedEntity', 'HGNC:8644']])
             }
           ],
@@ -256,6 +267,7 @@ describe('NerService', () => {
             'HGNC:8633',
             {
               synonymToXPaths: new Map<string, string[]>([['entity6', ['/html/*[6]']]]),
+              speciesNames: undefined,
               identifierSourceToID: new Map<string, string>([['resolvedEntity', 'HGNC:8633']])
             }
           ],
@@ -266,6 +278,7 @@ describe('NerService', () => {
                 ['entity3', ['/html/*[3]']],
                 ['ENTITY3', ['/html/*[4]']]
               ]),
+              speciesNames: undefined,
               identifierSourceToID: new Map<string, string>([['resolvedEntity', '']])
             }
           ],
@@ -273,6 +286,7 @@ describe('NerService', () => {
             'entity5',
             {
               synonymToXPaths: new Map<string, string[]>([['entity5', ['/html/*[5]']]]),
+              speciesNames: undefined,
               identifierSourceToID: new Map<string, string>([['resolvedEntity', '']])
             }
           ]

@@ -71,7 +71,7 @@
             </mat-chip>
             <mat-chip *ngFor="let link of card.entity.links">
               <a href="{{ link.url }}" target="_blank" class="href-no-underline">{{
-                link.resourceName
+                link.label || link.resourceName
               }}</a>
             </mat-chip>
           </mat-chip-list>
