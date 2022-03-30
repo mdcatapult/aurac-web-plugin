@@ -12,8 +12,12 @@ global.Node = document.defaultView.Node
 const APIEntities: APIEntities = [
   {
     name: 'thing',
-    position: 0,
-    xpath: '/html/*[1]',
+    positions: [
+      {
+        xpath: '/html/*[1]',
+        position: 0
+      }
+    ],
     recogniser: 'leadmine-proteins'
   }
 ]

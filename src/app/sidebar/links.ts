@@ -1,6 +1,7 @@
 export type Link = {
   resourceName: string
   url?: string
+  label?: string
   createUrl: (id: string) => string
 }
 
@@ -36,6 +37,68 @@ export const ensembl: Link = {
   resourceName: 'Ensembl',
   createUrl: (identifier: string) =>
     `https://www.ensembl.org/Homo_sapiens/Gene/Summary?g=${identifier}`
+}
+
+export const bioGrid: Link = {
+  resourceName: 'BioGRID',
+  createUrl: (identifier: string) => `https://thebiogrid.org/${identifier}`
+}
+
+export const intAct: Link = {
+  resourceName: 'IntAct',
+  createUrl: (identifier: string) => `https://www.ebi.ac.uk/intact/search?query=${identifier}`
+}
+
+export const openTargets: Link = {
+  resourceName: 'OpenTargets',
+  createUrl: (identifier: string) => `http`
+}
+
+export const disGeNet: Link = {
+  resourceName: 'DisGeNET',
+  createUrl: (identifier: string) => `http`
+}
+
+export const proteomicsDB: Link = {
+  resourceName: 'ProteomicsDB',
+  createUrl: (identifier: string) =>
+    `https://www.proteomicsdb.org/proteomicsdb/#protein/proteinDetails/${identifier}/summary`
+}
+
+export const antibodyPedia: Link = {
+  resourceName: 'AntibodyPedia',
+  createUrl: (identifier: string) => `http`
+}
+
+export const pfam: Link = {
+  resourceName: 'Pfam',
+  createUrl: (identifier: string) => `http://pfam.xfam.org/family/${identifier}`
+}
+
+export const refSeq: Link = {
+  resourceName: 'RefSeq',
+  createUrl: (identifier: string) => `https://www.ncbi.nlm.nih.gov/search/all/?term=${identifier}`
+}
+
+export const kegg: Link = {
+  resourceName: 'KEGG',
+  createUrl: (identifier: string) => `https://www.genome.jp/entry/${identifier}`
+}
+
+export const interPro: Link = {
+  resourceName: 'InterPro',
+  createUrl: (identifier: string) => `https://www.ebi.ac.uk/interpro/entry/InterPro/${identifier}/`
+}
+
+export const expressionAtlas: Link = {
+  resourceName: 'ExpressionAtlas',
+  createUrl: (identifier: string) => `http`
+}
+
+export const uniProt: Link = {
+  resourceName: 'Accession',
+  label: 'Uniprot',
+  createUrl: (identifier: string) => `https://www.uniprot.org/uniprot/${identifier}`
 }
 
 // general

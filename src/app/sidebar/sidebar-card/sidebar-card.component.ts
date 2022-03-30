@@ -4,6 +4,7 @@ import { PageScrollService } from 'ngx-page-scroll-core'
 import { BrowserService } from 'src/app/browser.service'
 import { SidebarDataService } from '../sidebar-data.service'
 import { Identifier, SidebarCard } from '../types'
+import { Clipboard } from '@angular/cdk/clipboard'
 
 @Component({
   selector: 'app-sidebar-card',
@@ -49,8 +50,13 @@ export class SidebarCardComponent implements OnInit, OnChanges {
     private browserService: BrowserService,
     private sidebarDataService: SidebarDataService,
     private pageScrollService: PageScrollService,
+    private clipboard: Clipboard,
     @Inject(DOCUMENT) private document: any
   ) {}
+
+  copyText(text: string) {
+    this.clipboard.copy(text)
+  }
 
   private scrollToMe(delayMs?: number) {
     // This still requires a timeout in order to work in ngOnInit.
@@ -79,7 +85,7 @@ export class SidebarCardComponent implements OnInit, OnChanges {
     const i = this.scrollIndex
     const n = htmlTagIDs.length
 
-    // This modulo operation means the scroll index with circle back to zero.
+    // This modulo operation means the scroll index will circle back to zero.
     this.scrollIndex = ((i % n) + n) % n
 
     this.browserService.sendMessageToBackground({
@@ -99,5 +105,17 @@ export class SidebarCardComponent implements OnInit, OnChanges {
       type: 'content_script_open_modal',
       body: this.card.entity
     })
+  }
+
+  hasSequence(): boolean {
+    return (
+      this.card.selectedSpecies && this.card.entity.metadata?.[this.card.selectedSpecies]?.sequence
+    )
+  }
+
+  getSwissprotMetadata(property: string): string {
+    return this.card.selectedSpecies && this.card.entity.metadata[this.card.selectedSpecies]
+      ? this.card.entity.metadata[this.card.selectedSpecies][property]
+      : ''
   }
 }

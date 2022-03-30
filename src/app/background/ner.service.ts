@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http'
 import { Injectable } from '@angular/core'
+import { uniqueId } from 'lodash'
 import { RecogniserEntities, Entity } from 'src/types/entity'
 import { Recogniser } from 'src/types/recognisers'
 import { BrowserService } from '../browser.service'
@@ -8,11 +9,15 @@ import { SettingsService } from './settings.service'
 
 export type APIEntity = {
   name: string
-  position: number
-  xpath: string
+  positions: Position[]
   recogniser: Recogniser
-  identifiers?: any
+  identifiers?: Record<string, string> | { [speciesName: string]: Record<string, string> }
   metadata?: string
+}
+
+type Position = {
+  xpath: string
+  position: number
 }
 
 export type APIEntities = APIEntity[]
@@ -136,8 +141,17 @@ export class NerService {
 
   private entityFromAPIEntity(recognisedEntity: APIEntity): Entity {
     const entity: Entity = {
-      synonymToXPaths: new Map([[recognisedEntity.name, [recognisedEntity.xpath]]])
+      synonymToXPaths: new Map(),
+      speciesNames:
+        this.settingsService.preferences.recogniser === 'swissprot-genes-proteins'
+          ? Object.keys(recognisedEntity.identifiers!)
+          : undefined
     }
+
+    entity.synonymToXPaths.set(
+      recognisedEntity.name,
+      recognisedEntity.positions.map(pos => pos.xpath)
+    )
 
     if (recognisedEntity.metadata) {
       try {
@@ -165,9 +179,12 @@ export class NerService {
     if (entity) {
       const xpaths = entity.synonymToXPaths.get(recognisedEntity.name)
       if (xpaths) {
-        xpaths.push(recognisedEntity.xpath)
+        recognisedEntity.positions.forEach(pos => xpaths.push(pos.xpath))
       } else {
-        entity.synonymToXPaths.set(recognisedEntity.name, [recognisedEntity.xpath])
+        entity.synonymToXPaths.set(
+          recognisedEntity.name,
+          recognisedEntity.positions.map(pos => pos.xpath)
+        )
       }
     } else {
       recogniserEntities.entities.set(key, this.entityFromAPIEntity(recognisedEntity))
@@ -194,13 +211,13 @@ export class NerService {
           case 'leadmine-proteins':
             // For all leadmine dictionaries, we will use the resolved entity
             // to determine whether two entities are synonyms of each other.
-            const resolvedEntity: string = recognisedEntity.identifiers?.resolvedEntity
+            const resolvedEntity = recognisedEntity.identifiers?.resolvedEntity
 
             // If there is no resolved entity, just use the entity text (lowercased) to determine synonyms.
             // (This means the synonyms will be identical except for their casing).
             this.setOrUpdateEntity(
               recogniserEntities!,
-              resolvedEntity || recognisedEntity.name.toLowerCase(),
+              (resolvedEntity as string) || recognisedEntity.name.toLowerCase(),
               recognisedEntity
             )
 
@@ -208,8 +225,19 @@ export class NerService {
           case 'swissprot-genes-proteins':
             // For the swissprot recogniser we will use the Accession, which is present for every entity.
             // This is different to Leadmine where an entity may not have a resolved entity.
-            const accession: string = recognisedEntity.identifiers?.Accession
-            this.setOrUpdateEntity(recogniserEntities!, accession, recognisedEntity)
+
+            for (const speciesName in recognisedEntity.identifiers) {
+              const identifierString = recognisedEntity.identifiers[speciesName]
+              let identifier: any
+
+              try {
+                identifier = JSON.parse(identifierString as string)['Accession']
+              } catch {
+                identifier = identifierString
+              }
+
+              this.setOrUpdateEntity(recogniserEntities!, identifier, recognisedEntity)
+            }
 
             break
         }

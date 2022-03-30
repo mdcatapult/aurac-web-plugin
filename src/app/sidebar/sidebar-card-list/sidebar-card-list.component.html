@@ -1,11 +1,11 @@
 <section>
-  <p *ngIf="cards.length === 0 && totalHighlights && totalHighlights > 0">
+  <p *ngIf="filteredCards.length === 0 && totalHighlights && totalHighlights > 0">
     Click on a highlighted entity to display further information and links below...
   </p>
   <p *ngIf="totalHighlights === 0">Nothing found on this page!</p>
 
   <app-sidebar-card
-    *ngFor="let card of cards"
+    *ngFor="let card of filteredCards"
     [card]="card"
     [inFocus]="card.entityID === focusedCard.entityID"
     [nOccurrences]="card.entity.htmlTagIDs!.length"

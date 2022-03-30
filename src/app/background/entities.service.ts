@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core'
 import * as _ from 'lodash'
 import { Subject } from 'rxjs'
 import { Recogniser } from 'src/types/recognisers'
+import { Species } from 'src/types/species'
 import {
   Entity,
   EntityChange,
@@ -49,11 +50,11 @@ export class EntitiesService {
   }
 
   // filterEntities updates the entity stream with a copy of this.entityMap, filtered by minEntityLength
-  filterEntities(minEntityLength: number): Map<TabID, TabEntities> {
+  filterEntities(minEntityLength: number, species?: Species): Map<TabID, TabEntities> {
     const entityMap = new Map<TabID, TabEntities>()
 
     _.cloneDeep(this.entityMap).forEach((tabEntities, tabId) => {
-      const filteredEntities = this.filterTabEntities(minEntityLength, tabEntities)
+      const filteredEntities = this.filterTabEntities(minEntityLength, tabEntities, species)
       entityMap.set(tabId, filteredEntities)
 
       // update entity stream with filteredEntities for tabId
@@ -63,7 +64,11 @@ export class EntitiesService {
     return entityMap
   }
 
-  private filterTabEntities(minEntityLength: number, tabEntities: TabEntities): TabEntities {
+  private filterTabEntities(
+    minEntityLength: number,
+    tabEntities: TabEntities,
+    species?: Species
+  ): TabEntities {
     const tabEntityKeys = Object.keys(tabEntities) as Array<keyof TabEntities>
 
     tabEntityKeys.forEach(recogniser => {
@@ -73,7 +78,10 @@ export class EntitiesService {
         const filteredSynonyms = new Map<string, string[]>()
 
         entity.synonymToXPaths.forEach((occurrences, synonym) => {
-          if (synonym.length >= minEntityLength) {
+          const hasLength = synonym.length >= minEntityLength
+          const hasSpecies = species && entity.speciesNames?.includes(species)
+
+          if (hasLength && (!species || hasSpecies)) {
             filteredSynonyms.set(synonym, occurrences)
           }
         })
@@ -92,6 +100,10 @@ export class EntitiesService {
     setterInfo?: SetterInfo
   ): void {
     const minEntityLength = this.settingsService.preferences.minEntityLength
+    const species =
+      recogniser === 'swissprot-genes-proteins'
+        ? this.settingsService.preferences.species
+        : undefined
 
     const tabEntities = this.entityMap.get(tabID)
 
@@ -107,7 +119,11 @@ export class EntitiesService {
       this.entityMap.set(tabID, tabEntities)
       entityCopy = _.cloneDeep(tabEntities)
     }
-    this.updateStream(tabID, this.filterTabEntities(minEntityLength, entityCopy), setterInfo)
+    this.updateStream(
+      tabID,
+      this.filterTabEntities(minEntityLength, entityCopy, species),
+      setterInfo
+    )
   }
 
   getFilteredEntity(tabID: TabID, recogniser: Recogniser, entityID: EntityID): Entity | undefined {

@@ -24,8 +24,12 @@ describe('NerService', () => {
   it('should create an entity from an API response entity', () => {
     const recognisedEntity: APIEntity = {
       name: 'Gene name',
-      position: 5,
-      xpath: '/html/*[1]/*[1]',
+      positions: [
+        {
+          xpath: '/html/*[1]/*[1]',
+          position: 5
+        }
+      ],
       recogniser: 'leadmine-proteins',
       identifiers: { resolvedEntity: 'HGNC:8544' },
       metadata:
@@ -33,6 +37,7 @@ describe('NerService', () => {
     }
     const entity: Entity = {
       synonymToXPaths: new Map([['Gene name', ['/html/*[1]/*[1]']]]),
+      speciesNames: undefined,
       identifierSourceToID: new Map([['resolvedEntity', 'HGNC:8544']]),
       metadata: {
         entityGroup: 'Gene or Protein',
@@ -60,7 +65,8 @@ describe('NerService', () => {
           [
             'HGNC:8644',
             {
-              synonymToXPaths: new Map<string, string[]>([['existing synonym', ['/html/*[1]']]])
+              synonymToXPaths: new Map<string, string[]>([['existing synonym', ['/html/*[1]']]]),
+              speciesNames: undefined
             }
           ]
         ])
@@ -73,18 +79,28 @@ describe('NerService', () => {
         entities: new Map<string, Entity>([
           [
             'HGNC:8644',
-            { synonymToXPaths: new Map<string, string[]>([['existing synonym', ['/html/*[1]']]]) }
+            {
+              synonymToXPaths: new Map<string, string[]>([['existing synonym', ['/html/*[1]']]]),
+              speciesNames: undefined
+            }
           ],
           [
             'HGNC:8744',
-            { synonymToXPaths: new Map<string, string[]>([['new synonym', ['/html/*[2]']]]) }
+            {
+              synonymToXPaths: new Map<string, string[]>([['new synonym', ['/html/*[2]']]]),
+              speciesNames: undefined
+            }
           ]
         ])
       }
       service['setOrUpdateEntity'](recogniserEntities, 'HGNC:8744', {
         name: 'new synonym',
-        position: 3,
-        xpath: '/html/*[2]',
+        positions: [
+          {
+            xpath: '/html/*[2]',
+            position: 3
+          }
+        ],
         recogniser: 'leadmine-proteins'
       })
 
@@ -101,15 +117,20 @@ describe('NerService', () => {
               synonymToXPaths: new Map<string, string[]>([
                 ['existing synonym', ['/html/*[1]']],
                 ['new synonym', ['/html/*[2]']]
-              ])
+              ]),
+              speciesNames: undefined
             }
           ]
         ])
       }
       service['setOrUpdateEntity'](recogniserEntities, 'HGNC:8644', {
         name: 'new synonym',
-        position: 3,
-        xpath: '/html/*[2]',
+        positions: [
+          {
+            xpath: '/html/*[2]',
+            position: 3
+          }
+        ],
         recogniser: 'leadmine-proteins'
       })
 
@@ -125,15 +146,20 @@ describe('NerService', () => {
             {
               synonymToXPaths: new Map<string, string[]>([
                 ['existing synonym', ['/html/*[1]', '/html/*[2]']]
-              ])
+              ]),
+              speciesNames: undefined
             }
           ]
         ])
       }
       service['setOrUpdateEntity'](recogniserEntities, 'HGNC:8644', {
         name: 'existing synonym',
-        position: 3,
-        xpath: '/html/*[2]',
+        positions: [
+          {
+            xpath: '/html/*[2]',
+            position: 3
+          }
+        ],
         recogniser: 'leadmine-proteins'
       })
 
@@ -146,50 +172,78 @@ describe('NerService', () => {
       const recognisedEntities: APIEntities = [
         {
           name: 'entity1',
-          position: 2,
-          xpath: '/html/*[1]',
+          positions: [
+            {
+              xpath: '/html/*[1]',
+              position: 2
+            }
+          ],
           recogniser: 'leadmine-proteins',
           identifiers: { resolvedEntity: 'HGNC:8644' }
         },
         {
           name: 'entity2',
-          position: 2,
-          xpath: '/html/*[2]',
+          positions: [
+            {
+              xpath: '/html/*[2]',
+              position: 2
+            }
+          ],
           recogniser: 'leadmine-proteins',
           identifiers: { resolvedEntity: 'HGNC:8644' }
         },
         {
           name: 'entity3',
-          position: 2,
-          xpath: '/html/*[3]',
+          positions: [
+            {
+              xpath: '/html/*[3]',
+              position: 2
+            }
+          ],
           recogniser: 'leadmine-proteins',
           identifiers: { resolvedEntity: '' }
         },
         {
           name: 'ENTITY3',
-          position: 2,
-          xpath: '/html/*[4]',
+          positions: [
+            {
+              xpath: '/html/*[4]',
+              position: 2
+            }
+          ],
           recogniser: 'leadmine-proteins',
           identifiers: { resolvedEntity: '' }
         },
         {
           name: 'entity5',
-          position: 2,
-          xpath: '/html/*[5]',
+          positions: [
+            {
+              xpath: '/html/*[5]',
+              position: 2
+            }
+          ],
           recogniser: 'leadmine-proteins',
           identifiers: { resolvedEntity: '' }
         },
         {
           name: 'entity6',
-          position: 2,
-          xpath: '/html/*[6]',
+          positions: [
+            {
+              xpath: '/html/*[6]',
+              position: 2
+            }
+          ],
           recogniser: 'leadmine-proteins',
           identifiers: { resolvedEntity: 'HGNC:8633' }
         },
         {
           name: 'entity1',
-          position: 2,
-          xpath: '/html/*[7]',
+          positions: [
+            {
+              xpath: '/html/*[7]',
+              position: 2
+            }
+          ],
           recogniser: 'leadmine-proteins',
           identifiers: { resolvedEntity: 'HGNC:8644' }
         }
@@ -205,6 +259,7 @@ describe('NerService', () => {
                 ['entity1', ['/html/*[1]', '/html/*[7]']],
                 ['entity2', ['/html/*[2]']]
               ]),
+              speciesNames: undefined,
               identifierSourceToID: new Map<string, string>([['resolvedEntity', 'HGNC:8644']])
             }
           ],
@@ -212,6 +267,7 @@ describe('NerService', () => {
             'HGNC:8633',
             {
               synonymToXPaths: new Map<string, string[]>([['entity6', ['/html/*[6]']]]),
+              speciesNames: undefined,
               identifierSourceToID: new Map<string, string>([['resolvedEntity', 'HGNC:8633']])
             }
           ],
@@ -222,6 +278,7 @@ describe('NerService', () => {
                 ['entity3', ['/html/*[3]']],
                 ['ENTITY3', ['/html/*[4]']]
               ]),
+              speciesNames: undefined,
               identifierSourceToID: new Map<string, string>([['resolvedEntity', '']])
             }
           ],
@@ -229,6 +286,7 @@ describe('NerService', () => {
             'entity5',
             {
               synonymToXPaths: new Map<string, string[]>([['entity5', ['/html/*[5]']]]),
+              speciesNames: undefined,
               identifierSourceToID: new Map<string, string>([['resolvedEntity', '']])
             }
           ]

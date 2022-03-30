@@ -19,7 +19,8 @@ describe('SidebarCardComponent', () => {
     clickedEntityOccurrence: 0,
     clickedSynonymOccurrence: 0,
     clickedSynonymName: '',
-    entityID: '1'
+    entityID: '1',
+    selectedSpecies: undefined
   }
 
   beforeEach(async () => {
