@@ -82,23 +82,23 @@
       <mat-expansion-panel *ngIf="hasSequence()">
         <mat-expansion-panel-header>
           <mat-panel-description>
-            <mat-icon inline="true">view_headline</mat-icon>
+            <mat-icon inline="true">gesture</mat-icon>
             Gene Sequence
           </mat-panel-description>
         </mat-expansion-panel-header>
-        <p>Genentic sequence: {{ getSwissprotMetadata('sequence') }}</p>
-        <p>Sequence length: {{ getSwissprotMetadata('sequence length') }}</p>
-        <p>Sequence mass: {{ getSwissprotMetadata('sequence mass') }}</p>
+        <p class="sequence"><b>Genetic sequence:</b> {{ getSwissprotMetadata('sequence') }}</p>
+        <p><b>Sequence length:</b> {{ getSwissprotMetadata('sequence length') }}</p>
+        <p><b>Sequence mass:</b> {{ getSwissprotMetadata('sequence mass') }}</p>
       </mat-expansion-panel>
 
       <mat-expansion-panel *ngIf="getSwissprotMetadata('subcellular location')">
         <mat-expansion-panel-header>
           <mat-panel-description>
-            <mat-icon inline="true">view_headline</mat-icon>
+            <mat-icon inline="true">widgets</mat-icon>
             General
           </mat-panel-description>
         </mat-expansion-panel-header>
-        <p>Subcellular locations: {{ getSwissprotMetadata('subcellular location') }}</p>
+        <p><b>Subcellular locations:</b> {{ getSwissprotMetadata('subcellular location') }}</p>
       </mat-expansion-panel>
 
       <br />
