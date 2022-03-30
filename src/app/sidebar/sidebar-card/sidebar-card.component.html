@@ -67,57 +67,57 @@
             <mat-chip *ngFor="let xRef of card.entity.xRefs">
               <a href="{{ xRef.url }}" target="_blank" class="href-no-underline">{{
                 xRef.databaseName | titlecase
-                }}</a>
+              }}</a>
             </mat-chip>
             <mat-chip *ngFor="let link of card.entity.links">
               <a href="{{ link.url }}" target="_blank" class="href-no-underline">{{
                 link.label || link.resourceName
-                }}</a>
+              }}</a>
             </mat-chip>
           </mat-chip-list>
         </mat-expansion-panel>
 
-      <!--- Sequence data -->
-      <mat-expansion-panel *ngIf="hasSequence()">
-        <mat-expansion-panel-header>
-          <mat-panel-description>
-            <mat-icon inline="true">gesture</mat-icon>
-            Gene Sequence
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        <div style="display: flex">
-                    <p><b>Genetic sequence:</b></p>
-          <span class="aurac-spacer"></span>
-          <button
-            class="copy-button"
-            mat-icon-button
-            matTooltip="Copy to clipboard"
-            matTooltipPosition="above"
-          (click)="copyText(getSwissprotMetadata('sequence'))">
-            <mat-icon class="aurac-clipboard">assignment</mat-icon>
-          </button>
-      </div>
-        <p class="aurac-sequence">
-          {{ getSwissprotMetadata('sequence') }}</p>
-        <p><b>Sequence length:</b> {{ getSwissprotMetadata('sequence length') }}</p>
-        <p><b>Sequence mass:</b> {{ getSwissprotMetadata('sequence mass') }}</p>
-      </mat-expansion-panel>
+        <!--- Sequence data -->
+        <mat-expansion-panel *ngIf="hasSequence()">
+          <mat-expansion-panel-header>
+            <mat-panel-description>
+              <mat-icon inline="true">gesture</mat-icon>
+              Gene Sequence
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <div style="display: flex">
+            <p><b>Genetic sequence:</b></p>
+            <span class="aurac-spacer"></span>
+            <button
+              class="copy-button"
+              mat-icon-button
+              matTooltip="Copy to clipboard"
+              matTooltipPosition="above"
+              (click)="copyText(getSwissprotMetadata('sequence'))"
+            >
+              <mat-icon class="aurac-clipboard">assignment</mat-icon>
+            </button>
+          </div>
+          <p class="aurac-sequence">
+            {{ getSwissprotMetadata('sequence') }}
+          </p>
+          <p><b>Sequence length:</b> {{ getSwissprotMetadata('sequence length') }}</p>
+          <p><b>Sequence mass:</b> {{ getSwissprotMetadata('sequence mass') }}</p>
+        </mat-expansion-panel>
 
         <!--- General data --->
-      <mat-expansion-panel *ngIf="getSwissprotMetadata('subcellular location')">
-        <mat-expansion-panel-header>
-          <mat-panel-description>
-            <mat-icon inline="true">widgets</mat-icon>
-            General
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        <p><b>Subcellular locations:</b> {{ getSwissprotMetadata('subcellular location') }}</p>
-      </mat-expansion-panel>
-
+        <mat-expansion-panel *ngIf="getSwissprotMetadata('subcellular location')">
+          <mat-expansion-panel-header>
+            <mat-panel-description>
+              <mat-icon inline="true">widgets</mat-icon>
+              General
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <p><b>Subcellular locations:</b> {{ getSwissprotMetadata('subcellular location') }}</p>
+        </mat-expansion-panel>
       </mat-accordion>
 
-
-      <br/>
+      <br />
       <button
         *ngIf="this.card.entity.xRefs?.length"
         class="open-modal-button"
@@ -127,9 +127,9 @@
         matTooltip="Button to display a chemical structure"
         matTooltipPosition="right"
       >
-        <img class="structure-image" src="https://img.icons8.com/ios/50/000000/peptide.png"/>
+        <img class="structure-image" src="https://img.icons8.com/ios/50/000000/peptide.png" />
       </button>
     </mat-card-content>
   </mat-card>
 </article>
-<br/>
+<br />

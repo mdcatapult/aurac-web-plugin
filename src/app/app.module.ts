@@ -36,7 +36,7 @@ import { MatSelectModule } from '@angular/material/select'
 import { MatSlideToggleModule } from '@angular/material/slide-toggle'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatBadgeModule } from '@angular/material/badge'
-import {ClipboardModule} from "@angular/cdk/clipboard";
+import { ClipboardModule } from '@angular/cdk/clipboard'
 
 const routes: Routes = [{ path: '**', component: RouterComponent }]
 
@@ -57,35 +57,35 @@ const routes: Routes = [{ path: '**', component: RouterComponent }]
     SafeResourcePipe,
     RecogniserNamePipe
   ],
-    imports: [
-        CommonModule,
-        BrowserModule,
-        FormsModule,
-        RouterModule.forRoot(routes, {relativeLinkResolution: 'legacy'}),
-        HttpClientModule,
-        ReactiveFormsModule,
-        MatTabsModule,
-        BrowserAnimationsModule,
-        MatInputModule,
-        MatFormFieldModule,
-        MatButtonModule,
-        MatIconModule,
-        MatInputModule,
-        MatFormFieldModule,
-        MatRadioModule,
-        MatCardModule,
-        MatTableModule,
-        MatTooltipModule,
-        NgxPageScrollCoreModule.forRoot({scrollOffset: 200}),
-        MatExpansionModule,
-        MatChipsModule,
-        MatCheckboxModule,
-        MatSelectModule,
-        MatSlideToggleModule,
-        MatToolbarModule,
-        MatBadgeModule,
-        ClipboardModule
-    ],
+  imports: [
+    CommonModule,
+    BrowserModule,
+    FormsModule,
+    RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' }),
+    HttpClientModule,
+    ReactiveFormsModule,
+    MatTabsModule,
+    BrowserAnimationsModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatButtonModule,
+    MatIconModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatRadioModule,
+    MatCardModule,
+    MatTableModule,
+    MatTooltipModule,
+    NgxPageScrollCoreModule.forRoot({ scrollOffset: 200 }),
+    MatExpansionModule,
+    MatChipsModule,
+    MatCheckboxModule,
+    MatSelectModule,
+    MatSlideToggleModule,
+    MatToolbarModule,
+    MatBadgeModule,
+    ClipboardModule
+  ],
   providers: [
     {
       provide: MAT_RADIO_DEFAULT_OPTIONS,

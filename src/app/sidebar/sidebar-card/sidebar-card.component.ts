@@ -4,7 +4,7 @@ import { PageScrollService } from 'ngx-page-scroll-core'
 import { BrowserService } from 'src/app/browser.service'
 import { SidebarDataService } from '../sidebar-data.service'
 import { Identifier, SidebarCard } from '../types'
-import { Clipboard } from '@angular/cdk/clipboard';
+import { Clipboard } from '@angular/cdk/clipboard'
 
 @Component({
   selector: 'app-sidebar-card',
@@ -55,7 +55,7 @@ export class SidebarCardComponent implements OnInit, OnChanges {
   ) {}
 
   copyText(text: string) {
-    this.clipboard.copy(text);
+    this.clipboard.copy(text)
   }
 
   private scrollToMe(delayMs?: number) {
