@@ -76,7 +76,47 @@
             </mat-chip>
           </mat-chip-list>
         </mat-expansion-panel>
+
+        <!--- Sequence data -->
+        <mat-expansion-panel *ngIf="hasSequence()">
+          <mat-expansion-panel-header>
+            <mat-panel-description>
+              <mat-icon inline="true">gesture</mat-icon>
+              Protein Sequence
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <p><b>Sequence length:</b> {{ getSwissprotMetadata('sequence length') }}</p>
+          <p><b>Sequence mass:</b> {{ getSwissprotMetadata('sequence mass') }} (Da)</p>
+          <div style="display: flex">
+            <p><b>Protein sequence:</b></p>
+            <span class="aurac-spacer"></span>
+            <button
+              class="copy-button"
+              mat-icon-button
+              matTooltip="Copy to clipboard"
+              matTooltipPosition="above"
+              (click)="copyText(getSwissprotMetadata('sequence'))"
+            >
+              <mat-icon class="aurac-clipboard">assignment</mat-icon>
+            </button>
+          </div>
+          <p class="aurac-sequence">
+            {{ getSwissprotMetadata('sequence') }}
+          </p>
+        </mat-expansion-panel>
+
+        <!--- General data --->
+        <mat-expansion-panel *ngIf="getSwissprotMetadata('subcellular location')">
+          <mat-expansion-panel-header>
+            <mat-panel-description>
+              <mat-icon inline="true">widgets</mat-icon>
+              General
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <p><b>Subcellular locations:</b> {{ getSwissprotMetadata('subcellular location') }}</p>
+        </mat-expansion-panel>
       </mat-accordion>
+
       <br />
       <button
         *ngIf="this.card.entity.xRefs?.length"

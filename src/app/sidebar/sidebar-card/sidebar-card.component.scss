@@ -39,3 +39,25 @@ mat-card {
 mat-icon {
   padding-right: 3px;
 }
+
+.aurac-sequence {
+  overflow-wrap: break-word;
+  max-height: 20vh;
+  overflow: auto;
+}
+
+.aurac-clipboard {
+  color: $aurac_button;
+}
+
+.aurac-spacer {
+  flex: 1 1 auto;
+}
+
+.copy-button:focus {
+  outline: none !important;
+}
+
+::ng-deep .mat-button-focus-overlay {
+  display: none;
+}

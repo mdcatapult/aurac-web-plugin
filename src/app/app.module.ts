@@ -36,6 +36,7 @@ import { MatSelectModule } from '@angular/material/select'
 import { MatSlideToggleModule } from '@angular/material/slide-toggle'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatBadgeModule } from '@angular/material/badge'
+import { ClipboardModule } from '@angular/cdk/clipboard'
 
 const routes: Routes = [{ path: '**', component: RouterComponent }]
 
@@ -82,7 +83,8 @@ const routes: Routes = [{ path: '**', component: RouterComponent }]
     MatSelectModule,
     MatSlideToggleModule,
     MatToolbarModule,
-    MatBadgeModule
+    MatBadgeModule,
+    ClipboardModule
   ],
   providers: [
     {
