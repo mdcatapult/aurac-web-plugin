@@ -48,7 +48,11 @@ release:
   tags:
     - wopr
   script:
-    - /scripts/release.sh -b -r develop -u 'dist/browser-plugin/web-ext-artifacts/aurac-*.zip' release2='dist-bio/browser-plugin/web-ext-artifacts/aurac-*.zip' --name2='bio'
+    - /scripts/release.sh -b -r develop -u \
+      --release-path-1='dist/browser-plugin/web-ext-artifacts/aurac-*.zip' \
+      --release-tag-1='' \
+      --release-path-2='dist-bio/browser-plugin/web-ext-artifacts/aurac-*.zip' \
+      --release-tag-2='bio'
   # only:
   #   - master
   except:
