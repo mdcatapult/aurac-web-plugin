@@ -1,6 +1,7 @@
 <div>
   <form [formGroup]="form">
-    <mat-radio-group *ngIf="recognisers.length > 1"
+    <mat-radio-group
+      *ngIf="recognisers.length > 1"
       aria-labelledby="radio-group-label"
       class="aurac-radio-group"
       formControlName="recogniser"

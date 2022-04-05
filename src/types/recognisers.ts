@@ -6,7 +6,12 @@ export function allRecognisers(): Recogniser[] {
 }
 
 const ALL_RECOGNISERS = environment.bio
-  ? ['swissprot-genes-proteins'] as const
-  : (['leadmine-proteins', 'leadmine-chemical-entities', 'leadmine-disease', 'swissprot-genes-proteins'] as const)
+  ? (['swissprot-genes-proteins'] as const)
+  : ([
+      'leadmine-proteins',
+      'leadmine-chemical-entities',
+      'leadmine-disease',
+      'swissprot-genes-proteins'
+    ] as const)
 type RecognisersTuple = typeof ALL_RECOGNISERS
 export type Recogniser = RecognisersTuple[number]

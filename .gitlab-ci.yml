@@ -36,7 +36,7 @@ test-lint-build:
     # build general version
     - npm run test:ci
     - npm run package
-  
+
   coverage: /Lines\s+:\s(\d+\.?\d*)%\s\(\s\d+\/\d+\s\)/
   except:
     variables:
