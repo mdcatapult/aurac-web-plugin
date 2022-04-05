@@ -70,7 +70,7 @@ export class PreferencesComponent implements OnInit {
       )
   }
 
-  isSwissprot(): boolean {
-    return (this.form.get('recogniser')!.value as Recogniser) === 'swissprot-genes-proteins'
+  showSpecies(): boolean {
+    return (this.form.get('recogniser')!.value as Recogniser) === 'swissprot-genes-proteins' || this.recognisers.length === 1 && this.recognisers[0] === 'swissprot-genes-proteins'
   }
 }

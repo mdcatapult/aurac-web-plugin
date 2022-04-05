@@ -18,16 +18,25 @@ test-lint-build:
   artifacts:
     paths:
       - dist/*
+      - dist-bio/*
   before_script:
     - apt-get -yqq update && apt-get upgrade -yqq chromium libxss1 xvfb
     - export CHROME_BIN=/usr/bin/chromium
     - npm install
   script:
-    - npm run test:ci
     - npm run lint
     - npm run build
     - npm run mocha
+
+    # build biology version
+    - npm run build:bio
     - npm run package
+    - mv dist/ dist-bio/
+
+    # build general version
+    - npm run test:ci
+    - npm run package
+  
   coverage: /Lines\s+:\s(\d+\.?\d*)%\s\(\s\d+\/\d+\s\)/
   except:
     variables:
@@ -40,6 +49,7 @@ release:
     - wopr
   script:
     - /scripts/release.sh -b -r develop -u 'dist/browser-plugin/web-ext-artifacts/aurac-*.zip'
+    - /scripts/release.sh -u 'dist-bio/browser-plugin/web-ext-artifacts/aurac-*.zip'
   only:
     - master
   except:

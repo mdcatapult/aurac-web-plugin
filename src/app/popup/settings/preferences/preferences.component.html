@@ -1,6 +1,6 @@
 <div>
   <form [formGroup]="form">
-    <mat-radio-group
+    <mat-radio-group *ngIf="recognisers.length > 1"
       aria-labelledby="radio-group-label"
       class="aurac-radio-group"
       formControlName="recogniser"
@@ -15,7 +15,7 @@
       </mat-radio-button>
     </mat-radio-group>
 
-    <div *ngIf="isSwissprot()">
+    <div *ngIf="showSpecies()">
       <mat-form-field appearance="fill" class="aurac-dropdown">
         <mat-label>Select species</mat-label>
         <mat-select [formControl]="form!.get('species')">
