@@ -25,8 +25,8 @@ test-lint-build:
     - npm install
   script:
     - npm run lint
-    - npm run build
     - npm run mocha
+    - npm run test:ci
 
     # build biology version
     - npm run build:bio
@@ -34,7 +34,7 @@ test-lint-build:
     - mv dist/ dist-bio/
 
     # build general version
-    - npm run test:ci
+    - npm run build
     - npm run package
 
   coverage: /Lines\s+:\s(\d+\.?\d*)%\s\(\s\d+\/\d+\s\)/
