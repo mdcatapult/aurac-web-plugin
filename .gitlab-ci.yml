@@ -53,8 +53,8 @@ release:
       --release-tag-1='' \
       --release-path-2='dist-bio/browser-plugin/web-ext-artifacts/aurac-*.zip' \
       --release-tag-2='bio'
-  # only:
-  #   - master
+  only:
+    - master
   except:
     variables:
       - '$CI_COMMIT_MESSAGE =~ /^Setting version to.*/'
