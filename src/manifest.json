@@ -1,6 +1,6 @@
 {
   "name": "Aurac",
-  "version": "0.12.28-bio",
+  "version": "0.12.28",
   "description": "NER browser extension",
   "manifest_version": 2,
   "browser_action": {
