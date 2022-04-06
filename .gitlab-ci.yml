@@ -44,7 +44,7 @@ test-lint-build:
 
 release:
   stage: release
-  image: registry.mdcatapult.io/informatics/docker-images/ci/node:bio6
+  image: registry.mdcatapult.io/informatics/docker-images/ci/node:bio7
   tags:
     - wopr
   script:
