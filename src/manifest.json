@@ -1,6 +1,6 @@
 {
   "name": "Aurac",
-  "version": "0.12.25",
+  "version": "0.12.26",
   "description": "NER browser extension",
   "manifest_version": 2,
   "browser_action": {
@@ -12,15 +12,27 @@
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["browser-polyfill.min.js", "content.js"],
-      "css": ["assets/styles.scss"]
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "browser-polyfill.min.js",
+        "content.js"
+      ],
+      "css": [
+        "assets/styles.scss"
+      ]
     }
   ],
-  "permissions": ["tabs", "storage"],
+  "permissions": [
+    "tabs",
+    "storage"
+  ],
   "icons": {
     "48": "assets/head-brains.icon.48.png",
     "128": "assets/head-brains.icon.128.png"
   },
-  "web_accessible_resources": ["*"]
+  "web_accessible_resources": [
+    "*"
+  ]
 }
