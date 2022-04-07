@@ -143,6 +143,11 @@ However, if you attempt to use this pdf conversion while on any of the pages bel
 - `about:debugging` on Firefox settings
 - any page that begins with `chrome://`
 
+### Releases and versions
+
+Running the `release` CI job will release two versions - a general release with all recognisers, and a bio release which only uses Swissprot and whose tag will be suffixed with `-bio`.
+For example, v1.2.3 and v1.2.3-bio.
+
 ### Credits
 
 Designed using elements from Heroicon and Vecteezy.com.
