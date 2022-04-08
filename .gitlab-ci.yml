@@ -12,7 +12,7 @@ variables:
   GIT_SUBMODULE_STRATEGY: recursive
 test-lint-build:
   stage: test-lint-build
-  image: registry.mdcatapult.io/informatics/docker-images/ci/node:versioning
+  image: registry.mdcatapult.io/informatics/docker-images/ci/node
   tags:
     - wopr
   artifacts:
