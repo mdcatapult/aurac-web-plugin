@@ -73,7 +73,6 @@ export class LinksService {
         break
       case 'swissprot-genes-proteins':
         entityLinks = [
-          // links.ncbi,
           links.hgnc,
           links.genecards,
           links.antibodies,
