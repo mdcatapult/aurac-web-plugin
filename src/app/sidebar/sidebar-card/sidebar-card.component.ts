@@ -114,8 +114,14 @@ export class SidebarCardComponent implements OnInit, OnChanges {
   }
 
   getSwissprotMetadata(property: string): string {
+    this.getMetadata()
+
     return this.card.selectedSpecies && this.card.entity.metadata[this.card.selectedSpecies]
       ? this.card.entity.metadata[this.card.selectedSpecies][property]
       : ''
+  }
+
+  getMetadata() {
+    console.log(this.card.entity.identifierSourceToID?.get('Homo sapiens'))
   }
 }

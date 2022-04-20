@@ -1,6 +1,7 @@
 import * as links from './links'
 import { Injectable } from '@angular/core'
 import { SidebarCard } from './types'
+import { antibodypedia, bioGrid, disGeNet, expressionAtlas, geneTree } from './links'
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +31,7 @@ export class LinksService {
           case geneAndProtein: {
             entityLinks = [
               links.ncbi,
-              links.geneNames,
+              links.hgnc,
               links.genecards,
               links.ensembl,
               links.antibodies,
@@ -72,10 +73,9 @@ export class LinksService {
         break
       case 'swissprot-genes-proteins':
         entityLinks = [
-          links.ncbi,
-          links.geneNames,
+          // links.ncbi,
+          links.hgnc,
           links.genecards,
-          links.ensembl,
           links.antibodies,
           links.pubmed,
           links.dimensions,
@@ -91,7 +91,21 @@ export class LinksService {
         }
 
         entityLinks = entityLinks.concat(
-          [links.intAct, links.interPro, links.proteomicsDB, links.pfam, links.uniProt, links.kegg]
+          [
+            links.intAct,
+            links.interPro,
+            links.proteomicsDB,
+            links.pfam,
+            links.uniProt,
+            links.kegg,
+            links.ncbi,
+            links.antibodypedia,
+            links.bioGrid,
+            links.ensembl,
+            links.disGeNet,
+            links.expressionAtlas,
+            links.geneTree
+          ]
             .filter(link => {
               const linkIdentifier = JSON.parse(speciesIdentifiers)[link.resourceName]
 
@@ -104,7 +118,6 @@ export class LinksService {
               }
             })
         )
-
         break
     }
 
