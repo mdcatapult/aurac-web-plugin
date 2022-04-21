@@ -1,7 +1,6 @@
 import * as links from './links'
 import { Injectable } from '@angular/core'
 import { SidebarCard } from './types'
-import { antibodypedia, bioGrid, disGeNet, expressionAtlas, geneTree } from './links'
 
 @Injectable({
   providedIn: 'root'

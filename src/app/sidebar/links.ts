@@ -12,7 +12,8 @@ export const hgnc: Link = {
 }
 
 export const ncbi: Link = {
-  //KEGG uses ncbi identifier appended to the end of it, so remove everything else except the ncbi identifier with a regex
+  //KEGG uses ncbi identifier appended to the end of it (hsa:55737) and NCBI isn't a resourceName returned from Swissprot
+  //, so take only the ncbi identifier from KEGG with a regex to remove anything except numbers
   resourceName: 'KEGG',
   label: 'NCBI',
   createUrl: (identifier: string) => {
