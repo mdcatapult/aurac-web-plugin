@@ -4,6 +4,7 @@ export type MessageType =
   | 'content_script_await_sidebar_readiness'
   | 'content_script_close_loading_icon'
   | 'content_script_close_sidebar'
+  | 'content_script_download_all_results'
   | 'content_script_get_page_contents'
   | 'content_script_highlight_entities'
   | 'content_script_is_page_compressed'

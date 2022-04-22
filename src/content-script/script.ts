@@ -8,6 +8,7 @@ import { Recogniser } from '../types/recognisers'
 import * as Mark from 'mark.js'
 import * as Highlights from '../types/highlights'
 import { highlightID } from '../types/highlights'
+import { saveAs } from 'file-saver'
 
 Globals.document = document
 Globals.browser = new BrowserImplementation()
@@ -328,6 +329,11 @@ function generateChemblId(xRefs: Array<XRef>): string {
   return chemblId
 }
 
+function saveAsCSV(text: string, fileName: string): void {
+  const blob = new Blob([text], { type: 'text/csv;charset=utf-8' })
+  saveAs(blob, fileName)
+}
+
 Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
   switch (msg.type) {
     case 'content_script_toggle_sidebar':
@@ -375,5 +381,8 @@ Globals.browser.addListener((msg: Message): Promise<any> | undefined => {
 
     case 'content_script_is_page_compressed':
       return Promise.resolve(toggleCompression(msg.body as boolean))
+
+    case 'content_script_download_all_results':
+      saveAsCSV(msg.body.csvResults, msg.body.csvFileName)
   }
 })

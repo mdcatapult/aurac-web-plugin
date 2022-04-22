@@ -43,7 +43,14 @@ export class CsvExporterService {
           const CSVFormattedResults = this.entitiesToCSV(entitiesArray, recogniser)
           const fileName =
             'aurac_all_results_' + recogniser + '_' + this.sanitiseURL(currentTab.url!) + '.csv'
-          this.saveAsCSV(CSVFormattedResults, fileName)
+
+          this.browserService.sendMessageToActiveTab({
+            type: 'content_script_download_all_results',
+            body: {
+              csvResults: CSVFormattedResults,
+              csvFileName: fileName
+            }
+          })
         }
       })
   }
