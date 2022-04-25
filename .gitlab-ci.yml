@@ -52,7 +52,7 @@ release:
       --release-path-2='dist/browser-plugin/web-ext-artifacts/aurac-*.zip' \
       --release-tag-2='' \
       --release-path-1='dist-bio/browser-plugin/web-ext-artifacts/aurac-*.zip' \
-      --release-tag-1='bio'
+      --release-tag-1='bio.*'
   only:
     - master
   except:
