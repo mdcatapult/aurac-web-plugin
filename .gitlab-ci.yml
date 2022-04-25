@@ -24,7 +24,6 @@ test-lint-build:
     - export CHROME_BIN=/usr/bin/chromium
     - npm install
   script:
-    - cictl get increment develop
     - npm run lint
     - npm run mocha
     - npm run test:ci
@@ -57,9 +56,7 @@ bio-release:
   tags:
       - wopr
   script:
-      - /scripts/release.sh -b -r develop -u \
-        --release-path-1='dist-bio/browser-plugin/web-ext-artifacts/aurac-*.zip' \
-        --release-tag-1='bio'
+      - /scripts/release.sh -b -r develop -u 'dist-bio/browser-plugin/web-ext-artifacts/aurac-*.zip'
 
   only:
     - master
