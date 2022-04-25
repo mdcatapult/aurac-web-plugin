@@ -49,6 +49,7 @@ release:
     - wopr
   script:
     - /scripts/release.sh -u 'dist/browser-plugin/web-ext-artifacts/aurac-*.zip'
+
   only:
     - master
     except:
@@ -62,6 +63,7 @@ bio-release:
     - wopr
   script:
     - /scripts/release.sh -b -r develop -u 'dist-bio/browser-plugin/web-ext-artifacts/aurac-*.zip'
+
   only:
     - master
   except:
