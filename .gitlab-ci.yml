@@ -52,9 +52,9 @@ release:
 
   only:
     - master
-    except:
-      variables:
-        - '$CI_COMMIT_MESSAGE =~ /^Setting version to.*/'
+  except:
+    variables:
+      - '$CI_COMMIT_MESSAGE =~ /^Setting version to.*/'
 
 bio-release:
   stage: release
@@ -69,6 +69,7 @@ bio-release:
   except:
     variables:
       - '$CI_COMMIT_MESSAGE =~ /^Setting version to.*/'
+
 #sast:
 #  stage: test
 #include:
