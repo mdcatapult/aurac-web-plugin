@@ -150,4 +150,4 @@ For example, v1.2.3 and v1.2.3-bio.
 
 ### Credits
 
-Designed using elements from Heroicon and Vecteezy.com.
+Designed using elements from Heroicon and Vecteezy.com.  
