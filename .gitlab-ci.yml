@@ -24,7 +24,7 @@ test-lint-build:
     - export CHROME_BIN=/usr/bin/chromium
     - npm install
   script:
-    - cictl get increment tag='develop'
+    - cictl get increment develop
     - npm run lint
     - npm run mocha
     - npm run test:ci
