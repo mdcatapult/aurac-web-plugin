@@ -49,11 +49,11 @@ release:
     - wopr
   script:
     - /scripts/release.sh -u 'dist/browser-plugin/web-ext-artifacts/aurac-*.zip'
-    only:
-      - master
-      except:
-        variables:
-          - '$CI_COMMIT_MESSAGE =~ /^Setting version to.*/'
+  only:
+    - master
+    except:
+      variables:
+        - '$CI_COMMIT_MESSAGE =~ /^Setting version to.*/'
 
 bio-release:
   stage: release
