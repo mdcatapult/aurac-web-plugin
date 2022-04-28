@@ -1,8 +1,9 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http'
 import { Injectable } from '@angular/core'
 import { uniqueId } from 'lodash'
+import { environment } from 'src/environments/environment'
 import { RecogniserEntities, Entity } from 'src/types/entity'
-import { Recogniser } from 'src/types/recognisers'
+import { allRecognisers, Recogniser } from 'src/types/recognisers'
 import { BrowserService } from '../browser.service'
 import { EntitiesService } from './entities.service'
 import { SettingsService } from './settings.service'
@@ -80,7 +81,7 @@ export class NerService {
 
   private callAPI(body: string): Promise<APIEntities | void> {
     const [params, headers] = this.constructRequestParametersAndHeaders(
-      this.settingsService.preferences.recogniser
+      allRecognisers().length == 1 ? allRecognisers()[0] : this.settingsService.preferences.recogniser 
     )
 
     return this.httpClient
