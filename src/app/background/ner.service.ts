@@ -200,9 +200,7 @@ export class NerService {
       entities: new Map<string, Entity>()
     }
 
-    if (
-      this.entitiesService.getTabEntities(tabID)?.[this.settingsService.getRecogniser()]!
-    ) {
+    if (this.entitiesService.getTabEntities(tabID)?.[this.settingsService.getRecogniser()]!) {
       return recogniserEntities!
     } else {
       response.forEach(recognisedEntity => {

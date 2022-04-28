@@ -73,12 +73,15 @@ export class CsvExporterService {
         switch (recogniser) {
           case 'swissprot-genes-proteins':
             key = 'Accession'
-            const speciesData = entity.identifierSourceToID!.get(this.settingsService.preferences.species)
+            const speciesData = entity.identifierSourceToID!.get(
+              this.settingsService.preferences.species
+            )
             if (!speciesData) return
             const jsonSpeciesData = JSON.parse(speciesData)
             const accession = jsonSpeciesData[key]
             if (!accession) return
             text = text + `"${synonymName}"` + ',' + accession + '\n'
+
             return
           case 'leadmine-proteins':
           case 'leadmine-chemical-entities':
