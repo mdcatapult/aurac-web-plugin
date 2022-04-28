@@ -37,7 +37,7 @@ export class EntityMessengerService {
           type: 'content_script_highlight_entities',
           body: {
             entities: stringifyWithTypes(change.entities),
-            recogniser: this.settingsService.preferences.recogniser
+            recogniser: this.settingsService.getRecogniser()
           }
         })
         .then((result: { tabEntities: string; entityCount: number }) => {
@@ -74,7 +74,7 @@ export class EntityMessengerService {
               .then(() => {
                 const { minEntityLength, species } = msg.body
                 const speciesArg =
-                  this.settingsService.preferences.recogniser === 'swissprot-genes-proteins'
+                  this.settingsService.getRecogniser() === 'swissprot-genes-proteins'
                     ? species
                     : undefined
                 this.entitiesService.filterEntities(minEntityLength, speciesArg)
@@ -145,7 +145,7 @@ export class EntityMessengerService {
     return this.browserService.getActiveTab().then(tab => {
       const entity = this.entitiesService.getFilteredEntity(
         tab.id!,
-        this.settingsService.preferences.recogniser,
+        this.settingsService.getRecogniser(),
         entityID
       )
       if (!entity) {
@@ -155,14 +155,14 @@ export class EntityMessengerService {
       }
 
       const sidebarCard: SidebarCard = {
-        recogniser: this.settingsService.preferences.recogniser,
+        recogniser: this.settingsService.getRecogniser(),
         entity,
         entityID: entityID,
         clickedEntityOccurrence: entityOccurrence,
         clickedSynonymName: synonymName,
         clickedSynonymOccurrence: synonymOccurrence,
         selectedSpecies:
-          this.settingsService.preferences.recogniser === 'swissprot-genes-proteins'
+          this.settingsService.getRecogniser() === 'swissprot-genes-proteins'
             ? this.settingsService.preferences.species
             : undefined
       }

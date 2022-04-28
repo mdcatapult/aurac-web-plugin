@@ -58,7 +58,7 @@ export class NerService {
           const recogniserEntities = this.transformAPIResponse(response as APIEntities, tab.id!)
           this.entitiesService.setRecogniserEntities(
             tab.id!,
-            this.settingsService.preferences.recogniser,
+            this.settingsService.getRecogniser(),
             recogniserEntities
           )
 
@@ -81,7 +81,7 @@ export class NerService {
 
   private callAPI(body: string): Promise<APIEntities | void> {
     const [params, headers] = this.constructRequestParametersAndHeaders(
-      allRecognisers().length == 1 ? allRecognisers()[0] : this.settingsService.preferences.recogniser 
+      this.settingsService.getRecogniser()
     )
 
     return this.httpClient
@@ -144,7 +144,7 @@ export class NerService {
     const entity: Entity = {
       synonymToXPaths: new Map(),
       speciesNames:
-        this.settingsService.preferences.recogniser === 'swissprot-genes-proteins'
+        this.settingsService.getRecogniser() === 'swissprot-genes-proteins'
           ? Object.keys(recognisedEntity.identifiers!)
           : undefined
     }
@@ -194,14 +194,14 @@ export class NerService {
 
   private transformAPIResponse(response: APIEntities, tabID: number): RecogniserEntities {
     let recogniserEntities = this.entitiesService.getTabEntities(tabID)?.[
-      this.settingsService.preferences.recogniser
+      this.settingsService.getRecogniser()
     ]! ?? {
       show: true,
       entities: new Map<string, Entity>()
     }
 
     if (
-      this.entitiesService.getTabEntities(tabID)?.[this.settingsService.preferences.recogniser]!
+      this.entitiesService.getTabEntities(tabID)?.[this.settingsService.getRecogniser()]!
     ) {
       return recogniserEntities!
     } else {

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core'
 import * as _ from 'lodash'
 import { BehaviorSubject, Observable } from 'rxjs'
 import { Message } from 'src/types/messages'
+import { allRecognisers, Recogniser } from 'src/types/recognisers'
 import { XRefSources, Preferences, defaultSettings, APIURLs, Settings } from 'src/types/settings'
 import { BrowserService } from '../browser.service'
 
@@ -88,6 +89,10 @@ export class SettingsService {
 
   getEnabledXrefs(): string[] {
     return Object.keys(this.xRefSources).filter(xRef => this.xRefSources[xRef] === true)
+  }
+
+  getRecogniser(): Recogniser {
+    return allRecognisers().length === 1 ? allRecognisers()[0] : this.preferences.recogniser
   }
 
   private setPreferences(pref: Preferences) {

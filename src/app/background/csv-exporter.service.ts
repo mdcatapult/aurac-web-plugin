@@ -33,7 +33,7 @@ export class CsvExporterService {
       })
       .then(({ currentTab, tabEntities }) => {
         if (!!tabEntities) {
-          const recogniser = this.settingsService.preferences.recogniser
+          const recogniser = this.settingsService.getRecogniser()
           const entitiesArray = Array.from(tabEntities[recogniser]!.entities.values())
 
           if (!entitiesArray.length) {
