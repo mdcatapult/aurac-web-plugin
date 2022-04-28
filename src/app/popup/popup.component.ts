@@ -11,7 +11,6 @@ export class PopupComponent {
   mode: 'menu' | 'settings' | 'pdf' = 'menu'
 
   nerError = false
-  sourcesError = false
 
   constructor(private browserService: BrowserService, private zone: NgZone) {
     this.browserService.addListener(msg => {
@@ -34,10 +33,6 @@ export class PopupComponent {
       .catch(error =>
         console.error("couldn't send message 'ner_service_process_current_page'", error)
       )
-  }
-
-  pdfClicked(): void {
-    this.mode = 'pdf'
   }
 
   exportResults(): void {

@@ -22,7 +22,7 @@ export class XRefService {
         return Promise.resolve([])
       }
 
-      const entityType = entity.metadata['RecognisingDict']['entityType']
+      const entityType = entity.metadata['RecognisingDict']?.['entityType']
       const identifier = entity.identifierSourceToID?.get('resolvedEntity')
 
       if (!identifier) {

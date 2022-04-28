@@ -20,7 +20,7 @@ export class LinksService {
         }
 
         const entityGroup = card.entity.metadata['entityGroup']
-        const entityType = card.entity.metadata['RecognisingDict']['entityType']
+        const entityType = card.entity.metadata['RecognisingDict']?.['entityType']
 
         const geneAndProtein = 'Gene or Protein'
         const disease = 'Biological'
