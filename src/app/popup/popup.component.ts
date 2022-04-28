@@ -1,5 +1,6 @@
 import { Component, NgZone } from '@angular/core'
 import { BrowserService } from '../browser.service'
+import {environment} from "src/environments/environment";
 
 @Component({
   selector: 'app-popup',
@@ -53,5 +54,13 @@ export class PopupComponent {
     } else {
       return 'Ask Aurac to highlight interesting things on the page'
     }
+  }
+
+  showURLs(): boolean {
+    return !environment.bio && !environment.production
+  }
+
+  showSources(): boolean {
+    return !environment.bio
   }
 }
