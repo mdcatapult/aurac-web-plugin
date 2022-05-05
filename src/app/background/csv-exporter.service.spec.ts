@@ -58,9 +58,8 @@ describe('CsvExporterService', () => {
   })
 
   it('should return a string containing column headers and relevant entity data for swissprot recogniser', () => {
-
     const identifierSourceToID = {
-      'Accession': 'Q77Q38'
+      Accession: 'Q77Q38'
     }
 
     const entity: Entity = {
