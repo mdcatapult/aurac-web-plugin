@@ -58,10 +58,15 @@ describe('CsvExporterService', () => {
   })
 
   it('should return a string containing column headers and relevant entity data for swissprot recogniser', () => {
+
+    const identifierSourceToID = {
+      'Accession': 'Q77Q38'
+    }
+
     const entity: Entity = {
       metadata: {},
       synonymToXPaths: new Map([['K12', ['']]]),
-      identifierSourceToID: new Map([['Accession', 'Q77Q38']])
+      identifierSourceToID: new Map([['Homo sapiens', JSON.stringify(identifierSourceToID)]])
     }
     const entities: Array<Entity> = [entity]
     const actual = service.entitiesToCSV(entities, 'swissprot-genes-proteins')

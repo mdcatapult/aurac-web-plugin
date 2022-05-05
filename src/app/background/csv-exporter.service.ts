@@ -73,11 +73,11 @@ export class CsvExporterService {
         switch (recogniser) {
           case 'swissprot-genes-proteins':
             key = 'Accession'
-            const speciesData = entity.identifierSourceToID!.get(
+            const speciesDataString = entity.identifierSourceToID!.get(
               this.settingsService.preferences.species
             )
-            if (!speciesData) return
-            const jsonSpeciesData = JSON.parse(speciesData)
+            if (!speciesDataString) return
+            const jsonSpeciesData: Record<string, string> = JSON.parse(speciesDataString)
             const accession = jsonSpeciesData[key]
             if (!accession) return
             text = text + `"${synonymName}"` + ',' + accession + '\n'
