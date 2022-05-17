@@ -12,30 +12,21 @@ variables:
   GIT_SUBMODULE_STRATEGY: recursive
 test-lint-build:
   stage: test-lint-build
-  image: registry.mdcatapult.io/informatics/docker-images/ci/node:multiple-releases
+  image: registry.mdcatapult.io/informatics/docker-images/ci/node
   tags:
     - wopr
   artifacts:
     paths:
       - dist/*
-      - dist-bio/*
   before_script:
     - apt-get -yqq update && apt-get upgrade -yqq chromium libxss1 xvfb
     - export CHROME_BIN=/usr/bin/chromium
     - npm install
   script:
-    - npm run lint
-    - npm run mocha
     - npm run test:ci
-
-    # build biology version
-    - npm run build:bio
-    - npm run package
-    - mv dist/ dist-bio/
-
-    # build general version
+    - npm run lint
     - npm run build
-    - npm run package
+    - npm run mocha
 
   coverage: /Lines\s+:\s(\d+\.?\d*)%\s\(\s\d+\/\d+\s\)/
   except:
@@ -48,28 +39,14 @@ release:
   tags:
     - wopr
   script:
-    - /scripts/release.sh -u 'dist/browser-plugin/web-ext-artifacts/aurac-*.zip'
-
-  #  only:
-  #    - master
+    - /scripts/release.sh -b -r develop -u 'dist/browser-plugin/web-ext-artifacts/aurac-*.zip'
+  only:
+    - master
   except:
     variables:
       - '$CI_COMMIT_MESSAGE =~ /^Setting version to.*/'
 
-bio-release:
-  stage: release
-  image: registry.mdcatapult.io/informatics/docker-images/ci/node
-  tags:
-    - wopr
-  script:
-    - /scripts/release.sh -b -r develop -u 'dist-bio/browser-plugin/web-ext-artifacts/aurac-*.zip'
-
-  #  only:
-  #    - master
-  except:
-    variables:
-      - '$CI_COMMIT_MESSAGE =~ /^Setting version to.*/'
-#sast:
-#  stage: test
-#include:
-#  - template: Security/SAST.gitlab-ci.yml
+sast:
+  stage: test
+include:
+  - template: Security/SAST.gitlab-ci.yml
