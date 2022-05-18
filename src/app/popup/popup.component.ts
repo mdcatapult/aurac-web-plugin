@@ -13,6 +13,7 @@
 
 import { Component, NgZone } from '@angular/core'
 import { BrowserService } from '../browser.service'
+import { environment } from 'src/environments/environment'
 
 @Component({
   selector: 'app-popup',
@@ -23,7 +24,6 @@ export class PopupComponent {
   mode: 'menu' | 'settings' | 'pdf' = 'menu'
 
   nerError = false
-  sourcesError = false
 
   constructor(private browserService: BrowserService, private zone: NgZone) {
     this.browserService.addListener(msg => {
@@ -48,10 +48,6 @@ export class PopupComponent {
       )
   }
 
-  pdfClicked(): void {
-    this.mode = 'pdf'
-  }
-
   exportResults(): void {
     this.browserService
       .sendMessageToBackground('csv_exporter_service_export_csv')
@@ -66,5 +62,13 @@ export class PopupComponent {
     } else {
       return 'Ask Aurac to highlight interesting things on the page'
     }
+  }
+
+  showURLs(): boolean {
+    return !environment.bio && !environment.production
+  }
+
+  showSources(): boolean {
+    return !environment.bio
   }
 }

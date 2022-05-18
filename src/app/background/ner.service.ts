@@ -14,8 +14,9 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http'
 import { Injectable } from '@angular/core'
 import { uniqueId } from 'lodash'
+import { environment } from 'src/environments/environment'
 import { RecogniserEntities, Entity } from 'src/types/entity'
-import { Recogniser } from 'src/types/recognisers'
+import { allRecognisers, Recogniser } from 'src/types/recognisers'
 import { BrowserService } from '../browser.service'
 import { EntitiesService } from './entities.service'
 import { SettingsService } from './settings.service'
@@ -70,7 +71,7 @@ export class NerService {
           const recogniserEntities = this.transformAPIResponse(response as APIEntities, tab.id!)
           this.entitiesService.setRecogniserEntities(
             tab.id!,
-            this.settingsService.preferences.recogniser,
+            this.settingsService.getRecogniser(),
             recogniserEntities
           )
 
@@ -93,7 +94,7 @@ export class NerService {
 
   private callAPI(body: string): Promise<APIEntities | void> {
     const [params, headers] = this.constructRequestParametersAndHeaders(
-      this.settingsService.preferences.recogniser
+      this.settingsService.getRecogniser()
     )
 
     return this.httpClient
@@ -156,7 +157,7 @@ export class NerService {
     const entity: Entity = {
       synonymToXPaths: new Map(),
       speciesNames:
-        this.settingsService.preferences.recogniser === 'swissprot-genes-proteins'
+        this.settingsService.getRecogniser() === 'swissprot-genes-proteins'
           ? Object.keys(recognisedEntity.identifiers!)
           : undefined
     }
@@ -206,15 +207,13 @@ export class NerService {
 
   private transformAPIResponse(response: APIEntities, tabID: number): RecogniserEntities {
     let recogniserEntities = this.entitiesService.getTabEntities(tabID)?.[
-      this.settingsService.preferences.recogniser
+      this.settingsService.getRecogniser()
     ]! ?? {
       show: true,
       entities: new Map<string, Entity>()
     }
 
-    if (
-      this.entitiesService.getTabEntities(tabID)?.[this.settingsService.preferences.recogniser]!
-    ) {
+    if (this.entitiesService.getTabEntities(tabID)?.[this.settingsService.getRecogniser()]!) {
       return recogniserEntities!
     } else {
       response.forEach(recognisedEntity => {

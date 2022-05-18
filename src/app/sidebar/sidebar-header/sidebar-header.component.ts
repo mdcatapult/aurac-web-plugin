@@ -43,7 +43,7 @@ export class SidebarHeaderComponent {
   }
 
   exportCSV() {
-    const recogniser = this.settingsService.preferences.recogniser
+    const recogniser = this.settingsService.getRecogniser()
     const csvText = this.csvExporterService.entitiesToCSV(
       this.sidebarDataService.cards.map(sidebarEntity => sidebarEntity.entity),
       recogniser

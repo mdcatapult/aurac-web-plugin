@@ -81,7 +81,7 @@
       <app-pdfselector (closed)="mode = 'menu'"></app-pdfselector>
     </mat-expansion-panel>
 
-    <mat-expansion-panel>
+    <mat-expansion-panel *ngIf="showURLs()">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <span>URLs</span>
@@ -90,7 +90,7 @@
       <app-urls></app-urls>
     </mat-expansion-panel>
 
-    <mat-expansion-panel class="aurac-link-sources">
+    <mat-expansion-panel class="aurac-link-sources" *ngIf="showSources()">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <span>Link Sources</span>
