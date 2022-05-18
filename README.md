@@ -2,7 +2,7 @@
 
 ## Running NER on a web page
 
-The plugin runs an NER tool over a web page in a Chrome or Firefox browser, and highlights any matches.  .  
+The plugin runs an NER tool over a web page in a Chrome or Firefox browser, and highlights any matches. .  
 Once the extension is loaded you will see the following icon:
 
 ![image](src/assets/head-brains.icon.48.png)
