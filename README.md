@@ -151,3 +151,6 @@ For example, v1.2.3 and v1.2.3-bio.
 ### Credits
 
 Designed using elements from Heroicon and Vecteezy.com.
+
+## Licence
+This project is licensed under the terms of the Apache 2 license, which can be found in the repository as `LICENCE.txt`.
