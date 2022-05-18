@@ -33,7 +33,7 @@ export class CsvExporterService {
       })
       .then(({ currentTab, tabEntities }) => {
         if (!!tabEntities) {
-          const recogniser = this.settingsService.preferences.recogniser
+          const recogniser = this.settingsService.getRecogniser()
           const entitiesArray = Array.from(tabEntities[recogniser]!.entities.values())
 
           if (!entitiesArray.length) {
@@ -73,7 +73,16 @@ export class CsvExporterService {
         switch (recogniser) {
           case 'swissprot-genes-proteins':
             key = 'Accession'
-            break
+            const speciesDataString = entity.identifierSourceToID!.get(
+              this.settingsService.preferences.species
+            )
+            if (!speciesDataString) return
+            const jsonSpeciesData: Record<string, string> = JSON.parse(speciesDataString)
+            const accession = jsonSpeciesData[key]
+            if (!accession) return
+            text = text + `"${synonymName}"` + ',' + accession + '\n'
+
+            return
           case 'leadmine-proteins':
           case 'leadmine-chemical-entities':
           case 'leadmine-disease':

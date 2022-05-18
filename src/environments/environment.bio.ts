@@ -1,5 +1,8 @@
-import { environment as PROD_ENV } from './environment.prod'
 export const environment = {
-  ...PROD_ENV,
+  production: false,
+  nerURL: 'http://localhost:8081',
+  compoundConverterURL: 'http://localhost:8082/convert',
+  unichemURL: 'http://localhost:8080',
+  pdfConverterURL: 'http://localhost:8000/html',
   bio: true
 }
