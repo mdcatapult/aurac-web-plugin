@@ -2,7 +2,7 @@
 
 ## Running NER on a web page
 
-The plugin runs Leadmine over a web page in a Chrome or Firefox browser, logging the result.  
+The plugin runs an NER tool over a web page in a Chrome or Firefox browser, and highlights any matches.  .  
 Once the extension is loaded you will see the following icon:
 
 ![image](src/assets/head-brains.icon.48.png)
@@ -10,7 +10,7 @@ Once the extension is loaded you will see the following icon:
 Clicking this icon will reveal a popup. To run NER on the current page, click 'NER'.
 
 Aurac is capable of using different dictionaries for NER, accessible through Settings -> Preferences. Selecting a dictionary will
-cause Aurac to use that dictionary for NER. Each dictionary corresponds to a specific Leadmine deployment:
+cause Aurac to use that dictionary for NER. Other than Swissprot, each dictionary corresponds to a specific Leadmine deployment:
 
 - Genes/Proteins
 - Diseases
@@ -29,7 +29,7 @@ There are three tabs in the settings page of the popup:
      - Leadmine
      - Compound Converter
      - Unichem Plus
-   - defaults to the WOPR deployments, which are currently the only available deployments
+   - **N.B. URLs default to internal Medicines Discovery Catapult k8s deployments, which are not accessible to users outside that organisation**
 
 2. Sources:
 
@@ -72,7 +72,7 @@ export WEB_EXT_START_URL=https://www.uniprot.org/uniprot/O76074
 
 Saves a lot of time when testing.
 
-**N.B. YOU MUST BE CONNECTED TO THE ALDERLEY PARK VPN FOR THE PLUGIN TO WORK**
+**N.B. MDC USERS MUST BE CONNECTED TO THE ALDERLEY PARK VPN FOR THE PLUGIN TO WORK USING THE DEFAULT URLS**
 
 ### Keeping Firefox changes between sessions
 
@@ -137,7 +137,7 @@ There are various convenience scripts inside the `package.json` that can be run 
 
 ### PDF Conversion
 
-There is a feature in Aurac that let's you put in the URL of an online PDF and convert it into HTML format which can then be NER'd.
+There is a feature in Aurac that lets you put in the URL of an online PDF and convert it into HTML format which can then be NER'd.
 However, if you attempt to use this pdf conversion while on any of the pages below it will not work:
 
 - `about:debugging` on Firefox settings
