@@ -1,5 +1,19 @@
+/*
+ * Copyright 2022 Medicines Discovery Catapult
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Component, NgZone } from '@angular/core'
 import { BrowserService } from '../browser.service'
+import { environment } from 'src/environments/environment'
 
 @Component({
   selector: 'app-popup',
@@ -10,7 +24,6 @@ export class PopupComponent {
   mode: 'menu' | 'settings' | 'pdf' = 'menu'
 
   nerError = false
-  sourcesError = false
 
   constructor(private browserService: BrowserService, private zone: NgZone) {
     this.browserService.addListener(msg => {
@@ -35,10 +48,6 @@ export class PopupComponent {
       )
   }
 
-  pdfClicked(): void {
-    this.mode = 'pdf'
-  }
-
   exportResults(): void {
     this.browserService
       .sendMessageToBackground('csv_exporter_service_export_csv')
@@ -53,5 +62,13 @@ export class PopupComponent {
     } else {
       return 'Ask Aurac to highlight interesting things on the page'
     }
+  }
+
+  showURLs(): boolean {
+    return !environment.bio && !environment.production
+  }
+
+  showSources(): boolean {
+    return !environment.bio
   }
 }

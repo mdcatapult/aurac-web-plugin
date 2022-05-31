@@ -1,3 +1,16 @@
+/*
+ * Copyright 2022 Medicines Discovery Catapult
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Injectable } from '@angular/core'
 import { TabEntities, XRef } from 'src/types/entity'
 import { parseHighlightID } from 'src/types/highlights'
@@ -37,7 +50,7 @@ export class EntityMessengerService {
           type: 'content_script_highlight_entities',
           body: {
             entities: stringifyWithTypes(change.entities),
-            recogniser: this.settingsService.preferences.recogniser
+            recogniser: this.settingsService.getRecogniser()
           }
         })
         .then((result: { tabEntities: string; entityCount: number }) => {
@@ -74,7 +87,7 @@ export class EntityMessengerService {
               .then(() => {
                 const { minEntityLength, species } = msg.body
                 const speciesArg =
-                  this.settingsService.preferences.recogniser === 'swissprot-genes-proteins'
+                  this.settingsService.getRecogniser() === 'swissprot-genes-proteins'
                     ? species
                     : undefined
                 this.entitiesService.filterEntities(minEntityLength, speciesArg)
@@ -145,7 +158,7 @@ export class EntityMessengerService {
     return this.browserService.getActiveTab().then(tab => {
       const entity = this.entitiesService.getFilteredEntity(
         tab.id!,
-        this.settingsService.preferences.recogniser,
+        this.settingsService.getRecogniser(),
         entityID
       )
       if (!entity) {
@@ -155,14 +168,14 @@ export class EntityMessengerService {
       }
 
       const sidebarCard: SidebarCard = {
-        recogniser: this.settingsService.preferences.recogniser,
+        recogniser: this.settingsService.getRecogniser(),
         entity,
         entityID: entityID,
         clickedEntityOccurrence: entityOccurrence,
         clickedSynonymName: synonymName,
         clickedSynonymOccurrence: synonymOccurrence,
         selectedSpecies:
-          this.settingsService.preferences.recogniser === 'swissprot-genes-proteins'
+          this.settingsService.getRecogniser() === 'swissprot-genes-proteins'
             ? this.settingsService.preferences.species
             : undefined
       }

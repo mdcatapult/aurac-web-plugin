@@ -1,3 +1,16 @@
+/*
+ * Copyright 2022 Medicines Discovery Catapult
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { TestBed, waitForAsync } from '@angular/core/testing'
 
 import { CsvExporterService } from './csv-exporter.service'
@@ -58,10 +71,14 @@ describe('CsvExporterService', () => {
   })
 
   it('should return a string containing column headers and relevant entity data for swissprot recogniser', () => {
+    const identifierSourceToID = {
+      Accession: 'Q77Q38'
+    }
+
     const entity: Entity = {
       metadata: {},
       synonymToXPaths: new Map([['K12', ['']]]),
-      identifierSourceToID: new Map([['Accession', 'Q77Q38']])
+      identifierSourceToID: new Map([['Homo sapiens', JSON.stringify(identifierSourceToID)]])
     }
     const entities: Array<Entity> = [entity]
     const actual = service.entitiesToCSV(entities, 'swissprot-genes-proteins')

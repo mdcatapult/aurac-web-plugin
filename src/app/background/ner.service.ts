@@ -1,8 +1,22 @@
+/*
+ * Copyright 2022 Medicines Discovery Catapult
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http'
 import { Injectable } from '@angular/core'
 import { uniqueId } from 'lodash'
+import { environment } from 'src/environments/environment'
 import { RecogniserEntities, Entity } from 'src/types/entity'
-import { Recogniser } from 'src/types/recognisers'
+import { allRecognisers, Recogniser } from 'src/types/recognisers'
 import { BrowserService } from '../browser.service'
 import { EntitiesService } from './entities.service'
 import { SettingsService } from './settings.service'
@@ -57,7 +71,7 @@ export class NerService {
           const recogniserEntities = this.transformAPIResponse(response as APIEntities, tab.id!)
           this.entitiesService.setRecogniserEntities(
             tab.id!,
-            this.settingsService.preferences.recogniser,
+            this.settingsService.getRecogniser(),
             recogniserEntities
           )
 
@@ -80,7 +94,7 @@ export class NerService {
 
   private callAPI(body: string): Promise<APIEntities | void> {
     const [params, headers] = this.constructRequestParametersAndHeaders(
-      this.settingsService.preferences.recogniser
+      this.settingsService.getRecogniser()
     )
 
     return this.httpClient
@@ -143,7 +157,7 @@ export class NerService {
     const entity: Entity = {
       synonymToXPaths: new Map(),
       speciesNames:
-        this.settingsService.preferences.recogniser === 'swissprot-genes-proteins'
+        this.settingsService.getRecogniser() === 'swissprot-genes-proteins'
           ? Object.keys(recognisedEntity.identifiers!)
           : undefined
     }
@@ -193,15 +207,13 @@ export class NerService {
 
   private transformAPIResponse(response: APIEntities, tabID: number): RecogniserEntities {
     let recogniserEntities = this.entitiesService.getTabEntities(tabID)?.[
-      this.settingsService.preferences.recogniser
+      this.settingsService.getRecogniser()
     ]! ?? {
       show: true,
       entities: new Map<string, Entity>()
     }
 
-    if (
-      this.entitiesService.getTabEntities(tabID)?.[this.settingsService.preferences.recogniser]!
-    ) {
+    if (this.entitiesService.getTabEntities(tabID)?.[this.settingsService.getRecogniser()]!) {
       return recogniserEntities!
     } else {
       response.forEach(recognisedEntity => {
