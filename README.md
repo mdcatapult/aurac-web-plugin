@@ -154,9 +154,10 @@ Designed using elements from Heroicon and Vecteezy.com.
 
 ## Known Issues
 
-- PDF conversion does not currently work in Firefox.  This is probably due to the content script trying to communicate directly with the pdf converter rather than via the background component.
+- PDF conversion does not currently work in Firefox. This is probably due to the content script trying to communicate directly with the pdf converter rather than via the background component.
 - When clicking on the arrow buttons to cycle through instances of a gene or protein on a page those instances are scrolled through alphabetically as opposed to in the order in which they appear on the page. Highlighted terms should be sorted by y position (or x position if identical y position) rather than value.
 - If the dictionary importer is run whilst there is no Redis instance running you will see an (incorrect) error something like that below, when the format is in fact fine.
+
 ```
 {"level":"fatal","error":"dial tcp 127.0.0.1:6379: connect: connection refused","time":"2022-06-16T11:20:06+01:00","message":"Could not read source file into pubchem. Are you sure this format is correct?"}
 ```
