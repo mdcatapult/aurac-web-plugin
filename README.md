@@ -60,6 +60,8 @@ Cross-browser plugin written in Angular. This plugin combines the [web extension
 
 Because Angular works as a single page app, different pages have to be loaded via query parameters. The angular router doesn't seem to pick the up query parameters but the `ActivatedRoute` service does, so routing is implemented a bit strangely.
 
+We wrote a [Medium article](https://medium.com/@nejetherington/building-a-web-extension-in-angular-1f77a5a71b85) on the architecture of the web extension outlining some of the problems we faced using Angular and how we overcame them.
+
 `npm run build && npm run start` boots the app for a production environment.
 
 Build time is reduced when instead running `npm run dev`, which can be used for development environment.
